@@ -1,1 +1,2 @@
-Andalalin adalah aplikasi pengajuan permohonan untuk dokumen andalalin
+# Andalalin
+Andalalin adalah aplikasi pengajuan permohonan terhadap dokumen andalalin lalala
