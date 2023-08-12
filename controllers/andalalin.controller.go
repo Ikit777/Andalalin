@@ -60,7 +60,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	}
 
-	loc, _ := time.LoadLocation("Asia/Singapore")
+	loc, _ := time.LoadLocation("Asia/Hong_Kong")
 	now := time.Now().In(loc).Format("02-01-2006")
 	nowTime := time.Now().In(loc)
 
