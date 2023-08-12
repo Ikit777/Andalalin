@@ -1,0 +1,38 @@
+package utils
+
+import (
+	"fmt"
+
+	"github.com/Ikit777/E-Andalalin/repository"
+)
+
+func GetRoleGives(role string) ([]string, error) {
+	var rolegives []string
+
+	// Switch given role.
+	switch role {
+	case repository.SuperAdminRoleName:
+		// Super Admin credentials.
+		rolegives = []string{
+			repository.OfficeRoleName,
+			repository.AdminRoleName,
+			repository.OperatorRoleName,
+			repository.OfficerRoleName,
+			repository.UserRoleName,
+		}
+	case repository.OfficeRoleName:
+		// Office credentials.
+		rolegives = []string{
+			repository.OfficeRoleName,
+			repository.AdminRoleName,
+			repository.OperatorRoleName,
+			repository.OfficerRoleName,
+			repository.UserRoleName,
+		}
+	default:
+		// Return error message.
+		return nil, fmt.Errorf("role '%v' does not exist", role)
+	}
+
+	return rolegives, nil
+}
