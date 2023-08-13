@@ -43,7 +43,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 		return
 	}
 
-	loc, _ := time.LoadLocation("Asia/Singapore")
+	loc := utils.GetLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
 	verification_code := utils.Encode(6)
 
@@ -231,7 +231,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 	expiresRefreshToken := claim.Expires
 
-	loc, _ := time.LoadLocation("Asia/Singapore")
+	loc := utils.GetLocation("Asia/Singapore")
 
 	now := time.Now().In(loc).Unix()
 

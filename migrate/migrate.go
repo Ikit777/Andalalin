@@ -36,7 +36,7 @@ func main() {
 	initializers.DB.AutoMigrate(&models.TiketLevel1{})
 	initializers.DB.AutoMigrate(&models.TiketLevel2{})
 
-	loc, _ := time.LoadLocation("Asia/Singapore")
+	loc := utils.GetLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
 	hashedPassword, err := utils.HashPassword("superadmin")
 	if err != nil {

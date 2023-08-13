@@ -26,7 +26,7 @@ func CreateToken(ttl time.Duration, id uuid.UUID, privateKey string, credentials
 		return "", fmt.Errorf("create: parse key: %w", err)
 	}
 
-	loc, _ := time.LoadLocation("Asia/Singapore")
+	loc := GetLocation("Asia/Singapore")
 	now := time.Now().In(loc)
 
 	claims := make(jwt.MapClaims)
