@@ -10,6 +10,8 @@ import (
 	"github.com/Ikit777/E-Andalalin/initializers"
 	"github.com/Ikit777/E-Andalalin/models"
 	"github.com/Ikit777/E-Andalalin/utils"
+
+	_ "time/tzdata"
 )
 
 func init() {
@@ -36,7 +38,7 @@ func main() {
 	initializers.DB.AutoMigrate(&models.TiketLevel1{})
 	initializers.DB.AutoMigrate(&models.TiketLevel2{})
 
-	loc := utils.GetLocation("Asia/Singapore")
+	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
 	hashedPassword, err := utils.HashPassword("superadmin")
 	if err != nil {

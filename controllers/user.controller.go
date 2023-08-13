@@ -17,6 +17,8 @@ import (
 	"github.com/Ikit777/E-Andalalin/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+
+	_ "time/tzdata"
 )
 
 type UserController struct {
@@ -251,7 +253,7 @@ func (ac *UserController) Add(ctx *gin.Context) {
 		return
 	}
 
-	loc := utils.GetLocation("Asia/Singapore")
+	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
 	filePath := "assets/default.png"
 	fileData, err := os.ReadFile(filePath)
@@ -368,7 +370,7 @@ func (ac *UserController) ForgotPassword(ctx *gin.Context) {
 	// Generate Verification Code
 	resetToken := utils.Encode(6)
 	user.ResetToken = resetToken
-	loc := utils.GetLocation("Asia/Singapore")
+	loc, _ := time.LoadLocation("Asia/Singapore")
 	user.ResetAt = time.Now().In(loc).Add(time.Minute * 5)
 	ac.DB.Save(&user)
 
@@ -402,7 +404,7 @@ func (ac *UserController) ResetPassword(ctx *gin.Context) {
 	}
 
 	hashedPassword, _ := utils.HashPassword(payload.Password)
-	loc := utils.GetLocation("Asia/Singapore")
+	loc, _ := time.LoadLocation("Asia/Singapore")
 	var updatedUser models.User
 	result := ac.DB.First(&updatedUser, "password_reset_token = ? AND password_reset_at > ?", resetToken, time.Now().In(loc))
 	if result.Error != nil {

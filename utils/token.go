@@ -7,6 +7,8 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
+
+	_ "time/tzdata"
 )
 
 type TokenMetadata struct {
@@ -26,7 +28,7 @@ func CreateToken(ttl time.Duration, id uuid.UUID, privateKey string, credentials
 		return "", fmt.Errorf("create: parse key: %w", err)
 	}
 
-	loc := GetLocation("Asia/Singapore")
+	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc)
 
 	claims := make(jwt.MapClaims)

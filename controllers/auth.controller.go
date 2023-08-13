@@ -13,6 +13,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+
+	_ "time/tzdata"
 )
 
 type AuthController struct {
@@ -43,7 +45,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 		return
 	}
 
-	loc := utils.GetLocation("Asia/Singapore")
+	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
 	verification_code := utils.Encode(6)
 
@@ -231,7 +233,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 	expiresRefreshToken := claim.Expires
 
-	loc := utils.GetLocation("Asia/Singapore")
+	loc, _ := time.LoadLocation("Asia/Singapore")
 
 	now := time.Now().In(loc).Unix()
 

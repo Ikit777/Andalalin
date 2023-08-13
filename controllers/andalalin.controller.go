@@ -17,6 +17,8 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
+	_ "time/tzdata"
+
 	wkhtmltopdf "github.com/SebastiaanKlippert/go-wkhtmltopdf"
 )
 
@@ -60,7 +62,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	}
 
-	loc := utils.GetLocation("Asia/Singapore")
+	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
 	nowTime := time.Now().In(loc)
 
