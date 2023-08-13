@@ -50,7 +50,8 @@ func main() {
 	}
 
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"http://0.0.0.0:8080", config.ClientOrigin}
+
+	corsConfig.AllowOrigins = []string{"*"}
 	corsConfig.AllowCredentials = true
 
 	server.Use(cors.New(corsConfig))
