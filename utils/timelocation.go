@@ -8,7 +8,7 @@ import (
 var zoneInfoFS embed.FS // get it from GOROOT/lib/time/zoneInfo.zip
 
 func GetLocation(name string) (loc *time.Location) {
-	bs, err := zoneInfoFS.ReadFile("zoneinfo/" + name)
+	bs, err := zoneInfoFS.ReadFile("zoneInfo/" + name)
 	if err != nil {
 		panic(err)
 	}
