@@ -155,7 +155,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 	}
 
 	var user models.User
-	result := ac.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
+	result := ac.DB.First(&user, "email = ?", payload.Email)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Akun tidak terdaftar"})
 		return
