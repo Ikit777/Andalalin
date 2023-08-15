@@ -227,7 +227,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 	claim, error := utils.ValidateToken(refresh_token, config.RefreshTokenPublicKey)
 	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		ctx.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"status": "fail", "message": error.Error()})
 		return
 	}
 
