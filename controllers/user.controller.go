@@ -408,7 +408,7 @@ func (ac *UserController) ResetPassword(ctx *gin.Context) {
 	var updatedUser models.User
 	result := ac.DB.First(&updatedUser, "password_reset_token = ? AND password_reset_at > ?", resetToken, time.Now().In(loc))
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Reset token kada luarsa"})
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": "Reset token kada luarsa"})
 		return
 	}
 
