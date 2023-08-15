@@ -406,7 +406,7 @@ func (ac *UserController) ResetPassword(ctx *gin.Context) {
 	hashedPassword, _ := utils.HashPassword(payload.Password)
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	var updatedUser models.User
-	result := ac.DB.First(&updatedUser, "password_reset_token = ? AND password_reset_at > ?", resetToken, time.Now().In(loc))
+	result := ac.DB.First(&updatedUser, "reset_token = ? AND reset_at > ?", resetToken, time.Now().In(loc))
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": "Reset token kada luarsa"})
 		return
