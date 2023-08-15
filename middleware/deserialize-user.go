@@ -34,7 +34,7 @@ func DeserializeUser() gin.HandlerFunc {
 		config, _ := initializers.LoadConfig(".")
 		claim, err := utils.ValidateToken(access_token, config.AccessTokenPublicKey)
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": err.Error()})
+			ctx.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"status": "fail", "message": err.Error()})
 			return
 		}
 
