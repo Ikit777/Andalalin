@@ -442,12 +442,8 @@ func (ac *UserController) UpdatePhoto(ctx *gin.Context) {
 		return
 	}
 
-	newWidth := 320
-	newHeight := 320
-	resizedImage := utils.ResizeImage(imageFile, newWidth, newHeight)
-
 	var buf bytes.Buffer
-	if err := png.Encode(&buf, resizedImage); err != nil {
+	if err := png.Encode(&buf, imageFile); err != nil {
 		log.Fatal("Error encode image :", err)
 		return
 	}
