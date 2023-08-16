@@ -66,7 +66,8 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	now := time.Now().In(loc).Format("02-01-2006")
 	nowTime := time.Now().In(loc)
 
-	nomer := utils.Encode(6)
+	kode := "andalalin/" + utils.Generate(6)
+	tanggal := nowTime.Format("01") + " " + utils.Bulan(nowTime.Format("02")) + " " + nowTime.Format("2006")
 
 	t, err := template.ParseFiles("templates/tandaterimaTemplate.html")
 	if err != nil {
@@ -75,23 +76,21 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	}
 
 	bukti := struct {
-		Nomer  string
-		Bulan  string
-		Tahun  int
-		Nama   string
-		Alamat string
-		Tlp    string
-		Izin   string
-		Waktu  string
+		Tanggal      string
+		Waktu        string
+		Kode         string
+		Nama         string
+		Instansi     string
+		Nomor        string
+		NomorSeluler string
 	}{
-		Nomer:  nomer,
-		Bulan:  nowTime.Format("02"),
-		Tahun:  nowTime.Year(),
-		Nama:   payload.Andalalin.NamaPemohon,
-		Alamat: payload.Andalalin.AlamatPemohon,
-		Tlp:    payload.Andalalin.NomerPemohon,
-		Izin:   payload.Andalalin.JenisAndalalin,
-		Waktu:  now,
+		Tanggal:      tanggal,
+		Waktu:        nowTime.Format("15:04:05"),
+		Kode:         kode,
+		Nama:         payload.Andalalin.NamaPemohon,
+		Instansi:     payload.Andalalin.NamaPerusahaan,
+		Nomor:        payload.Andalalin.NamaPemohon,
+		NomorSeluler: payload.Andalalin.NomerSelulerPemohon,
 	}
 
 	buffer := new(bytes.Buffer)
@@ -155,7 +154,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	permohonan := models.Andalalin{
 		IdUser:                 currentUser.ID,
 		JenisAndalalin:         payload.Andalalin.JenisAndalalin,
-		NomerAndalalin:         nomer,
+		KodeAndalalin:          kode,
 		NikPemohon:             payload.Andalalin.NikPemohon,
 		NamaPemohon:            payload.Andalalin.NamaPemohon,
 		EmailPemohon:           currentUser.Email,
@@ -279,13 +278,13 @@ func (ac *AndalalinController) GetPermohonanByIdUser(ctx *gin.Context) {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range andalalin {
 			respone = append(respone, models.DaftarAndalalinResponse{
-				IdAndalalin:     s.IdAndalalin,
-				NomerAndalalin:  s.NomerAndalalin,
-				WaktuAndalalin:  s.WaktuAndalalin,
-				Nama:            s.NamaPemohon,
-				Alamat:          s.AlamatPemohon,
-				JenisAndalalin:  s.JenisAndalalin,
-				StatusAndalalin: s.StatusAndalalin,
+				IdAndalalin:      s.IdAndalalin,
+				KodeAndalalin:    s.KodeAndalalin,
+				TanggalAndalalin: s.TanggalAndalalin,
+				Nama:             s.NamaPemohon,
+				Alamat:           s.AlamatPemohon,
+				JenisAndalalin:   s.JenisAndalalin,
+				StatusAndalalin:  s.StatusAndalalin,
 			})
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
@@ -307,7 +306,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	data := models.AndalalinResponse{
 		IdAndalalin:                  andalalin.IdAndalalin,
 		JenisAndalalin:               andalalin.JenisAndalalin,
-		NomerAndalalin:               andalalin.NomerAndalalin,
+		KodeAndalalin:                andalalin.KodeAndalalin,
 		NikPemohon:                   andalalin.NikPemohon,
 		NamaPemohon:                  andalalin.NamaPemohon,
 		EmailPemohon:                 andalalin.EmailPemohon,
@@ -392,13 +391,13 @@ func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range andalalin {
 			respone = append(respone, models.DaftarAndalalinResponse{
-				IdAndalalin:     s.IdAndalalin,
-				NomerAndalalin:  s.NomerAndalalin,
-				WaktuAndalalin:  s.WaktuAndalalin,
-				Nama:            s.NamaPemohon,
-				Alamat:          s.AlamatPemohon,
-				JenisAndalalin:  s.JenisAndalalin,
-				StatusAndalalin: s.StatusAndalalin,
+				IdAndalalin:      s.IdAndalalin,
+				KodeAndalalin:    s.KodeAndalalin,
+				TanggalAndalalin: s.TanggalAndalalin,
+				Nama:             s.NamaPemohon,
+				Alamat:           s.AlamatPemohon,
+				JenisAndalalin:   s.JenisAndalalin,
+				StatusAndalalin:  s.StatusAndalalin,
 			})
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
@@ -438,13 +437,13 @@ func (ac *AndalalinController) GetPermohonan(ctx *gin.Context) {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range andalalin {
 			respone = append(respone, models.DaftarAndalalinResponse{
-				IdAndalalin:     s.IdAndalalin,
-				NomerAndalalin:  s.NomerAndalalin,
-				WaktuAndalalin:  s.WaktuAndalalin,
-				Nama:            s.NamaPemohon,
-				Alamat:          s.AlamatPemohon,
-				JenisAndalalin:  s.JenisAndalalin,
-				StatusAndalalin: s.StatusAndalalin,
+				IdAndalalin:      s.IdAndalalin,
+				KodeAndalalin:    s.KodeAndalalin,
+				TanggalAndalalin: s.TanggalAndalalin,
+				Nama:             s.NamaPemohon,
+				Alamat:           s.AlamatPemohon,
+				JenisAndalalin:   s.JenisAndalalin,
+				StatusAndalalin:  s.StatusAndalalin,
 			})
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
@@ -494,13 +493,13 @@ func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 			}
 
 			respone = append(respone, models.DaftarAndalalinResponse{
-				IdAndalalin:     andalalin.IdAndalalin,
-				NomerAndalalin:  andalalin.NomerAndalalin,
-				WaktuAndalalin:  andalalin.WaktuAndalalin,
-				Nama:            andalalin.NamaPemohon,
-				Alamat:          andalalin.AlamatPemohon,
-				JenisAndalalin:  andalalin.JenisAndalalin,
-				StatusAndalalin: andalalin.StatusAndalalin,
+				IdAndalalin:      andalalin.IdAndalalin,
+				KodeAndalalin:    andalalin.KodeAndalalin,
+				TanggalAndalalin: andalalin.TanggalAndalalin,
+				Nama:             andalalin.NamaPemohon,
+				Alamat:           andalalin.AlamatPemohon,
+				JenisAndalalin:   andalalin.JenisAndalalin,
+				StatusAndalalin:  andalalin.StatusAndalalin,
 			})
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
@@ -771,7 +770,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 	}
 
 	data := utils.PersyaratanTidakSesuai{
-		Nomer:       andalalinData.NomerAndalalin,
+		Nomer:       andalalinData.KodeAndalalin,
 		Nama:        andalalinData.NamaPemohon,
 		Alamat:      andalalinData.AlamatPemohon,
 		Tlp:         andalalinData.NomerPemohon,
@@ -967,13 +966,13 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 			}
 
 			respone = append(respone, models.DaftarAndalalinResponse{
-				IdAndalalin:     andalalin.IdAndalalin,
-				NomerAndalalin:  andalalin.NomerAndalalin,
-				WaktuAndalalin:  andalalin.WaktuAndalalin,
-				Nama:            andalalin.NamaPemohon,
-				Alamat:          andalalin.AlamatPemohon,
-				JenisAndalalin:  andalalin.JenisAndalalin,
-				StatusAndalalin: andalalin.StatusAndalalin,
+				IdAndalalin:      andalalin.IdAndalalin,
+				KodeAndalalin:    andalalin.KodeAndalalin,
+				TanggalAndalalin: andalalin.TanggalAndalalin,
+				Nama:             andalalin.NamaPemohon,
+				Alamat:           andalalin.AlamatPemohon,
+				JenisAndalalin:   andalalin.JenisAndalalin,
+				StatusAndalalin:  andalalin.StatusAndalalin,
 			})
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
@@ -1464,7 +1463,7 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 	ac.DB.Save(&andalalin)
 
 	data := utils.PermohonanSelesai{
-		Nomer:   andalalin.NomerAndalalin,
+		Nomer:   andalalin.KodeAndalalin,
 		Nama:    andalalin.NamaPemohon,
 		Alamat:  andalalin.AlamatPemohon,
 		Tlp:     andalalin.NomerPemohon,

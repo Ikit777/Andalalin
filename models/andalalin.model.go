@@ -10,7 +10,7 @@ type Andalalin struct {
 	IdUser                 uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdPetugas              uuid.UUID `gorm:"type:varchar(255);"`
 	JenisAndalalin         string    `gorm:"type:varchar(255);not null"`
-	NomerAndalalin         string    `gorm:"type:varchar(255);not null"`
+	KodeAndalalin          string    `gorm:"type:varchar(255);not null"`
 	NikPemohon             string    `gorm:"type:varchar(255);not null"`
 	NamaPemohon            string    `gorm:"type:varchar(255);not null"`
 	EmailPemohon           string    `gorm:"type:varchar(255);not null"`
@@ -19,9 +19,11 @@ type Andalalin struct {
 	AlamatPemohon          string    `gorm:"type:varchar(255);not null"`
 	JenisKelaminPemohon    string    `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
 	NomerPemohon           string    `gorm:"type:varchar(255);not null"`
+	NomerSelulerPemohon    string    `gorm:"type:varchar(255);not null"`
 	JabatanPemohon         string    `gorm:"type:varchar(255);not null"`
 	LokasiPengambilan      string    `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin         string    `gorm:"not null"`
+	TanggalAndalalin       string    `gorm:"not null"`
 	StatusAndalalin        string    `sql:"type:enum('Cek persyaratan', 'Persayaratan tidak sesuai', 'Persyaratan terpenuhi', 'Survey lapangan', 'Laporan BAP', 'Pembuatan SK', 'Permohonan selesai')"`
 	NamaPetugas            string    `gorm:"type:varchar(255);"`
 	EmailPetugas           string    `gorm:"type:varchar(255);"`
@@ -75,6 +77,7 @@ type InputAndalalin struct {
 	AlamatPemohon        string `json:"alamat_pemohon" binding:"required"`
 	JenisKelaminPemohon  string `json:"jenis_kelamin_pemohon" binding:"required"`
 	NomerPemohon         string `json:"nomer_pemohon" binding:"required"`
+	NomerSelulerPemohon  string `json:"nomer_seluler_pemohon" binding:"required"`
 	JabatanPemohon       string `json:"jabatan_pemohon" binding:"required"`
 	LokasiPengambilan    string `json:"lokasi_pengambilan" binding:"required"`
 	NamaPerusahaan       string `json:"nama_perusahaan" binding:"required"`
@@ -102,13 +105,13 @@ type DataAndalalin struct {
 }
 
 type DaftarAndalalinResponse struct {
-	IdAndalalin     uuid.UUID `json:"id_andalalin,omitempty"`
-	NomerAndalalin  string    `json:"nomer_andalalin,omitempty"`
-	WaktuAndalalin  string    `json:"waktu_andalalin,omitempty"`
-	Nama            string    `json:"nama_pemohon,omitempty"`
-	Alamat          string    `json:"alamat_pemohon,omitempty"`
-	JenisAndalalin  string    `json:"jenis_andalalin,omitempty"`
-	StatusAndalalin string    `json:"status_andalalin,omitempty"`
+	IdAndalalin      uuid.UUID `json:"id_andalalin,omitempty"`
+	KodeAndalalin    string    `json:"nomer_andalalin,omitempty"`
+	TanggalAndalalin string    `json:"tanggal_andalalin,omitempty"`
+	Nama             string    `json:"nama_pemohon,omitempty"`
+	Alamat           string    `json:"alamat_pemohon,omitempty"`
+	JenisAndalalin   string    `json:"jenis_andalalin,omitempty"`
+	StatusAndalalin  string    `json:"status_andalalin,omitempty"`
 }
 
 type PersayaratanRespone struct {
@@ -143,7 +146,7 @@ type AndalalinResponse struct {
 	//Data Pemohon
 	IdAndalalin            uuid.UUID `json:"id_andalalin,omitempty"`
 	JenisAndalalin         string    `json:"jenis_andalalin,omitempty"`
-	NomerAndalalin         string    `json:"nomer_andalalin,omitempty"`
+	KodeAndalalin          string    `json:"nomer_andalalin,omitempty"`
 	NikPemohon             string    `json:"nik_pemohon,omitempty"`
 	NamaPemohon            string    `json:"nama_pemohon,omitempty"`
 	EmailPemohon           string    `json:"email_pemohon,omitempty"`
@@ -152,9 +155,11 @@ type AndalalinResponse struct {
 	AlamatPemohon          string    `json:"alamat_pemohon,omitempty"`
 	JenisKelaminPemohon    string    `json:"jenis_kelamin_pemohon,omitempty"`
 	NomerPemohon           string    `json:"nomer_pemohon,omitempty"`
+	NomerSelulerPemohon    string    `json:"nomer_seluler_pemohon,omitempty"`
 	JabatanPemohon         string    `json:"jabatan_pemohon,omitempty"`
 	LokasiPengambilan      string    `json:"lokasi_pengambilan,omitempty"`
 	WaktuAndalalin         string    `json:"waktu_andalalin,omitempty"`
+	TanggalAndalalin       string    `json:"tanggal_andalalin,omitempty"`
 	StatusAndalalin        string    `json:"status_andalalin,omitempty"`
 	TandaTerimaPendaftaran []byte    `json:"tanda_terima_pendaftaran,omitempty"`
 

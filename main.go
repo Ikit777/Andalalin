@@ -53,6 +53,7 @@ func main() {
 
 	corsConfig.AllowOrigins = []string{"*"}
 	corsConfig.AllowCredentials = true
+	corsConfig.AllowHeaders = []string{"Authorization"}
 
 	server.Use(cors.New(corsConfig))
 
