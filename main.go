@@ -54,11 +54,8 @@ func main() {
 	corsConfig.AllowOrigins = []string{"*"}
 	corsConfig.AllowCredentials = true
 
-	corsConfig.AllowHeaders = []string{
-		"Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token",
-		"Authorization", "accept", "origin", "Cache-Control", "X-Requested-With",
-	}
-	corsConfig.AllowMethods = []string{"POST", "PATCH", "GET", "PUT"}
+	corsConfig.AllowHeaders = []string{"*"}
+	corsConfig.AllowMethods = []string{"*"}
 
 	server.Use(cors.New(corsConfig))
 
