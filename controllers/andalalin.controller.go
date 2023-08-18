@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -18,8 +21,6 @@ import (
 	"gorm.io/gorm"
 
 	_ "time/tzdata"
-
-	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 )
 
 type AndalalinController struct {
@@ -97,25 +98,33 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	}
 
-	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	// Save the HTML content to a temporary file
+	htmlFilePath := "tmp/template.html"
+	err = ioutil.WriteFile(htmlFilePath, buffer.Bytes(), 0644)
 	if err != nil {
-		log.Fatal("Eror generate pdf", err)
+		log.Fatal("Error:", err)
 		return
 	}
 
-	// read the HTML page as a PDF page
-	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
-
-	pdfg.AddPage(page)
-
-	pdfg.Dpi.Set(300)
-	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-
-	err = pdfg.Create()
+	// Generate PDF using wkhtmltopdf
+	outputFilePath := "tmp/output.pdf"
+	cmd := exec.Command("wkhtmltopdf", htmlFilePath, outputFilePath)
+	err = cmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error:", err)
+		return
 	}
+
+	// Read the generated PDF content
+	pdfContent, err := ioutil.ReadFile(outputFilePath)
+	if err != nil {
+		log.Fatal("Error:", err)
+		return
+	}
+
+	// Remove temporary files
+	os.Remove(htmlFilePath)
+	os.Remove(outputFilePath)
 
 	form, err := ctx.MultipartForm()
 	if err != nil {
@@ -164,7 +173,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		LokasiPengambilan:      payload.Andalalin.LokasiPengambilan,
 		WaktuAndalalin:         now,
 		StatusAndalalin:        "Cek persyaratan",
-		TandaTerimaPendaftaran: pdfg.Bytes(),
+		TandaTerimaPendaftaran: pdfContent,
 
 		NamaPerusahaan:       payload.Andalalin.NamaPerusahaan,
 		AlamatPerusahaan:     payload.Andalalin.AlamatPerusahaan,
