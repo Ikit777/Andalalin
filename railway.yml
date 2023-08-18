@@ -1,9 +1,0 @@
-version: 2
-services:
-  app:
-    name: Andalalin
-    build:
-      dockerfile: Dockerfile
-    envs:
-      - name: PATH
-        value: "/workspace/.railway/bin:$PATH"

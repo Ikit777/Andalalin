@@ -1,0 +1,6 @@
+version: 2
+services:
+  app:
+    name: Andalalin
+    build:
+      dockerfile: Dockerfile
