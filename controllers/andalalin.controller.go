@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os/exec"
 	"strings"
 	"time"
 
@@ -20,7 +19,7 @@ import (
 
 	_ "time/tzdata"
 
-	wkhtmltopdf "github.com/SebastiaanKlippert/go-wkhtmltopdf"
+	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 )
 
 type AndalalinController struct {
@@ -99,16 +98,6 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		log.Fatal("Eror saat membaca template:", err)
 		return
 	}
-
-	cmd := exec.Command("which", "wkhtmltopdf")
-	output, err := cmd.Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	wkhtmltopdfPath := string(output)
-
-	wkhtmltopdf.SetPath(wkhtmltopdfPath)
 
 	pdfg, err := wkhtmltopdf.NewPDFGenerator()
 	if err != nil {
