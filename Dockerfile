@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg62-turbo-dev \
     libxext6 \
     wkhtmltopdf
-
+    
 # Set the working directory
 WORKDIR /app
 
