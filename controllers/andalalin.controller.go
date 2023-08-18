@@ -30,8 +30,6 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
 
-const path = "/app/wkhtmltopdf_bin/wkhtmltopdf"
-
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	var payload *models.DataAndalalin
 	currentUser := ctx.MustGet("currentUser").(models.User)
@@ -98,8 +96,6 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		log.Fatal("Eror saat membaca template:", err)
 		return
 	}
-
-	wkhtmltopdf.SetPath(path)
 
 	pdfg, err := wkhtmltopdf.NewPDFGenerator()
 	if err != nil {
