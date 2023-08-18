@@ -19,7 +19,7 @@ import (
 
 	_ "time/tzdata"
 
-	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
+	wkhtmltopdf "github.com/SebastiaanKlippert/go-wkhtmltopdf"
 )
 
 type AndalalinController struct {
@@ -30,7 +30,7 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
 
-// const path = "C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf"
+const path = "wkhtmltopdf/wkhtmltopdf"
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	var payload *models.DataAndalalin
@@ -98,6 +98,8 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		log.Fatal("Eror saat membaca template:", err)
 		return
 	}
+
+	wkhtmltopdf.SetPath(path)
 
 	pdfg, err := wkhtmltopdf.NewPDFGenerator()
 	if err != nil {
