@@ -11,4 +11,4 @@ COPY wkhtmltopdf_bin /app/wkhtmltopdf_bin
 COPY . .
 
 # Build and run the Go application
-CMD ["go", "run", "main.go"]
+CMD ["go", "run", "main.go"]
