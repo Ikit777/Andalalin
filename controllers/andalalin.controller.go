@@ -30,7 +30,7 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
 
-const path = "wkhtmltopdf/bin/wkhtmltopdf"
+const path = "./wkhtmltopdf/bin/wkhtmltopdf"
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	var payload *models.DataAndalalin
