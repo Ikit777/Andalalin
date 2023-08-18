@@ -30,7 +30,8 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
 
-const path = "C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf" //Sesuaikan dengan path wkhtmltopdf
+// const path = "C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf"
+const path = "./bin/wkhtmltopdf"
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	var payload *models.DataAndalalin
