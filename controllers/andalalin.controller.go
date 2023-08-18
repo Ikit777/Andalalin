@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os/exec"
 	"strings"
 	"time"
 
@@ -32,6 +31,8 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 }
 
 // const path = "C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf"
+
+const path = "/usr/local/bin/wkhtmltopdf"
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	var payload *models.DataAndalalin
@@ -100,15 +101,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	}
 
-	cmd := exec.Command("which", "wkhtmltopdf")
-	output, err := cmd.Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	wkhtmltopdfPath := string(output)
-
-	wkhtmltopdf.SetPath(wkhtmltopdfPath)
+	wkhtmltopdf.SetPath(path)
 
 	pdfg, err := wkhtmltopdf.NewPDFGenerator()
 	if err != nil {
