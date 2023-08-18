@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -100,7 +99,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 
 	// Save the HTML content to a temporary file
 	htmlFilePath := "tmp/template.html"
-	err = ioutil.WriteFile(htmlFilePath, buffer.Bytes(), 0644)
+	err = os.WriteFile(htmlFilePath, buffer.Bytes(), 0644)
 	if err != nil {
 		log.Fatal("Error:", err)
 		return
@@ -116,7 +115,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	}
 
 	// Read the generated PDF content
-	pdfContent, err := ioutil.ReadFile(outputFilePath)
+	pdfContent, err := os.ReadFile(outputFilePath)
 	if err != nil {
 		log.Fatal("Error:", err)
 		return
