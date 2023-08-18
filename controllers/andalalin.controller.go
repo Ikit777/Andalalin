@@ -19,7 +19,7 @@ import (
 
 	_ "time/tzdata"
 
-	wkhtmltopdf "github.com/SebastiaanKlippert/go-wkhtmltopdf"
+	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 )
 
 type AndalalinController struct {
