@@ -3,7 +3,7 @@ package utils
 import (
 	"crypto/rand"
 	"io"
-	"strconv"
+	"time"
 )
 
 var number = [...]byte{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
@@ -34,15 +34,33 @@ func Generate(s int) string {
 	return string(b)
 }
 
-func Bulan(s string) string {
-	indonesianMonths := []string{
-		"Januari", "Februari", "Maret", "April",
-		"Mei", "Juni", "Juli", "Agustus",
-		"September", "Oktober", "November", "Desember",
+func Bulan(month time.Month) string {
+	switch month {
+	case time.January:
+		return "Januari"
+	case time.February:
+		return "Februari"
+	case time.March:
+		return "Maret"
+	case time.April:
+		return "April"
+	case time.May:
+		return "Mei"
+	case time.June:
+		return "Juni"
+	case time.July:
+		return "Juli"
+	case time.August:
+		return "Agustus"
+	case time.September:
+		return "September"
+	case time.October:
+		return "Oktober"
+	case time.November:
+		return "November"
+	case time.December:
+		return "Desember"
+	default:
+		return ""
 	}
-
-	monthNumber, _ := strconv.Atoi(s)
-
-	indonesianMonth := indonesianMonths[monthNumber]
-	return indonesianMonth
 }
