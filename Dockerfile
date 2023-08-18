@@ -1,9 +1,15 @@
 # Use the official Golang image as the base
-FROM golang:latest
+FROM railwayapp/golang
 
 # Install wkhtmltopdf dependencies and wkhtmltopdf itself
-RUN apt-get update && apt-get install -y wkhtmltopdf
-
+RUN apt-get update && apt-get install -y \
+    libxrender1 \
+    libfontconfig1 \
+    libx11-dev \
+    libjpeg62-turbo-dev \
+    libxext6 \
+    wkhtmltopdf
+    
 # Set the working directory
 WORKDIR /app
 
