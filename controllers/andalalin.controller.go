@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -97,8 +98,10 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	}
 
+	dirTemp, _ := os.MkdirTemp("", "temporary")
+
 	// Save the HTML content to a temporary file
-	htmlFilePath := "tmp/template.html"
+	htmlFilePath := filepath.Join(dirTemp, "template.html")
 	err = os.WriteFile(htmlFilePath, buffer.Bytes(), 0644)
 	if err != nil {
 		log.Fatal("Error:", err)
@@ -106,7 +109,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	}
 
 	// Generate PDF using wkhtmltopdf
-	outputFilePath := "tmp/output.pdf"
+	outputFilePath := filepath.Join(dirTemp, "output.pdf")
 	cmd := exec.Command("wkhtmltopdf", htmlFilePath, outputFilePath)
 	err = cmd.Run()
 	if err != nil {
