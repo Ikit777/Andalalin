@@ -43,6 +43,6 @@ func Bulan(s string) string {
 
 	monthNumber, _ := strconv.Atoi(s)
 
-	indonesianMonth := indonesianMonths[monthNumber-1]
+	indonesianMonth := indonesianMonths[monthNumber]
 	return indonesianMonth
 }
