@@ -1,0 +1,9 @@
+version: 2
+name: Andalalin
+services:
+  web:
+    image: golang:latest
+    build:
+      dockerfile: Dockerfile
+    envs:
+      - WKHTMLTOPDF_PATH=/app/wkhtmltopdf_bin/wkhtmltopdf
