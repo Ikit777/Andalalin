@@ -98,7 +98,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	}
 
-	dirTemp, _ := os.MkdirTemp("", "temporary")
+	dirTemp, _ := os.MkdirTemp("", "")
 
 	// Save the HTML content to a temporary file
 	htmlFilePath := filepath.Join(dirTemp, "template.html")
