@@ -87,7 +87,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		Kode:         kode,
 		Nama:         payload.Andalalin.NamaPemohon,
 		Instansi:     payload.Andalalin.NamaPerusahaan,
-		Nomor:        payload.Andalalin.NamaPemohon,
+		Nomor:        payload.Andalalin.NomerPemohon,
 		NomorSeluler: payload.Andalalin.NomerSelulerPemohon,
 	}
 
@@ -111,6 +111,10 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	pdfg.Dpi.Set(300)
 	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
 	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
+	pdfg.MarginBottom.Set(96)
+	pdfg.MarginLeft.Set(96)
+	pdfg.MarginRight.Set(96)
+	pdfg.MarginTop.Set(96)
 
 	err = pdfg.Create()
 	if err != nil {
