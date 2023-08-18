@@ -110,7 +110,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 
 	// Generate PDF using wkhtmltopdf
 	outputFilePath := filepath.Join(dirTemp, "output.pdf")
-	cmd := exec.Command("wkhtmltopdf", htmlFilePath, outputFilePath)
+	cmd := exec.Command("/usr/local/bin/wkhtmltopdf", htmlFilePath, outputFilePath)
 	err = cmd.Run()
 	if err != nil {
 		log.Fatal("Error:", err)
