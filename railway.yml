@@ -1,11 +1,9 @@
-jobs:
-  - name: Andalalin
-    steps:
-      - name: Download wkhtmltopdf
-        run: |
-          wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb -O wkhtmltox.deb
-          dpkg -i wkhtmltox.deb
-      - name: Build Go App
-        run: go build -o main .
-      - name: Railway Up
-        run: railway up
+version: 2
+services:
+  app:
+    name: Andalalin
+    build:
+      dockerfile: Dockerfile
+    envs:
+      - name: PATH
+        value: "/workspace/.railway/bin:$PATH"
