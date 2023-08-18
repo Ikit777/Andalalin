@@ -1,20 +1,19 @@
-# Use the official Golang image as the base
+# Use an official Golang runtime as a parent image
 FROM golang:latest
 
-# Install wkhtmltopdf dependencies and wkhtmltopdf itself
-RUN apt-get update && apt-get install -y \
-    libxrender1 \
-    libfontconfig1 \
-    libx11-dev \
-    libjpeg62-turbo-dev \
-    libxext6 \
-    wkhtmltopdf
-
-# Set the working directory
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy the Go application files to the container
-COPY . .
+# Copy the current directory contents into the container at /app
+COPY . /app
 
-# Build and run the Go application
-CMD ["go", "run", "main.go"]
+# Install wkhtmltopdf dependencies
+RUN apt-get update && apt-get install -y \
+    wkhtmltopdf \
+    && rm -rf /var/lib/apt/lists/*
+
+# Build the Go app
+RUN go build -o main .
+
+# Command to run the executable
+CMD ["./main"]
