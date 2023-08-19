@@ -111,10 +111,10 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	pdfg.Dpi.Set(300)
 	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
 	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(25)
+	pdfg.MarginBottom.Set(20)
 	pdfg.MarginLeft.Set(30)
 	pdfg.MarginRight.Set(30)
-	pdfg.MarginTop.Set(25)
+	pdfg.MarginTop.Set(20)
 
 	err = pdfg.Create()
 	if err != nil {
