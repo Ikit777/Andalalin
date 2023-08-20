@@ -5,6 +5,7 @@ import (
 	"image"
 	_ "image/jpeg"
 	"image/png"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -452,15 +453,21 @@ func (ac *UserController) UpdatePhoto(ctx *gin.Context) {
 		return
 	}
 
+	data, err := io.ReadAll(&buf)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
 	var user models.User
 
-	result := ac.DB.Model(&user).Where("id = ?", currentUser.ID).Update("photo", buf.Bytes())
+	result := ac.DB.Model(&user).Where("id = ?", currentUser.ID).Update("photo", data)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Akun tidak ditemukan"})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "photo": buf.Bytes()})
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "photo": data})
 }
