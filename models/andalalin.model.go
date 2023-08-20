@@ -106,7 +106,7 @@ type DataAndalalin struct {
 
 type DaftarAndalalinResponse struct {
 	IdAndalalin      uuid.UUID `json:"id_andalalin,omitempty"`
-	KodeAndalalin    string    `json:"nomer_andalalin,omitempty"`
+	KodeAndalalin    string    `json:"kode_andalalin,omitempty"`
 	TanggalAndalalin string    `json:"tanggal_andalalin,omitempty"`
 	Nama             string    `json:"nama_pemohon,omitempty"`
 	Alamat           string    `json:"alamat_pemohon,omitempty"`
@@ -146,7 +146,7 @@ type AndalalinResponse struct {
 	//Data Pemohon
 	IdAndalalin            uuid.UUID `json:"id_andalalin,omitempty"`
 	JenisAndalalin         string    `json:"jenis_andalalin,omitempty"`
-	KodeAndalalin          string    `json:"nomer_andalalin,omitempty"`
+	KodeAndalalin          string    `json:"kode_andalalin,omitempty"`
 	NikPemohon             string    `json:"nik_pemohon,omitempty"`
 	NamaPemohon            string    `json:"nama_pemohon,omitempty"`
 	EmailPemohon           string    `json:"email_pemohon,omitempty"`
