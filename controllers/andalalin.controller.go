@@ -120,15 +120,6 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		log.Fatal(err)
 	}
 
-	var pdfBuffer bytes.Buffer
-	pdfBuffer.Write(pdfg.Bytes())
-
-	data, err := io.ReadAll(&pdfBuffer)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
 	form, err := ctx.MultipartForm()
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -177,7 +168,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		WaktuAndalalin:         nowTime.Format("15:04:05"),
 		TanggalAndalalin:       tanggal,
 		StatusAndalalin:        "Cek persyaratan",
-		TandaTerimaPendaftaran: data,
+		TandaTerimaPendaftaran: pdfg.Bytes(),
 
 		NamaPerusahaan:       payload.Andalalin.NamaPerusahaan,
 		AlamatPerusahaan:     payload.Andalalin.AlamatPerusahaan,
