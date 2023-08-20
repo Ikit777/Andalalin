@@ -61,7 +61,6 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
-	now := time.Now().In(loc).Format("02-01-2006")
 	nowTime := time.Now().In(loc)
 
 	kode := "andalalin/" + utils.Generate(6)
@@ -166,7 +165,8 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		NomerSelulerPemohon:    payload.Andalalin.NomerSelulerPemohon,
 		JabatanPemohon:         payload.Andalalin.JabatanPemohon,
 		LokasiPengambilan:      payload.Andalalin.LokasiPengambilan,
-		WaktuAndalalin:         now,
+		WaktuAndalalin:         nowTime.Format("15:04:05"),
+		TanggalAndalalin:       tanggal,
 		StatusAndalalin:        "Cek persyaratan",
 		TandaTerimaPendaftaran: pdfg.Bytes(),
 
