@@ -196,12 +196,22 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 
 	result := ac.DB.Create(&permohonan)
 
+	respone := &models.DaftarAndalalinResponse{
+		IdAndalalin:      permohonan.IdAndalalin,
+		KodeAndalalin:    permohonan.KodeAndalalin,
+		TanggalAndalalin: permohonan.TanggalAndalalin,
+		Nama:             permohonan.NamaPemohon,
+		Alamat:           permohonan.AlamatPemohon,
+		JenisAndalalin:   permohonan.JenisAndalalin,
+		StatusAndalalin:  permohonan.StatusAndalalin,
+	}
+
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "eror saat mengirim data"})
 		return
 	} else {
 		ac.ReleaseTicketLevel1(ctx, permohonan.IdAndalalin)
-		ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 	}
 }
 
