@@ -161,6 +161,10 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		return
 	}
 
+	user.PushToken = payload.PushToken
+
+	ac.DB.Save(&user)
+
 	if !user.Verified {
 		ctx.JSON(http.StatusForbidden, gin.H{"status": "fail", "message": "Akun belum melakukan verifikasi"})
 		return
