@@ -40,7 +40,7 @@ type UserAdd struct {
 type UserSignIn struct {
 	Email     string `json:"email" binding:"required"`
 	Password  string `json:"password" binding:"required"`
-	PushToken string `json:"push_token"`
+	PushToken string `json:"push_token" binding:"required"`
 }
 
 type UserResponse struct {
