@@ -802,14 +802,16 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		return
 	}
 
-	notif := utils.Notification{
-		IdUser: user.ID,
-		Title:  "Persyaratan Tidak Sesuai",
-		Body:   "Permohonan anda dengan kode " + andalalinData.KodeAndalalin + " terdapat persyaratan yang tidak sesuai",
-		Token:  user.PushToken,
-	}
+	if user.Logged {
+		notif := utils.Notification{
+			IdUser: user.ID,
+			Title:  "Persyaratan Tidak Sesuai",
+			Body:   "Permohonan anda dengan kode " + andalalinData.KodeAndalalin + " terdapat persyaratan yang tidak sesuai",
+			Token:  user.PushToken,
+		}
 
-	utils.SendPushNotifications(&notif)
+		utils.SendPushNotifications(&notif)
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
@@ -1502,4 +1504,22 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 	}
 
 	utils.SendEmailPermohonanSelesai(andalalin.EmailPemohon, &data)
+
+	var user models.User
+	resultUser := ac.DB.First(&user, "id = ?", andalalin.IdUser)
+	if resultUser.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+		return
+	}
+
+	if user.Logged {
+		notif := utils.Notification{
+			IdUser: user.ID,
+			Title:  "Permohonan selesai",
+			Body:   "Permohonan anda dengan kode " + andalalin.KodeAndalalin + " telah selesai",
+			Token:  user.PushToken,
+		}
+
+		utils.SendPushNotifications(&notif)
+	}
 }

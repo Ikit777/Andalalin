@@ -161,12 +161,6 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		return
 	}
 
-	if payload.PushToken != "" {
-		user.PushToken = payload.PushToken
-
-		ac.DB.Save(&user)
-	}
-
 	if !user.Verified {
 		ctx.JSON(http.StatusForbidden, gin.H{"status": "fail", "message": "Akun belum melakukan verifikasi"})
 		return
@@ -181,6 +175,18 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
+	}
+
+	user.Logged = true
+
+	ac.DB.Save(&user)
+
+	if payload.PushToken != "" && user.Logged {
+		result := ac.DB.Model(&user).Where("id = ?", user.ID).Update("push_token", payload.PushToken)
+		if result.Error != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+			return
+		}
 	}
 
 	config, _ := initializers.LoadConfig(".")
@@ -287,5 +293,18 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 }
 
 func (ac *AuthController) LogoutUser(ctx *gin.Context) {
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	var user models.User
+	result := ac.DB.First(&user, "id = ?", currentUser.ID)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Akun tidak terdaftar"})
+		return
+	}
+
+	user.Logged = false
+
+	ac.DB.Save(&user)
+
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }

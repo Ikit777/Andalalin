@@ -32,8 +32,16 @@ func DeserializeUser() gin.HandlerFunc {
 		}
 
 		config, _ := initializers.LoadConfig(".")
+
 		claim, err := utils.ValidateToken(access_token, config.AccessTokenPublicKey)
 		if err != nil {
+			var userData models.User
+			initializers.DB.First(&userData, "id = ?", fmt.Sprint(claim.UserID))
+
+			userData.Logged = false
+
+			initializers.DB.Save(&userData)
+
 			ctx.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"status": "fail", "message": err.Error()})
 			return
 		}
