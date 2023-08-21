@@ -17,7 +17,7 @@ type User struct {
 	Verified         bool   `gorm:"not null"`
 	ResetToken       string
 	ResetAt          time.Time
-	PushToken        []string
+	PushToken        string
 	CreatedAt        string `gorm:"not null"`
 	UpdatedAt        string `gorm:"not null"`
 }
@@ -38,9 +38,9 @@ type UserAdd struct {
 }
 
 type UserSignIn struct {
-	Email     string   `json:"email"  binding:"required"`
-	Password  string   `json:"password"  binding:"required"`
-	PushToken []string `json:"push_token" binding:"required"`
+	Email     string `json:"email"  binding:"required"`
+	Password  string `json:"password"  binding:"required"`
+	PushToken string `json:"push_token" binding:"required"`
 }
 
 type UserResponse struct {
