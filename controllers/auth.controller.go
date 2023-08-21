@@ -196,21 +196,23 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 	}
 
 	data := struct {
-		Access  string    `json:"access_token,omitempty"`
-		Refresh string    `json:"refresh_token,omitempty"`
-		Id      uuid.UUID `json:"id,omitempty"`
-		Name    string    `json:"name,omitempty"`
-		Email   string    `json:"email,omitempty"`
-		Role    string    `json:"role,omitempty"`
-		Photo   []byte    `json:"photo,omitempty"`
+		Access    string    `json:"access_token,omitempty"`
+		Refresh   string    `json:"refresh_token,omitempty"`
+		Id        uuid.UUID `json:"id,omitempty"`
+		Name      string    `json:"name,omitempty"`
+		Email     string    `json:"email,omitempty"`
+		Role      string    `json:"role,omitempty"`
+		Photo     []byte    `json:"photo,omitempty"`
+		PushToken string    `json:"push_token,omitempty"`
 	}{
-		Access:  access_token,
-		Refresh: refresh_token,
-		Id:      user.ID,
-		Name:    user.Name,
-		Email:   user.Email,
-		Role:    user.Role,
-		Photo:   user.Photo,
+		Access:    access_token,
+		Refresh:   refresh_token,
+		Id:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		Role:      user.Role,
+		Photo:     user.Photo,
+		PushToken: user.PushToken,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
