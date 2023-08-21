@@ -795,6 +795,22 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 
 	utils.SendEmailPersyaratan(andalalinData.EmailPemohon, &data)
 
+	var user models.User
+	resultUser := ac.DB.First(&user, "id = ?", andalalinData.IdUser)
+	if resultUser.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+		return
+	}
+
+	notif := utils.Notification{
+		IdUser: user.ID,
+		Title:  "Persyaratan Tidak Sesuai",
+		Body:   "Permohonan anda dengan kode " + andalalinData.KodeAndalalin + " terdapat persyaratan yang tidak sesuai",
+		Token:  user.PushToken,
+	}
+
+	utils.SendPushNotifications(&notif)
+
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
