@@ -31,4 +31,7 @@ func (uc *UserRouteController) UserRoute(rg *gin.RouterGroup) {
 	router.PATCH("/resetpassword/:resetToken", uc.userController.ResetPassword)
 
 	router.POST("/updatephoto", middleware.DeserializeUser(), uc.userController.UpdatePhoto)
+
+	router.GET("/notifikasi", middleware.DeserializeUser(), uc.userController.GetNotifikasi)
+	router.DELETE("/clearnotifikasi", middleware.DeserializeUser(), uc.userController.ClearNotifikasi)
 }

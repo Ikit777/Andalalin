@@ -31,12 +31,14 @@ func main() {
 	initializers.DB.Migrator().DropTable(&models.Survey{})
 	initializers.DB.Migrator().DropTable(&models.TiketLevel1{})
 	initializers.DB.Migrator().DropTable(&models.TiketLevel2{})
+	initializers.DB.Migrator().DropTable(&models.Notifikasi{})
 
 	initializers.DB.AutoMigrate(&models.User{})
 	initializers.DB.AutoMigrate(&models.Andalalin{})
 	initializers.DB.AutoMigrate(&models.Survey{})
 	initializers.DB.AutoMigrate(&models.TiketLevel1{})
 	initializers.DB.AutoMigrate(&models.TiketLevel2{})
+	initializers.DB.AutoMigrate(&models.Notifikasi{})
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")

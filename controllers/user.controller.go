@@ -149,6 +149,46 @@ func (ac *UserController) GetUsers(ctx *gin.Context) {
 	}
 }
 
+func (ac *UserController) GetNotifikasi(ctx *gin.Context) {
+
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	var notif []models.Notifikasi
+
+	results := ac.DB.First(&notif, "id_user = ?", currentUser.ID)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	} else {
+		var respone []models.NotifikasiRespone
+
+		for _, s := range notif {
+			respone = append(respone, models.NotifikasiRespone{
+				IdUser: s.IdUser,
+				Title:  s.Title,
+				Body:   s.Body,
+			})
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
+	}
+}
+
+func (ac *UserController) ClearNotifikasi(ctx *gin.Context) {
+
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	results := ac.DB.Delete(&models.Notifikasi{}, "id_user LIKE ?", currentUser.ID)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
+}
+
 func (ac *UserController) GetUsersSortRole(ctx *gin.Context) {
 	role := ctx.Param("role")
 

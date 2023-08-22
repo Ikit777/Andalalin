@@ -30,6 +30,18 @@ type UserSignUp struct {
 	PasswordConfirm string `json:"passwordConfirm" binding:"required"`
 }
 
+type Notifikasi struct {
+	IdUser uuid.UUID `gorm:"not null"`
+	Title  string    `gorm:"not null"`
+	Body   string    `gorm:"not null"`
+}
+
+type NotifikasiRespone struct {
+	IdUser uuid.UUID `json:"id_user,omitempty"`
+	Title  string    `json:"title,omitempty"`
+	Body   string    `json:"body,omitempty"`
+}
+
 type UserAdd struct {
 	Name            string `json:"name" binding:"required"`
 	Email           string `json:"email" binding:"required"`
