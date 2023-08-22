@@ -305,6 +305,8 @@ func (ac *AndalalinController) GetPermohonanByIdUser(ctx *gin.Context) {
 func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
 	var andalalin models.Andalalin
 
 	results := ac.DB.First(&andalalin, "id_andalalin = ?", id)
@@ -314,58 +316,78 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		return
 	}
 
-	data := models.AndalalinResponse{
-		IdAndalalin:                  andalalin.IdAndalalin,
-		JenisAndalalin:               andalalin.JenisAndalalin,
-		KodeAndalalin:                andalalin.KodeAndalalin,
-		NikPemohon:                   andalalin.NikPemohon,
-		NamaPemohon:                  andalalin.NamaPemohon,
-		EmailPemohon:                 andalalin.EmailPemohon,
-		TempatLahirPemohon:           andalalin.TempatLahirPemohon,
-		TanggalLahirPemohon:          andalalin.TanggalLahirPemohon,
-		AlamatPemohon:                andalalin.AlamatPemohon,
-		JenisKelaminPemohon:          andalalin.JenisKelaminPemohon,
-		NomerPemohon:                 andalalin.NomerPemohon,
-		NomerSelulerPemohon:          andalalin.NomerSelulerPemohon,
-		JabatanPemohon:               andalalin.JabatanPemohon,
-		LokasiPengambilan:            andalalin.LokasiPengambilan,
-		WaktuAndalalin:               andalalin.WaktuAndalalin,
-		StatusAndalalin:              andalalin.StatusAndalalin,
-		TandaTerimaPendaftaran:       andalalin.TandaTerimaPendaftaran,
-		NamaPerusahaan:               andalalin.NamaPerusahaan,
-		AlamatPerusahaan:             andalalin.AlamatPerusahaan,
-		NomerPerusahaan:              andalalin.NomerPerusahaan,
-		EmailPerusahaan:              andalalin.EmailPerusahaan,
-		ProvinsiPerusahaan:           andalalin.ProvinsiPerusahaan,
-		KabupatenPerusahaan:          andalalin.KabupatenPerusahaan,
-		KecamatanPerusahaan:          andalalin.KecamatanPerusahaan,
-		KelurahaanPerusahaan:         andalalin.KelurahaanPerusahaan,
-		NamaPimpinan:                 andalalin.NamaPimpinan,
-		JabatanPimpinan:              andalalin.JabatanPimpinan,
-		JenisKelaminPimpinan:         andalalin.JenisKelaminPimpinan,
-		JenisKegiatan:                andalalin.JenisKegiatan,
-		Peruntukan:                   andalalin.Peruntukan,
-		LuasLahan:                    andalalin.LuasLahan,
-		AlamatPersil:                 andalalin.AlamatPersil,
-		KelurahanPersil:              andalalin.KelurahanPersil,
-		NomerSKRK:                    andalalin.NomerSKRK,
-		TanggalSKRK:                  andalalin.TanggalSKRK,
-		KartuTandaPenduduk:           andalalin.KartuTandaPenduduk,
-		AktaPendirianBadan:           andalalin.AktaPendirianBadan,
-		SuratKuasa:                   andalalin.SuratKuasa,
-		IdPetugas:                    andalalin.IdPetugas,
-		NamaPetugas:                  andalalin.NamaPetugas,
-		EmailPetugas:                 andalalin.EmailPetugas,
-		PersetujuanDokumen:           andalalin.PersetujuanDokumen,
-		KeteranganPersetujuanDokumen: andalalin.KeteranganPersetujuanDokumen,
-		NomerBAPDasar:                andalalin.NomerBAPDasar,
-		NomerBAPPelaksanaan:          andalalin.NomerBAPPelaksanaan,
-		TanggalBAP:                   andalalin.TanggalBAP,
-		FileBAP:                      andalalin.FileBAP,
-		FileSK:                       andalalin.FileSK,
-	}
+	if currentUser.Role == "User" {
+		dataUser := models.AndalalinResponseUser{
+			IdAndalalin:            andalalin.IdAndalalin,
+			JenisAndalalin:         andalalin.JenisAndalalin,
+			KodeAndalalin:          andalalin.KodeAndalalin,
+			NamaPemohon:            andalalin.NamaPemohon,
+			LokasiPengambilan:      andalalin.LokasiPengambilan,
+			TanggalAndalalin:       andalalin.TanggalAndalalin,
+			StatusAndalalin:        andalalin.StatusAndalalin,
+			TandaTerimaPendaftaran: andalalin.TandaTerimaPendaftaran,
+			NamaPerusahaan:         andalalin.NamaPerusahaan,
+			JenisKegiatan:          andalalin.JenisKegiatan,
+			Peruntukan:             andalalin.Peruntukan,
+			LuasLahan:              andalalin.LuasLahan,
+			FileSK:                 andalalin.FileSK,
+		}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
+	} else {
+		data := models.AndalalinResponse{
+			IdAndalalin:                  andalalin.IdAndalalin,
+			JenisAndalalin:               andalalin.JenisAndalalin,
+			KodeAndalalin:                andalalin.KodeAndalalin,
+			NikPemohon:                   andalalin.NikPemohon,
+			NamaPemohon:                  andalalin.NamaPemohon,
+			EmailPemohon:                 andalalin.EmailPemohon,
+			TempatLahirPemohon:           andalalin.TempatLahirPemohon,
+			TanggalLahirPemohon:          andalalin.TanggalLahirPemohon,
+			AlamatPemohon:                andalalin.AlamatPemohon,
+			JenisKelaminPemohon:          andalalin.JenisKelaminPemohon,
+			NomerPemohon:                 andalalin.NomerPemohon,
+			NomerSelulerPemohon:          andalalin.NomerSelulerPemohon,
+			JabatanPemohon:               andalalin.JabatanPemohon,
+			LokasiPengambilan:            andalalin.LokasiPengambilan,
+			WaktuAndalalin:               andalalin.WaktuAndalalin,
+			TanggalAndalalin:             andalalin.TanggalAndalalin,
+			StatusAndalalin:              andalalin.StatusAndalalin,
+			TandaTerimaPendaftaran:       andalalin.TandaTerimaPendaftaran,
+			NamaPerusahaan:               andalalin.NamaPerusahaan,
+			AlamatPerusahaan:             andalalin.AlamatPerusahaan,
+			NomerPerusahaan:              andalalin.NomerPerusahaan,
+			EmailPerusahaan:              andalalin.EmailPerusahaan,
+			ProvinsiPerusahaan:           andalalin.ProvinsiPerusahaan,
+			KabupatenPerusahaan:          andalalin.KabupatenPerusahaan,
+			KecamatanPerusahaan:          andalalin.KecamatanPerusahaan,
+			KelurahaanPerusahaan:         andalalin.KelurahaanPerusahaan,
+			NamaPimpinan:                 andalalin.NamaPimpinan,
+			JabatanPimpinan:              andalalin.JabatanPimpinan,
+			JenisKelaminPimpinan:         andalalin.JenisKelaminPimpinan,
+			JenisKegiatan:                andalalin.JenisKegiatan,
+			Peruntukan:                   andalalin.Peruntukan,
+			LuasLahan:                    andalalin.LuasLahan,
+			AlamatPersil:                 andalalin.AlamatPersil,
+			KelurahanPersil:              andalalin.KelurahanPersil,
+			NomerSKRK:                    andalalin.NomerSKRK,
+			TanggalSKRK:                  andalalin.TanggalSKRK,
+			KartuTandaPenduduk:           andalalin.KartuTandaPenduduk,
+			AktaPendirianBadan:           andalalin.AktaPendirianBadan,
+			SuratKuasa:                   andalalin.SuratKuasa,
+			IdPetugas:                    andalalin.IdPetugas,
+			NamaPetugas:                  andalalin.NamaPetugas,
+			EmailPetugas:                 andalalin.EmailPetugas,
+			PersetujuanDokumen:           andalalin.PersetujuanDokumen,
+			KeteranganPersetujuanDokumen: andalalin.KeteranganPersetujuanDokumen,
+			NomerBAPDasar:                andalalin.NomerBAPDasar,
+			NomerBAPPelaksanaan:          andalalin.NomerBAPPelaksanaan,
+			TanggalBAP:                   andalalin.TanggalBAP,
+			FileBAP:                      andalalin.FileBAP,
+			FileSK:                       andalalin.FileSK,
+		}
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
+	}
 }
 
 func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {

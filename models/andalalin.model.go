@@ -207,6 +207,27 @@ type AndalalinResponse struct {
 	FileSK []byte `json:"file_sk,omitempty"`
 }
 
+type AndalalinResponseUser struct {
+	//Data Pemohon
+	IdAndalalin            uuid.UUID `json:"id_andalalin,omitempty"`
+	JenisAndalalin         string    `json:"jenis_andalalin,omitempty"`
+	KodeAndalalin          string    `json:"kode_andalalin,omitempty"`
+	NamaPemohon            string    `json:"nama_pemohon,omitempty"`
+	LokasiPengambilan      string    `json:"lokasi_pengambilan,omitempty"`
+	TanggalAndalalin       string    `json:"tanggal_andalalin,omitempty"`
+	StatusAndalalin        string    `json:"status_andalalin,omitempty"`
+	TandaTerimaPendaftaran []byte    `json:"tanda_terima_pendaftaran,omitempty"`
+
+	//Data Perusahaan
+	NamaPerusahaan string `json:"nama_perusahaan,omitempty"`
+	JenisKegiatan  string `json:"jenis_kegiatan,omitempty"`
+	Peruntukan     string `json:"peruntukan,omitempty"`
+	LuasLahan      string `json:"luas_lahan,omitempty"`
+
+	//Data SK
+	FileSK []byte `json:"file_sk,omitempty"`
+}
+
 type PersayaratanTidakSesuai struct {
 	Persyaratan string `json:"persyaratan" binding:"required"`
 }
