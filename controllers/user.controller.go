@@ -153,7 +153,7 @@ func (ac *UserController) GetNotifikasi(ctx *gin.Context) {
 
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
-	var notif []models.NotifikasiRespone
+	var notif []models.Notifikasi
 
 	results := ac.DB.Find(&notif, "id_user = ?", currentUser.ID)
 
