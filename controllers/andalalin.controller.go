@@ -828,7 +828,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		notif := utils.Notification{
 			IdUser: user.ID,
 			Title:  "Persyaratan Tidak Sesuai",
-			Body:   "Permohonan anda dengan kode " + andalalinData.KodeAndalalin + " terdapat persyaratan yang tidak sesuai",
+			Body:   "Permohonan anda dengan kode " + andalalinData.KodeAndalalin + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
 			Token:  user.PushToken,
 		}
 
@@ -1538,7 +1538,7 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 		notif := utils.Notification{
 			IdUser: user.ID,
 			Title:  "Permohonan selesai",
-			Body:   "Permohonan anda dengan kode " + andalalin.KodeAndalalin + " telah selesai",
+			Body:   "Permohonan anda dengan kode " + andalalin.KodeAndalalin + " telah selesai, harap cek email untuk lebih jelas",
 			Token:  user.PushToken,
 		}
 
