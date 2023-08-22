@@ -153,7 +153,7 @@ func (ac *UserController) GetNotifikasi(ctx *gin.Context) {
 
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
-	var notif []models.Notifikasi
+	var notif []models.NotifikasiRespone
 
 	results := ac.DB.Find(&notif, "id_user = ?", currentUser.ID)
 
@@ -161,17 +161,8 @@ func (ac *UserController) GetNotifikasi(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
 		return
 	}
-	var respone []models.NotifikasiRespone
 
-	for _, s := range notif {
-		respone = append(respone, models.NotifikasiRespone{
-			IdUser: s.IdUser,
-			Title:  s.Title,
-			Body:   s.Body,
-		})
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(notif), "data": notif})
 
 }
 
