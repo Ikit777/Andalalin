@@ -212,6 +212,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		Role      string    `json:"role,omitempty"`
 		Photo     []byte    `json:"photo,omitempty"`
 		PushToken string    `json:"push_token,omitempty"`
+		Logged    bool      `json:"logged,omitempty"`
 	}{
 		Access:    access_token,
 		Refresh:   refresh_token,
@@ -221,6 +222,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		Role:      user.Role,
 		Photo:     user.Photo,
 		PushToken: user.PushToken,
+		Logged:    user.Logged,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
