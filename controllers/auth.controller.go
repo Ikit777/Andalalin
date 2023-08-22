@@ -178,7 +178,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 	}
 
 	if user.Logged {
-		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusConflict, gin.H{"status": "fail"})
 		return
 	}
 
