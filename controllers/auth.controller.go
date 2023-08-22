@@ -239,8 +239,8 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 	config, _ := initializers.LoadConfig(".")
 
-	claim, error := utils.ValidateToken(refresh_token, config.RefreshTokenPublicKey)
-	if error != nil {
+	claim, err := utils.ValidateToken(refresh_token, config.RefreshTokenPublicKey)
+	if err != nil {
 		getId := utils.GetIdByToken(refresh_token, config.AccessTokenPublicKey)
 		var userData models.User
 		initializers.DB.First(&userData, "id = ?", fmt.Sprint(getId.UserID))
@@ -249,7 +249,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 		initializers.DB.Save(&userData)
 
-		ctx.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"status": "fail", "message": error.Error()})
+		ctx.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
