@@ -160,19 +160,19 @@ func (ac *UserController) GetNotifikasi(ctx *gin.Context) {
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
 		return
-	} else {
-		var respone []models.NotifikasiRespone
-
-		for _, s := range notif {
-			respone = append(respone, models.NotifikasiRespone{
-				IdUser: s.IdUser,
-				Title:  s.Title,
-				Body:   s.Body,
-			})
-		}
-
-		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
 	}
+	var respone []models.NotifikasiRespone
+
+	for _, s := range notif {
+		respone = append(respone, models.NotifikasiRespone{
+			IdUser: s.IdUser,
+			Title:  s.Title,
+			Body:   s.Body,
+		})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
+
 }
 
 func (ac *UserController) ClearNotifikasi(ctx *gin.Context) {
