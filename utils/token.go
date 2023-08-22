@@ -130,3 +130,23 @@ func ValidateToken(token string, publicKey string) (*TokenMetadata, error) {
 	}
 	return nil, err
 }
+
+func GetIdByToken(token string, publicKey string) *TokenMetadata {
+	decodedPublicKey, _ := base64.StdEncoding.DecodeString(publicKey)
+
+	key, _ := jwt.ParseRSAPublicKeyFromPEM(decodedPublicKey)
+
+	parsedToken, _ := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected method: %s", t.Header["alg"])
+		}
+		return key, nil
+	})
+
+	claims, _ := parsedToken.Claims.(jwt.MapClaims)
+	userID, _ := uuid.Parse(claims["id"].(string))
+
+	return &TokenMetadata{
+		UserID: userID,
+	}
+}

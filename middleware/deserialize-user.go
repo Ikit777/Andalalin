@@ -35,8 +35,9 @@ func DeserializeUser() gin.HandlerFunc {
 
 		claim, err := utils.ValidateToken(access_token, config.AccessTokenPublicKey)
 		if err != nil {
+			getId := utils.GetIdByToken(access_token, config.AccessTokenPublicKey)
 			var userData models.User
-			initializers.DB.First(&userData, "id = ?", fmt.Sprint(claim.UserID))
+			initializers.DB.First(&userData, "id = ?", fmt.Sprint(getId.UserID))
 
 			userData.Logged = false
 

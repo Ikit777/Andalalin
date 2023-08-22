@@ -241,6 +241,14 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 	claim, error := utils.ValidateToken(refresh_token, config.RefreshTokenPublicKey)
 	if error != nil {
+		getId := utils.GetIdByToken(refresh_token, config.AccessTokenPublicKey)
+		var userData models.User
+		initializers.DB.First(&userData, "id = ?", fmt.Sprint(getId.UserID))
+
+		userData.Logged = false
+
+		initializers.DB.Save(&userData)
+
 		ctx.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"status": "fail", "message": error.Error()})
 		return
 	}
