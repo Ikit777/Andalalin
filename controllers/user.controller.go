@@ -155,7 +155,7 @@ func (ac *UserController) GetNotifikasi(ctx *gin.Context) {
 
 	var notif []models.Notifikasi
 
-	results := ac.DB.First(&notif, "id_user = ?", currentUser.ID)
+	results := ac.DB.Find(&notif, "id_user = ?", currentUser.ID)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
