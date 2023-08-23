@@ -32,6 +32,7 @@ func main() {
 	initializers.DB.Migrator().DropTable(&models.TiketLevel1{})
 	initializers.DB.Migrator().DropTable(&models.TiketLevel2{})
 	initializers.DB.Migrator().DropTable(&models.Notifikasi{})
+	initializers.DB.Migrator().DropTable(&models.DataMaster{})
 
 	initializers.DB.AutoMigrate(&models.User{})
 	initializers.DB.AutoMigrate(&models.Andalalin{})
@@ -39,6 +40,7 @@ func main() {
 	initializers.DB.AutoMigrate(&models.TiketLevel1{})
 	initializers.DB.AutoMigrate(&models.TiketLevel2{})
 	initializers.DB.AutoMigrate(&models.Notifikasi{})
+	initializers.DB.AutoMigrate(&models.DataMaster{})
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
@@ -62,6 +64,24 @@ func main() {
 		Verified:  true,
 		CreatedAt: now,
 		UpdatedAt: now,
+	})
+
+	lokasi := []string{"Banjarmasin"}
+
+	jenis_kegiatan := []string{"Pusat kegiatan", "Pemukiman", "Infrastruktur", "Lainnya"}
+
+	pusat_kegiatan := []string{"Pusat perbelanjaan atau retail", "Perkantoran", "Industri dan pergudangan", "Sekolah atau universitas",
+		"Lembaga kursus", "Rumah sakit", "Klinik bersama", "Bank", "Stasiun pengisin bahan bakar", "Hotel", "Gedung pertemuan",
+		"Restoran", "Fasilitan olah raga", "Bengkel kendaraan bermotor", "Pencucian mobil"}
+	infrastruktur := []string{"Akses ke dan dari jalan tol", "Pelabuhan", "Bandar udara", "Terminal", "Stasiun kereta api", "Pool kendaraan", "Fasilitas parkir umum", "Flyover", "Underpass", "Terowongan"}
+	pemukiman := []string{"Perumahan sederhana", "Perumahan menengan-atas", "Rumah susun sederhana", "Apartemen", "Asrama", "Ruko"}
+
+	rencana := [][]string{pusat_kegiatan, infrastruktur, pemukiman}
+
+	initializers.DB.Create(&models.DataMaster{
+		LokasiPengambilan:       models.Lokasi{Lokasi: lokasi},
+		JenisRencanaPembangunan: models.Jenis{Jenis: jenis_kegiatan},
+		RencanaPembangunan:      models.Rencana{Recana: rencana},
 	})
 
 	fmt.Println("Migration complete")
