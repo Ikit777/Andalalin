@@ -76,12 +76,12 @@ func main() {
 	infrastruktur := []string{"Akses ke dan dari jalan tol", "Pelabuhan", "Bandar udara", "Terminal", "Stasiun kereta api", "Pool kendaraan", "Fasilitas parkir umum", "Flyover", "Underpass", "Terowongan"}
 	pemukiman := []string{"Perumahan sederhana", "Perumahan menengan-atas", "Rumah susun sederhana", "Apartemen", "Asrama", "Ruko"}
 
-	rencana := [][]string{pusat_kegiatan, infrastruktur, pemukiman}
+	rencana := models.Rencana{Pusat: pusat_kegiatan, Pemukiman: pemukiman, Infrastruktur: infrastruktur}
 
 	initializers.DB.Create(&models.DataMaster{
-		LokasiPengambilan:       models.Lokasi{Lokasi: lokasi},
-		JenisRencanaPembangunan: models.Jenis{Jenis: jenis_kegiatan},
-		RencanaPembangunan:      models.Rencana{Recana: rencana},
+		LokasiPengambilan:       lokasi,
+		JenisRencanaPembangunan: jenis_kegiatan,
+		RencanaPembangunan:      rencana,
 	})
 
 	fmt.Println("Migration complete")

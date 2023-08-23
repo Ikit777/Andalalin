@@ -1,19 +1,17 @@
 package models
 
 type DataMaster struct {
-	LokasiPengambilan       Lokasi  `gorm:"type:string[]"`
-	JenisRencanaPembangunan Jenis   `gorm:"type:string[]"`
-	RencanaPembangunan      Rencana `gorm:"type:string[][]"`
-}
-
-type Lokasi struct {
-	Lokasi []string
-}
-
-type Jenis struct {
-	Jenis []string
+	LokasiPengambilan       Lokasi  `gorm:"serializer:json"`
+	JenisRencanaPembangunan Jenis   `gorm:"serializer:json"`
+	RencanaPembangunan      Rencana `gorm:"serializer:json"`
 }
 
 type Rencana struct {
-	Recana [][]string
+	Pusat         []string
+	Pemukiman     []string
+	Infrastruktur []string
 }
+
+type Lokasi []string
+
+type Jenis []string
