@@ -8,15 +8,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type DataMasterControll struct {
+type DataMasterControler struct {
 	DB *gorm.DB
 }
 
-func NewDataMasterControll(DB *gorm.DB) DataMasterControll {
-	return DataMasterControll{DB}
+func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
+	return DataMasterControler{DB}
 }
 
-func (dm *DataMasterControll) GetDataMaster(ctx *gin.Context) {
+func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	var data models.DataMaster
 
 	results := dm.DB.First(&data)

@@ -21,6 +21,9 @@ var (
 
 	AndalalinController      controllers.AndalalinController
 	AndalalinRouteController routes.AndalalinRouteController
+
+	DataMasterController      controllers.DataMasterControler
+	DataMasterRouteController routes.DataMasterRouteController
 )
 
 func init() {
@@ -39,6 +42,9 @@ func init() {
 
 	AndalalinController = controllers.NewAndalalinController(initializers.DB)
 	AndalalinRouteController = routes.NewRouteAndalalinController(AndalalinController)
+
+	DataMasterController = controllers.NewDataMasterControler(initializers.DB)
+	DataMasterRouteController = routes.NewDataMasterRouteController(DataMasterController)
 
 	server = gin.Default()
 }
@@ -68,5 +74,6 @@ func main() {
 	AuthRouteController.AuthRoute(router)
 	UserRouteController.UserRoute(router)
 	AndalalinRouteController.AndalalainRoute(router)
+	DataMasterRouteController.DataMasterRoute(router)
 	log.Fatal(server.Run(":" + config.ServerPort))
 }

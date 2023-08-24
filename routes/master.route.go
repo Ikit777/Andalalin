@@ -6,10 +6,10 @@ import (
 )
 
 type DataMasterRouteController struct {
-	dataMasterController controllers.DataMasterControll
+	dataMasterController controllers.DataMasterControler
 }
 
-func NewDataMasterRouteController(dataMasterController controllers.DataMasterControll) DataMasterRouteController {
+func NewDataMasterRouteController(dataMasterController controllers.DataMasterControler) DataMasterRouteController {
 	return DataMasterRouteController{dataMasterController}
 }
 
