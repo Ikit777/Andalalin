@@ -19,7 +19,7 @@ func NewDataMasterControll(DB *gorm.DB) DataMasterControll {
 func (dm *DataMasterControll) GetDataMaster(ctx *gin.Context) {
 	var data models.DataMaster
 
-	results := dm.DB.Find(&data)
+	results := dm.DB.First(&data)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
