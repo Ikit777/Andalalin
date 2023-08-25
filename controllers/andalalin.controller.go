@@ -808,9 +808,9 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		return
 	}
 
-	andalalin.PersyaratanTidakSesuai = payload.Persyaratan
+	andalalinData.PersyaratanTidakSesuai = payload.Persyaratan
 
-	ac.DB.Save(andalalin)
+	ac.DB.Save(andalalinData)
 
 	data := utils.PersyaratanTidakSesuai{
 		Nomer:       andalalinData.KodeAndalalin,
