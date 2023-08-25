@@ -56,6 +56,9 @@ type Andalalin struct {
 	AktaPendirianBadan []byte
 	SuratKuasa         []byte
 
+	//Persyaratan Tidak Sesuai
+	PersyaratanTidakSesuai PersayaratanTidakSesuai `gorm:"serializer:json"`
+
 	//Data Persetujuan Dokumen
 	PersetujuanDokumen           string `gorm:"type:varchar(255);"`
 	KeteranganPersetujuanDokumen string
@@ -234,9 +237,11 @@ type AndalalinResponseUser struct {
 	FileSK []byte `json:"file_sk,omitempty"`
 }
 
-type PersayaratanTidakSesuai struct {
-	Persyaratan string `json:"persyaratan" binding:"required"`
+type PersayaratanTidakSesuaiInput struct {
+	Persyaratan PersayaratanTidakSesuai `json:"persyaratan" binding:"required"`
 }
+
+type PersayaratanTidakSesuai []string
 
 type Persetujuan struct {
 	Persetujuan string `json:"persetujuan" binding:"required"`

@@ -29,7 +29,7 @@ type PersyaratanTidakSesuai struct {
 	Waktu       string
 	Izin        string
 	Status      string
-	Persyaratan string
+	Persyaratan []string
 	Subject     string
 }
 

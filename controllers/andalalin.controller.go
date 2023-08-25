@@ -753,7 +753,7 @@ func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 
 	var andalalin models.Andalalin
 
-	result := ac.DB.Model(&andalalin).Where("id_andalalin = ?", id).Update("status_andalalin", "Persayaratan terpenuhi")
+	result := ac.DB.Model(&andalalin).Where("id_andalalin = ?", id).Update("status_andalalin", "Persyaratan terpenuhi")
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
 		return
@@ -764,7 +764,7 @@ func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 
 func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
-	var payload *models.PersayaratanTidakSesuai
+	var payload *models.PersayaratanTidakSesuaiInput
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -807,6 +807,10 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
 		return
 	}
+
+	andalalin.PersyaratanTidakSesuai = payload.Persyaratan
+
+	ac.DB.Save(andalalin)
 
 	data := utils.PersyaratanTidakSesuai{
 		Nomer:       andalalinData.KodeAndalalin,
