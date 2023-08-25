@@ -794,7 +794,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 
 	var andalalin models.Andalalin
 
-	result := ac.DB.Model(&andalalin).Where("id_andalalin = ?", id).Update("status_andalalin", "Persayaratan tidak sesuai")
+	result := ac.DB.Model(&andalalin).Where("id_andalalin = ?", id).Update("status_andalalin", "Persyaratan tidak sesuai")
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
 		return
@@ -810,7 +810,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 
 	andalalinData.PersyaratanTidakSesuai = payload.Persyaratan
 
-	ac.DB.Save(andalalinData)
+	ac.DB.Save(&andalalinData)
 
 	data := utils.PersyaratanTidakSesuai{
 		Nomer:       andalalinData.KodeAndalalin,
@@ -821,7 +821,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		Izin:        andalalinData.JenisAndalalin,
 		Status:      andalalinData.StatusAndalalin,
 		Persyaratan: payload.Persyaratan,
-		Subject:     "Persyaratan Tidak Sesuai",
+		Subject:     "Persyaratan tidak sesuai",
 	}
 
 	utils.SendEmailPersyaratan(andalalinData.EmailPemohon, &data)
