@@ -805,6 +805,8 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 
 	ac.DB.Save(&andalalin)
 
+	justString := strings.Join(payload.Persyaratan, "\n")
+
 	data := utils.PersyaratanTidakSesuai{
 		Nomer:       andalalin.KodeAndalalin,
 		Nama:        andalalin.NamaPemohon,
@@ -813,7 +815,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		Waktu:       andalalin.WaktuAndalalin,
 		Izin:        andalalin.JenisAndalalin,
 		Status:      andalalin.StatusAndalalin,
-		Persyaratan: payload.Persyaratan,
+		Persyaratan: justString,
 		Subject:     "Persyaratan tidak sesuai",
 	}
 
