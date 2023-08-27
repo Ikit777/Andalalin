@@ -186,7 +186,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 
 	ac.DB.Save(&user)
 
-	if payload.PushToken != "" && user.Logged {
+	if payload.PushToken != "" && user.Logged && user.Role == "User" {
 		result := ac.DB.Model(&user).Where("id = ?", user.ID).Update("push_token", payload.PushToken)
 		if result.Error != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
