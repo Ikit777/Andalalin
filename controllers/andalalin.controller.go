@@ -666,6 +666,7 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 	andalalin.KartuTandaPenduduk = blobs["ktp"]
 	andalalin.AktaPendirianBadan = blobs["apb"]
 	andalalin.SuratKuasa = blobs["sk"]
+	andalalin.PersyaratanTidakSesuai = []string{}
 	andalalin.StatusAndalalin = "Cek persyaratan"
 
 	ac.DB.Save(&andalalin)
