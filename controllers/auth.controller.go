@@ -252,6 +252,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 		var userData models.User
 		initializers.DB.First(&userData, "id = ?", fmt.Sprint(getId.UserID))
 
+		userData.PushToken = ""
 		userData.Logged = false
 
 		initializers.DB.Save(&userData)
@@ -317,6 +318,7 @@ func (ac *AuthController) LogoutUser(ctx *gin.Context) {
 		return
 	}
 
+	user.PushToken = ""
 	user.Logged = false
 
 	ac.DB.Save(&user)
