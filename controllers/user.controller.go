@@ -230,6 +230,51 @@ func (ac *UserController) GetUsersSortRole(ctx *gin.Context) {
 	}
 }
 
+func (ac *UserController) GetPetugas(ctx *gin.Context) {
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinAddOfficerCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var users []models.User
+
+	results := ac.DB.Find(&users, "role = ?", "Petugas")
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	} else {
+		var respone []models.UserResponse
+
+		for _, s := range users {
+			respone = append(respone, models.UserResponse{
+				ID:    s.ID,
+				Name:  s.Name,
+				Email: s.Email,
+				Photo: s.Photo,
+			})
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
+	}
+}
+
 // Add User
 func (ac *UserController) Add(ctx *gin.Context) {
 	var payload *models.UserAdd

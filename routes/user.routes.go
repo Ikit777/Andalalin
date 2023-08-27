@@ -34,4 +34,6 @@ func (uc *UserRouteController) UserRoute(rg *gin.RouterGroup) {
 
 	router.GET("/notifikasi", middleware.DeserializeUser(), uc.userController.GetNotifikasi)
 	router.DELETE("/clearnotifikasi", middleware.DeserializeUser(), uc.userController.ClearNotifikasi)
+
+	router.GET("/petugas", middleware.DeserializeUser(), uc.userController.GetPetugas)
 }
