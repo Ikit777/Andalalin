@@ -196,6 +196,9 @@ type AndalalinResponse struct {
 	AktaPendirianBadan []byte `json:"akta_pendirian_badan,omitempty"`
 	SuratKuasa         []byte `json:"surat_kuasa,omitempty"`
 
+	//Persyaratan Tidak Sesuai
+	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
+
 	//Data Petugas
 	IdPetugas    uuid.UUID `json:"id_petugas,omitempty"`
 	NamaPetugas  string    `json:"nama_petugas,omitempty"`
@@ -232,6 +235,9 @@ type AndalalinResponseUser struct {
 	JenisKegiatan  string `json:"jenis_kegiatan,omitempty"`
 	Peruntukan     string `json:"peruntukan,omitempty"`
 	LuasLahan      string `json:"luas_lahan,omitempty"`
+
+	//Persyaratan Tidak Sesuai
+	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
 
 	//Data SK
 	FileSK []byte `json:"file_sk,omitempty"`

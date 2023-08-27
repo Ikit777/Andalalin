@@ -333,6 +333,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 			JenisKegiatan:           andalalin.JenisKegiatan,
 			Peruntukan:              andalalin.Peruntukan,
 			LuasLahan:               andalalin.LuasLahan,
+			PersyaratanTidakSesuai:  andalalin.PersyaratanTidakSesuai,
 			FileSK:                  andalalin.FileSK,
 		}
 
@@ -380,6 +381,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 			KartuTandaPenduduk:              andalalin.KartuTandaPenduduk,
 			AktaPendirianBadan:              andalalin.AktaPendirianBadan,
 			SuratKuasa:                      andalalin.SuratKuasa,
+			PersyaratanTidakSesuai:          andalalin.PersyaratanTidakSesuai,
 			IdPetugas:                       andalalin.IdPetugas,
 			NamaPetugas:                     andalalin.NamaPetugas,
 			EmailPetugas:                    andalalin.EmailPetugas,
