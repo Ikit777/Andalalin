@@ -177,16 +177,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		return
 	}
 
-	if user.Logged {
-		ctx.JSON(http.StatusConflict, gin.H{"status": "fail"})
-		return
-	}
-
-	user.Logged = true
-
-	ac.DB.Save(&user)
-
-	if payload.PushToken != "" && user.Logged && user.Role == "User" {
+	if payload.PushToken != "" && user.Role == "User" {
 		result := ac.DB.Model(&user).Where("id = ?", user.ID).Update("push_token", payload.PushToken)
 		if result.Error != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
@@ -217,7 +208,6 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		Role      string    `json:"role,omitempty"`
 		Photo     []byte    `json:"photo,omitempty"`
 		PushToken string    `json:"push_token,omitempty"`
-		Logged    bool      `json:"logged,omitempty"`
 	}{
 		Access:    access_token,
 		Refresh:   refresh_token,
@@ -227,7 +217,6 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		Role:      user.Role,
 		Photo:     user.Photo,
 		PushToken: user.PushToken,
-		Logged:    user.Logged,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
@@ -253,7 +242,6 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 		initializers.DB.First(&userData, "id = ?", fmt.Sprint(getId.UserID))
 
 		userData.PushToken = ""
-		userData.Logged = false
 
 		initializers.DB.Save(&userData)
 
@@ -319,7 +307,6 @@ func (ac *AuthController) LogoutUser(ctx *gin.Context) {
 	}
 
 	user.PushToken = ""
-	user.Logged = false
 
 	ac.DB.Save(&user)
 

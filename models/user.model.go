@@ -18,7 +18,6 @@ type User struct {
 	ResetToken       string
 	ResetAt          time.Time
 	PushToken        string
-	Logged           bool   `gorm:"default:false;nnot null"`
 	CreatedAt        string `gorm:"not null"`
 	UpdatedAt        string `gorm:"not null"`
 }

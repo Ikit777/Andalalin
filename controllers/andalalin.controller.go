@@ -830,7 +830,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		return
 	}
 
-	if user.Logged && user.PushToken != "" {
+	if user.PushToken != "" {
 		notif := utils.Notification{
 			IdUser: user.ID,
 			Title:  "Persyaratan Tidak Sesuai",
@@ -1540,7 +1540,7 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 		return
 	}
 
-	if user.Logged && user.PushToken != "" {
+	if user.PushToken != "" {
 		notif := utils.Notification{
 			IdUser: user.ID,
 			Title:  "Permohonan selesai",
