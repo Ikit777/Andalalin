@@ -20,7 +20,7 @@ func (uc *UserRouteController) UserRoute(rg *gin.RouterGroup) {
 
 	router.GET("/me", middleware.DeserializeUser(), uc.userController.GetMe)
 
-	router.GET("/", middleware.DeserializeUser(), uc.userController.GetUsers)
+	router.GET("/all", middleware.DeserializeUser(), uc.userController.GetUsers)
 	router.GET("/email/:emailUser", middleware.DeserializeUser(), uc.userController.GetUserByEmail)
 	router.GET("role/:role", middleware.DeserializeUser(), uc.userController.GetUsersSortRole)
 
