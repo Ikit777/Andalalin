@@ -517,7 +517,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 
 	var ticket []models.TiketLevel1
 
-	results := ac.DB.Order("tanggal_andalalin").Find(&ticket, "status = ?", status)
+	results := ac.DB.Find(&ticket, "status = ?", status)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
@@ -1008,7 +1008,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 
 	var ticket []models.TiketLevel2
 
-	results := ac.DB.Order("tanggal_andalalin").Find(&ticket, "status = ?", status)
+	results := ac.DB.Find(&ticket, "status = ?", status)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
