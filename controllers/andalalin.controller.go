@@ -526,7 +526,12 @@ func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range ticket {
 			var andalalin models.Andalalin
-			ac.DB.First(&andalalin, "id_andalalin = ?", s.IdAndalalin)
+			results := ac.DB.First(&andalalin, "id_andalalin = ?", s.IdAndalalin)
+
+			if results.Error != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+				return
+			}
 
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      andalalin.IdAndalalin,
@@ -1012,7 +1017,12 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range ticket {
 			var andalalin models.Andalalin
-			ac.DB.First(&andalalin, "id_andalalin = ? AND id_petugas = ?", s.IdAndalalin, currentUser.ID)
+			results := ac.DB.First(&andalalin, "id_andalalin = ? AND id_petugas = ?", s.IdAndalalin, currentUser.ID)
+
+			if results.Error != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+				return
+			}
 
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      andalalin.IdAndalalin,
