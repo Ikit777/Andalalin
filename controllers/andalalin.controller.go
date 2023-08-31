@@ -1125,6 +1125,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 		IdTiketLevel2: ticket2.IdTiketLevel2,
 		IdPetugas:     currentUser.ID,
 		Petugas:       currentUser.Name,
+		EmailPetugas:  currentUser.Email,
 		Lokasi:        payload.Data.Lokasi,
 		Keterangan:    payload.Data.Keterangan,
 		Foto1:         blobs["foto1"],

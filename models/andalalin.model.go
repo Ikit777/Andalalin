@@ -275,6 +275,7 @@ type Survey struct {
 	IdTiketLevel2 uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdPetugas     uuid.UUID `gorm:"type:varchar(255);not null"`
 	Petugas       string    `gorm:"type:varchar(255);not null"`
+	EmailPetugas  string    `gorm:"type:varchar(255);not null"`
 	Keterangan    string
 	Foto1         []byte
 	Foto2         []byte
