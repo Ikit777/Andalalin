@@ -244,9 +244,8 @@ func (ac *AndalalinController) CloseTiketLevel1(ctx *gin.Context, id uuid.UUID) 
 	}
 }
 
-func (ac *AndalalinController) ReleaseTicketLevel2(ctx *gin.Context, id uuid.UUID) {
+func (ac *AndalalinController) ReleaseTicketLevel2(ctx *gin.Context, id uuid.UUID, petugas uuid.UUID) {
 	var tiket1 models.TiketLevel1
-	currentUser := ctx.MustGet("currentUser").(models.User)
 	results := ac.DB.First(&tiket1, "id_andalalin = ?", id)
 
 	if results.Error != nil {
@@ -257,7 +256,7 @@ func (ac *AndalalinController) ReleaseTicketLevel2(ctx *gin.Context, id uuid.UUI
 	tiket := models.TiketLevel2{
 		IdTiketLevel1: tiket1.IdTiketLevel1,
 		IdAndalalin:   id,
-		IdPetugas:     currentUser.ID,
+		IdPetugas:     petugas,
 		Status:        "Buka",
 	}
 
@@ -927,7 +926,7 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 
 	ac.DB.Save(&andalalin)
 
-	ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin)
+	ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, payload.IdPetugas)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Tambah petugas berhasil"})
 }
@@ -978,7 +977,7 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 
 	ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
 
-	ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin)
+	ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, payload.IdPetugas)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ubah petugas berhasil"})
 }
