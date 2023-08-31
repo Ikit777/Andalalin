@@ -982,11 +982,7 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 		return
 	}
 
-	tutupTiket2 := ac.DB.Model(&ticket2).Where("id_andalalin = ? AND id_tiket_level2 = ?", id, ticket2.IdTiketLevel2).Update("status", "Tutup")
-	if tutupTiket2.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
-		return
-	}
+	ticket2.Status = "Tutup"
 
 	ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin)
 
