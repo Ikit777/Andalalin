@@ -270,13 +270,11 @@ func (ac *AndalalinController) ReleaseTicketLevel2(ctx *gin.Context, id uuid.UUI
 func (ac *AndalalinController) CloseTiketLevel2(ctx *gin.Context, id uuid.UUID) {
 	var tiket models.TiketLevel2
 
-	result := ac.DB.First(&tiket, "id_andalalin = ? AND status = ?", id, "Buka")
+	result := ac.DB.Model(&tiket).Where("id_andalalin = ?", id).Update("status", "Tutup")
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
 		return
 	}
-	tiket.Status = "Tutup"
-	ac.DB.Save(tiket)
 }
 
 func (ac *AndalalinController) GetPermohonanByIdUser(ctx *gin.Context) {
@@ -976,9 +974,15 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 
 	ac.DB.Save(&andalalin)
 
-	ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
+	var tiket models.TiketLevel2
 
-	ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin)
+	resultTutup := ac.DB.Model(&tiket).Where("id_andalalin = ? AND status = Buka", id).Update("status", "Tutup")
+	if resultTutup.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
+		return
+	} else {
+		ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin)
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ubah petugas berhasil"})
 }
