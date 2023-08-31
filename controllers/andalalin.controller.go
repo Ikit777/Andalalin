@@ -974,7 +974,21 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 
 	ac.DB.Save(&andalalin)
 
-	ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
+	var ticket1 models.TiketLevel1
+	var ticket2 models.TiketLevel2
+
+	resultTiket1 := ac.DB.Find(&ticket1, "id_andalalin = ?", id)
+	resultTiket2 := ac.DB.Find(&ticket2, "id_andalalin = ?", id)
+	if resultTiket1.Error != nil && resultTiket2.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
+		return
+	}
+
+	tutupTiket2 := ac.DB.Model(&ticket2).Where("id_andalalin = ? AND id_tiket_level1 = ? AND id_tiket_level2 = ?", id, ticket1.IdTiketLevel1, ticket2.IdTiketLevel2).Update("status", "Tutup")
+	if tutupTiket2.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
+		return
+	}
 
 	ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin)
 
