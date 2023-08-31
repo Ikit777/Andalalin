@@ -305,5 +305,6 @@ type TiketLevel2 struct {
 	IdTiketLevel2 uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
 	IdTiketLevel1 uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdAndalalin   uuid.UUID `gorm:"type:varchar(255);not null"`
+	IdPetugas     uuid.UUID `gorm:"type:varchar(255);not null"`
 	Status        string    `sql:"type:enum('Buka', 'Tutup', 'Tunda', 'Batal');not null"`
 }

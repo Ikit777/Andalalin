@@ -246,6 +246,7 @@ func (ac *AndalalinController) CloseTiketLevel1(ctx *gin.Context, id uuid.UUID) 
 
 func (ac *AndalalinController) ReleaseTicketLevel2(ctx *gin.Context, id uuid.UUID) {
 	var tiket1 models.TiketLevel1
+	currentUser := ctx.MustGet("currentUser").(models.User)
 	results := ac.DB.First(&tiket1, "id_andalalin = ?", id)
 
 	if results.Error != nil {
@@ -256,6 +257,7 @@ func (ac *AndalalinController) ReleaseTicketLevel2(ctx *gin.Context, id uuid.UUI
 	tiket := models.TiketLevel2{
 		IdTiketLevel1: tiket1.IdTiketLevel1,
 		IdAndalalin:   id,
+		IdPetugas:     currentUser.ID,
 		Status:        "Buka",
 	}
 
@@ -1008,7 +1010,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 
 	var ticket []models.TiketLevel2
 
-	results := ac.DB.Find(&ticket, "status = ?", status)
+	results := ac.DB.Find(&ticket, "status = ? AND id_petugas = ?", status, currentUser.ID)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
