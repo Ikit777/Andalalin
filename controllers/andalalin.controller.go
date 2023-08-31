@@ -984,6 +984,8 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 
 	ticket2.Status = "Tutup"
 
+	ac.DB.Save(&ticket2)
+
 	ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ubah petugas berhasil"})
