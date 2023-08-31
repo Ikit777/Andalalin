@@ -284,11 +284,6 @@ func (ac *UserController) Add(ctx *gin.Context) {
 		return
 	}
 
-	if payload.Password != payload.PasswordConfirm {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Password tidak sama"})
-		return
-	}
-
 	hashedPassword, err := utils.HashPassword(payload.Password)
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error()})
