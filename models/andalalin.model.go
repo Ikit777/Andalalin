@@ -286,7 +286,7 @@ type Survey struct {
 
 type InputSurvey struct {
 	Lokasi     string  `json:"lokasi" binding:"required"`
-	Keterangan string  `json:"keterangan" binding:"required"`
+	Keterangan string  `json:"keterangan"`
 	Latitude   float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
 	Longitude  float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
 }
