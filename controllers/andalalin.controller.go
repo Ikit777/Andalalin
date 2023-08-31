@@ -978,7 +978,7 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 	var ticket2 models.TiketLevel2
 
 	resultTiket1 := ac.DB.Find(&ticket1, "id_andalalin = ?", id)
-	resultTiket2 := ac.DB.Find(&ticket2, "id_andalalin = ?", id)
+	resultTiket2 := ac.DB.Find(&ticket2, "id_andalalin = ? AND status = ?", id, "Buka")
 	if resultTiket1.Error != nil && resultTiket2.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
 		return
