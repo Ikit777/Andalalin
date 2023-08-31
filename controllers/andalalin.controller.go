@@ -1153,6 +1153,61 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }
 
+func (ac *AndalalinController) GetAllSurvey(ctx *gin.Context) {
+	currentUser := ctx.MustGet("currentUser").(models.User)
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinSurveyCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var survey []models.Survey
+
+	results := ac.DB.Find(&survey, "id_petugas = ?", currentUser.ID)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	} else {
+		var respone []models.DaftarAndalalinResponse
+		for _, s := range survey {
+			var andalalin models.Andalalin
+			results := ac.DB.First(&andalalin, "id_andalalin = ? AND id_petugas = ?", s.IdAndalalin, s.IdPetugas)
+
+			if results.Error != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+				return
+			}
+
+			respone = append(respone, models.DaftarAndalalinResponse{
+				IdAndalalin:      andalalin.IdAndalalin,
+				KodeAndalalin:    andalalin.KodeAndalalin,
+				TanggalAndalalin: andalalin.TanggalAndalalin,
+				Nama:             andalalin.NamaPemohon,
+				Alamat:           andalalin.AlamatPemohon,
+				JenisAndalalin:   andalalin.JenisAndalalin,
+				StatusAndalalin:  andalalin.StatusAndalalin,
+			})
+		}
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
+	}
+}
+
 func (ac *AndalalinController) GetSurvey(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 
