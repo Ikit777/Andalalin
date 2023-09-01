@@ -832,6 +832,14 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		return
 	}
 
+	simpanNotif := models.Notifikasi{
+		IdUser: user.ID,
+		Title:  "Persyaratan Tidak Sesuai",
+		Body:   "Permohonan anda dengan kode " + andalalin.KodeAndalalin + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
+	}
+
+	ac.DB.Create(&simpanNotif)
+
 	if user.PushToken != "" {
 		notif := utils.Notification{
 			IdUser: user.ID,
@@ -1598,6 +1606,14 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
 		return
 	}
+
+	simpanNotif := models.Notifikasi{
+		IdUser: user.ID,
+		Title:  "Permohonan selesai",
+		Body:   "Permohonan anda dengan kode " + andalalin.KodeAndalalin + " telah selesai, harap cek email untuk lebih jelas",
+	}
+
+	ac.DB.Create(&simpanNotif)
 
 	if user.PushToken != "" {
 		notif := utils.Notification{
