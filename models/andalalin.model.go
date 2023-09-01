@@ -276,7 +276,7 @@ type Survey struct {
 	IdPetugas     uuid.UUID `gorm:"type:varchar(255);not null"`
 	Petugas       string    `gorm:"type:varchar(255);not null"`
 	EmailPetugas  string    `gorm:"type:varchar(255);not null"`
-	Keterangan    string
+	Keterangan    *string
 	Foto1         []byte
 	Foto2         []byte
 	Foto3         []byte
@@ -287,7 +287,7 @@ type Survey struct {
 
 type InputSurvey struct {
 	Lokasi     string  `json:"lokasi" binding:"required"`
-	Keterangan string  `json:"keterangan" binding:"required"`
+	Keterangan *string `json:"keterangan" binding:"required"`
 	Latitude   float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
 	Longitude  float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
 }
