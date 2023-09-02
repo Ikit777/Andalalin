@@ -60,8 +60,8 @@ type Andalalin struct {
 	PersyaratanTidakSesuai []string `gorm:"serializer:json"`
 
 	//Data Persetujuan Dokumen
-	PersetujuanDokumen           *string `gorm:"type:varchar(255);"`
-	KeteranganPersetujuanDokumen *string
+	PersetujuanDokumen           string `gorm:"type:varchar(255);"`
+	KeteranganPersetujuanDokumen string
 
 	//Data BAP
 	NomerBAPDasar       string `gorm:"type:varchar(255);"`
@@ -205,8 +205,8 @@ type AndalalinResponse struct {
 	EmailPetugas string    `json:"email_petugas,omitempty"`
 
 	//Data Persetujuan
-	PersetujuanDokumen           *string `json:"persetujuan,omitempty"`
-	KeteranganPersetujuanDokumen *string `json:"keterangan_persetujuan,omitempty"`
+	PersetujuanDokumen           string `json:"persetujuan,omitempty"`
+	KeteranganPersetujuanDokumen string `json:"keterangan_persetujuan,omitempty"`
 
 	//Data BAP
 	NomerBAPDasar       string `json:"nomer_bap_dasar,omitempty"`
@@ -248,8 +248,8 @@ type PersayaratanTidakSesuaiInput struct {
 }
 
 type Persetujuan struct {
-	Persetujuan *string `json:"persetujuan" binding:"required"`
-	Keterangan  *string `json:"keterangan" binding:"required"`
+	Persetujuan string `json:"persetujuan" binding:"required"`
+	Keterangan  string `json:"keterangan" binding:"required"`
 }
 
 type InputBAP struct {
