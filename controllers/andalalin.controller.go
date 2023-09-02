@@ -516,7 +516,7 @@ func (ac *AndalalinController) GetPermohonanPersetujuan(ctx *gin.Context) {
 
 	var andalalin []models.Andalalin
 	status := "Laporan BAP"
-	results := ac.DB.Order("tanggal_andalalin").Where(models.Andalalin{StatusAndalalin: status, PersetujuanDokumen: ""}).Not(models.Andalalin{FileBAP: nil}).Find(&andalalin)
+	results := ac.DB.Order("tanggal_andalalin").Where(models.Andalalin{StatusAndalalin: status, PersetujuanDokumen: ""}).Not(models.Andalalin{NomerBAPDasar: ""}).Find(&andalalin)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
