@@ -492,6 +492,52 @@ func (ac *AndalalinController) GetPermohonan(ctx *gin.Context) {
 	}
 }
 
+func (ac *AndalalinController) GetPermohonanPersetujuan(ctx *gin.Context) {
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinPersetujuanCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var andalalin []models.Andalalin
+
+	results := ac.DB.Order("tanggal_andalalin").Find(&andalalin, "status_andalalin = ? AND persetujuan_dokumen = ?", "Laporan BAP", nil)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	} else {
+		var respone []models.DaftarAndalalinResponse
+		for _, s := range andalalin {
+			respone = append(respone, models.DaftarAndalalinResponse{
+				IdAndalalin:      s.IdAndalalin,
+				KodeAndalalin:    s.KodeAndalalin,
+				TanggalAndalalin: s.TanggalAndalalin,
+				Nama:             s.NamaPemohon,
+				Alamat:           s.AlamatPemohon,
+				JenisAndalalin:   s.JenisAndalalin,
+				StatusAndalalin:  s.StatusAndalalin,
+			})
+		}
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
+	}
+}
+
 func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 	status := ctx.Param("status")
 
