@@ -1497,8 +1497,8 @@ func (ac *AndalalinController) GetPersetujuanDokumen(ctx *gin.Context) {
 	}
 
 	data := struct {
-		PersetujuanDokumen           string `json:"persetujuan,omitempty"`
-		KeteranganPersetujuanDokumen string `json:"keterangan,omitempty"`
+		PersetujuanDokumen           *string `json:"persetujuan,omitempty"`
+		KeteranganPersetujuanDokumen *string `json:"keterangan,omitempty"`
 	}{
 		PersetujuanDokumen:           andalalin.PersetujuanDokumen,
 		KeteranganPersetujuanDokumen: andalalin.KeteranganPersetujuanDokumen,
