@@ -424,7 +424,7 @@ func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
 
 	var andalalin []models.Andalalin
 
-	results := ac.DB.Order("tanggal_andalalin").Where(models.Andalalin{StatusAndalalin: status}).Find(&andalalin)
+	results := ac.DB.Order("tanggal_andalalin").Find(&andalalin, models.Andalalin{StatusAndalalin: status})
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
