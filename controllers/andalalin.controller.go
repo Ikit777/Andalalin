@@ -268,7 +268,7 @@ func (ac *AndalalinController) ReleaseTicketLevel2(ctx *gin.Context, id uuid.UUI
 	}
 }
 
-func (ac *AndalalinController) CloseTiketLevel2(ctx *gin.Context, id uuid.UUID, petugas uuid.UUID) {
+func (ac *AndalalinController) CloseTiketLevel2(ctx *gin.Context, id uuid.UUID) {
 	var tiket models.TiketLevel2
 
 	result := ac.DB.Model(&tiket).Where("id_andalalin = ?", id).Update("status", "Tutup")
@@ -1029,7 +1029,7 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 
 	ac.DB.Save(&andalalin)
 
-	ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin, payload.IdPetugas)
+	ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
 
 	ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, payload.IdPetugas)
 
@@ -1203,7 +1203,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 
 	ac.DB.Save(&andalalin)
 
-	ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin, currentUser.ID)
+	ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }
