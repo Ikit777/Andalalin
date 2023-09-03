@@ -424,7 +424,7 @@ func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
 
 	var andalalin []models.Andalalin
 
-	results := ac.DB.Order("tanggal_andalalin").Where(models.Andalalin{StatusAndalalin: status}).Find(&andalalin)
+	results := ac.DB.Order("tanggal_andalalin").Find(&andalalin, "status_andalalin = ?", status)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
@@ -1629,7 +1629,7 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 		return
 	}
 
-	andalalin.StatusAndalalin = "Permohonan Selesai"
+	andalalin.StatusAndalalin = "Permohonan selesai"
 
 	ac.DB.Save(&andalalin)
 

@@ -26,7 +26,7 @@ type Andalalin struct {
 	LokasiPengambilan               string    `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin                  string    `gorm:"not null"`
 	TanggalAndalalin                string    `gorm:"not null"`
-	StatusAndalalin                 string    `sql:"type:enum('Cek persyaratan', 'Persayaratan tidak sesuai', 'Persyaratan terpenuhi', 'Survey lapangan', 'Laporan BAP', 'Pembuatan SK', 'Permohonan selesai')"`
+	StatusAndalalin                 string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak sesuai', 'Persyaratan terpenuhi', 'Survey lapangan', 'Laporan BAP', 'Pembuatan SK', 'Permohonan selesai')"`
 	NamaPetugas                     string    `gorm:"type:varchar(255);"`
 	EmailPetugas                    string    `gorm:"type:varchar(255);"`
 	TandaTerimaPendaftaran          []byte
