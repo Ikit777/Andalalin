@@ -55,6 +55,7 @@ func GetCredentialsByRole(role string) ([]string, error) {
 			repository.AndalalinBAPCredential,
 			repository.AndalalinSKCredential,
 			repository.AndalalinSurveyCredential,
+			repository.AndalalinGetCredential,
 		}
 	case repository.OfficerRoleName:
 		// Officer credentials.
