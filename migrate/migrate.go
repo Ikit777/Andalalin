@@ -56,7 +56,7 @@ func main() {
 	}
 
 	initializers.DB.Create(&models.User{
-		Name:      "super admin",
+		Name:      "Super admin",
 		Email:     strings.ToLower("superadmin@gmail.com"),
 		Password:  hashedPassword,
 		Role:      "Super Admin",
