@@ -313,7 +313,7 @@ type TiketLevel2 struct {
 
 type UsulanPengelolaan struct {
 	IdUsulan                   uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	IdAndalalin                uuid.UUID `gorm:"type:varchar(255);not null"`
+	IdAndalalin                uuid.UUID `gorm:"type:varchar(255);uniqueIndex;not null"`
 	IdTiketLevel1              uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdTiketLevel2              uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdPengusulTindakan         uuid.UUID `gorm:"type:varchar(255);not null"`
