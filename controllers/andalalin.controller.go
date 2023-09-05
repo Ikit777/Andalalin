@@ -1877,19 +1877,18 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		return
 	}
 
-	var usulan models.UsulanPengelolaan
-
-	resultUsulan := ac.DB.First(&usulan, "id_andalalin = ?", id)
-	if resultUsulan.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
-		return
-	}
-
 	var tiket models.TiketLevel2
 
 	result := ac.DB.Model(&tiket).Where("id_andalalin = ?", id).Update("status", jenis)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	results := ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin LIKE ?", id)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
 		return
 	}
 
