@@ -322,10 +322,10 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	var ticket2 models.TiketLevel2
 	resultTiket2 := ac.DB.Not(&ticket2, "status = ?", "Tutup").First(&ticket2, "id_andalalin = ?", andalalin.IdAndalalin)
 	var status string
-	if resultTiket2.Error == nil {
-		status = ticket2.Status
-	} else {
+	if resultTiket2.Error != nil {
 		status = "Kosong"
+	} else {
+		status = ticket2.Status
 	}
 
 	if currentUser.Role == "User" {
