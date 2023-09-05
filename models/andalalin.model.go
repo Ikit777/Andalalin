@@ -200,9 +200,10 @@ type AndalalinResponse struct {
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
 
 	//Data Petugas
-	IdPetugas    uuid.UUID `json:"id_petugas,omitempty"`
-	NamaPetugas  string    `json:"nama_petugas,omitempty"`
-	EmailPetugas string    `json:"email_petugas,omitempty"`
+	IdPetugas         uuid.UUID `json:"id_petugas,omitempty"`
+	NamaPetugas       string    `json:"nama_petugas,omitempty"`
+	EmailPetugas      string    `json:"email_petugas,omitempty"`
+	StatusTiketLevel2 string    `json:"status_tiket,omitempty"`
 
 	//Data Persetujuan
 	PersetujuanDokumen           string  `json:"persetujuan,omitempty"`
