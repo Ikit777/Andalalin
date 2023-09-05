@@ -1841,7 +1841,6 @@ func (ac *AndalalinController) GetDetailUsulan(ctx *gin.Context) {
 
 	data := struct {
 		NamaPengusulTindakan       string  `json:"nama,omitempty"`
-		JenisUsulanTindakan        string  `json:"jenis,omitempty"`
 		PertimbanganUsulanTindakan string  `json:"pertimbangan,omitempty"`
 		KeteranganUsulanTindakan   *string `json:"keterangan,omitempty"`
 	}{
