@@ -1954,7 +1954,7 @@ func (ac *AndalalinController) GetPermohonanByTiketLevel2(ctx *gin.Context) {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range ticket {
 			var andalalin models.Andalalin
-			results := ac.DB.First(&andalalin, "id_andalalin = ? AND id_petugas = ?", s.IdAndalalin)
+			results := ac.DB.First(&andalalin, "id_andalalin = ?", s.IdAndalalin)
 
 			if results.Error != nil {
 				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
