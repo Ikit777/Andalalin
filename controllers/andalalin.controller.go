@@ -271,7 +271,7 @@ func (ac *AndalalinController) ReleaseTicketLevel2(ctx *gin.Context, id uuid.UUI
 func (ac *AndalalinController) CloseTiketLevel2(ctx *gin.Context, id uuid.UUID) {
 	var tiket models.TiketLevel2
 
-	result := ac.DB.Model(&tiket).Where("id_andalalin = ?", id).Update("status", "Tutup")
+	result := ac.DB.Model(&tiket).Where("id_andalalin = ? AND status IS Buka", id).Or("status IS Batal").Update("status", "Tutup")
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
 		return
@@ -1879,7 +1879,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 
 	var tiket models.TiketLevel2
 
-	result := ac.DB.Model(&tiket).Where("id_andalalin = ?", id).Update("status", jenis)
+	result := ac.DB.Model(&tiket).Where("id_andalalin = ? AND status IS Buka", id).Update("status", jenis)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
 		return
