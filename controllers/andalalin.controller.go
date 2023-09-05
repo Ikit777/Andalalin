@@ -1885,7 +1885,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		return
 	}
 
-	results := ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin LIKE ?", id)
+	results := ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin = ?", id)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
@@ -1919,7 +1919,7 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 		return
 	}
 
-	results := ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin LIKE ?", id)
+	results := ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin = ?", id)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})

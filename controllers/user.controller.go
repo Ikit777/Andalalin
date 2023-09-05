@@ -170,7 +170,7 @@ func (ac *UserController) ClearNotifikasi(ctx *gin.Context) {
 
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
-	results := ac.DB.Delete(&models.Notifikasi{}, "id_user LIKE ?", currentUser.ID)
+	results := ac.DB.Delete(&models.Notifikasi{}, "id_user = ?", currentUser.ID)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
