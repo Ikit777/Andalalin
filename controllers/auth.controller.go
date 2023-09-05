@@ -177,11 +177,13 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		return
 	}
 
-	if payload.PushToken != "" && user.Role == "User" {
-		result := ac.DB.Model(&user).Where("id = ?", user.ID).Update("push_token", payload.PushToken)
-		if result.Error != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
-			return
+	if user.Role == "User" || user.Role == "Operator" || user.Role == "Petugas" {
+		if payload.PushToken != "" {
+			result := ac.DB.Model(&user).Where("id = ?", user.ID).Update("push_token", payload.PushToken)
+			if result.Error != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+				return
+			}
 		}
 	}
 
