@@ -1742,16 +1742,12 @@ func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 	}
 
 	resultSave := ac.DB.Create(&usul)
-	if resultSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultSave.Error})
-		return
-	}
 
 	if resultSave.Error != nil && strings.Contains(resultSave.Error.Error(), "duplicate key value violates unique") {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Usulan sudah tersedia"})
 		return
 	} else if resultSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultSave.Error})
 		return
 	}
 
