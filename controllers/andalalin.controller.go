@@ -1741,13 +1741,13 @@ func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 		KeteranganUsulanTindakan:   payload.KeteranganUsulanTindakan,
 	}
 
-	resultSave := ac.DB.Create(&usul)
+	result := ac.DB.Create(&usul)
 
-	if resultSave.Error != nil && strings.Contains(resultSave.Error.Error(), "duplicate key value violates unique") {
-		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Usulan sudah tersedia"})
+	if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
+		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Usulan sudah ada"})
 		return
-	} else if resultSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultSave.Error})
+	} else if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
