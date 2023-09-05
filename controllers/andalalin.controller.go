@@ -1736,7 +1736,6 @@ func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 		IdTiketLevel2:              ticket2.IdTiketLevel2,
 		IdPengusulTindakan:         currentUser.ID,
 		NamaPengusulTindakan:       currentUser.Name,
-		JenisUsulanTindakan:        payload.JenisUsulanTindakan,
 		PertimbanganUsulanTindakan: payload.PertimbanganUsulanTindakan,
 		KeteranganUsulanTindakan:   payload.KeteranganUsulanTindakan,
 	}
@@ -1847,7 +1846,6 @@ func (ac *AndalalinController) GetDetailUsulan(ctx *gin.Context) {
 		KeteranganUsulanTindakan   *string `json:"keterangan,omitempty"`
 	}{
 		NamaPengusulTindakan:       usulan.NamaPengusulTindakan,
-		JenisUsulanTindakan:        usulan.JenisUsulanTindakan,
 		PertimbanganUsulanTindakan: usulan.PertimbanganUsulanTindakan,
 		KeteranganUsulanTindakan:   usulan.KeteranganUsulanTindakan,
 	}
@@ -1857,6 +1855,7 @@ func (ac *AndalalinController) GetDetailUsulan(ctx *gin.Context) {
 
 func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
+	jenis := ctx.Param("jenis_pelaksanaan")
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -1889,7 +1888,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 
 	var tiket models.TiketLevel2
 
-	result := ac.DB.Model(&tiket).Where("id_andalalin = ?", id).Update("status", usulan.JenisUsulanTindakan)
+	result := ac.DB.Model(&tiket).Where("id_andalalin = ?", id).Update("status", jenis)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
 		return

@@ -318,13 +318,11 @@ type UsulanPengelolaan struct {
 	IdTiketLevel2              uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdPengusulTindakan         uuid.UUID `gorm:"type:varchar(255);not null"`
 	NamaPengusulTindakan       string    `gorm:"type:varchar(255);not null"`
-	JenisUsulanTindakan        string    `gorm:"type:varchar(255);not null"`
 	PertimbanganUsulanTindakan string    `gorm:"type:varchar(255);not null"`
 	KeteranganUsulanTindakan   *string   `gorm:"type:varchar(255);not null"`
 }
 
 type InputUsulanPengelolaan struct {
-	JenisUsulanTindakan        string  `json:"jenis_usulan" binding:"required"`
 	PertimbanganUsulanTindakan string  `json:"pertimbangan" binding:"required"`
 	KeteranganUsulanTindakan   *string `json:"keterangan" binding:"required"`
 }
