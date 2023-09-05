@@ -309,3 +309,21 @@ type TiketLevel2 struct {
 	IdPetugas     uuid.UUID `gorm:"type:varchar(255);not null"`
 	Status        string    `sql:"type:enum('Buka', 'Tutup', 'Tunda', 'Batal');not null"`
 }
+
+type UsulanPengelolaan struct {
+	IdUsulan                   uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
+	IdAndalalin                uuid.UUID `gorm:"type:varchar(255);not null"`
+	IdTiketLevel1              uuid.UUID `gorm:"type:varchar(255);not null"`
+	IdTiketLevel2              uuid.UUID `gorm:"type:varchar(255);not null"`
+	IdPengusulTindakan         uuid.UUID `gorm:"type:varchar(255);not null"`
+	NamaPengusulTindakan       string    `gorm:"type:varchar(255);not null"`
+	JenisUsulanTindakan        string    `gorm:"type:varchar(255);not null"`
+	PertimbanganUsulanTindakan string    `gorm:"type:varchar(255);not null"`
+	KeteranganUsulanTindakan   *string   `gorm:"type:varchar(255);not null"`
+}
+
+type InputUsulanPengelolaan struct {
+	JenisUsulanTindakan        string  `json:"jenis_usulan" binding:"required"`
+	PertimbanganUsulanTindakan string  `json:"pertimbangan" binding:"required"`
+	KeteranganUsulanTindakan   *string `json:"keterangan" binding:"required"`
+}

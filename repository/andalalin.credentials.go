@@ -26,4 +26,6 @@ const (
 	AndalalinSKCredential string = "andalalin:sk"
 
 	AndalalinPengajuanCredential string = "andalalin:pengajuan"
+
+	AndalalinKelolaTiket string = "andalalin:kelola"
 )

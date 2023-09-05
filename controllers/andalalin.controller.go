@@ -1672,3 +1672,202 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 		utils.SendPushNotifications(&notif)
 	}
 }
+
+func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
+	var payload *models.InputUsulanPengelolaan
+	id := ctx.Param("id_andalalin")
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinKelolaTiket]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var ticket1 models.TiketLevel1
+	var ticket2 models.TiketLevel2
+
+	resultTiket1 := ac.DB.Find(&ticket1, "id_andalalin = ?", id)
+	resultTiket2 := ac.DB.Find(&ticket2, "id_andalalin = ?", id)
+	if resultTiket1.Error != nil && resultTiket2.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
+		return
+	}
+
+	var andalalin models.Andalalin
+
+	resultAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	if resultAndalalin.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultAndalalin.Error})
+		return
+	}
+
+	usul := models.UsulanPengelolaan{
+		IdAndalalin:                andalalin.IdAndalalin,
+		IdTiketLevel1:              ticket1.IdTiketLevel1,
+		IdTiketLevel2:              ticket2.IdTiketLevel2,
+		IdPengusulTindakan:         currentUser.ID,
+		NamaPengusulTindakan:       currentUser.Name,
+		JenisUsulanTindakan:        payload.JenisUsulanTindakan,
+		PertimbanganUsulanTindakan: payload.PertimbanganUsulanTindakan,
+		KeteranganUsulanTindakan:   payload.KeteranganUsulanTindakan,
+	}
+
+	resultSave := ac.DB.Create(&usul)
+	if resultSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultSave.Error})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinKelolaTiket]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var usulan []models.UsulanPengelolaan
+
+	results := ac.DB.Find(&usulan)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	} else {
+		var respone []models.DaftarAndalalinResponse
+		for _, s := range usulan {
+			var andalalin models.Andalalin
+			results := ac.DB.First(&andalalin, "id_andalalin = ?", s.IdAndalalin)
+
+			if results.Error != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+				return
+			}
+
+			respone = append(respone, models.DaftarAndalalinResponse{
+				IdAndalalin:      andalalin.IdAndalalin,
+				KodeAndalalin:    andalalin.KodeAndalalin,
+				TanggalAndalalin: andalalin.TanggalAndalalin,
+				Nama:             andalalin.NamaPemohon,
+				Alamat:           andalalin.AlamatPemohon,
+				JenisAndalalin:   andalalin.JenisAndalalin,
+				StatusAndalalin:  andalalin.StatusAndalalin,
+			})
+		}
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
+	}
+
+}
+
+func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinKelolaTiket]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var usulan models.UsulanPengelolaan
+
+	resultUsulan := ac.DB.First(&usulan, "id_andalalin = ?", id)
+	if resultUsulan.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	var tiket models.TiketLevel2
+
+	result := ac.DB.Model(&tiket).Where("id_andalalin = ?", id).Update("status", usulan.JenisUsulanTindakan)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
+		return
+	}
+}
+
+func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinKelolaTiket]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	results := ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin LIKE ?", id)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
+}
