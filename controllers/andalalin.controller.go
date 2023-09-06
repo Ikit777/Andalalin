@@ -1786,7 +1786,7 @@ func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range usulan {
 			var ticket2 models.TiketLevel2
-			resultTiket2 := ac.DB.Not("status = ?", "Tutup").Where("id_andalalin = ?", s.IdAndalalin).First(&ticket2)
+			resultTiket2 := ac.DB.Not("status = ?", "Tunda").Where("id_andalalin = ? AND status = ?", s.IdAndalalin, "Buka").First(&ticket2)
 			if resultTiket2.Error != nil {
 				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
 				return
