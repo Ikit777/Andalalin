@@ -1785,8 +1785,15 @@ func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
 	} else {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range usulan {
+			var ticket2 models.TiketLevel2
+			resultTiket2 := ac.DB.Not("status = ?", "Tutup").Where("id_andalalin = ?", s.IdAndalalin).First(&ticket2)
+			if resultTiket2.Error != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+				return
+			}
+
 			var andalalin models.Andalalin
-			results := ac.DB.First(&andalalin, "id_andalalin = ?", s.IdAndalalin)
+			results := ac.DB.First(&andalalin, "id_andalalin = ?", ticket2.IdAndalalin)
 
 			if results.Error != nil {
 				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
@@ -1887,15 +1894,11 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 
 	var usulan models.UsulanPengelolaan
 
-	resultUsulan := ac.DB.First(&usulan, "id_andalalin = ?", id)
-	if resultUsulan.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
-		return
-	}
+	ac.DB.First(&usulan, "id_andalalin = ?", id)
 
 	var andalalin models.Andalalin
 
-	resultAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", usulan.IdAndalalin)
+	resultAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
 	if resultAndalalin.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultAndalalin.Error})
 		return
@@ -2013,7 +2016,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		}
 	}
 
-	if jenis == "Batal" || jenis == "Tunda" {
+	if jenis == "Batal" || jenis == "Buka" {
 		ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin = ?", id)
 	}
 
