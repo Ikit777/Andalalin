@@ -237,7 +237,7 @@ func (ac *AndalalinController) ReleaseTicketLevel1(ctx *gin.Context, id uuid.UUI
 func (ac *AndalalinController) CloseTiketLevel1(ctx *gin.Context, id uuid.UUID) {
 	var tiket models.TiketLevel1
 
-	result := ac.DB.Model(&tiket).Where("id_andalalin = ?", id).Update("status", "Tutup")
+	result := ac.DB.Model(&tiket).Where("id_andalalin = ? AND status = ?", id, "Buka").Update("status", "Tutup")
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Tiket level 1 tidak tersedia"})
 		return
