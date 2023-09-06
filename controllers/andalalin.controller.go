@@ -1885,6 +1885,13 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		return
 	}
 
+	var usulan models.UsulanPengelolaan
+
+	resultUsulan := ac.DB.First(&usulan, "id_andalalin = ?", id)
+	if resultUsulan.Error == nil {
+		ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin = ?", id)
+	}
+
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }
 
