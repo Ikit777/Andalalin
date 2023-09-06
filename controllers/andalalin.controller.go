@@ -1897,7 +1897,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 
 	resultAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", usulan.IdAndalalin)
 	if resultAndalalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultAndalalin.Error})
 		return
 	}
 
@@ -1993,14 +1993,6 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 			utils.SendPushNotifications(&notifPetugas)
 		}
 	case "Buka":
-		simpanNotifPengusul := models.Notifikasi{
-			IdUser: userPengusul.ID,
-			Title:  "Pelaksanaan survei dilanjutkan",
-			Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei dilanjutkan",
-		}
-
-		ac.DB.Create(&simpanNotifPengusul)
-
 		simpanNotifPetugas := models.Notifikasi{
 			IdUser: userPetugas.ID,
 			Title:  "Pelaksanaan survei dilanjutkan",
@@ -2008,17 +2000,6 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		}
 
 		ac.DB.Create(&simpanNotifPetugas)
-
-		if userPengusul.PushToken != "" {
-			notifPengusul := utils.Notification{
-				IdUser: userPengusul.ID,
-				Title:  "Pelaksanaan survei dilanjutkan",
-				Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei dilanjutkan",
-				Token:  userPengusul.PushToken,
-			}
-
-			utils.SendPushNotifications(&notifPengusul)
-		}
 
 		if userPetugas.PushToken != "" {
 			notifPetugas := utils.Notification{
@@ -2032,7 +2013,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		}
 	}
 
-	if jenis == "Batal" || jenis == "Buka" {
+	if jenis == "Batal" || jenis == "Tunda" {
 		ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin = ?", id)
 	}
 
@@ -2061,6 +2042,48 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 			"msg":   "Permission denied",
 		})
 		return
+	}
+
+	var usulan models.UsulanPengelolaan
+
+	resultUsulan := ac.DB.First(&usulan, "id_andalalin = ?", id)
+	if resultUsulan.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+		return
+	}
+
+	var andalalin models.Andalalin
+
+	resultAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", usulan.IdAndalalin)
+	if resultAndalalin.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultAndalalin.Error})
+		return
+	}
+
+	var userPengusul models.User
+	resulPengusul := ac.DB.First(&userPengusul, "id = ?", usulan.IdPengusulTindakan)
+	if resulPengusul.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+		return
+	}
+
+	simpanNotifPengusul := models.Notifikasi{
+		IdUser: userPengusul.ID,
+		Title:  "Usulan tindakan dihapus",
+		Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah dihapus",
+	}
+
+	ac.DB.Create(&simpanNotifPengusul)
+
+	if userPengusul.PushToken != "" {
+		notifPengusul := utils.Notification{
+			IdUser: userPengusul.ID,
+			Title:  "Usulan tindakan dihapus",
+			Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah dihapus",
+			Token:  userPengusul.PushToken,
+		}
+
+		utils.SendPushNotifications(&notifPengusul)
 	}
 
 	results := ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin = ?", id)
