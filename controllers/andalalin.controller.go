@@ -1928,7 +1928,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		simpanNotifPetugas := models.Notifikasi{
 			IdUser: userPetugas.ID,
 			Title:  "Pelaksanaan survei ditunda",
-			Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei ditunda",
+			Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " dibatalkan",
 		}
 
 		ac.DB.Create(&simpanNotifPetugas)
@@ -1948,7 +1948,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 			notifPetugas := utils.Notification{
 				IdUser: userPetugas.ID,
 				Title:  "Pelaksanaan survei ditunda",
-				Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei ditunda",
+				Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " ditunda",
 				Token:  userPetugas.PushToken,
 			}
 
@@ -1966,7 +1966,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		simpanNotifPetugas := models.Notifikasi{
 			IdUser: userPetugas.ID,
 			Title:  "Pelaksanaan survei dibatalkan",
-			Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei dibatalkan",
+			Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " dibatalkan",
 		}
 
 		ac.DB.Create(&simpanNotifPetugas)
@@ -1986,7 +1986,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 			notifPetugas := utils.Notification{
 				IdUser: userPetugas.ID,
 				Title:  "Pelaksanaan survei dibatalkan",
-				Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei dibatalkan",
+				Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " dibatalkan",
 				Token:  userPetugas.PushToken,
 			}
 
@@ -1996,7 +1996,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		simpanNotifPetugas := models.Notifikasi{
 			IdUser: userPetugas.ID,
 			Title:  "Pelaksanaan survei dilanjutkan",
-			Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei dilanjutkan",
+			Body:   "Pelaksanaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah dilanjutkan kembali",
 		}
 
 		ac.DB.Create(&simpanNotifPetugas)
@@ -2005,7 +2005,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 			notifPetugas := utils.Notification{
 				IdUser: userPetugas.ID,
 				Title:  "Pelaksanaan survei dilanjutkan",
-				Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei dilanjutkan",
+				Body:   "Pelaksanaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah dilanjutkan kembali",
 				Token:  userPetugas.PushToken,
 			}
 
