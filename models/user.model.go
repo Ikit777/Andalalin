@@ -11,7 +11,7 @@ type User struct {
 	Name             string    `gorm:"type:varchar(255);not null"`
 	Email            string    `gorm:"uniqueIndex;not null"`
 	Password         string    `gorm:"not null"`
-	Role             string    `sql:"type:enum('Super Admin', 'Dinas Perhubungan', 'Admin', 'Operator', 'Petugas', 'User');default:'User';not null"`
+	Role             string    `sql:"type:enum('Super Admin', 'Admin', 'Operator', 'Petugas', 'User');default:'User';not null"`
 	Photo            []byte
 	VerificationCode string `gorm:"type:varchar(255);not null"`
 	Verified         bool   `gorm:"not null"`

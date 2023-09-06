@@ -19,13 +19,6 @@ func GetCredentialsByRole(role string) ([]string, error) {
 			repository.UserAddCredential,
 			repository.UserDeleteCredential,
 			repository.UserGetCredential,
-		}
-	case repository.OfficeRoleName:
-		// Office credentials.
-		credentials = []string{
-			repository.UserAddCredential,
-			repository.UserDeleteCredential,
-			repository.UserGetCredential,
 
 			repository.AndalalinGetCredential,
 			repository.AndalalinUpdateCredential,

@@ -78,7 +78,10 @@ func main() {
 	infrastruktur := []string{"Akses ke dan dari jalan tol", "Pelabuhan", "Bandar udara", "Terminal", "Stasiun kereta api", "Pool kendaraan", "Fasilitas parkir umum", "Flyover", "Underpass", "Terowongan"}
 	pemukiman := []string{"Perumahan sederhana", "Perumahan menengan-atas", "Rumah susun sederhana", "Apartemen", "Asrama", "Ruko"}
 
-	rencana := models.Rencana{Pusat: pusat_kegiatan, Pemukiman: pemukiman, Infrastruktur: infrastruktur}
+	rencana := []models.Rencana{}
+	rencana = append(rencana, models.Rencana{Kategori: "Pusat kegiatan", JenisRencana: pusat_kegiatan})
+	rencana = append(rencana, models.Rencana{Kategori: "Pemukiman", JenisRencana: pemukiman})
+	rencana = append(rencana, models.Rencana{Kategori: "Infrastruktur", JenisRencana: infrastruktur})
 
 	initializers.DB.Create(&models.DataMaster{
 		LokasiPengambilan:       lokasi,
