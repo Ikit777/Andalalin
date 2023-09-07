@@ -80,7 +80,7 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.First(&master)
+	resultsData := dm.DB.FirstOrCreate(&master, models.DataMaster{})
 
 	if resultsData.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
@@ -94,9 +94,9 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 		return
 	}
 
-	tambah := append(master.LokasiPengambilan, lokasi)
+	master.LokasiPengambilan = append(master.LokasiPengambilan, lokasi)
 
-	resultsSave := dm.DB.Model(&master).Where("lokasi_pengambilan", master.LokasiPengambilan).Update("lokasi_pengambilan", tambah)
+	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
