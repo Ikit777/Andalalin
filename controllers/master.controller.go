@@ -89,11 +89,10 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 
 	exist := contains(master.LokasiPengambilan, lokasi)
 
-	if exist == true {
+	if exist {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
 	}
-
 	tambah := append(master.LokasiPengambilan, lokasi)
 
 	result := dm.DB.Model(&master.LokasiPengambilan).UpdateColumns(tambah)
