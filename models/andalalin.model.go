@@ -26,7 +26,7 @@ type Andalalin struct {
 	LokasiPengambilan               string    `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin                  string    `gorm:"not null"`
 	TanggalAndalalin                string    `gorm:"not null"`
-	StatusAndalalin                 string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak sesuai', 'Persyaratan terpenuhi', 'Survey lapangan', 'Laporan BAP', 'Pembuatan SK', 'Permohonan selesai')"`
+	StatusAndalalin                 string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Persyaratan terpenuhi', 'Survey lapangan', 'Berita acara pemeriksaan', 'Persetujuan dokumen', 'Pembuatan surat keputusan', 'Permohonan selesai')"`
 	NamaPetugas                     string    `gorm:"type:varchar(255);"`
 	EmailPetugas                    string    `gorm:"type:varchar(255);"`
 	TandaTerimaPendaftaran          []byte
@@ -56,7 +56,7 @@ type Andalalin struct {
 	AktaPendirianBadan []byte
 	SuratKuasa         []byte
 
-	//Persyaratan Tidak Sesuai
+	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `gorm:"serializer:json"`
 
 	//Data Persetujuan Dokumen
@@ -196,7 +196,7 @@ type AndalalinResponse struct {
 	AktaPendirianBadan []byte `json:"akta_pendirian_badan,omitempty"`
 	SuratKuasa         []byte `json:"surat_kuasa,omitempty"`
 
-	//Persyaratan Tidak Sesuai
+	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
 
 	//Data Petugas
@@ -237,7 +237,7 @@ type AndalalinResponseUser struct {
 	Peruntukan     string `json:"peruntukan,omitempty"`
 	LuasLahan      string `json:"luas_lahan,omitempty"`
 
-	//Persyaratan Tidak Sesuai
+	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
 
 	//Data SK

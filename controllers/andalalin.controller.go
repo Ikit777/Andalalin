@@ -525,7 +525,7 @@ func (ac *AndalalinController) GetPermohonanPersetujuan(ctx *gin.Context) {
 	}
 
 	var andalalin []models.Andalalin
-	status := "Laporan BAP"
+	status := "Berita acara pemeriksaan"
 	results := ac.DB.Order("tanggal_andalalin").Not("file_bap = ?", []byte{}).Where(models.Andalalin{StatusAndalalin: status, PersetujuanDokumen: ""}).Find(&andalalin)
 
 	if results.Error != nil {
@@ -859,7 +859,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		return
 	}
 
-	andalalin.StatusAndalalin = "Persyaratan tidak sesuai"
+	andalalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
 	andalalin.PersyaratanTidakSesuai = payload.Persyaratan
 
 	ac.DB.Save(&andalalin)
@@ -875,7 +875,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		Izin:        andalalin.JenisAndalalin,
 		Status:      andalalin.StatusAndalalin,
 		Persyaratan: justString,
-		Subject:     "Persyaratan tidak sesuai",
+		Subject:     "Persyaratan tidak terpenuhi",
 	}
 
 	utils.SendEmailPersyaratan(andalalin.EmailPemohon, &data)
@@ -889,7 +889,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 
 	simpanNotif := models.Notifikasi{
 		IdUser: user.ID,
-		Title:  "Persyaratan Tidak Sesuai",
+		Title:  "Persyaratan tidak terpenuhi",
 		Body:   "Permohonan anda dengan kode " + andalalin.KodeAndalalin + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
 	}
 
@@ -898,7 +898,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 	if user.PushToken != "" {
 		notif := utils.Notification{
 			IdUser: user.ID,
-			Title:  "Persyaratan Tidak Sesuai",
+			Title:  "Persyaratan tidak terpenuhi",
 			Body:   "Permohonan anda dengan kode " + andalalin.KodeAndalalin + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
 			Token:  user.PushToken,
 		}
@@ -1207,7 +1207,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 		return
 	}
 
-	andalalin.StatusAndalalin = "Laporan BAP"
+	andalalin.StatusAndalalin = "Berita acara pemeriksaan"
 
 	ac.DB.Save(&andalalin)
 
@@ -1465,7 +1465,7 @@ func (ac *AndalalinController) PersetujuanDokumen(ctx *gin.Context) {
 
 	andalalin.PersetujuanDokumen = payload.Persetujuan
 	andalalin.KeteranganPersetujuanDokumen = payload.Keterangan
-	andalalin.StatusAndalalin = "Pembuatan SK"
+	andalalin.StatusAndalalin = "Pembuatan surat keputusan"
 
 	ac.DB.Save(&andalalin)
 
