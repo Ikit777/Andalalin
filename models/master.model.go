@@ -7,14 +7,18 @@ type DataMaster struct {
 	PersyaratanTambahan     PersyaratanTambahan `gorm:"serializer:json"`
 }
 
+type Lokasi []string
+
+type LokasiInput struct {
+	Lokasi string `json:"lokasi" binding:"required"`
+}
+
+type Jenis []string
+
 type Rencana struct {
 	Kategori     string
 	JenisRencana []string
 }
-
-type Lokasi []string
-
-type Jenis []string
 
 type PersyaratanTambahan struct {
 	PersyaratanTambahanAndalalin  []PersyaratanTambahanInput

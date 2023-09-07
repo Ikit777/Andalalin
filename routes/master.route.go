@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/Ikit777/E-Andalalin/controllers"
+	"github.com/Ikit777/E-Andalalin/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,4 +18,6 @@ func (dm *DataMasterRouteController) DataMasterRoute(rg *gin.RouterGroup) {
 	router := rg.Group("/master")
 
 	router.GET("/andalalin", dm.dataMasterController.GetDataMaster)
+
+	router.GET("/tambahlokasi", middleware.DeserializeUser(), dm.dataMasterController.TambahLokasi)
 }
