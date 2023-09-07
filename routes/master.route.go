@@ -19,5 +19,5 @@ func (dm *DataMasterRouteController) DataMasterRoute(rg *gin.RouterGroup) {
 
 	router.GET("/andalalin", dm.dataMasterController.GetDataMaster)
 
-	router.GET("/tambahlokasi", middleware.DeserializeUser(), dm.dataMasterController.TambahLokasi)
+	router.POST("/tambahlokasi", middleware.DeserializeUser(), dm.dataMasterController.TambahLokasi)
 }
