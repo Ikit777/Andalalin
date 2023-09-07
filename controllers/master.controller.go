@@ -8,6 +8,7 @@ import (
 	"github.com/Ikit777/E-Andalalin/repository"
 	"github.com/Ikit777/E-Andalalin/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -30,11 +31,13 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	}
 
 	respone := struct {
+		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
 		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
 		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
 		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
 		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
+		IdDataMaster:        data.IdDataMaster,
 		Lokasi:              data.LokasiPengambilan,
 		JenisRencana:        data.JenisRencanaPembangunan,
 		RencanaPembangunan:  data.RencanaPembangunan,
