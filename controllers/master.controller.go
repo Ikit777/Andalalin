@@ -44,6 +44,16 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
 
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 	lokasi := ctx.Param("lokasi")
 
@@ -70,24 +80,23 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	results := dm.DB.Where(models.Lokasi{lokasi}).First(&master.LokasiPengambilan)
-	if results.Error == nil {
+	resultsData := dm.DB.First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	contains := contains(master.LokasiPengambilan, lokasi)
+
+	if contains == true {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
 	}
 
-	var data models.DataMaster
+	tambah := append(master.LokasiPengambilan, lokasi)
 
-	resultsData := dm.DB.First(&data)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
-		return
-	}
-
-	tambah := append(data.LokasiPengambilan, lokasi)
-
-	result := dm.DB.Model(&data.LokasiPengambilan).UpdateColumns(tambah)
+	result := dm.DB.Model(&master.LokasiPengambilan).UpdateColumns(tambah)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
 		return
