@@ -45,7 +45,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
-	var payload *models.LokasiInput
+	lokasi := ctx.Param("lokasi")
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -68,20 +68,30 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 		return
 	}
 
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
-		return
-	}
-
 	var master models.DataMaster
 
-	results := dm.DB.Where(models.Lokasi{payload.Lokasi}).First(&master.LokasiPengambilan)
+	results := dm.DB.Where(lokasi).First(&master.LokasiPengambilan)
 	if results.Error == nil {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
 	}
 
-	dm.DB.Model(&master).Association("LokasiPengambilan").Append(payload.Lokasi)
+	var data models.DataMaster
+
+	resultsData := dm.DB.First(&data)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	}
+
+	tambah := append(data.LokasiPengambilan, lokasi)
+
+	result := dm.DB.Model(&data.LokasiPengambilan).UpdateColumns(tambah)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
+		return
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 

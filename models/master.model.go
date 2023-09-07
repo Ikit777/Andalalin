@@ -9,10 +9,6 @@ type DataMaster struct {
 
 type Lokasi []string
 
-type LokasiInput struct {
-	Lokasi string `json:"lokasi" binding:"required"`
-}
-
 type Jenis []string
 
 type Rencana struct {
