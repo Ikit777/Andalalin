@@ -56,6 +56,7 @@ func contains(s []string, str string) bool {
 
 func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 	lokasi := ctx.Param("lokasi")
+	id := ctx.Param("id")
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -80,7 +81,7 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.FirstOrCreate(&master, models.DataMaster{})
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
 
 	if resultsData.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
@@ -94,11 +95,9 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 		return
 	}
 
-	data := &models.DataMaster{}
+	master.LokasiPengambilan = append(master.LokasiPengambilan, lokasi)
 
-	data.LokasiPengambilan = append(data.LokasiPengambilan, lokasi)
-
-	resultsSave := dm.DB.Save(&data)
+	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
