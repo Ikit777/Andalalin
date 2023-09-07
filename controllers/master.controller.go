@@ -87,9 +87,9 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 		return
 	}
 
-	contains := contains(master.LokasiPengambilan, lokasi)
+	exist := contains(master.LokasiPengambilan, lokasi)
 
-	if contains == true {
+	if exist == true {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
 	}
