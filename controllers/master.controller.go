@@ -93,7 +93,7 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
 	}
-	s
+
 	tambah := append(master.LokasiPengambilan, lokasi)
 
 	result := dm.DB.Model(&master).UpdateColumn("lokasi_pengambilan", tambah)
