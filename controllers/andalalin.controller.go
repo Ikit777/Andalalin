@@ -1367,6 +1367,7 @@ func (ac *AndalalinController) LaporanBAP(ctx *gin.Context) {
 	andalalin.NomerBAPPelaksanaan = payload.Data.NomerBAPPelaksanaan
 	andalalin.TanggalBAP = payload.Data.TanggalBAP
 	andalalin.FileBAP = data
+	andalalin.StatusAndalalin = "Persetujuan dokumen"
 
 	result := ac.DB.Save(&andalalin)
 
@@ -1465,7 +1466,11 @@ func (ac *AndalalinController) PersetujuanDokumen(ctx *gin.Context) {
 
 	andalalin.PersetujuanDokumen = payload.Persetujuan
 	andalalin.KeteranganPersetujuanDokumen = payload.Keterangan
-	andalalin.StatusAndalalin = "Pembuatan surat keputusan"
+	if payload.Persetujuan == "Dokumen disetujui" {
+		andalalin.StatusAndalalin = "Pembuatan surat keputusan"
+	} else {
+		andalalin.StatusAndalalin = "Berita acara pemeriksaan"
+	}
 
 	ac.DB.Save(&andalalin)
 
