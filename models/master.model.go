@@ -17,8 +17,8 @@ type Lokasi []string
 type Jenis []string
 
 type PersyaratanTambahan struct {
-	PersyaratanTambahanAndalalin  []string
-	PersyaratanTambahanRambulalin []string
+	PersyaratanTambahanAndalalin  []PersyaratanTambahanInput
+	PersyaratanTambahanRambulalin []PersyaratanTambahanInput
 }
 
 type PersyaratanTambahanInput struct {

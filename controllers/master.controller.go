@@ -27,13 +27,15 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Lokasi             []string         `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana       []string         `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan []models.Rencana `json:"rencana_pembangunan,omitempty"`
+		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		Lokasi:             data.LokasiPengambilan,
-		JenisRencana:       data.JenisRencanaPembangunan,
-		RencanaPembangunan: data.RencanaPembangunan,
+		Lokasi:              data.LokasiPengambilan,
+		JenisRencana:        data.JenisRencanaPembangunan,
+		RencanaPembangunan:  data.RencanaPembangunan,
+		PersyaratanTambahan: data.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
