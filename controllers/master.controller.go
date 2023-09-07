@@ -73,19 +73,15 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 		return
 	}
 
-	lokasi := models.LokasiInput{
-		Lokasi: payload.Lokasi,
-	}
-
 	var master models.DataMaster
 
-	results := dm.DB.First(&master.LokasiPengambilan, models.Lokasi{payload.Lokasi})
-	if results.Error != nil {
+	results := dm.DB.Where(models.Lokasi{payload.Lokasi}).First(&master.LokasiPengambilan)
+	if results.Error == nil {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
 	}
 
-	dm.DB.Model(&master).Association("LokasiPengambilan").Append(&lokasi)
+	dm.DB.Model(&master).Association("LokasiPengambilan").Append(payload.Lokasi)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 
