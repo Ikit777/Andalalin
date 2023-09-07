@@ -70,7 +70,7 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	results := dm.DB.Where(lokasi).First(&master.LokasiPengambilan)
+	results := dm.DB.Where(models.Lokasi{lokasi}).First(&master.LokasiPengambilan)
 	if results.Error != nil {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
