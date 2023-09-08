@@ -416,12 +416,12 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 				if item == rencana {
 					ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 					return
-				} else {
+				} else if item != rencana {
 					master.RencanaPembangunan[i].JenisRencana = append(master.RencanaPembangunan[i].JenisRencana, rencana)
 					break
 				}
 			}
-		} else {
+		} else if master.RencanaPembangunan[i].Kategori != kategori {
 			jenis := models.Rencana{
 				Kategori:     kategori,
 				JenisRencana: []string{rencana},
