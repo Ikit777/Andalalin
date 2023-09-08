@@ -410,8 +410,8 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 		return
 	}
 
-	for i, kategori_jenis := range master.RencanaPembangunan {
-		if kategori_jenis.Kategori == kategori {
+	for i := range master.RencanaPembangunan {
+		if master.RencanaPembangunan[i].Kategori == kategori {
 
 			exist := contains(master.RencanaPembangunan[i].JenisRencana, rencana)
 
