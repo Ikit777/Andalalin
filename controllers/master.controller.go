@@ -413,15 +413,14 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 	for i, kategori_jenis := range master.RencanaPembangunan {
 		if kategori_jenis.Kategori == kategori {
 
-			exist := contains(kategori_jenis.JenisRencana, rencana)
+			exist := contains(master.RencanaPembangunan[i].JenisRencana, rencana)
 
 			if exist {
 				ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 				return
-			} else {
-				kategori_jenis.JenisRencana = append(kategori_jenis.JenisRencana, rencana)
-				master.RencanaPembangunan[i] = kategori_jenis
 			}
+
+			master.RencanaPembangunan[i].JenisRencana = append(master.RencanaPembangunan[i].JenisRencana, rencana)
 			break
 		} else {
 			jenis := models.Rencana{
