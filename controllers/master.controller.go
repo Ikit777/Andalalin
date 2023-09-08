@@ -421,6 +421,7 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 					break
 				}
 			}
+			break
 		} else {
 			jenis := models.Rencana{
 				Kategori:     kategori,
