@@ -412,7 +412,7 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 
 	var rencana_pembangunan models.Rencana
 
-	for i, kategori_jenis := range master.RencanaPembangunan {
+	for _, kategori_jenis := range master.RencanaPembangunan {
 		if kategori_jenis.Kategori == kategori {
 
 			rencana_pembangunan = kategori_jenis
@@ -425,15 +425,13 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 			}
 
 			kategori_jenis.JenisRencana = append(kategori_jenis.JenisRencana, rencana)
-
-			master.RencanaPembangunan[i] = rencana_pembangunan
 			break
 		} else {
 			jenis := models.Rencana{
 				Kategori:     kategori,
 				JenisRencana: []string{rencana},
 			}
-			master.RencanaPembangunan[i] = jenis
+			master.RencanaPembangunan = append(master.RencanaPembangunan, jenis)
 		}
 	}
 
