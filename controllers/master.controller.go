@@ -410,8 +410,8 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 		return
 	}
 
-	for i, rencana_pembangunan := range master.RencanaPembangunan {
-		if rencana_pembangunan.Kategori == kategori && rencana_pembangunan.Kategori != "" {
+	for i := range master.RencanaPembangunan {
+		if master.RencanaPembangunan[i].Kategori == kategori {
 			for _, item := range master.RencanaPembangunan[i].JenisRencana {
 				if item == rencana {
 					ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
