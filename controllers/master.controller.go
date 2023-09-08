@@ -428,6 +428,12 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 
 			master.RencanaPembangunan[i] = rencana_pembangunan
 			break
+		} else {
+			jenis := models.Rencana{
+				Kategori:     kategori,
+				JenisRencana: []string{rencana},
+			}
+			master.RencanaPembangunan[i] = jenis
 		}
 	}
 
