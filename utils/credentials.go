@@ -45,6 +45,7 @@ func GetCredentialsByRole(role string) ([]string, error) {
 			repository.AndalalinKelolaTiket,
 			repository.AndalalinTicket2Credential,
 			repository.AndalalinGetCredential,
+			repository.AndalalinSurveyCredential,
 
 			repository.ProductAddCredential,
 			repository.ProductDeleteCredential,
