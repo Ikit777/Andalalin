@@ -418,7 +418,7 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 			kategoriExists = true
 			for _, item := range master.RencanaPembangunan[i].JenisRencana {
 				if item != rencana {
-					jenisExists = false
+					jenisExists = true
 					master.RencanaPembangunan[i].JenisRencana = append(master.RencanaPembangunan[i].JenisRencana, rencana)
 					break
 				}
@@ -434,7 +434,7 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 		master.RencanaPembangunan = append(master.RencanaPembangunan, jenis)
 	}
 
-	if jenisExists {
+	if !jenisExists && kategoriExists {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
 	}
