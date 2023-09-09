@@ -521,3 +521,67 @@ func (dm *DataMasterControler) HapusJenisRencanaPembangunan(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
+
+func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
+	kategori := ctx.Param("kategori")
+	rencana := ctx.Param("rencana")
+	newRencana := ctx.Param("rencana_new")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	itemIndexKategori := -1
+	itemIndexRencana := -1
+
+	for i := range master.RencanaPembangunan {
+		if master.RencanaPembangunan[i].Kategori == kategori {
+			itemIndexKategori = i
+			for j, item := range master.RencanaPembangunan[i].JenisRencana {
+				if item == rencana {
+					itemIndexRencana = j
+					break
+				}
+			}
+		}
+	}
+
+	if itemIndexKategori != -1 && itemIndexRencana != -1 {
+		master.RencanaPembangunan[itemIndexKategori].JenisRencana[itemIndexRencana] = newRencana
+	}
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
