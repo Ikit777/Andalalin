@@ -361,6 +361,7 @@ func (dm *DataMasterControler) EditKategori(ctx *gin.Context) {
 	}
 
 	itemIndex := -1
+	itemIndexRencana := -1
 
 	for i, item := range master.JenisRencanaPembangunan {
 		if item == kategori {
@@ -371,6 +372,17 @@ func (dm *DataMasterControler) EditKategori(ctx *gin.Context) {
 
 	if itemIndex != -1 {
 		master.JenisRencanaPembangunan[itemIndex] = newKategori
+	}
+
+	for i, item := range master.RencanaPembangunan {
+		if item.Kategori == kategori {
+			itemIndexRencana = i
+			break
+		}
+	}
+
+	if itemIndexRencana != -1 {
+		master.RencanaPembangunan[itemIndexRencana].Kategori = newKategori
 	}
 
 	resultsSave := dm.DB.Save(&master)
