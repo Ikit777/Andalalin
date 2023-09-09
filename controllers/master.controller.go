@@ -309,6 +309,13 @@ func (dm *DataMasterControler) HapusKategori(ctx *gin.Context) {
 		}
 	}
 
+	for i, item := range master.RencanaPembangunan {
+		if item.Kategori == kategori {
+			master.RencanaPembangunan = append(master.RencanaPembangunan[:i], master.RencanaPembangunan[i+1:]...)
+			break
+		}
+	}
+
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
