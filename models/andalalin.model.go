@@ -77,7 +77,6 @@ type InputAndalalin struct {
 	KategoriJenisRencanaPembangunan string `json:"kategori" binding:"required"`
 	JenisRencanaPembangunan         string `json:"jenis_rencana_pembangunan" binding:"required"`
 	NikPemohon                      string `json:"nik_pemohon" binding:"required"`
-	NamaPemohon                     string `json:"nama_pemohon" binding:"required"`
 	TempatLahirPemohon              string `json:"tempat_lahir_pemohon" binding:"required"`
 	TanggalLahirPemohon             string `json:"tanggal_lahir_pemohon" binding:"required"`
 	AlamatPemohon                   string `json:"alamat_pemohon" binding:"required"`
