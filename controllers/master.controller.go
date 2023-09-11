@@ -762,7 +762,7 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	if !persyaratanExist {
-		persyaratan := models.PersyaratanTambahanInput{
+		persyaratan := models.PersyaratanTambahanStruct{
 			Persyaratan:           payload.Persyaratan,
 			KeteranganPersyaratan: payload.KeteranganPersyaratan,
 		}
@@ -894,7 +894,7 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	}
 
-	persyaratan := models.PersyaratanTambahanInput{
+	persyaratan := models.PersyaratanTambahanStruct{
 		Persyaratan:           payload.Persyaratan,
 		KeteranganPersyaratan: payload.KeteranganPersyaratan,
 	}
@@ -978,7 +978,7 @@ func (dm *DataMasterControler) TambahPersyaratanRambulalin(ctx *gin.Context) {
 	}
 
 	if !persyaratanExist {
-		persyaratan := models.PersyaratanTambahanInput{
+		persyaratan := models.PersyaratanTambahanStruct{
 			Persyaratan:           payload.Persyaratan,
 			KeteranganPersyaratan: payload.KeteranganPersyaratan,
 		}
@@ -1110,7 +1110,7 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 		return
 	}
 
-	persyaratan := models.PersyaratanTambahanInput{
+	persyaratan := models.PersyaratanTambahanStruct{
 		Persyaratan:           payload.Persyaratan,
 		KeteranganPersyaratan: payload.KeteranganPersyaratan,
 	}
