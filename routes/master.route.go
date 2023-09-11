@@ -33,7 +33,7 @@ func (dm *DataMasterRouteController) DataMasterRoute(rg *gin.RouterGroup) {
 
 	router.POST("/tambahpersyaratanandalalin/:id", middleware.DeserializeUser(), dm.dataMasterController.TambahPersyaratanAndalalin)
 	router.POST("/hapuspersyaratanandalalin/:id/:persyaratan", middleware.DeserializeUser(), dm.dataMasterController.HapusPersyaratanAndalalin)
-	router.POST("/editpersyaratanandalalin", middleware.DeserializeUser(), dm.dataMasterController.EditPersyaratanAndalalin)
+	router.POST("/editpersyaratanandalalin/:id", middleware.DeserializeUser(), dm.dataMasterController.EditPersyaratanAndalalin)
 
 	router.POST("/tambahpersyaratanrambulalin/:id", middleware.DeserializeUser(), dm.dataMasterController.TambahPersyaratanRambulalin)
 	router.POST("/hapuspersyaratanrambulalin/:id/:persyaratan", middleware.DeserializeUser(), dm.dataMasterController.HapusPersyaratanRambulalin)
