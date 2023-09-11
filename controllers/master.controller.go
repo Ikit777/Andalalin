@@ -895,12 +895,18 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	}
 
+	itemIndex := -1
+
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
 		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan = payload.Persyaratan
-			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].KeteranganPersyaratan = payload.KeteranganPersyaratan
+			itemIndex = i
 			break
 		}
+	}
+
+	if itemIndex != -1 {
+		master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan = payload.Persyaratan
+		master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
 	}
 
 	resultsSave := dm.DB.Save(&master)
@@ -1109,12 +1115,18 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 		return
 	}
 
+	itemIndex := -1
+
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
 		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == payload.Persyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan = payload.Persyaratan
-			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].KeteranganPersyaratan = payload.KeteranganPersyaratan
+			itemIndex = i
 			break
 		}
+	}
+
+	if itemIndex != -1 {
+		master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].Persyaratan = payload.Persyaratan
+		master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
 	}
 
 	resultsSave := dm.DB.Save(&master)
