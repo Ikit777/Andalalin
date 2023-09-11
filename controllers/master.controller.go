@@ -737,6 +737,11 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	}
 
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
 	var master models.DataMaster
 
 	resultsData := dm.DB.Where("id_data_master", id).First(&master)
@@ -875,6 +880,11 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	}
 
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
 	var master models.DataMaster
 
 	resultsData := dm.DB.Where("id_data_master", id).First(&master)
@@ -939,6 +949,11 @@ func (dm *DataMasterControler) TambahPersyaratanRambulalin(ctx *gin.Context) {
 			"error": true,
 			"msg":   "Permission denied",
 		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
@@ -1077,6 +1092,11 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 			"error": true,
 			"msg":   "Permission denied",
 		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
