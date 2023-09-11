@@ -829,6 +829,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
 		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == persyaratan {
 			master.PersyaratanTambahan.PersyaratanTambahanAndalalin = append(master.PersyaratanTambahan.PersyaratanTambahanAndalalin[:i], master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i+1:]...)
+			break
 		}
 	}
 
@@ -896,9 +897,9 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
 		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
-
 			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan = payload.Persyaratan
 			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].KeteranganPersyaratan = payload.KeteranganPersyaratan
+			break
 		}
 	}
 
@@ -1042,6 +1043,7 @@ func (dm *DataMasterControler) HapusPersyaratanRambulalin(ctx *gin.Context) {
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
 		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == persyaratan {
 			master.PersyaratanTambahan.PersyaratanTambahanRambulalin = append(master.PersyaratanTambahan.PersyaratanTambahanRambulalin[:i], master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i+1:]...)
+			break
 		}
 	}
 
@@ -1111,6 +1113,7 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == payload.Persyaratan {
 			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan = payload.Persyaratan
 			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].KeteranganPersyaratan = payload.KeteranganPersyaratan
+			break
 		}
 	}
 
