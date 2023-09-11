@@ -711,3 +711,413 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
+
+func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
+	var payload *models.PersyaratanTambahanInput
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	persyaratanExist := false
+
+	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
+		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
+			persyaratanExist = true
+			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
+			return
+		}
+	}
+
+	if !persyaratanExist {
+		persyaratan := models.PersyaratanTambahanInput{
+			Persyaratan:           payload.Persyaratan,
+			KeteranganPersyaratan: payload.KeteranganPersyaratan,
+		}
+		master.PersyaratanTambahan.PersyaratanTambahanAndalalin = append(master.PersyaratanTambahan.PersyaratanTambahanAndalalin, persyaratan)
+	}
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:        master.IdDataMaster,
+		Lokasi:              master.LokasiPengambilan,
+		JenisRencana:        master.JenisRencanaPembangunan,
+		RencanaPembangunan:  master.RencanaPembangunan,
+		PersyaratanTambahan: master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
+	persyaratan := ctx.Param("persyaratan")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
+		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == persyaratan {
+			master.PersyaratanTambahan.PersyaratanTambahanAndalalin = append(master.PersyaratanTambahan.PersyaratanTambahanAndalalin[:i], master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i+1:]...)
+		}
+	}
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:        master.IdDataMaster,
+		Lokasi:              master.LokasiPengambilan,
+		JenisRencana:        master.JenisRencanaPembangunan,
+		RencanaPembangunan:  master.RencanaPembangunan,
+		PersyaratanTambahan: master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
+	var payload *models.PersyaratanTambahanInput
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
+		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
+			persyaratan := models.PersyaratanTambahanInput{
+				Persyaratan:           payload.Persyaratan,
+				KeteranganPersyaratan: payload.KeteranganPersyaratan,
+			}
+			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i] = persyaratan
+		}
+	}
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:        master.IdDataMaster,
+		Lokasi:              master.LokasiPengambilan,
+		JenisRencana:        master.JenisRencanaPembangunan,
+		RencanaPembangunan:  master.RencanaPembangunan,
+		PersyaratanTambahan: master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) TambahPersyaratanRambulalin(ctx *gin.Context) {
+	var payload *models.PersyaratanTambahanInput
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	persyaratanExist := false
+
+	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
+		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == payload.Persyaratan {
+			persyaratanExist = true
+			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
+			return
+		}
+	}
+
+	if !persyaratanExist {
+		persyaratan := models.PersyaratanTambahanInput{
+			Persyaratan:           payload.Persyaratan,
+			KeteranganPersyaratan: payload.KeteranganPersyaratan,
+		}
+		master.PersyaratanTambahan.PersyaratanTambahanRambulalin = append(master.PersyaratanTambahan.PersyaratanTambahanRambulalin, persyaratan)
+	}
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:        master.IdDataMaster,
+		Lokasi:              master.LokasiPengambilan,
+		JenisRencana:        master.JenisRencanaPembangunan,
+		RencanaPembangunan:  master.RencanaPembangunan,
+		PersyaratanTambahan: master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) HapusPersyaratanRambulalin(ctx *gin.Context) {
+	persyaratan := ctx.Param("persyaratan")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
+		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == persyaratan {
+			master.PersyaratanTambahan.PersyaratanTambahanRambulalin = append(master.PersyaratanTambahan.PersyaratanTambahanRambulalin[:i], master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i+1:]...)
+		}
+	}
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:        master.IdDataMaster,
+		Lokasi:              master.LokasiPengambilan,
+		JenisRencana:        master.JenisRencanaPembangunan,
+		RencanaPembangunan:  master.RencanaPembangunan,
+		PersyaratanTambahan: master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
+	var payload *models.PersyaratanTambahanInput
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
+		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == payload.Persyaratan {
+			persyaratan := models.PersyaratanTambahanInput{
+				Persyaratan:           payload.Persyaratan,
+				KeteranganPersyaratan: payload.KeteranganPersyaratan,
+			}
+			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i] = persyaratan
+		}
+	}
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:        master.IdDataMaster,
+		Lokasi:              master.LokasiPengambilan,
+		JenisRencana:        master.JenisRencanaPembangunan,
+		RencanaPembangunan:  master.RencanaPembangunan,
+		PersyaratanTambahan: master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
