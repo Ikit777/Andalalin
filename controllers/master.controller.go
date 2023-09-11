@@ -713,8 +713,9 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
-	var payload *models.PersyaratanTambahanInput
 	id := ctx.Param("id")
+	persyaratan := ctx.Param("persyaratan")
+	keterangan := ctx.Param("keterangan")
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -737,11 +738,6 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	}
 
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
-		return
-	}
-
 	var master models.DataMaster
 
 	resultsData := dm.DB.Where("id_data_master", id).First(&master)
@@ -754,7 +750,7 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 	persyaratanExist := false
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == persyaratan {
 			persyaratanExist = true
 			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 			return
@@ -763,8 +759,8 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 
 	if !persyaratanExist {
 		persyaratan := models.PersyaratanTambahanInput{
-			Persyaratan:           payload.Persyaratan,
-			KeteranganPersyaratan: payload.KeteranganPersyaratan,
+			Persyaratan: persyaratan,
+			Keterangan:  keterangan,
 		}
 		master.PersyaratanTambahan.PersyaratanTambahanAndalalin = append(master.PersyaratanTambahan.PersyaratanTambahanAndalalin, persyaratan)
 	}
@@ -857,8 +853,9 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
-	var payload *models.PersyaratanTambahanInput
 	id := ctx.Param("id")
+	persyaratan := ctx.Param("persyaratan")
+	keterangan := ctx.Param("keterangan")
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -881,11 +878,6 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	}
 
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
-		return
-	}
-
 	var master models.DataMaster
 
 	resultsData := dm.DB.Where("id_data_master", id).First(&master)
@@ -898,15 +890,15 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == persyaratan {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan = payload.Persyaratan
-		master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
+		master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan = persyaratan
+		master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Keterangan = keterangan
 	}
 
 	resultsSave := dm.DB.Save(&master)
@@ -933,8 +925,9 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) TambahPersyaratanRambulalin(ctx *gin.Context) {
-	var payload *models.PersyaratanTambahanInput
 	id := ctx.Param("id")
+	persyaratan := ctx.Param("persyaratan")
+	keterangan := ctx.Param("keterangan")
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -957,11 +950,6 @@ func (dm *DataMasterControler) TambahPersyaratanRambulalin(ctx *gin.Context) {
 		return
 	}
 
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
-		return
-	}
-
 	var master models.DataMaster
 
 	resultsData := dm.DB.Where("id_data_master", id).First(&master)
@@ -974,7 +962,7 @@ func (dm *DataMasterControler) TambahPersyaratanRambulalin(ctx *gin.Context) {
 	persyaratanExist := false
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == payload.Persyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == persyaratan {
 			persyaratanExist = true
 			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 			return
@@ -983,8 +971,8 @@ func (dm *DataMasterControler) TambahPersyaratanRambulalin(ctx *gin.Context) {
 
 	if !persyaratanExist {
 		persyaratan := models.PersyaratanTambahanInput{
-			Persyaratan:           payload.Persyaratan,
-			KeteranganPersyaratan: payload.KeteranganPersyaratan,
+			Persyaratan: persyaratan,
+			Keterangan:  keterangan,
 		}
 		master.PersyaratanTambahan.PersyaratanTambahanRambulalin = append(master.PersyaratanTambahan.PersyaratanTambahanRambulalin, persyaratan)
 	}
@@ -1077,8 +1065,9 @@ func (dm *DataMasterControler) HapusPersyaratanRambulalin(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
-	var payload *models.PersyaratanTambahanInput
 	id := ctx.Param("id")
+	persyaratan := ctx.Param("persyaratan")
+	keterangan := ctx.Param("keterangan")
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -1101,11 +1090,6 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 		return
 	}
 
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
-		return
-	}
-
 	var master models.DataMaster
 
 	resultsData := dm.DB.Where("id_data_master", id).First(&master)
@@ -1118,15 +1102,15 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == payload.Persyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == persyaratan {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].Persyaratan = payload.Persyaratan
-		master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
+		master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].Persyaratan = persyaratan
+		master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].Keterangan = keterangan
 	}
 
 	resultsSave := dm.DB.Save(&master)
