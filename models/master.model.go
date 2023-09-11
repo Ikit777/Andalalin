@@ -25,6 +25,6 @@ type PersyaratanTambahan struct {
 }
 
 type PersyaratanTambahanInput struct {
-	Persyaratan           string
-	KeteranganPersyaratan string
+	Persyaratan           string `json:"persyaratan" binding:"required"`
+	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
 }
