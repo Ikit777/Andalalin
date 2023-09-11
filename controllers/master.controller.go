@@ -903,11 +903,8 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		persyaratan := models.PersyaratanTambahanInput{
-			Persyaratan:           payload.Persyaratan,
-			KeteranganPersyaratan: payload.KeteranganPersyaratan,
-		}
-		master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex] = persyaratan
+		master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan = payload.Persyaratan
+		master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
 	}
 
 	resultsSave := dm.DB.Save(&master)
@@ -1124,11 +1121,8 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		persyaratan := models.PersyaratanTambahanInput{
-			Persyaratan:           payload.Persyaratan,
-			KeteranganPersyaratan: payload.KeteranganPersyaratan,
-		}
-		master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex] = persyaratan
+		master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].Persyaratan = payload.Persyaratan
+		master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].Persyaratan = payload.KeteranganPersyaratan
 	}
 
 	resultsSave := dm.DB.Save(&master)
