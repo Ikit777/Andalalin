@@ -30,6 +30,6 @@ type PersyaratanTambahanInput struct {
 }
 
 type PersyaratanTambahanStruct struct {
-	Persyaratan           string
-	KeteranganPersyaratan string
+	Persyaratan string
+	Keterangan  string
 }

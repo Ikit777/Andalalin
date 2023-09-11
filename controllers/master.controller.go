@@ -763,8 +763,8 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 
 	if !persyaratanExist {
 		persyaratan := models.PersyaratanTambahanStruct{
-			Persyaratan:           payload.Persyaratan,
-			KeteranganPersyaratan: payload.KeteranganPersyaratan,
+			Persyaratan: payload.Persyaratan,
+			Keterangan:  payload.KeteranganPersyaratan,
 		}
 		master.PersyaratanTambahan.PersyaratanTambahanAndalalin = append(master.PersyaratanTambahan.PersyaratanTambahanAndalalin, persyaratan)
 	}
@@ -895,8 +895,8 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	persyaratan := models.PersyaratanTambahanStruct{
-		Persyaratan:           payload.Persyaratan,
-		KeteranganPersyaratan: payload.KeteranganPersyaratan,
+		Persyaratan: payload.Persyaratan,
+		Keterangan:  payload.KeteranganPersyaratan,
 	}
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
@@ -979,8 +979,8 @@ func (dm *DataMasterControler) TambahPersyaratanRambulalin(ctx *gin.Context) {
 
 	if !persyaratanExist {
 		persyaratan := models.PersyaratanTambahanStruct{
-			Persyaratan:           payload.Persyaratan,
-			KeteranganPersyaratan: payload.KeteranganPersyaratan,
+			Persyaratan: payload.Persyaratan,
+			Keterangan:  payload.KeteranganPersyaratan,
 		}
 		master.PersyaratanTambahan.PersyaratanTambahanRambulalin = append(master.PersyaratanTambahan.PersyaratanTambahanRambulalin, persyaratan)
 	}
@@ -1111,8 +1111,8 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 	}
 
 	persyaratan := models.PersyaratanTambahanStruct{
-		Persyaratan:           payload.Persyaratan,
-		KeteranganPersyaratan: payload.KeteranganPersyaratan,
+		Persyaratan: payload.Persyaratan,
+		Keterangan:  payload.KeteranganPersyaratan,
 	}
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
