@@ -83,16 +83,10 @@ func main() {
 	rencana = append(rencana, models.Rencana{Kategori: "Pemukiman", JenisRencana: pemukiman})
 	rencana = append(rencana, models.Rencana{Kategori: "Infrastruktur", JenisRencana: infrastruktur})
 
-	persyaratan := models.PersyaratanTambahan{
-		PersyaratanTambahanAndalalin:  []models.PersyaratanTambahanInput{},
-		PersyaratanTambahanRambulalin: []models.PersyaratanTambahanInput{},
-	}
-
 	initializers.DB.Create(&models.DataMaster{
 		LokasiPengambilan:       lokasi,
 		JenisRencanaPembangunan: jenis_kegiatan,
 		RencanaPembangunan:      rencana,
-		PersyaratanTambahan:     persyaratan,
 	})
 
 	fmt.Println("Migration complete")
