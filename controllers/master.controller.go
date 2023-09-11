@@ -907,7 +907,7 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 
 	if itemIndex != -1 {
 		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan != payload.Persyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan = payload.KeteranganPersyaratan
+			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan = payload.Persyaratan
 		}
 
 		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
