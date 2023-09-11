@@ -20,16 +20,11 @@ type Rencana struct {
 }
 
 type PersyaratanTambahan struct {
-	PersyaratanTambahanAndalalin  []PersyaratanTambahanStruct
-	PersyaratanTambahanRambulalin []PersyaratanTambahanStruct
+	PersyaratanTambahanAndalalin  []PersyaratanTambahanInput
+	PersyaratanTambahanRambulalin []PersyaratanTambahanInput
 }
 
 type PersyaratanTambahanInput struct {
 	Persyaratan           string `json:"persyaratan" binding:"required"`
 	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
-}
-
-type PersyaratanTambahanStruct struct {
-	Persyaratan string
-	Keterangan  string
 }

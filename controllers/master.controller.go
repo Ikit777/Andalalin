@@ -762,9 +762,9 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	if !persyaratanExist {
-		persyaratan := models.PersyaratanTambahanStruct{
-			Persyaratan: payload.Persyaratan,
-			Keterangan:  payload.KeteranganPersyaratan,
+		persyaratan := models.PersyaratanTambahanInput{
+			Persyaratan:           payload.Persyaratan,
+			KeteranganPersyaratan: payload.KeteranganPersyaratan,
 		}
 		master.PersyaratanTambahan.PersyaratanTambahanAndalalin = append(master.PersyaratanTambahan.PersyaratanTambahanAndalalin, persyaratan)
 	}
@@ -894,14 +894,11 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	}
 
-	persyaratan := models.PersyaratanTambahanStruct{
-		Persyaratan: payload.Persyaratan,
-		Keterangan:  payload.KeteranganPersyaratan,
-	}
-
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
 		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i] = persyaratan
+
+			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan = payload.Persyaratan
+			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].KeteranganPersyaratan = payload.KeteranganPersyaratan
 		}
 	}
 
@@ -978,9 +975,9 @@ func (dm *DataMasterControler) TambahPersyaratanRambulalin(ctx *gin.Context) {
 	}
 
 	if !persyaratanExist {
-		persyaratan := models.PersyaratanTambahanStruct{
-			Persyaratan: payload.Persyaratan,
-			Keterangan:  payload.KeteranganPersyaratan,
+		persyaratan := models.PersyaratanTambahanInput{
+			Persyaratan:           payload.Persyaratan,
+			KeteranganPersyaratan: payload.KeteranganPersyaratan,
 		}
 		master.PersyaratanTambahan.PersyaratanTambahanRambulalin = append(master.PersyaratanTambahan.PersyaratanTambahanRambulalin, persyaratan)
 	}
@@ -1110,14 +1107,10 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 		return
 	}
 
-	persyaratan := models.PersyaratanTambahanStruct{
-		Persyaratan: payload.Persyaratan,
-		Keterangan:  payload.KeteranganPersyaratan,
-	}
-
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
 		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == payload.Persyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i] = persyaratan
+			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan = payload.Persyaratan
+			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].KeteranganPersyaratan = payload.KeteranganPersyaratan
 		}
 	}
 
