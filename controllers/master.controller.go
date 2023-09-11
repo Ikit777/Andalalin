@@ -896,11 +896,8 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
 		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
-			persyaratan := models.PersyaratanTambahanInput{
-				Persyaratan:           payload.Persyaratan,
-				KeteranganPersyaratan: payload.KeteranganPersyaratan,
-			}
-			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i] = persyaratan
+			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan = payload.Persyaratan
+			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].KeteranganPersyaratan = payload.KeteranganPersyaratan
 		}
 	}
 
@@ -1111,11 +1108,8 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
 		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == payload.Persyaratan {
-			persyaratan := models.PersyaratanTambahanInput{
-				Persyaratan:           payload.Persyaratan,
-				KeteranganPersyaratan: payload.KeteranganPersyaratan,
-			}
-			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i] = persyaratan
+			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan = payload.Persyaratan
+			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].KeteranganPersyaratan = payload.KeteranganPersyaratan
 		}
 	}
 
