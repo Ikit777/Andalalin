@@ -859,6 +859,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 	var payload *models.PersyaratanTambahanInput
 	id := ctx.Param("id")
+	syarat := ctx.Param("persyaratan")
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -898,7 +899,7 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == syarat {
 			itemIndex = i
 			break
 		}
@@ -906,7 +907,7 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 
 	if itemIndex != -1 {
 		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan != payload.Persyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan = payload.Persyaratan
+			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan = payload.KeteranganPersyaratan
 		}
 
 		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
@@ -1085,6 +1086,7 @@ func (dm *DataMasterControler) HapusPersyaratanRambulalin(ctx *gin.Context) {
 func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 	var payload *models.PersyaratanTambahanInput
 	id := ctx.Param("id")
+	syarat := ctx.Param("persyaratan")
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -1124,7 +1126,7 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == payload.Persyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == syarat {
 			itemIndex = i
 			break
 		}
