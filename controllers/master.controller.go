@@ -754,7 +754,7 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 	persyaratanExist := false
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].NamaPersyaratan == payload.NamaPersyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
 			persyaratanExist = true
 			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 			return
@@ -763,7 +763,7 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 
 	if !persyaratanExist {
 		persyaratan := models.PersyaratanTambahanInput{
-			NamaPersyaratan:       payload.NamaPersyaratan,
+			Persyaratan:           payload.Persyaratan,
 			KeteranganPersyaratan: payload.KeteranganPersyaratan,
 		}
 		master.PersyaratanTambahan.PersyaratanTambahanAndalalin = append(master.PersyaratanTambahan.PersyaratanTambahanAndalalin, persyaratan)
@@ -827,7 +827,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].NamaPersyaratan == persyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == persyaratan {
 			master.PersyaratanTambahan.PersyaratanTambahanAndalalin = append(master.PersyaratanTambahan.PersyaratanTambahanAndalalin[:i], master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i+1:]...)
 			break
 		}
@@ -898,15 +898,21 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].NamaPersyaratan == payload.NamaPersyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].NamaPersyaratan = payload.NamaPersyaratan
-		master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
+		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan != payload.Persyaratan {
+			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan = payload.Persyaratan
+		}
+
+		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
+			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
+		}
+
 	}
 
 	resultsSave := dm.DB.Save(&master)
@@ -974,7 +980,7 @@ func (dm *DataMasterControler) TambahPersyaratanRambulalin(ctx *gin.Context) {
 	persyaratanExist := false
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].NamaPersyaratan == payload.NamaPersyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == payload.Persyaratan {
 			persyaratanExist = true
 			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 			return
@@ -983,7 +989,7 @@ func (dm *DataMasterControler) TambahPersyaratanRambulalin(ctx *gin.Context) {
 
 	if !persyaratanExist {
 		persyaratan := models.PersyaratanTambahanInput{
-			NamaPersyaratan:       payload.NamaPersyaratan,
+			Persyaratan:           payload.Persyaratan,
 			KeteranganPersyaratan: payload.KeteranganPersyaratan,
 		}
 		master.PersyaratanTambahan.PersyaratanTambahanRambulalin = append(master.PersyaratanTambahan.PersyaratanTambahanRambulalin, persyaratan)
@@ -1047,7 +1053,7 @@ func (dm *DataMasterControler) HapusPersyaratanRambulalin(ctx *gin.Context) {
 	}
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].NamaPersyaratan == persyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == persyaratan {
 			master.PersyaratanTambahan.PersyaratanTambahanRambulalin = append(master.PersyaratanTambahan.PersyaratanTambahanRambulalin[:i], master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i+1:]...)
 			break
 		}
@@ -1118,15 +1124,20 @@ func (dm *DataMasterControler) EditPersyaratanRambulalin(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i := range master.PersyaratanTambahan.PersyaratanTambahanRambulalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].NamaPersyaratan == payload.NamaPersyaratan {
+		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[i].Persyaratan == payload.Persyaratan {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].NamaPersyaratan = payload.NamaPersyaratan
-		master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
+		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].Persyaratan != payload.Persyaratan {
+			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].Persyaratan = payload.Persyaratan
+		}
+
+		if master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
+			master.PersyaratanTambahan.PersyaratanTambahanRambulalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
+		}
 	}
 
 	resultsSave := dm.DB.Save(&master)
