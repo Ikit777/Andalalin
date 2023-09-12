@@ -678,14 +678,14 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 		return
 	}
 
-	for key, _ := range ctx.Request.PostForm {
+	for key := range ctx.Request.Form {
 		switch key {
 		case "Kartu tanda penduduk":
-			andalalin.KartuTandaPenduduk = blobs[key]
+			andalalin.KartuTandaPenduduk = blobs["Kartu tanda penduduk"]
 		case "Akta pendirian badan":
-			andalalin.AktaPendirianBadan = blobs[key]
+			andalalin.AktaPendirianBadan = blobs["Akta pendirian badan"]
 		case "Surat kuasa":
-			andalalin.SuratKuasa = blobs[key]
+			andalalin.SuratKuasa = blobs["Surat kuasa"]
 		default:
 			for i, persyaratan := range andalalin.PersyaratanTambahan {
 				if persyaratan.Persyaratan == key {
