@@ -56,6 +56,8 @@ type Andalalin struct {
 	AktaPendirianBadan []byte
 	SuratKuasa         []byte
 
+	PersyaratanTambahan []PersyaratanTambahanPermohonan `gorm:"serializer:json"`
+
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `gorm:"serializer:json"`
 
@@ -71,6 +73,11 @@ type Andalalin struct {
 
 	//Data SK
 	FileSK []byte
+}
+
+type PersyaratanTambahanPermohonan struct {
+	Persyaratan string
+	Berkas      []byte
 }
 
 type InputAndalalin struct {

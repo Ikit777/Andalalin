@@ -150,6 +150,21 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		}
 	}
 
+	var master models.DataMaster
+
+	results := ac.DB.First(&master)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	}
+
+	tambahan := []models.PersyaratanTambahanPermohonan{}
+
+	for _, persyaratan := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
+		tambahan = append(tambahan, models.PersyaratanTambahanPermohonan{Persyaratan: persyaratan.Persyaratan, Berkas: blobs[persyaratan.Persyaratan]})
+	}
+
 	permohonan := models.Andalalin{
 		IdUser:                          currentUser.ID,
 		JenisAndalalin:                  "Dokumen analisa dampak lalu lintas",
@@ -191,9 +206,10 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		NomerSKRK:            payload.Andalalin.NomerSKRK,
 		TanggalSKRK:          payload.Andalalin.TanggalSKRK,
 
-		KartuTandaPenduduk: blobs["ktp"],
-		AktaPendirianBadan: blobs["apb"],
-		SuratKuasa:         blobs["sk"],
+		KartuTandaPenduduk:  blobs["ktp"],
+		AktaPendirianBadan:  blobs["apb"],
+		SuratKuasa:          blobs["sk"],
+		PersyaratanTambahan: tambahan,
 	}
 
 	result := ac.DB.Create(&permohonan)
