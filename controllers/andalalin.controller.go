@@ -687,9 +687,9 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 		case "Surat kuasa":
 			andalalin.SuratKuasa = blobs[key]
 		default:
-			for i, persyaratan := range andalalin.PersyaratanTambahan {
+			for _, persyaratan := range andalalin.PersyaratanTambahan {
 				if persyaratan.Persyaratan == key {
-					andalalin.PersyaratanTambahan[i].Berkas = blobs[key]
+					persyaratan.Berkas = blobs[key]
 				}
 			}
 		}
