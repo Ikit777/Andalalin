@@ -679,9 +679,10 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 			case "Surat kuasa":
 				andalalin.SuratKuasa = data
 			default:
-				for _, persyaratan := range andalalin.PersyaratanTambahan {
-					if persyaratan.Persyaratan == key {
-						persyaratan.Berkas = data
+				for i := range andalalin.PersyaratanTambahan {
+					if andalalin.PersyaratanTambahan[i].Persyaratan == key {
+						andalalin.PersyaratanTambahan[i].Berkas = data
+						break
 					}
 				}
 			}
