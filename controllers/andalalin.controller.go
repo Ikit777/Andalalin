@@ -678,9 +678,7 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Request.ParseForm()
-
-	for key := range ctx.Request.PostForm {
+	for key := range form.File {
 		switch key {
 		case "Kartu tanda penduduk":
 			andalalin.KartuTandaPenduduk = blobs[key]
