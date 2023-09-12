@@ -678,6 +678,8 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 		return
 	}
 
+	ctx.Request.ParseForm()
+
 	for key := range ctx.Request.PostForm {
 		switch key {
 		case "Kartu tanda penduduk":
