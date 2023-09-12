@@ -678,21 +678,23 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 		return
 	}
 
-	if blobs["ktp"] == nil {
-		blobs["ktp"] = andalalin.KartuTandaPenduduk
+	for key, _ := range ctx.Request.PostForm {
+		switch key {
+		case "Kartu tanda penduduk":
+			andalalin.KartuTandaPenduduk = blobs[key]
+		case "Akta pendirian badan":
+			andalalin.AktaPendirianBadan = blobs[key]
+		case "Surat kuasa":
+			andalalin.SuratKuasa = blobs[key]
+		default:
+			for i, persyaratan := range andalalin.PersyaratanTambahan {
+				if persyaratan.Persyaratan == key {
+					andalalin.PersyaratanTambahan[i].Berkas = blobs[key]
+				}
+			}
+		}
 	}
 
-	if blobs["apb"] == nil {
-		blobs["apb"] = andalalin.AktaPendirianBadan
-	}
-
-	if blobs["sk"] == nil {
-		blobs["sk"] = andalalin.SuratKuasa
-	}
-
-	andalalin.KartuTandaPenduduk = blobs["ktp"]
-	andalalin.AktaPendirianBadan = blobs["apb"]
-	andalalin.SuratKuasa = blobs["sk"]
 	andalalin.PersyaratanTidakSesuai = nil
 	andalalin.StatusAndalalin = "Cek persyaratan"
 
