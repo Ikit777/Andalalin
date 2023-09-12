@@ -419,6 +419,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 			TanggalBAP:                      andalalin.TanggalBAP,
 			FileBAP:                         andalalin.FileBAP,
 			FileSK:                          andalalin.FileSK,
+			PersyaratanTambahan:             andalalin.PersyaratanTambahan,
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 	}
