@@ -223,6 +223,8 @@ type AndalalinResponse struct {
 
 	//Data SK
 	FileSK []byte `json:"file_sk,omitempty"`
+
+	PersyaratanTambahan []PersyaratanTambahanPermohonan `json:"persyaratan_tambahan,omitempty"`
 }
 
 type AndalalinResponseUser struct {
