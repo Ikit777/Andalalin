@@ -646,7 +646,13 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 		return
 	}
 
-	blobs := make(map[string][]byte)
+	var andalalin *models.Andalalin
+	results := ac.DB.Find(&andalalin, "id_andalalin = ?", id)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	}
 
 	for key, files := range form.File {
 		for _, file := range files {
@@ -665,31 +671,18 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 				return
 			}
 
-			// Store the blob data in the map
-			blobs[key] = data
-		}
-	}
-
-	var andalalin *models.Andalalin
-	results := ac.DB.Find(&andalalin, "id_andalalin = ?", id)
-
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
-		return
-	}
-
-	for key := range form.File {
-		switch key {
-		case "Kartu tanda penduduk":
-			andalalin.KartuTandaPenduduk = blobs[key]
-		case "Akta pendirian badan":
-			andalalin.AktaPendirianBadan = blobs[key]
-		case "Surat kuasa":
-			andalalin.SuratKuasa = blobs[key]
-		default:
-			for _, persyaratan := range andalalin.PersyaratanTambahan {
-				if persyaratan.Persyaratan == key {
-					persyaratan.Berkas = blobs[key]
+			switch key {
+			case "Kartu tanda penduduk":
+				andalalin.KartuTandaPenduduk = data
+			case "Akta pendirian badan":
+				andalalin.AktaPendirianBadan = data
+			case "Surat kuasa":
+				andalalin.SuratKuasa = data
+			default:
+				for _, persyaratan := range andalalin.PersyaratanTambahan {
+					if persyaratan.Persyaratan == key {
+						persyaratan.Berkas = data
+					}
 				}
 			}
 		}
