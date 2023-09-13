@@ -855,9 +855,9 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		for _, s := range andalalin {
 			for j, tambahan := range s.PersyaratanTambahan {
 				if tambahan.Persyaratan == persyaratan {
-					fileData, errorDecode := base64.StdEncoding.DecodeString(string(s.PersyaratanTambahan[j].Berkas))
+					fileData, errorDecode := base64.StdEncoding.DecodeString(string(tambahan.Berkas))
 					if errorDecode != nil {
-						ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": errorDecode})
+						ctx.JSON(http.StatusConflict, gin.H{"status": "error", "message": errorDecode})
 						return
 					}
 
