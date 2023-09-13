@@ -20,6 +20,11 @@ type DataMasterControler struct {
 	DB *gorm.DB
 }
 
+type file struct {
+	Name string
+	File []byte
+}
+
 func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 	return DataMasterControler{DB}
 }
@@ -845,25 +850,21 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
-		file := []string{}
-		for i := range andalalin {
-			for j := range andalalin[i].PersyaratanTambahan {
-				if andalalin[i].PersyaratanTambahan[j].Persyaratan == persyaratan {
-					fileName := andalalin[i].KodeAndalalin + ".pdf"
+		dataFile := []file{}
+		for _, permohonan := range andalalin {
+			for j, tambahan := range permohonan.PersyaratanTambahan {
+				if tambahan.Persyaratan == persyaratan {
+					fileName := permohonan.KodeAndalalin + ".pdf"
 
-					error = os.WriteFile(fileName, andalalin[i].PersyaratanTambahan[j].Berkas, 0644)
-					if error != nil {
-						ctx.JSON(http.StatusConflict, gin.H{"status": "error", "message": error})
-						return
-					}
-					file = append(file, fileName)
-					andalalin[i].PersyaratanTambahan = append(andalalin[i].PersyaratanTambahan[:j], andalalin[i].PersyaratanTambahan[j+1:]...)
+					dataFile = append(dataFile, file{Name: fileName, File: tambahan.Berkas})
+					permohonan.PersyaratanTambahan = append(permohonan.PersyaratanTambahan[:j], permohonan.PersyaratanTambahan[j+1:]...)
+					break
 				}
 			}
 		}
 
 		zipFile := persyaratan + ".zip"
-		error = compressFiles(zipFile, file)
+		error = compressFiles(zipFile, dataFile)
 		if error != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": error})
 			return
@@ -901,7 +902,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 	}
 }
 
-func compressFiles(zipFileName string, fileNames []string) error {
+func compressFiles(zipFileName string, fileData []file) error {
 	zipFile, err := os.Create(zipFileName)
 	if err != nil {
 		return err
@@ -911,8 +912,14 @@ func compressFiles(zipFileName string, fileNames []string) error {
 	zipWriter := zip.NewWriter(zipFile)
 	defer zipWriter.Close()
 
-	for _, fileName := range fileNames {
-		file, err := os.Open(fileName)
+	for _, data := range fileData {
+		tmpFile, _ := os.CreateTemp("", "persyaratan.pdf")
+		defer os.Remove(tmpFile.Name())
+
+		_, _ = tmpFile.Write(data.File)
+		tmpFile.Close()
+
+		file, err := os.Open(tmpFile.Name())
 		if err != nil {
 			return err
 		}
@@ -928,7 +935,7 @@ func compressFiles(zipFileName string, fileNames []string) error {
 			return err
 		}
 
-		header.Name = fileName
+		header.Name = data.Name
 
 		writer, err := zipWriter.CreateHeader(header)
 		if err != nil {
