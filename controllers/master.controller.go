@@ -67,6 +67,55 @@ func contains(s []string, str string) bool {
 	return false
 }
 
+func compressFiles(zipFileName string, fileData []file) error {
+	zipFile, err := os.Create(zipFileName)
+	if err != nil {
+		return err
+	}
+	defer zipFile.Close()
+
+	zipWriter := zip.NewWriter(zipFile)
+	defer zipWriter.Close()
+
+	for _, data := range fileData {
+		tmpFile, _ := os.CreateTemp("", "persyaratan.pdf")
+		defer os.Remove(tmpFile.Name())
+
+		_, _ = tmpFile.Write(data.File)
+		tmpFile.Close()
+
+		file, err := os.Open(tmpFile.Name())
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		fileInfo, err := file.Stat()
+		if err != nil {
+			return err
+		}
+
+		header, err := zip.FileInfoHeader(fileInfo)
+		if err != nil {
+			return err
+		}
+
+		header.Name = data.Name
+
+		writer, err := zipWriter.CreateHeader(header)
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(writer, file)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 	lokasi := ctx.Param("lokasi")
 	id := ctx.Param("id")
@@ -883,6 +932,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 
 		base64ZipData := base64.StdEncoding.EncodeToString(zipData)
 
+		dm.DB.Save(&andalalin)
 		resultsSave := dm.DB.Save(&master)
 		if resultsSave.Error != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
@@ -905,55 +955,6 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone, "file": base64ZipData})
 	}
-}
-
-func compressFiles(zipFileName string, fileData []file) error {
-	zipFile, err := os.Create(zipFileName)
-	if err != nil {
-		return err
-	}
-	defer zipFile.Close()
-
-	zipWriter := zip.NewWriter(zipFile)
-	defer zipWriter.Close()
-
-	for _, data := range fileData {
-		tmpFile, _ := os.CreateTemp("", "persyaratan.pdf")
-		defer os.Remove(tmpFile.Name())
-
-		_, _ = tmpFile.Write(data.File)
-		tmpFile.Close()
-
-		file, err := os.Open(tmpFile.Name())
-		if err != nil {
-			return err
-		}
-		defer file.Close()
-
-		fileInfo, err := file.Stat()
-		if err != nil {
-			return err
-		}
-
-		header, err := zip.FileInfoHeader(fileInfo)
-		if err != nil {
-			return err
-		}
-
-		header.Name = data.Name
-
-		writer, err := zipWriter.CreateHeader(header)
-		if err != nil {
-			return err
-		}
-
-		_, err = io.Copy(writer, file)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
