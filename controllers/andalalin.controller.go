@@ -162,19 +162,6 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		}
 	}
 
-	var master models.DataMaster
-
-	results := ac.DB.First(&master)
-
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
-		return
-	}
-
-	for _, persyaratan := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
-		tambahan = append(tambahan, models.PersyaratanTambahanPermohonan{Persyaratan: persyaratan.Persyaratan, Berkas: blobs[persyaratan.Persyaratan]})
-	}
-
 	permohonan := models.Andalalin{
 		IdUser:                          currentUser.ID,
 		JenisAndalalin:                  "Dokumen analisa dampak lalu lintas",
