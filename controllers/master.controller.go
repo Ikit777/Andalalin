@@ -846,19 +846,18 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	} else {
 		file := []string{}
-		for _, s := range andalalin {
-			for j, tambahan := range s.PersyaratanTambahan {
-				if tambahan.Persyaratan == persyaratan {
-					fileName := s.KodeAndalalin + ".pdf"
+		for i := range andalalin {
+			for j := range andalalin[i].PersyaratanTambahan {
+				if andalalin[i].PersyaratanTambahan[j].Persyaratan == persyaratan {
+					fileName := andalalin[i].KodeAndalalin + ".pdf"
 
-					error = os.WriteFile(fileName, tambahan.Berkas, 0644)
+					error = os.WriteFile(fileName, andalalin[i].PersyaratanTambahan[j].Berkas, 0644)
 					if error != nil {
 						ctx.JSON(http.StatusConflict, gin.H{"status": "error", "message": error})
 						return
 					}
 					file = append(file, fileName)
-					s.PersyaratanTambahan = append(s.PersyaratanTambahan[:j], s.PersyaratanTambahan[j+1:]...)
-					break
+					andalalin[i].PersyaratanTambahan = append(andalalin[i].PersyaratanTambahan[:j], andalalin[i].PersyaratanTambahan[j+1:]...)
 				}
 			}
 		}
