@@ -852,23 +852,25 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	} else {
 		file := []string{}
-		for i, s := range andalalin {
-			if s.PersyaratanTambahan[i].Persyaratan == persyaratan {
-				fileData, errorDecode := base64.StdEncoding.DecodeString(string(s.PersyaratanTambahan[i].Berkas))
-				if errorDecode != nil {
-					ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": errorDecode})
-					return
-				}
+		for _, s := range andalalin {
+			for j, tambahan := range s.PersyaratanTambahan {
+				if tambahan.Persyaratan == persyaratan {
+					fileData, errorDecode := base64.StdEncoding.DecodeString(string(s.PersyaratanTambahan[j].Berkas))
+					if errorDecode != nil {
+						ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": errorDecode})
+						return
+					}
 
-				fileName := s.KodeAndalalin + ".pdf"
+					fileName := s.KodeAndalalin + ".pdf"
 
-				error = os.WriteFile(fileName, fileData, 0644)
-				if error != nil {
-					ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": error})
-					return
+					error = os.WriteFile(fileName, fileData, 0644)
+					if error != nil {
+						ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": error})
+						return
+					}
+					file = append(file, fileName)
+					s.PersyaratanTambahan = append(s.PersyaratanTambahan[:j], s.PersyaratanTambahan[j+1:]...)
 				}
-				file = append(file, fileName)
-				s.PersyaratanTambahan = append(s.PersyaratanTambahan[:i], s.PersyaratanTambahan[i+1:]...)
 			}
 		}
 
