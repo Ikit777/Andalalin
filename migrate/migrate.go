@@ -84,8 +84,8 @@ func main() {
 	rencana = append(rencana, models.Rencana{Kategori: "Infrastruktur", JenisRencana: infrastruktur})
 
 	persyaratan := models.PersyaratanTambahan{
-		PersyaratanTambahanAndalalin:  []models.PersyaratanTambahanInput{},
-		PersyaratanTambahanRambulalin: []models.PersyaratanTambahanInput{},
+		PersyaratanTambahanAndalalin: []models.PersyaratanTambahanInput{},
+		PersyaratanTambahanPerlalin:  []models.PersyaratanTambahanInput{},
 	}
 
 	initializers.DB.Create(&models.DataMaster{

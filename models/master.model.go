@@ -20,8 +20,8 @@ type Rencana struct {
 }
 
 type PersyaratanTambahan struct {
-	PersyaratanTambahanAndalalin  []PersyaratanTambahanInput
-	PersyaratanTambahanRambulalin []PersyaratanTambahanInput
+	PersyaratanTambahanAndalalin []PersyaratanTambahanInput
+	PersyaratanTambahanPerlalin  []PersyaratanTambahanInput
 }
 
 type PersyaratanTambahanInput struct {
