@@ -860,7 +860,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 					return
 				}
 
-				fileName := s.KodeAndalalin
+				fileName := s.KodeAndalalin + ".pdf"
 
 				error = os.WriteFile(fileName, fileData, 0644)
 				if error != nil {
