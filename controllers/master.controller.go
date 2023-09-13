@@ -1,7 +1,11 @@
 package controllers
 
 import (
+	"archive/zip"
+	"encoding/base64"
+	"io"
 	"net/http"
+	"os"
 
 	"github.com/Ikit777/E-Andalalin/initializers"
 	"github.com/Ikit777/E-Andalalin/models"
@@ -847,27 +851,101 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
+		file := []string{}
 		for i, s := range andalalin {
-			s.PersyaratanTambahan = append(s.PersyaratanTambahan[:i], s.PersyaratanTambahan[i+1:]...)
+			if s.PersyaratanTambahan[i].Persyaratan == persyaratan {
+				fileData, errorDecode := base64.StdEncoding.DecodeString(string(s.PersyaratanTambahan[i].Berkas))
+				if errorDecode != nil {
+					ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": errorDecode})
+					return
+				}
+
+				fileName := s.KodeAndalalin
+
+				error = os.WriteFile(fileName, fileData, 0644)
+				if error != nil {
+					ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": error})
+					return
+				}
+				file = append(file, fileName)
+				s.PersyaratanTambahan = append(s.PersyaratanTambahan[:i], s.PersyaratanTambahan[i+1:]...)
+			}
 		}
-		ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+
+		zipFile := persyaratan + ".zip"
+		error = compressFiles(zipFile, file)
+		if error != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": error})
+			return
+		}
+
+		zipData, errorZip := os.ReadFile(zipFile)
+		if errorZip != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": errorZip})
+			return
+		}
+
+		base64ZipData := base64.StdEncoding.EncodeToString(zipData)
+
+		respone := struct {
+			IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
+			Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
+			JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
+			RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+			PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		}{
+			IdDataMaster:        master.IdDataMaster,
+			Lokasi:              master.LokasiPengambilan,
+			JenisRencana:        master.JenisRencanaPembangunan,
+			RencanaPembangunan:  master.RencanaPembangunan,
+			PersyaratanTambahan: master.PersyaratanTambahan,
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone, "file": base64ZipData})
+	}
+}
+
+func compressFiles(zipFileName string, fileNames []string) error {
+	zipFile, err := os.Create(zipFileName)
+	if err != nil {
+		return err
+	}
+	defer zipFile.Close()
+
+	zipWriter := zip.NewWriter(zipFile)
+	defer zipWriter.Close()
+
+	for _, fileName := range fileNames {
+		file, err := os.Open(fileName)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		fileInfo, err := file.Stat()
+		if err != nil {
+			return err
+		}
+
+		header, err := zip.FileInfoHeader(fileInfo)
+		if err != nil {
+			return err
+		}
+
+		header.Name = fileName
+
+		writer, err := zipWriter.CreateHeader(header)
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(writer, file)
+		if err != nil {
+			return err
+		}
 	}
 
-	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
-	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+	return nil
 }
 
 func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
