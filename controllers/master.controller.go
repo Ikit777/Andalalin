@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/Ikit777/E-Andalalin/initializers"
 	"github.com/Ikit777/E-Andalalin/models"
@@ -854,7 +855,10 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		for _, permohonan := range andalalin {
 			for j, tambahan := range permohonan.PersyaratanTambahan {
 				if tambahan.Persyaratan == persyaratan {
-					fileName := permohonan.KodeAndalalin + ".pdf"
+					oldSubstr := "/"
+					newSubstr := "//"
+					result := strings.Replace(permohonan.KodeAndalalin, oldSubstr, newSubstr, -1)
+					fileName := result + ".pdf"
 
 					dataFile = append(dataFile, file{Name: fileName, File: tambahan.Berkas})
 					permohonan.PersyaratanTambahan = append(permohonan.PersyaratanTambahan[:j], permohonan.PersyaratanTambahan[j+1:]...)
@@ -878,6 +882,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 
 		base64ZipData := base64.StdEncoding.EncodeToString(zipData)
 
+		dm.DB.Save(&andalalin)
 		resultsSave := dm.DB.Save(&master)
 		if resultsSave.Error != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
