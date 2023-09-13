@@ -128,6 +128,8 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 
 	blobs := make(map[string][]byte)
 
+	tambahan := []models.PersyaratanTambahanPermohonan{}
+
 	for key, files := range form.File {
 		for _, file := range files {
 			// Save the uploaded file with key as prefix
@@ -146,7 +148,17 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 			}
 
 			// Store the blob data in the map
-			blobs[key] = data
+
+			switch key {
+			case "ktp":
+				blobs[key] = data
+			case "apb":
+				blobs[key] = data
+			case "sk":
+				blobs[key] = data
+			default:
+				tambahan = append(tambahan, models.PersyaratanTambahanPermohonan{Persyaratan: key, Berkas: data})
+			}
 		}
 	}
 
@@ -158,8 +170,6 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
 		return
 	}
-
-	tambahan := []models.PersyaratanTambahanPermohonan{}
 
 	for _, persyaratan := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
 		tambahan = append(tambahan, models.PersyaratanTambahanPermohonan{Persyaratan: persyaratan.Persyaratan, Berkas: blobs[persyaratan.Persyaratan]})

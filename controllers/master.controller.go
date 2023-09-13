@@ -839,6 +839,20 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	}
 
+	var andalalin []models.Andalalin
+
+	results := dm.DB.Find(&andalalin)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	} else {
+		for i, s := range andalalin {
+			s.PersyaratanTambahan = append(s.PersyaratanTambahan[:i], s.PersyaratanTambahan[i+1:]...)
+		}
+		ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+	}
+
 	respone := struct {
 		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
 		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
