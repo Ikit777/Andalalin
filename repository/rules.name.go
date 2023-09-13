@@ -4,6 +4,8 @@ const (
 	// SuperAdminRoleName const for super admin role.
 	SuperAdminRoleName string = "Super Admin"
 
+	DinasPerhubunganRoleName string = "Dinas Perhubungan"
+
 	// AdminRoleName const for admin role.
 	AdminRoleName string = "Admin"
 

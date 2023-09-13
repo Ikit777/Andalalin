@@ -14,6 +14,7 @@ func GetRoleGives(role string) ([]string, error) {
 	case repository.SuperAdminRoleName:
 		// Super Admin credentials.
 		rolegives = []string{
+			repository.DinasPerhubunganRoleName,
 			repository.AdminRoleName,
 			repository.OperatorRoleName,
 			repository.OfficerRoleName,

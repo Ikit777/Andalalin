@@ -38,6 +38,12 @@ func GetCredentialsByRole(role string) ([]string, error) {
 			repository.ProductDeleteCredential,
 			repository.ProductUpdateCredential,
 		}
+	case repository.DinasPerhubunganRoleName:
+		// Admin credentials.
+		credentials = []string{
+			repository.AndalalinGetCredential,
+			repository.AndalalinSurveyCredential,
+		}
 	case repository.AdminRoleName:
 		// Admin credentials.
 		credentials = []string{
