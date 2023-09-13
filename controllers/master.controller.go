@@ -837,12 +837,6 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		}
 	}
 
-	resultsSave := dm.DB.Save(&master)
-	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
-		return
-	}
-
 	var andalalin []models.Andalalin
 
 	results := dm.DB.Find(&andalalin)
@@ -859,7 +853,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 
 					error = os.WriteFile(fileName, tambahan.Berkas, 0644)
 					if error != nil {
-						ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": error})
+						ctx.JSON(http.StatusConflict, gin.H{"status": "error", "message": error})
 						return
 					}
 					file = append(file, fileName)
@@ -878,11 +872,17 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 
 		zipData, errorZip := os.ReadFile(zipFile)
 		if errorZip != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": errorZip})
+			ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": errorZip})
 			return
 		}
 
 		base64ZipData := base64.StdEncoding.EncodeToString(zipData)
+
+		resultsSave := dm.DB.Save(&master)
+		if resultsSave.Error != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+			return
+		}
 
 		respone := struct {
 			IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
