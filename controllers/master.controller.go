@@ -864,6 +864,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 					}
 					file = append(file, fileName)
 					s.PersyaratanTambahan = append(s.PersyaratanTambahan[:j], s.PersyaratanTambahan[j+1:]...)
+					break
 				}
 			}
 		}
