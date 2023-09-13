@@ -852,16 +852,17 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	} else {
 		dataFile := []file{}
-		for _, permohonan := range andalalin {
+		for i, permohonan := range andalalin {
 			for j, tambahan := range permohonan.PersyaratanTambahan {
 				if tambahan.Persyaratan == persyaratan {
 					oldSubstr := "/"
-					newSubstr := "//"
+					newSubstr := "-"
+
 					result := strings.Replace(permohonan.KodeAndalalin, oldSubstr, newSubstr, -1)
 					fileName := result + ".pdf"
 
 					dataFile = append(dataFile, file{Name: fileName, File: tambahan.Berkas})
-					permohonan.PersyaratanTambahan = append(permohonan.PersyaratanTambahan[:j], permohonan.PersyaratanTambahan[j+1:]...)
+					andalalin[i].PersyaratanTambahan = append(andalalin[i].PersyaratanTambahan[:j], andalalin[i].PersyaratanTambahan[j+1:]...)
 					break
 				}
 			}
@@ -882,7 +883,6 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 
 		base64ZipData := base64.StdEncoding.EncodeToString(zipData)
 
-		dm.DB.Save(&andalalin)
 		resultsSave := dm.DB.Save(&master)
 		if resultsSave.Error != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
