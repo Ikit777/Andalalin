@@ -204,7 +204,7 @@ func (dm *DataMasterControler) HapusLokasi(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductDeleteCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -273,7 +273,7 @@ func (dm *DataMasterControler) EditLokasi(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductUpdateCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -417,7 +417,7 @@ func (dm *DataMasterControler) HapusKategori(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductDeleteCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -493,7 +493,7 @@ func (dm *DataMasterControler) EditKategori(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductUpdateCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -672,7 +672,7 @@ func (dm *DataMasterControler) HapusJenisRencanaPembangunan(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductDeleteCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -745,7 +745,7 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductUpdateCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -895,7 +895,7 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductDeleteCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -971,7 +971,7 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductUpdateCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -1141,7 +1141,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductDeleteCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -1252,7 +1252,7 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductUpdateCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -1422,7 +1422,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductDeleteCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -1491,7 +1491,7 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.ProductAddCredential]
+	credential := claim.Credentials[repository.ProductUpdateCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
