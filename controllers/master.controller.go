@@ -41,17 +41,21 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        data.IdDataMaster,
-		Lokasi:              data.LokasiPengambilan,
-		JenisRencana:        data.JenisRencanaPembangunan,
-		RencanaPembangunan:  data.RencanaPembangunan,
-		PersyaratanTambahan: data.PersyaratanTambahan,
+		IdDataMaster:           data.IdDataMaster,
+		Lokasi:                 data.LokasiPengambilan,
+		JenisRencana:           data.JenisRencanaPembangunan,
+		RencanaPembangunan:     data.RencanaPembangunan,
+		KategoriPerlengkapan:   data.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: data.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    data.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
