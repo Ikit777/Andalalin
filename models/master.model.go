@@ -7,6 +7,8 @@ type DataMaster struct {
 	LokasiPengambilan       Lokasi              `gorm:"serializer:json"`
 	JenisRencanaPembangunan Jenis               `gorm:"serializer:json"`
 	RencanaPembangunan      []Rencana           `gorm:"serializer:json"`
+	KategoriPerlengkapan    Perlengkapan        `gorm:"serializer:json"`
+	PerlengkapanLaluLintas  []JenisPerlengkapan `gorm:"serializer:json"`
 	PersyaratanTambahan     PersyaratanTambahan `gorm:"serializer:json"`
 }
 
@@ -14,9 +16,17 @@ type Lokasi []string
 
 type Jenis []string
 
+type Perlengkapan []string
+
 type Rencana struct {
 	Kategori     string
 	JenisRencana []string
+}
+
+type JenisPerlengkapan struct {
+	Kategori           string
+	GambarPerlengkapan []byte
+	JenisPerlengkapan  []string
 }
 
 type PersyaratanTambahan struct {
