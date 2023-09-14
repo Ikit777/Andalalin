@@ -24,9 +24,13 @@ type Rencana struct {
 }
 
 type JenisPerlengkapan struct {
-	Kategori           string
+	Kategori     string
+	Perlengkapan []PerlengkapanItem
+}
+
+type PerlengkapanItem struct {
+	JenisPerlengkapan  string
 	GambarPerlengkapan []byte
-	JenisPerlengkapan  []string
 }
 
 type PersyaratanTambahan struct {
