@@ -922,12 +922,12 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 		}
 	}
 
-	// for i, item := range master.RencanaPembangunan {
-	// 	if item.Kategori == kategori {
-	// 		master.RencanaPembangunan = append(master.RencanaPembangunan[:i], master.RencanaPembangunan[i+1:]...)
-	// 		break
-	// 	}
-	// }
+	for i, item := range master.PerlengkapanLaluLintas {
+		if item.Kategori == kategori {
+			master.PerlengkapanLaluLintas = append(master.PerlengkapanLaluLintas[:i], master.PerlengkapanLaluLintas[i+1:]...)
+			break
+		}
+	}
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
@@ -992,7 +992,7 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 	}
 
 	itemIndex := -1
-	// itemIndexRencana := -1
+	itemIndexKategori := -1
 
 	for i, item := range master.KategoriPerlengkapan {
 		if item == kategori {
@@ -1005,16 +1005,16 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 		master.KategoriPerlengkapan[itemIndex] = newKategori
 	}
 
-	// for i, item := range master.RencanaPembangunan {
-	// 	if item.Kategori == kategori {
-	// 		itemIndexRencana = i
-	// 		break
-	// 	}
-	// }
+	for i, item := range master.PerlengkapanLaluLintas {
+		if item.Kategori == kategori {
+			itemIndexKategori = i
+			break
+		}
+	}
 
-	// if itemIndexRencana != -1 {
-	// 	master.RencanaPembangunan[itemIndexRencana].Kategori = newKategori
-	// }
+	if itemIndexKategori != -1 {
+		master.PerlengkapanLaluLintas[itemIndexKategori].Kategori = newKategori
+	}
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {

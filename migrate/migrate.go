@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -21,6 +23,10 @@ func init() {
 	}
 
 	initializers.ConnectDB(&config)
+}
+
+func removeExtension(fileName string) string {
+	return path.Base(fileName[:len(fileName)-len(path.Ext(fileName))])
 }
 
 func main() {
@@ -90,12 +96,45 @@ func main() {
 		PersyaratanTambahanPerlalin:  []models.PersyaratanTambahanInput{},
 	}
 
+	perlengkapanPeringatan := []models.PerlengkapanItem{}
+
+	folderPath := "assets/Perlalin/Peringatan"
+
+	folder, err := os.Open(folderPath)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder.Close()
+
+	filePeringatan, err := folder.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range filePeringatan {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderPath, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPeringatan = append(perlengkapanPeringatan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapan := []models.JenisPerlengkapan{}
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu peringatan", Perlengkapan: perlengkapanPeringatan})
+
 	initializers.DB.Create(&models.DataMaster{
 		LokasiPengambilan:       lokasi,
 		JenisRencanaPembangunan: jenis_kegiatan,
 		RencanaPembangunan:      rencana,
 		PersyaratanTambahan:     persyaratan,
 		KategoriPerlengkapan:    ketegori_perlengkapan,
+		PerlengkapanLaluLintas:  perlengkapan,
 	})
 
 	fmt.Println("Migration complete")
