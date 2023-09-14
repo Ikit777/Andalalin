@@ -83,6 +83,8 @@ func main() {
 	rencana = append(rencana, models.Rencana{Kategori: "Pemukiman", JenisRencana: pemukiman})
 	rencana = append(rencana, models.Rencana{Kategori: "Infrastruktur", JenisRencana: infrastruktur})
 
+	ketegori_perlengkapan := []string{"Rambu peringatan", "Rambu larangan", "Rambu perintah", "Rambu petunjunk", "Lainnya"}
+
 	persyaratan := models.PersyaratanTambahan{
 		PersyaratanTambahanAndalalin: []models.PersyaratanTambahanInput{},
 		PersyaratanTambahanPerlalin:  []models.PersyaratanTambahanInput{},
@@ -93,6 +95,7 @@ func main() {
 		JenisRencanaPembangunan: jenis_kegiatan,
 		RencanaPembangunan:      rencana,
 		PersyaratanTambahan:     persyaratan,
+		KategoriPerlengkapan:    ketegori_perlengkapan,
 	})
 
 	fmt.Println("Migration complete")

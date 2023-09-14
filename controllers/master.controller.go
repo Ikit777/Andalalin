@@ -170,17 +170,21 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -234,17 +238,21 @@ func (dm *DataMasterControler) HapusLokasi(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -305,17 +313,21 @@ func (dm *DataMasterControler) EditLokasi(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -371,17 +383,21 @@ func (dm *DataMasterControler) TambahKategori(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -442,17 +458,21 @@ func (dm *DataMasterControler) HapusKategori(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -525,17 +545,21 @@ func (dm *DataMasterControler) EditKategori(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -613,17 +637,21 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -681,17 +709,21 @@ func (dm *DataMasterControler) HapusJenisRencanaPembangunan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -759,17 +791,253 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
+	kategori := ctx.Param("kategori")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	exist := contains(master.KategoriPerlengkapan, kategori)
+
+	if exist {
+		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
+		return
+	}
+
+	master.KategoriPerlengkapan = append(master.KategoriPerlengkapan, kategori)
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
+	kategori := ctx.Param("kategori")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	for i, item := range master.KategoriPerlengkapan {
+		if item == kategori {
+			master.KategoriPerlengkapan = append(master.KategoriPerlengkapan[:i], master.KategoriPerlengkapan[i+1:]...)
+			break
+		}
+	}
+
+	// for i, item := range master.RencanaPembangunan {
+	// 	if item.Kategori == kategori {
+	// 		master.RencanaPembangunan = append(master.RencanaPembangunan[:i], master.RencanaPembangunan[i+1:]...)
+	// 		break
+	// 	}
+	// }
+
+	// resultsSave := dm.DB.Save(&master)
+	// if resultsSave.Error != nil {
+	// 	ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+	// 	return
+	// }
+
+	respone := struct {
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
+	kategori := ctx.Param("kategori")
+	newKategori := ctx.Param("new_kategori")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	itemIndex := -1
+	// itemIndexRencana := -1
+
+	for i, item := range master.KategoriPerlengkapan {
+		if item == kategori {
+			itemIndex = i
+			break
+		}
+	}
+
+	if itemIndex != -1 {
+		master.KategoriPerlengkapan[itemIndex] = newKategori
+	}
+
+	// for i, item := range master.RencanaPembangunan {
+	// 	if item.Kategori == kategori {
+	// 		itemIndexRencana = i
+	// 		break
+	// 	}
+	// }
+
+	// if itemIndexRencana != -1 {
+	// 	master.RencanaPembangunan[itemIndexRencana].Kategori = newKategori
+	// }
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -839,17 +1107,21 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -944,17 +1216,21 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		}
 
 		respone := struct {
-			IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-			Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-			JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-			RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-			PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+			IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+			Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+			JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+			RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+			KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+			PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+			PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 		}{
-			IdDataMaster:        master.IdDataMaster,
-			Lokasi:              master.LokasiPengambilan,
-			JenisRencana:        master.JenisRencanaPembangunan,
-			RencanaPembangunan:  master.RencanaPembangunan,
-			PersyaratanTambahan: master.PersyaratanTambahan,
+			IdDataMaster:           master.IdDataMaster,
+			Lokasi:                 master.LokasiPengambilan,
+			JenisRencana:           master.JenisRencanaPembangunan,
+			RencanaPembangunan:     master.RencanaPembangunan,
+			KategoriPerlengkapan:   master.KategoriPerlengkapan,
+			PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+			PersyaratanTambahan:    master.PersyaratanTambahan,
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone, "file": base64ZipData})
@@ -1028,17 +1304,21 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -1108,17 +1388,21 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -1172,17 +1456,21 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -1254,17 +1542,21 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster        uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi              []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana        []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan  []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		PersyaratanTambahan models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
 	}{
-		IdDataMaster:        master.IdDataMaster,
-		Lokasi:              master.LokasiPengambilan,
-		JenisRencana:        master.JenisRencanaPembangunan,
-		RencanaPembangunan:  master.RencanaPembangunan,
-		PersyaratanTambahan: master.PersyaratanTambahan,
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
