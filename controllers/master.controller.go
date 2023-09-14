@@ -929,11 +929,11 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 	// 	}
 	// }
 
-	// resultsSave := dm.DB.Save(&master)
-	// if resultsSave.Error != nil {
-	// 	ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
-	// 	return
-	// }
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
 
 	respone := struct {
 		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
