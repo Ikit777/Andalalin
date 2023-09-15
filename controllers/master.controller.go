@@ -1285,28 +1285,24 @@ func (dm *DataMasterControler) EditPerlengkapan(ctx *gin.Context) {
 		}
 	}
 
-	file, err := ctx.FormFile("perlengkapan")
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	uploadedFile, err := file.Open()
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	defer uploadedFile.Close()
-
-	data, err := io.ReadAll(uploadedFile)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	file, _ := ctx.FormFile("perlengkapan")
 
 	if itemIndexKategori != -1 && itemIndexPerlengkapan != -1 {
 		master.PerlengkapanLaluLintas[itemIndexKategori].Perlengkapan[itemIndexPerlengkapan].JenisPerlengkapan = newPerlengkapan
-		if data != nil {
+		if file != nil {
+			uploadedFile, err := file.Open()
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			defer uploadedFile.Close()
+
+			data, err := io.ReadAll(uploadedFile)
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
 			master.PerlengkapanLaluLintas[itemIndexKategori].Perlengkapan[itemIndexPerlengkapan].GambarPerlengkapan = data
 		}
 
