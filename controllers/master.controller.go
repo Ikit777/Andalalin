@@ -1043,6 +1043,302 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
 
+func (dm *DataMasterControler) TambahPerlengkapan(ctx *gin.Context) {
+	kategori := ctx.Param("kategori")
+	perlengkapan := ctx.Param("perlengkapan")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	kategoriExists := false
+	perlengkapanExist := false
+	itemIndex := 0
+
+	for i := range master.PerlengkapanLaluLintas {
+		if master.PerlengkapanLaluLintas[i].Kategori == kategori {
+			kategoriExists = true
+			itemIndex = i
+			for _, item := range master.PerlengkapanLaluLintas[i].Perlengkapan {
+				if item.JenisPerlengkapan == perlengkapan {
+					perlengkapanExist = true
+					ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
+					return
+				}
+			}
+		}
+	}
+
+	file, err := ctx.FormFile("perlengkapan")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	uploadedFile, err := file.Open()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer uploadedFile.Close()
+
+	data, err := io.ReadAll(uploadedFile)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if !kategoriExists {
+		perlengkapan := models.PerlengkapanItem{
+			JenisPerlengkapan:  perlengkapan,
+			GambarPerlengkapan: data,
+		}
+		jenis := models.JenisPerlengkapan{
+			Kategori:     kategori,
+			Perlengkapan: []models.PerlengkapanItem{perlengkapan},
+		}
+		master.PerlengkapanLaluLintas = append(master.PerlengkapanLaluLintas, jenis)
+	}
+
+	if !perlengkapanExist && kategoriExists {
+		perlengkapan := models.PerlengkapanItem{
+			JenisPerlengkapan:  perlengkapan,
+			GambarPerlengkapan: data,
+		}
+		master.PerlengkapanLaluLintas[itemIndex].Perlengkapan = append(master.PerlengkapanLaluLintas[itemIndex].Perlengkapan, perlengkapan)
+	}
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) HapuspPerlengkapan(ctx *gin.Context) {
+	kategori := ctx.Param("kategori")
+	perlengkapan := ctx.Param("perlengkapan")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductDeleteCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	for i := range master.PerlengkapanLaluLintas {
+		if master.PerlengkapanLaluLintas[i].Kategori == kategori {
+			for j, item := range master.PerlengkapanLaluLintas[i].Perlengkapan {
+				if item.JenisPerlengkapan == perlengkapan {
+					master.PerlengkapanLaluLintas[i].Perlengkapan = append(master.PerlengkapanLaluLintas[i].Perlengkapan[:j], master.PerlengkapanLaluLintas[i].Perlengkapan[j+1:]...)
+				}
+			}
+		}
+	}
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) EditPerlengkapan(ctx *gin.Context) {
+	kategori := ctx.Param("kategori")
+	perlengkapan := ctx.Param("perlengkapan")
+	newPerlengkapan := ctx.Param("perlengkapan_new")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductUpdateCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	itemIndexKategori := -1
+	itemIndexPerlengkapan := -1
+
+	for i := range master.PerlengkapanLaluLintas {
+		if master.PerlengkapanLaluLintas[i].Kategori == kategori {
+			itemIndexKategori = i
+			for j, item := range master.PerlengkapanLaluLintas[i].Perlengkapan {
+				if item.JenisPerlengkapan == perlengkapan {
+					itemIndexPerlengkapan = j
+					break
+				}
+			}
+		}
+	}
+
+	file, err := ctx.FormFile("perlengkapan")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	uploadedFile, err := file.Open()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer uploadedFile.Close()
+
+	data, err := io.ReadAll(uploadedFile)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if itemIndexKategori != -1 && itemIndexPerlengkapan != -1 {
+		master.PerlengkapanLaluLintas[itemIndexKategori].Perlengkapan[itemIndexPerlengkapan].JenisPerlengkapan = newPerlengkapan
+		if data != nil {
+			master.PerlengkapanLaluLintas[itemIndexKategori].Perlengkapan[itemIndexPerlengkapan].GambarPerlengkapan = data
+		}
+
+	}
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+	}{
+		IdDataMaster:           master.IdDataMaster,
+		Lokasi:                 master.LokasiPengambilan,
+		JenisRencana:           master.JenisRencanaPembangunan,
+		RencanaPembangunan:     master.RencanaPembangunan,
+		KategoriPerlengkapan:   master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+		PersyaratanTambahan:    master.PersyaratanTambahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
 func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 	var payload *models.PersyaratanTambahanInput
 	id := ctx.Param("id")

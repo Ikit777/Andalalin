@@ -98,16 +98,16 @@ func main() {
 
 	perlengkapanPeringatan := []models.PerlengkapanItem{}
 
-	folderPath := "assets/Perlalin/Peringatan"
+	folderPeringatan := "assets/Perlalin/Peringatan"
 
-	folder, err := os.Open(folderPath)
+	folder1, err := os.Open(folderPeringatan)
 	if err != nil {
 		fmt.Println("Error opening folder:", err)
 		return
 	}
-	defer folder.Close()
+	defer folder1.Close()
 
-	filePeringatan, err := folder.Readdir(0)
+	filePeringatan, err := folder1.Readdir(0)
 	if err != nil {
 		fmt.Println("Error reading folder contents:", err)
 		return
@@ -115,7 +115,7 @@ func main() {
 
 	for _, fileInfo := range filePeringatan {
 		if fileInfo.Mode().IsRegular() {
-			filePath := filepath.Join(folderPath, fileInfo.Name())
+			filePath := filepath.Join(folderPeringatan, fileInfo.Name())
 			content, err := os.ReadFile(filePath)
 			if err != nil {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
@@ -125,8 +125,98 @@ func main() {
 		}
 	}
 
+	perlengkapanLarangan := []models.PerlengkapanItem{}
+
+	folderLarangan := "assets/Perlalin/Larangan"
+
+	folder2, err := os.Open(folderLarangan)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder2.Close()
+
+	fileLarangan, err := folder2.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range fileLarangan {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderLarangan, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanLarangan = append(perlengkapanLarangan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanPerintah := []models.PerlengkapanItem{}
+
+	folderPerintah := "assets/Perlalin/Perintah"
+
+	folder3, err := os.Open(folderPerintah)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder3.Close()
+
+	filePerintah, err := folder3.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range filePerintah {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderPerintah, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPerintah = append(perlengkapanPerintah, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanPetunjuk := []models.PerlengkapanItem{}
+
+	folderPetunjuk := "assets/Perlalin/Petunjuk"
+
+	folder4, err := os.Open(folderPetunjuk)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder4.Close()
+
+	filePetunjuk, err := folder4.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range filePetunjuk {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderPetunjuk, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPetunjuk = append(perlengkapanPetunjuk, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
 	perlengkapan := []models.JenisPerlengkapan{}
 	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu peringatan", Perlengkapan: perlengkapanPeringatan})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu larangan", Perlengkapan: perlengkapanLarangan})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu perintah", Perlengkapan: perlengkapanPerintah})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu petunjuk", Perlengkapan: perlengkapanPetunjuk})
 
 	initializers.DB.Create(&models.DataMaster{
 		LokasiPengambilan:       lokasi,
