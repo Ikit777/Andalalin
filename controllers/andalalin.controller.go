@@ -475,15 +475,28 @@ func (ac *AndalalinController) GetPermohonanByIdUser(ctx *gin.Context) {
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
 	var andalalin []models.Andalalin
+	var perlalin []models.Perlalin
 
-	results := ac.DB.Order("tanggal_andalalin").Find(&andalalin, "id_user = ?", currentUser.ID)
+	resultsAndalalin := ac.DB.Order("tanggal_andalalin").Find(&andalalin, "id_user = ?", currentUser.ID)
+	resultsPerlalin := ac.DB.Order("tanggal_andalalin").Find(&perlalin, "id_user = ?", currentUser.ID)
 
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	} else {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range andalalin {
+			respone = append(respone, models.DaftarAndalalinResponse{
+				IdAndalalin:      s.IdAndalalin,
+				Kode:             s.Kode,
+				TanggalAndalalin: s.TanggalAndalalin,
+				Nama:             s.NamaPemohon,
+				Alamat:           s.AlamatPemohon,
+				JenisAndalalin:   s.JenisAndalalin,
+				StatusAndalalin:  s.StatusAndalalin,
+			})
+		}
+		for _, s := range perlalin {
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      s.IdAndalalin,
 				Kode:             s.Kode,
