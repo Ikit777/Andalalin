@@ -350,9 +350,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 			switch key {
 			case "ktp":
 				blobs[key] = data
-			case "apb":
-				blobs[key] = data
-			case "sk":
+			case "sp":
 				blobs[key] = data
 			default:
 				tambahan = append(tambahan, models.PersyaratanTambahanPermohonan{Persyaratan: key, Berkas: data})
