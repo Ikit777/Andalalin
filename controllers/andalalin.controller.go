@@ -163,26 +163,26 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	}
 
 	permohonan := models.Andalalin{
-		IdUser:                          currentUser.ID,
-		JenisAndalalin:                  "Dokumen analisa dampak lalu lintas",
-		KategoriJenisRencanaPembangunan: payload.Andalalin.KategoriJenisRencanaPembangunan,
-		JenisRencanaPembangunan:         payload.Andalalin.JenisRencanaPembangunan,
-		KodeAndalalin:                   kode,
-		NikPemohon:                      payload.Andalalin.NikPemohon,
-		NamaPemohon:                     currentUser.Name,
-		EmailPemohon:                    currentUser.Email,
-		TempatLahirPemohon:              payload.Andalalin.TempatLahirPemohon,
-		TanggalLahirPemohon:             payload.Andalalin.TanggalLahirPemohon,
-		AlamatPemohon:                   payload.Andalalin.AlamatPemohon,
-		JenisKelaminPemohon:             payload.Andalalin.JenisKelaminPemohon,
-		NomerPemohon:                    payload.Andalalin.NomerPemohon,
-		NomerSelulerPemohon:             payload.Andalalin.NomerSelulerPemohon,
-		JabatanPemohon:                  payload.Andalalin.JabatanPemohon,
-		LokasiPengambilan:               payload.Andalalin.LokasiPengambilan,
-		WaktuAndalalin:                  nowTime.Format("15:04:05"),
-		TanggalAndalalin:                tanggal,
-		StatusAndalalin:                 "Cek persyaratan",
-		TandaTerimaPendaftaran:          pdfg.Bytes(),
+		IdUser:                 currentUser.ID,
+		JenisAndalalin:         "Dokumen analisa dampak lalu lintas",
+		Kategori:               payload.Andalalin.KategoriJenisRencanaPembangunan,
+		Jenis:                  payload.Andalalin.JenisRencanaPembangunan,
+		Kode:                   kode,
+		NikPemohon:             payload.Andalalin.NikPemohon,
+		NamaPemohon:            currentUser.Name,
+		EmailPemohon:           currentUser.Email,
+		TempatLahirPemohon:     payload.Andalalin.TempatLahirPemohon,
+		TanggalLahirPemohon:    payload.Andalalin.TanggalLahirPemohon,
+		AlamatPemohon:          payload.Andalalin.AlamatPemohon,
+		JenisKelaminPemohon:    payload.Andalalin.JenisKelaminPemohon,
+		NomerPemohon:           payload.Andalalin.NomerPemohon,
+		NomerSelulerPemohon:    payload.Andalalin.NomerSelulerPemohon,
+		JabatanPemohon:         payload.Andalalin.JabatanPemohon,
+		LokasiPengambilan:      payload.Andalalin.LokasiPengambilan,
+		WaktuAndalalin:         nowTime.Format("15:04:05"),
+		TanggalAndalalin:       tanggal,
+		StatusAndalalin:        "Cek persyaratan",
+		TandaTerimaPendaftaran: pdfg.Bytes(),
 
 		NamaPerusahaan:       payload.Andalalin.NamaPerusahaan,
 		AlamatPerusahaan:     payload.Andalalin.AlamatPerusahaan,
@@ -213,7 +213,189 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 
 	respone := &models.DaftarAndalalinResponse{
 		IdAndalalin:      permohonan.IdAndalalin,
-		KodeAndalalin:    permohonan.KodeAndalalin,
+		Kode:             permohonan.Kode,
+		TanggalAndalalin: permohonan.TanggalAndalalin,
+		Nama:             permohonan.NamaPemohon,
+		Alamat:           permohonan.AlamatPemohon,
+		JenisAndalalin:   permohonan.JenisAndalalin,
+		StatusAndalalin:  permohonan.StatusAndalalin,
+	}
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "eror saat mengirim data"})
+		return
+	} else {
+		ac.ReleaseTicketLevel1(ctx, permohonan.IdAndalalin)
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+	}
+}
+
+func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
+	var payload *models.DataPerlalin
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinPengajuanCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBind(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+
+	kode := "andalalin/" + utils.Generate(6)
+	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
+
+	t, err := template.ParseFiles("templates/tandaterimaPerlalin.html")
+	if err != nil {
+		log.Fatal("Error reading the email template:", err)
+		return
+	}
+
+	bukti := struct {
+		Tanggal      string
+		Waktu        string
+		Kode         string
+		Nama         string
+		Nomor        string
+		NomorSeluler string
+	}{
+		Tanggal:      tanggal,
+		Waktu:        nowTime.Format("15:04:05"),
+		Kode:         kode,
+		Nama:         currentUser.Name,
+		Nomor:        payload.Perlalin.NomerPemohon,
+		NomorSeluler: payload.Perlalin.NomerSelulerPemohon,
+	}
+
+	buffer := new(bytes.Buffer)
+	if err = t.Execute(buffer, bukti); err != nil {
+		log.Fatal("Eror saat membaca template:", err)
+		return
+	}
+
+	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	if err != nil {
+		log.Fatal("Eror generate pdf", err)
+		return
+	}
+
+	// read the HTML page as a PDF page
+	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
+
+	pdfg.AddPage(page)
+
+	pdfg.Dpi.Set(300)
+	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
+	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
+	pdfg.MarginBottom.Set(20)
+	pdfg.MarginLeft.Set(30)
+	pdfg.MarginRight.Set(30)
+	pdfg.MarginTop.Set(20)
+
+	err = pdfg.Create()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	blobs := make(map[string][]byte)
+
+	tambahan := []models.PersyaratanTambahanPermohonan{}
+
+	for key, files := range form.File {
+		for _, file := range files {
+			// Save the uploaded file with key as prefix
+			file, err := file.Open()
+
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			defer file.Close()
+
+			data, err := io.ReadAll(file)
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			// Store the blob data in the map
+
+			switch key {
+			case "ktp":
+				blobs[key] = data
+			case "apb":
+				blobs[key] = data
+			case "sk":
+				blobs[key] = data
+			default:
+				tambahan = append(tambahan, models.PersyaratanTambahanPermohonan{Persyaratan: key, Berkas: data})
+			}
+		}
+	}
+
+	permohonan := models.Perlalin{
+		IdUser:                 currentUser.ID,
+		JenisAndalalin:         "Perlengkapan lalu lintas",
+		Kategori:               payload.Perlalin.Kategori,
+		Jenis:                  payload.Perlalin.Jenis,
+		Kode:                   kode,
+		NikPemohon:             payload.Perlalin.NikPemohon,
+		NamaPemohon:            currentUser.Name,
+		EmailPemohon:           currentUser.Email,
+		TempatLahirPemohon:     payload.Perlalin.TempatLahirPemohon,
+		TanggalLahirPemohon:    payload.Perlalin.TanggalLahirPemohon,
+		AlamatPemohon:          payload.Perlalin.AlamatPemohon,
+		JenisKelaminPemohon:    payload.Perlalin.JenisKelaminPemohon,
+		NomerPemohon:           payload.Perlalin.NomerPemohon,
+		NomerSelulerPemohon:    payload.Perlalin.NomerSelulerPemohon,
+		LokasiPengambilan:      payload.Perlalin.LokasiPengambilan,
+		WaktuAndalalin:         nowTime.Format("15:04:05"),
+		TanggalAndalalin:       tanggal,
+		JenisKegiatan:          payload.Perlalin.JenisKegiatan,
+		Peruntukan:             payload.Perlalin.Peruntukan,
+		LuasLahan:              payload.Perlalin.LuasLahan + "m²",
+		AlamatPersil:           payload.Perlalin.AlamatPersil,
+		KelurahanPersil:        payload.Perlalin.KelurahanPersil,
+		StatusAndalalin:        "Cek persyaratan",
+		TandaTerimaPendaftaran: pdfg.Bytes(),
+
+		KartuTandaPenduduk:  blobs["ktp"],
+		SuratPermohonan:     blobs["sp"],
+		PersyaratanTambahan: tambahan,
+	}
+
+	result := ac.DB.Create(&permohonan)
+
+	respone := &models.DaftarAndalalinResponse{
+		IdAndalalin:      permohonan.IdAndalalin,
+		Kode:             permohonan.Kode,
 		TanggalAndalalin: permohonan.TanggalAndalalin,
 		Nama:             permohonan.NamaPemohon,
 		Alamat:           permohonan.AlamatPemohon,
@@ -306,7 +488,7 @@ func (ac *AndalalinController) GetPermohonanByIdUser(ctx *gin.Context) {
 		for _, s := range andalalin {
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      s.IdAndalalin,
-				KodeAndalalin:    s.KodeAndalalin,
+				Kode:             s.Kode,
 				TanggalAndalalin: s.TanggalAndalalin,
 				Nama:             s.NamaPemohon,
 				Alamat:           s.AlamatPemohon,
@@ -345,8 +527,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		dataUser := models.AndalalinResponseUser{
 			IdAndalalin:             andalalin.IdAndalalin,
 			JenisAndalalin:          andalalin.JenisAndalalin,
-			JenisRencanaPembangunan: andalalin.JenisRencanaPembangunan,
-			KodeAndalalin:           andalalin.KodeAndalalin,
+			JenisRencanaPembangunan: andalalin.Jenis,
+			Kode:                    andalalin.Kode,
 			NamaPemohon:             andalalin.NamaPemohon,
 			LokasiPengambilan:       andalalin.LokasiPengambilan,
 			TanggalAndalalin:        andalalin.TanggalAndalalin,
@@ -363,62 +545,143 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
 	} else {
 		data := models.AndalalinResponse{
-			IdAndalalin:                     andalalin.IdAndalalin,
-			JenisAndalalin:                  andalalin.JenisAndalalin,
-			KategoriJenisRencanaPembangunan: andalalin.KategoriJenisRencanaPembangunan,
-			JenisRencanaPembangunan:         andalalin.JenisRencanaPembangunan,
-			KodeAndalalin:                   andalalin.KodeAndalalin,
-			NikPemohon:                      andalalin.NikPemohon,
-			NamaPemohon:                     andalalin.NamaPemohon,
-			EmailPemohon:                    andalalin.EmailPemohon,
-			TempatLahirPemohon:              andalalin.TempatLahirPemohon,
-			TanggalLahirPemohon:             andalalin.TanggalLahirPemohon,
-			AlamatPemohon:                   andalalin.AlamatPemohon,
-			JenisKelaminPemohon:             andalalin.JenisKelaminPemohon,
-			NomerPemohon:                    andalalin.NomerPemohon,
-			NomerSelulerPemohon:             andalalin.NomerSelulerPemohon,
-			JabatanPemohon:                  andalalin.JabatanPemohon,
-			LokasiPengambilan:               andalalin.LokasiPengambilan,
-			WaktuAndalalin:                  andalalin.WaktuAndalalin,
-			TanggalAndalalin:                andalalin.TanggalAndalalin,
-			StatusAndalalin:                 andalalin.StatusAndalalin,
-			TandaTerimaPendaftaran:          andalalin.TandaTerimaPendaftaran,
-			NamaPerusahaan:                  andalalin.NamaPerusahaan,
-			AlamatPerusahaan:                andalalin.AlamatPerusahaan,
-			NomerPerusahaan:                 andalalin.NomerPerusahaan,
-			EmailPerusahaan:                 andalalin.EmailPerusahaan,
-			ProvinsiPerusahaan:              andalalin.ProvinsiPerusahaan,
-			KabupatenPerusahaan:             andalalin.KabupatenPerusahaan,
-			KecamatanPerusahaan:             andalalin.KecamatanPerusahaan,
-			KelurahaanPerusahaan:            andalalin.KelurahaanPerusahaan,
-			NamaPimpinan:                    andalalin.NamaPimpinan,
-			JabatanPimpinan:                 andalalin.JabatanPimpinan,
-			JenisKelaminPimpinan:            andalalin.JenisKelaminPimpinan,
-			JenisKegiatan:                   andalalin.JenisKegiatan,
-			Peruntukan:                      andalalin.Peruntukan,
-			LuasLahan:                       andalalin.LuasLahan,
-			AlamatPersil:                    andalalin.AlamatPersil,
-			KelurahanPersil:                 andalalin.KelurahanPersil,
-			NomerSKRK:                       andalalin.NomerSKRK,
-			TanggalSKRK:                     andalalin.TanggalSKRK,
-			KartuTandaPenduduk:              andalalin.KartuTandaPenduduk,
-			AktaPendirianBadan:              andalalin.AktaPendirianBadan,
-			SuratKuasa:                      andalalin.SuratKuasa,
-			PersyaratanTidakSesuai:          andalalin.PersyaratanTidakSesuai,
-			IdPetugas:                       andalalin.IdPetugas,
-			NamaPetugas:                     andalalin.NamaPetugas,
-			EmailPetugas:                    andalalin.EmailPetugas,
-			StatusTiketLevel2:               status,
-			PersetujuanDokumen:              andalalin.PersetujuanDokumen,
-			KeteranganPersetujuanDokumen:    andalalin.KeteranganPersetujuanDokumen,
-			NomerBAPDasar:                   andalalin.NomerBAPDasar,
-			NomerBAPPelaksanaan:             andalalin.NomerBAPPelaksanaan,
-			TanggalBAP:                      andalalin.TanggalBAP,
-			FileBAP:                         andalalin.FileBAP,
-			FileSK:                          andalalin.FileSK,
-			PersyaratanTambahan:             andalalin.PersyaratanTambahan,
+			IdAndalalin:                  andalalin.IdAndalalin,
+			JenisAndalalin:               andalalin.JenisAndalalin,
+			Kategori:                     andalalin.Kategori,
+			Jenis:                        andalalin.Jenis,
+			Kode:                         andalalin.Kode,
+			NikPemohon:                   andalalin.NikPemohon,
+			NamaPemohon:                  andalalin.NamaPemohon,
+			EmailPemohon:                 andalalin.EmailPemohon,
+			TempatLahirPemohon:           andalalin.TempatLahirPemohon,
+			TanggalLahirPemohon:          andalalin.TanggalLahirPemohon,
+			AlamatPemohon:                andalalin.AlamatPemohon,
+			JenisKelaminPemohon:          andalalin.JenisKelaminPemohon,
+			NomerPemohon:                 andalalin.NomerPemohon,
+			NomerSelulerPemohon:          andalalin.NomerSelulerPemohon,
+			JabatanPemohon:               andalalin.JabatanPemohon,
+			LokasiPengambilan:            andalalin.LokasiPengambilan,
+			WaktuAndalalin:               andalalin.WaktuAndalalin,
+			TanggalAndalalin:             andalalin.TanggalAndalalin,
+			StatusAndalalin:              andalalin.StatusAndalalin,
+			TandaTerimaPendaftaran:       andalalin.TandaTerimaPendaftaran,
+			NamaPerusahaan:               andalalin.NamaPerusahaan,
+			AlamatPerusahaan:             andalalin.AlamatPerusahaan,
+			NomerPerusahaan:              andalalin.NomerPerusahaan,
+			EmailPerusahaan:              andalalin.EmailPerusahaan,
+			ProvinsiPerusahaan:           andalalin.ProvinsiPerusahaan,
+			KabupatenPerusahaan:          andalalin.KabupatenPerusahaan,
+			KecamatanPerusahaan:          andalalin.KecamatanPerusahaan,
+			KelurahaanPerusahaan:         andalalin.KelurahaanPerusahaan,
+			NamaPimpinan:                 andalalin.NamaPimpinan,
+			JabatanPimpinan:              andalalin.JabatanPimpinan,
+			JenisKelaminPimpinan:         andalalin.JenisKelaminPimpinan,
+			JenisKegiatan:                andalalin.JenisKegiatan,
+			Peruntukan:                   andalalin.Peruntukan,
+			LuasLahan:                    andalalin.LuasLahan,
+			AlamatPersil:                 andalalin.AlamatPersil,
+			KelurahanPersil:              andalalin.KelurahanPersil,
+			NomerSKRK:                    andalalin.NomerSKRK,
+			TanggalSKRK:                  andalalin.TanggalSKRK,
+			KartuTandaPenduduk:           andalalin.KartuTandaPenduduk,
+			AktaPendirianBadan:           andalalin.AktaPendirianBadan,
+			SuratKuasa:                   andalalin.SuratKuasa,
+			PersyaratanTidakSesuai:       andalalin.PersyaratanTidakSesuai,
+			IdPetugas:                    andalalin.IdPetugas,
+			NamaPetugas:                  andalalin.NamaPetugas,
+			EmailPetugas:                 andalalin.EmailPetugas,
+			StatusTiketLevel2:            status,
+			PersetujuanDokumen:           andalalin.PersetujuanDokumen,
+			KeteranganPersetujuanDokumen: andalalin.KeteranganPersetujuanDokumen,
+			NomerBAPDasar:                andalalin.NomerBAPDasar,
+			NomerBAPPelaksanaan:          andalalin.NomerBAPPelaksanaan,
+			TanggalBAP:                   andalalin.TanggalBAP,
+			FileBAP:                      andalalin.FileBAP,
+			FileSK:                       andalalin.FileSK,
+			PersyaratanTambahan:          andalalin.PersyaratanTambahan,
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
+	}
+}
+
+func (ac *AndalalinController) GetPermohonanByIdPerlalin(ctx *gin.Context) {
+	id := ctx.Param("id_andalalin")
+
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	var perlalin models.Perlalin
+
+	results := ac.DB.First(&perlalin, "id_andalalin = ?", id)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	}
+
+	var ticket2 models.TiketLevel2
+	resultTiket2 := ac.DB.Not("status = ?", "Tutup").Where("id_andalalin = ?", id).First(&ticket2)
+	var status string
+	if resultTiket2.Error != nil {
+		status = "Kosong"
+	} else {
+		status = ticket2.Status
+	}
+
+	if currentUser.Role == "User" {
+		dataUser := models.AndalalinResponseUser{
+			IdAndalalin:             perlalin.IdAndalalin,
+			JenisAndalalin:          perlalin.JenisAndalalin,
+			JenisRencanaPembangunan: perlalin.Jenis,
+			Kode:                    perlalin.Kode,
+			NamaPemohon:             perlalin.NamaPemohon,
+			LokasiPengambilan:       perlalin.LokasiPengambilan,
+			TanggalAndalalin:        perlalin.TanggalAndalalin,
+			StatusAndalalin:         perlalin.StatusAndalalin,
+			TandaTerimaPendaftaran:  perlalin.TandaTerimaPendaftaran,
+			JenisKegiatan:           perlalin.JenisKegiatan,
+			Peruntukan:              perlalin.Peruntukan,
+			LuasLahan:               perlalin.LuasLahan,
+			PersyaratanTidakSesuai:  perlalin.PersyaratanTidakSesuai,
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
+	} else {
+		data := models.PerlalinResponse{
+			IdAndalalin:            perlalin.IdAndalalin,
+			JenisAndalalin:         perlalin.JenisAndalalin,
+			Kategori:               perlalin.Kategori,
+			Jenis:                  perlalin.Jenis,
+			Kode:                   perlalin.Kode,
+			NikPemohon:             perlalin.NikPemohon,
+			NamaPemohon:            perlalin.NamaPemohon,
+			EmailPemohon:           perlalin.EmailPemohon,
+			TempatLahirPemohon:     perlalin.TempatLahirPemohon,
+			TanggalLahirPemohon:    perlalin.TanggalLahirPemohon,
+			AlamatPemohon:          perlalin.AlamatPemohon,
+			JenisKelaminPemohon:    perlalin.JenisKelaminPemohon,
+			NomerPemohon:           perlalin.NomerPemohon,
+			NomerSelulerPemohon:    perlalin.NomerSelulerPemohon,
+			LokasiPengambilan:      perlalin.LokasiPengambilan,
+			WaktuAndalalin:         perlalin.WaktuAndalalin,
+			TanggalAndalalin:       perlalin.TanggalAndalalin,
+			StatusAndalalin:        perlalin.StatusAndalalin,
+			TandaTerimaPendaftaran: perlalin.TandaTerimaPendaftaran,
+			JenisKegiatan:          perlalin.JenisKegiatan,
+			Peruntukan:             perlalin.Peruntukan,
+			LuasLahan:              perlalin.LuasLahan,
+			AlamatPersil:           perlalin.AlamatPersil,
+			KelurahanPersil:        perlalin.KelurahanPersil,
+			KartuTandaPenduduk:     perlalin.KartuTandaPenduduk,
+			SuratPermohonan:        perlalin.SuratPermohonan,
+			PersyaratanTidakSesuai: perlalin.PersyaratanTidakSesuai,
+			IdPetugas:              perlalin.IdPetugas,
+			NamaPetugas:            perlalin.NamaPetugas,
+			EmailPetugas:           perlalin.EmailPetugas,
+			StatusTiketLevel2:      status,
+			PersyaratanTambahan:    perlalin.PersyaratanTambahan,
+		}
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
+
 	}
 }
 
@@ -458,7 +721,7 @@ func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
 		for _, s := range andalalin {
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      s.IdAndalalin,
-				KodeAndalalin:    s.KodeAndalalin,
+				Kode:             s.Kode,
 				TanggalAndalalin: s.TanggalAndalalin,
 				Nama:             s.NamaPemohon,
 				Alamat:           s.AlamatPemohon,
@@ -504,7 +767,7 @@ func (ac *AndalalinController) GetPermohonan(ctx *gin.Context) {
 		for _, s := range andalalin {
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      s.IdAndalalin,
-				KodeAndalalin:    s.KodeAndalalin,
+				Kode:             s.Kode,
 				TanggalAndalalin: s.TanggalAndalalin,
 				Nama:             s.NamaPemohon,
 				Alamat:           s.AlamatPemohon,
@@ -560,7 +823,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      andalalin.IdAndalalin,
-				KodeAndalalin:    andalalin.KodeAndalalin,
+				Kode:             andalalin.Kode,
 				TanggalAndalalin: andalalin.TanggalAndalalin,
 				Nama:             andalalin.NamaPemohon,
 				Alamat:           andalalin.AlamatPemohon,
@@ -831,7 +1094,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 	justString := strings.Join(payload.Persyaratan, "\n")
 
 	data := utils.PersyaratanTidakSesuai{
-		Nomer:       andalalin.KodeAndalalin,
+		Nomer:       andalalin.Kode,
 		Nama:        andalalin.NamaPemohon,
 		Alamat:      andalalin.AlamatPemohon,
 		Tlp:         andalalin.NomerPemohon,
@@ -854,7 +1117,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 	simpanNotif := models.Notifikasi{
 		IdUser: user.ID,
 		Title:  "Persyaratan tidak terpenuhi",
-		Body:   "Permohonan anda dengan kode " + andalalin.KodeAndalalin + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
+		Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
 	}
 
 	ac.DB.Create(&simpanNotif)
@@ -863,7 +1126,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		notif := utils.Notification{
 			IdUser: user.ID,
 			Title:  "Persyaratan tidak terpenuhi",
-			Body:   "Permohonan anda dengan kode " + andalalin.KodeAndalalin + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
+			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
 			Token:  user.PushToken,
 		}
 
@@ -1054,7 +1317,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      andalalin.IdAndalalin,
-				KodeAndalalin:    andalalin.KodeAndalalin,
+				Kode:             andalalin.Kode,
 				TanggalAndalalin: andalalin.TanggalAndalalin,
 				Nama:             andalalin.NamaPemohon,
 				Alamat:           andalalin.AlamatPemohon,
@@ -1223,7 +1486,7 @@ func (ac *AndalalinController) GetAllSurvey(ctx *gin.Context) {
 
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      andalalin.IdAndalalin,
-				KodeAndalalin:    andalalin.KodeAndalalin,
+				Kode:             andalalin.Kode,
 				TanggalAndalalin: andalalin.TanggalAndalalin,
 				Nama:             andalalin.NamaPemohon,
 				Alamat:           andalalin.AlamatPemohon,
@@ -1611,7 +1874,7 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 	ac.DB.Save(&andalalin)
 
 	data := utils.PermohonanSelesai{
-		Nomer:   andalalin.KodeAndalalin,
+		Nomer:   andalalin.Kode,
 		Nama:    andalalin.NamaPemohon,
 		Alamat:  andalalin.AlamatPemohon,
 		Tlp:     andalalin.NomerPemohon,
@@ -1633,7 +1896,7 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 	simpanNotif := models.Notifikasi{
 		IdUser: user.ID,
 		Title:  "Permohonan selesai",
-		Body:   "Permohonan anda dengan kode " + andalalin.KodeAndalalin + " telah selesai, harap cek email untuk lebih jelas",
+		Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, harap cek email untuk lebih jelas",
 	}
 
 	ac.DB.Create(&simpanNotif)
@@ -1642,7 +1905,7 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 		notif := utils.Notification{
 			IdUser: user.ID,
 			Title:  "Permohonan selesai",
-			Body:   "Permohonan anda dengan kode " + andalalin.KodeAndalalin + " telah selesai, harap cek email untuk lebih jelas",
+			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, harap cek email untuk lebih jelas",
 			Token:  user.PushToken,
 		}
 
@@ -1767,7 +2030,7 @@ func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
 
 				respone = append(respone, models.DaftarAndalalinResponse{
 					IdAndalalin:      andalalin.IdAndalalin,
-					KodeAndalalin:    andalalin.KodeAndalalin,
+					Kode:             andalalin.Kode,
 					TanggalAndalalin: andalalin.TanggalAndalalin,
 					Nama:             andalalin.NamaPemohon,
 					Alamat:           andalalin.AlamatPemohon,
@@ -1889,7 +2152,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		simpanNotifPengusul := models.Notifikasi{
 			IdUser: userPengusul.ID,
 			Title:  "Pelaksanaan survei ditunda",
-			Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei ditunda",
+			Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.Kode + " telah diputuskan bahwa pelaksanaan survei ditunda",
 		}
 
 		ac.DB.Create(&simpanNotifPengusul)
@@ -1897,7 +2160,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		simpanNotifPetugas := models.Notifikasi{
 			IdUser: userPetugas.ID,
 			Title:  "Pelaksanaan survei ditunda",
-			Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " dibatalkan",
+			Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.Kode + " dibatalkan",
 		}
 
 		ac.DB.Create(&simpanNotifPetugas)
@@ -1906,7 +2169,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 			notifPengusul := utils.Notification{
 				IdUser: userPengusul.ID,
 				Title:  "Pelaksanaan survei ditunda",
-				Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei ditunda",
+				Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.Kode + " telah diputuskan bahwa pelaksanaan survei ditunda",
 				Token:  userPengusul.PushToken,
 			}
 
@@ -1917,7 +2180,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 			notifPetugas := utils.Notification{
 				IdUser: userPetugas.ID,
 				Title:  "Pelaksanaan survei ditunda",
-				Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " ditunda",
+				Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.Kode + " ditunda",
 				Token:  userPetugas.PushToken,
 			}
 
@@ -1927,7 +2190,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		simpanNotifPengusul := models.Notifikasi{
 			IdUser: userPengusul.ID,
 			Title:  "Pelaksanaan survei dibatalkan",
-			Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei dibatalkan",
+			Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.Kode + " telah diputuskan bahwa pelaksanaan survei dibatalkan",
 		}
 
 		ac.DB.Create(&simpanNotifPengusul)
@@ -1935,7 +2198,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		simpanNotifPetugas := models.Notifikasi{
 			IdUser: userPetugas.ID,
 			Title:  "Pelaksanaan survei dibatalkan",
-			Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " dibatalkan",
+			Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.Kode + " dibatalkan",
 		}
 
 		ac.DB.Create(&simpanNotifPetugas)
@@ -1944,7 +2207,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 			notifPengusul := utils.Notification{
 				IdUser: userPengusul.ID,
 				Title:  "Pelaksanaan survei dibatalkan",
-				Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah diputuskan bahwa pelaksanaan survei dibatalkan",
+				Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.Kode + " telah diputuskan bahwa pelaksanaan survei dibatalkan",
 				Token:  userPengusul.PushToken,
 			}
 
@@ -1955,7 +2218,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 			notifPetugas := utils.Notification{
 				IdUser: userPetugas.ID,
 				Title:  "Pelaksanaan survei dibatalkan",
-				Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " dibatalkan",
+				Body:   "Pelakasnaan survei pada permohonan dengan kode " + andalalin.Kode + " dibatalkan",
 				Token:  userPetugas.PushToken,
 			}
 
@@ -1965,7 +2228,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		simpanNotifPetugas := models.Notifikasi{
 			IdUser: userPetugas.ID,
 			Title:  "Pelaksanaan survei dilanjutkan",
-			Body:   "Pelaksanaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah dilanjutkan kembali",
+			Body:   "Pelaksanaan survei pada permohonan dengan kode " + andalalin.Kode + " telah dilanjutkan kembali",
 		}
 
 		ac.DB.Create(&simpanNotifPetugas)
@@ -1974,7 +2237,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 			notifPetugas := utils.Notification{
 				IdUser: userPetugas.ID,
 				Title:  "Pelaksanaan survei dilanjutkan",
-				Body:   "Pelaksanaan survei pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah dilanjutkan kembali",
+				Body:   "Pelaksanaan survei pada permohonan dengan kode " + andalalin.Kode + " telah dilanjutkan kembali",
 				Token:  userPetugas.PushToken,
 			}
 
@@ -2039,7 +2302,7 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 	simpanNotifPengusul := models.Notifikasi{
 		IdUser: userPengusul.ID,
 		Title:  "Usulan tindakan dihapus",
-		Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah dihapus",
+		Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.Kode + " telah dihapus",
 	}
 
 	ac.DB.Create(&simpanNotifPengusul)
@@ -2048,7 +2311,7 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 		notifPengusul := utils.Notification{
 			IdUser: userPengusul.ID,
 			Title:  "Usulan tindakan dihapus",
-			Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.KodeAndalalin + " telah dihapus",
+			Body:   "Usulan tindakan anda pada permohonan dengan kode " + andalalin.Kode + " telah dihapus",
 			Token:  userPengusul.PushToken,
 		}
 
@@ -2109,7 +2372,7 @@ func (ac *AndalalinController) GetAllAndalalinByTiketLevel2(ctx *gin.Context) {
 
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      andalalin.IdAndalalin,
-				KodeAndalalin:    andalalin.KodeAndalalin,
+				Kode:             andalalin.Kode,
 				TanggalAndalalin: andalalin.TanggalAndalalin,
 				Nama:             andalalin.NamaPemohon,
 				Alamat:           andalalin.AlamatPemohon,

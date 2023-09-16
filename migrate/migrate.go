@@ -34,6 +34,7 @@ func main() {
 
 	initializers.DB.Migrator().DropTable(&models.User{})
 	initializers.DB.Migrator().DropTable(&models.Andalalin{})
+	initializers.DB.Migrator().DropTable(&models.Perlalin{})
 	initializers.DB.Migrator().DropTable(&models.Survey{})
 	initializers.DB.Migrator().DropTable(&models.TiketLevel1{})
 	initializers.DB.Migrator().DropTable(&models.TiketLevel2{})
@@ -43,6 +44,7 @@ func main() {
 
 	initializers.DB.AutoMigrate(&models.User{})
 	initializers.DB.AutoMigrate(&models.Andalalin{})
+	initializers.DB.AutoMigrate(&models.Perlalin{})
 	initializers.DB.AutoMigrate(&models.Survey{})
 	initializers.DB.AutoMigrate(&models.TiketLevel1{})
 	initializers.DB.AutoMigrate(&models.TiketLevel2{})

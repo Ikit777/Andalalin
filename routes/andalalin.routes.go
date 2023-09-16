@@ -19,12 +19,14 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router := rg.Group("andalalin")
 
 	router.POST("/pengajuan", middleware.DeserializeUser(), uc.andalalinController.Pengajuan)
+	router.POST("/pengajuanperlalin", middleware.DeserializeUser(), uc.andalalinController.PengajuanPerlalin)
 
 	router.GET("/persyaratan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPersyaratan)
 	router.GET("/perusahaan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPerusahaan)
 	router.GET("/permohonan", middleware.DeserializeUser(), uc.andalalinController.GetPermohonan)
 	router.GET("/userpermohonan", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanByIdUser)
 	router.GET("/detailpermohonan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanByIdAndalalin)
+	router.GET("/detailperlalin/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanByIdPerlalin)
 	router.GET("/statuspermohonan/:status_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanByStatus)
 
 	router.GET("/tiketpermohonan/:status", middleware.DeserializeUser(), uc.andalalinController.GetAndalalinTicketLevel1)

@@ -1475,7 +1475,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 					oldSubstr := "/"
 					newSubstr := "-"
 
-					result := strings.Replace(permohonan.KodeAndalalin, oldSubstr, newSubstr, -1)
+					result := strings.Replace(permohonan.Kode, oldSubstr, newSubstr, -1)
 					fileName := result + ".pdf"
 
 					dataFile = append(dataFile, file{Name: fileName, File: tambahan.Berkas})
@@ -1741,31 +1741,73 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 		}
 	}
 
-	resultsSave := dm.DB.Save(&master)
-	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+	var andalalin []models.Andalalin
+
+	results := dm.DB.Find(&andalalin)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
 		return
-	}
+	} else {
+		dataFile := []file{}
+		for i, permohonan := range andalalin {
+			for j, tambahan := range permohonan.PersyaratanTambahan {
+				if tambahan.Persyaratan == persyaratan {
+					oldSubstr := "/"
+					newSubstr := "-"
 
-	respone := struct {
-		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
-		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
-		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
-	}{
-		IdDataMaster:           master.IdDataMaster,
-		Lokasi:                 master.LokasiPengambilan,
-		JenisRencana:           master.JenisRencanaPembangunan,
-		RencanaPembangunan:     master.RencanaPembangunan,
-		KategoriPerlengkapan:   master.KategoriPerlengkapan,
-		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
-		PersyaratanTambahan:    master.PersyaratanTambahan,
-	}
+					result := strings.Replace(permohonan.Kode, oldSubstr, newSubstr, -1)
+					fileName := result + ".pdf"
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+					dataFile = append(dataFile, file{Name: fileName, File: tambahan.Berkas})
+					andalalin[i].PersyaratanTambahan = append(andalalin[i].PersyaratanTambahan[:j], andalalin[i].PersyaratanTambahan[j+1:]...)
+					break
+				}
+			}
+		}
+
+		zipFile := persyaratan + ".zip"
+		error = compressFiles(zipFile, dataFile)
+		if error != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": error})
+			return
+		}
+
+		zipData, errorZip := os.ReadFile(zipFile)
+		if errorZip != nil {
+			ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": errorZip})
+			return
+		}
+
+		base64ZipData := base64.StdEncoding.EncodeToString(zipData)
+
+		dm.DB.Save(&andalalin)
+		resultsSave := dm.DB.Save(&master)
+		if resultsSave.Error != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+			return
+		}
+
+		respone := struct {
+			IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+			Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
+			JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
+			RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
+			KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
+			PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
+			PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		}{
+			IdDataMaster:           master.IdDataMaster,
+			Lokasi:                 master.LokasiPengambilan,
+			JenisRencana:           master.JenisRencanaPembangunan,
+			RencanaPembangunan:     master.RencanaPembangunan,
+			KategoriPerlengkapan:   master.KategoriPerlengkapan,
+			PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
+			PersyaratanTambahan:    master.PersyaratanTambahan,
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone, "file": base64ZipData})
+	}
 }
 
 func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
