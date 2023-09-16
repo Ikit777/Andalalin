@@ -853,40 +853,34 @@ func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range ticket {
 			var andalalin models.Andalalin
-			resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", s.IdAndalalin)
-
-			if resultsAndalalin.Error != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsAndalalin.Error})
-				return
-			}
-
-			respone = append(respone, models.DaftarAndalalinResponse{
-				IdAndalalin:      andalalin.IdAndalalin,
-				Kode:             andalalin.Kode,
-				TanggalAndalalin: andalalin.TanggalAndalalin,
-				Nama:             andalalin.NamaPemohon,
-				Alamat:           andalalin.AlamatPemohon,
-				JenisAndalalin:   andalalin.JenisAndalalin,
-				StatusAndalalin:  andalalin.StatusAndalalin,
-			})
-
 			var perlalin models.Perlalin
-			resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin)
+			ac.DB.First(&andalalin, "id_andalalin = ?", s.IdAndalalin)
+			ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin)
 
-			if resultsPerlalin.Error != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsPerlalin.Error})
-				return
+			if andalalin.IdAndalalin != uuid.Nil {
+				respone = append(respone, models.DaftarAndalalinResponse{
+					IdAndalalin:      andalalin.IdAndalalin,
+					Kode:             andalalin.Kode,
+					TanggalAndalalin: andalalin.TanggalAndalalin,
+					Nama:             andalalin.NamaPemohon,
+					Alamat:           andalalin.AlamatPemohon,
+					JenisAndalalin:   andalalin.JenisAndalalin,
+					StatusAndalalin:  andalalin.StatusAndalalin,
+				})
 			}
 
-			respone = append(respone, models.DaftarAndalalinResponse{
-				IdAndalalin:      perlalin.IdAndalalin,
-				Kode:             perlalin.Kode,
-				TanggalAndalalin: perlalin.TanggalAndalalin,
-				Nama:             perlalin.NamaPemohon,
-				Alamat:           perlalin.AlamatPemohon,
-				JenisAndalalin:   perlalin.JenisAndalalin,
-				StatusAndalalin:  perlalin.StatusAndalalin,
-			})
+			if perlalin.IdAndalalin != uuid.Nil {
+				respone = append(respone, models.DaftarAndalalinResponse{
+					IdAndalalin:      perlalin.IdAndalalin,
+					Kode:             perlalin.Kode,
+					TanggalAndalalin: perlalin.TanggalAndalalin,
+					Nama:             perlalin.NamaPemohon,
+					Alamat:           perlalin.AlamatPemohon,
+					JenisAndalalin:   perlalin.JenisAndalalin,
+					StatusAndalalin:  perlalin.StatusAndalalin,
+				})
+			}
+
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
 	}
