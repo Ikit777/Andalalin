@@ -723,15 +723,28 @@ func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
 	}
 
 	var andalalin []models.Andalalin
+	var perlalin []models.Perlalin
 
-	results := ac.DB.Order("tanggal_andalalin").Find(&andalalin, "status_andalalin = ?", status)
+	resultsAndalalin := ac.DB.Order("tanggal_andalalin").Find(&andalalin, "status_andalalin = ?", status)
+	resultsPerlalin := ac.DB.Order("tanggal_andalalin").Find(&perlalin, "status_andalalin = ?", status)
 
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	} else {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range andalalin {
+			respone = append(respone, models.DaftarAndalalinResponse{
+				IdAndalalin:      s.IdAndalalin,
+				Kode:             s.Kode,
+				TanggalAndalalin: s.TanggalAndalalin,
+				Nama:             s.NamaPemohon,
+				Alamat:           s.AlamatPemohon,
+				JenisAndalalin:   s.JenisAndalalin,
+				StatusAndalalin:  s.StatusAndalalin,
+			})
+		}
+		for _, s := range perlalin {
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      s.IdAndalalin,
 				Kode:             s.Kode,
@@ -769,15 +782,28 @@ func (ac *AndalalinController) GetPermohonan(ctx *gin.Context) {
 	}
 
 	var andalalin []models.Andalalin
+	var perlalin []models.Perlalin
 
-	results := ac.DB.Order("tanggal_andalalin").Find(&andalalin)
+	resultsAndalalin := ac.DB.Order("tanggal_andalalin").Find(&andalalin)
+	resultsPerlalin := ac.DB.Order("tanggal_andalalin").Find(&perlalin)
 
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	} else {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range andalalin {
+			respone = append(respone, models.DaftarAndalalinResponse{
+				IdAndalalin:      s.IdAndalalin,
+				Kode:             s.Kode,
+				TanggalAndalalin: s.TanggalAndalalin,
+				Nama:             s.NamaPemohon,
+				Alamat:           s.AlamatPemohon,
+				JenisAndalalin:   s.JenisAndalalin,
+				StatusAndalalin:  s.StatusAndalalin,
+			})
+		}
+		for _, s := range perlalin {
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      s.IdAndalalin,
 				Kode:             s.Kode,
@@ -827,10 +853,10 @@ func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range ticket {
 			var andalalin models.Andalalin
-			results := ac.DB.First(&andalalin, "id_andalalin = ?", s.IdAndalalin)
+			resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", s.IdAndalalin)
 
-			if results.Error != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+			if resultsAndalalin.Error != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsAndalalin.Error})
 				return
 			}
 
@@ -842,6 +868,24 @@ func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 				Alamat:           andalalin.AlamatPemohon,
 				JenisAndalalin:   andalalin.JenisAndalalin,
 				StatusAndalalin:  andalalin.StatusAndalalin,
+			})
+
+			var perlalin models.Perlalin
+			resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin)
+
+			if resultsPerlalin.Error != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsPerlalin.Error})
+				return
+			}
+
+			respone = append(respone, models.DaftarAndalalinResponse{
+				IdAndalalin:      perlalin.IdAndalalin,
+				Kode:             perlalin.Kode,
+				TanggalAndalalin: perlalin.TanggalAndalalin,
+				Nama:             perlalin.NamaPemohon,
+				Alamat:           perlalin.AlamatPemohon,
+				JenisAndalalin:   perlalin.JenisAndalalin,
+				StatusAndalalin:  perlalin.StatusAndalalin,
 			})
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
