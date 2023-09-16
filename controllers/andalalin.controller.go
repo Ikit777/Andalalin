@@ -539,6 +539,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 			IdAndalalin:             andalalin.IdAndalalin,
 			JenisAndalalin:          andalalin.JenisAndalalin,
 			JenisRencanaPembangunan: andalalin.Jenis,
+			Kategori:                andalalin.Kategori,
 			Kode:                    andalalin.Kode,
 			NamaPemohon:             andalalin.NamaPemohon,
 			LokasiPengambilan:       andalalin.LokasiPengambilan,
@@ -642,6 +643,7 @@ func (ac *AndalalinController) GetPermohonanByIdPerlalin(ctx *gin.Context) {
 		dataUser := models.AndalalinResponseUser{
 			IdAndalalin:             perlalin.IdAndalalin,
 			JenisAndalalin:          perlalin.JenisAndalalin,
+			Kategori:                perlalin.Kategori,
 			JenisRencanaPembangunan: perlalin.Jenis,
 			Kode:                    perlalin.Kode,
 			NamaPemohon:             perlalin.NamaPemohon,

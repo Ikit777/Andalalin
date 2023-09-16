@@ -346,6 +346,7 @@ type AndalalinResponseUser struct {
 	StatusAndalalin         string    `json:"status_andalalin,omitempty"`
 	TandaTerimaPendaftaran  []byte    `json:"tanda_terima_pendaftaran,omitempty"`
 	JenisRencanaPembangunan string    `json:"jenis_rencana_pembangunan,omitempty"`
+	Kategori                string    `json:"kategori,omitempty"`
 
 	//Data Perusahaan
 	NamaPerusahaan string `json:"nama_perusahaan,omitempty"`
