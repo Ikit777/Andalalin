@@ -1033,58 +1033,114 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 	}
 
 	var andalalin models.Andalalin
+	var perlalin models.Perlalin
 
-	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
+
+	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
-	andalalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
-	andalalin.PersyaratanTidakSesuai = payload.Persyaratan
+	if andalalin.IdAndalalin != uuid.Nil {
+		andalalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
+		andalalin.PersyaratanTidakSesuai = payload.Persyaratan
 
-	ac.DB.Save(&andalalin)
+		ac.DB.Save(&andalalin)
 
-	justString := strings.Join(payload.Persyaratan, "\n")
+		justString := strings.Join(payload.Persyaratan, "\n")
 
-	data := utils.PersyaratanTidakSesuai{
-		Nomer:       andalalin.Kode,
-		Nama:        andalalin.NamaPemohon,
-		Alamat:      andalalin.AlamatPemohon,
-		Tlp:         andalalin.NomerPemohon,
-		Waktu:       andalalin.WaktuAndalalin,
-		Izin:        andalalin.JenisAndalalin,
-		Status:      andalalin.StatusAndalalin,
-		Persyaratan: justString,
-		Subject:     "Persyaratan tidak terpenuhi",
-	}
+		data := utils.PersyaratanTidakSesuai{
+			Nomer:       andalalin.Kode,
+			Nama:        andalalin.NamaPemohon,
+			Alamat:      andalalin.AlamatPemohon,
+			Tlp:         andalalin.NomerPemohon,
+			Waktu:       andalalin.WaktuAndalalin,
+			Izin:        andalalin.JenisAndalalin,
+			Status:      andalalin.StatusAndalalin,
+			Persyaratan: justString,
+			Subject:     "Persyaratan tidak terpenuhi",
+		}
 
-	utils.SendEmailPersyaratan(andalalin.EmailPemohon, &data)
+		utils.SendEmailPersyaratan(andalalin.EmailPemohon, &data)
 
-	var user models.User
-	resultUser := ac.DB.First(&user, "id = ?", andalalin.IdUser)
-	if resultUser.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
-		return
-	}
+		var user models.User
+		resultUser := ac.DB.First(&user, "id = ?", andalalin.IdUser)
+		if resultUser.Error != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+			return
+		}
 
-	simpanNotif := models.Notifikasi{
-		IdUser: user.ID,
-		Title:  "Persyaratan tidak terpenuhi",
-		Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
-	}
-
-	ac.DB.Create(&simpanNotif)
-
-	if user.PushToken != "" {
-		notif := utils.Notification{
+		simpanNotif := models.Notifikasi{
 			IdUser: user.ID,
 			Title:  "Persyaratan tidak terpenuhi",
 			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
-			Token:  user.PushToken,
 		}
 
-		utils.SendPushNotifications(&notif)
+		ac.DB.Create(&simpanNotif)
+
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Persyaratan tidak terpenuhi",
+				Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
+				Token:  user.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+		}
+
+	}
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		perlalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
+		perlalin.PersyaratanTidakSesuai = payload.Persyaratan
+
+		ac.DB.Save(&perlalin)
+
+		justString := strings.Join(payload.Persyaratan, "\n")
+
+		data := utils.PersyaratanTidakSesuai{
+			Nomer:       perlalin.Kode,
+			Nama:        perlalin.NamaPemohon,
+			Alamat:      perlalin.AlamatPemohon,
+			Tlp:         perlalin.NomerPemohon,
+			Waktu:       perlalin.WaktuAndalalin,
+			Izin:        perlalin.JenisAndalalin,
+			Status:      perlalin.StatusAndalalin,
+			Persyaratan: justString,
+			Subject:     "Persyaratan tidak terpenuhi",
+		}
+
+		utils.SendEmailPersyaratan(perlalin.EmailPemohon, &data)
+
+		var user models.User
+		resultUser := ac.DB.First(&user, "id = ?", perlalin.IdUser)
+		if resultUser.Error != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+			return
+		}
+
+		simpanNotif := models.Notifikasi{
+			IdUser: user.ID,
+			Title:  "Persyaratan tidak terpenuhi",
+			Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
+		}
+
+		ac.DB.Create(&simpanNotif)
+
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Persyaratan tidak terpenuhi",
+				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
+				Token:  user.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+		}
+
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
