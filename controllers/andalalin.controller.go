@@ -1025,13 +1025,27 @@ func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 		return
 	}
 
-	var andalalin models.Andalalin
-	var perlalin models.Perlalin
+	var andalalin *models.Andalalin
+	var perlalin *models.Perlalin
 
-	result := ac.DB.Model(&andalalin).Model(&perlalin).Where("id_andalalin = ?", id).Update("status_andalalin", "Persyaratan terpenuhi")
-	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+	resultsAndalalin := ac.DB.Find(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.Find(&perlalin, "id_andalalin = ?", id)
+
+	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
+	}
+
+	if andalalin.IdAndalalin != uuid.Nil {
+		andalalin.StatusAndalalin = "Cek persyaratan"
+
+		ac.DB.Save(&andalalin)
+	}
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		perlalin.StatusAndalalin = "Cek persyaratan"
+
+		ac.DB.Save(&perlalin)
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
@@ -1206,13 +1220,27 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 		return
 	}
 
-	var andalalin models.Andalalin
-	var perlalin models.Andalalin
+	var andalalin *models.Andalalin
+	var perlalin *models.Perlalin
 
-	result := ac.DB.Model(&andalalin).Model(&perlalin).Where("id_andalalin = ?", id).Update("status_andalalin", status)
-	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+	resultsAndalalin := ac.DB.Find(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.Find(&perlalin, "id_andalalin = ?", id)
+
+	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
+	}
+
+	if andalalin.IdAndalalin != uuid.Nil {
+		andalalin.StatusAndalalin = status
+
+		ac.DB.Save(&andalalin)
+	}
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		perlalin.StatusAndalalin = status
+
+		ac.DB.Save(&perlalin)
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
@@ -1767,53 +1795,6 @@ func (ac *AndalalinController) LaporanBAP(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }
 
-func (ac *AndalalinController) GetBAP(ctx *gin.Context) {
-	id := ctx.Param("id_andalalin")
-
-	config, _ := initializers.LoadConfig(".")
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinBAPCredential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
-
-	var andalalin models.Andalalin
-
-	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
-		return
-	}
-
-	data := struct {
-		NomerDasar       string `json:"nomer_dasar,omitempty"`
-		NomerPelaksanaan string `json:"nomer_pelaksanaan,omitempty"`
-		TanggalBAP       string `json:"tanggal,omitempty"`
-		BAP              []byte `json:"bap,omitempty"`
-	}{
-		NomerDasar:       andalalin.NomerBAPDasar,
-		NomerPelaksanaan: andalalin.NomerBAPPelaksanaan,
-		TanggalBAP:       andalalin.TanggalBAP,
-		BAP:              andalalin.FileBAP,
-	}
-
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": data})
-}
-
 func (ac *AndalalinController) PersetujuanDokumen(ctx *gin.Context) {
 	var payload *models.Persetujuan
 	id := ctx.Param("id_andalalin")
@@ -1863,49 +1844,6 @@ func (ac *AndalalinController) PersetujuanDokumen(ctx *gin.Context) {
 	ac.DB.Save(&andalalin)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
-}
-
-func (ac *AndalalinController) GetPersetujuanDokumen(ctx *gin.Context) {
-	id := ctx.Param("id_andalalin")
-
-	config, _ := initializers.LoadConfig(".")
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinPersetujuanCredential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
-
-	var andalalin models.Andalalin
-
-	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
-		return
-	}
-
-	data := struct {
-		PersetujuanDokumen           string  `json:"persetujuan,omitempty"`
-		KeteranganPersetujuanDokumen *string `json:"keterangan,omitempty"`
-	}{
-		PersetujuanDokumen:           andalalin.PersetujuanDokumen,
-		KeteranganPersetujuanDokumen: andalalin.KeteranganPersetujuanDokumen,
-	}
-
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": data})
 }
 
 func (ac *AndalalinController) LaporanSK(ctx *gin.Context) {
@@ -1976,49 +1914,6 @@ func (ac *AndalalinController) LaporanSK(ctx *gin.Context) {
 	ac.PermohonanSelesai(ctx, andalalin.IdAndalalin)
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
-}
-
-func (ac *AndalalinController) GetSK(ctx *gin.Context) {
-	id := ctx.Param("id_andalalin")
-
-	config, _ := initializers.LoadConfig(".")
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinSKCredential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
-
-	var andalalin models.Andalalin
-
-	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
-		return
-	}
-
-	data := struct {
-		Id uuid.UUID `json:"id,omitempty"`
-		SK []byte    `json:"sk,omitempty"`
-	}{
-		Id: andalalin.IdAndalalin,
-		SK: andalalin.FileSK,
-	}
-
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": data})
 }
 
 func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID) {
