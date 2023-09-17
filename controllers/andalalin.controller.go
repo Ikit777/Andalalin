@@ -1575,7 +1575,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 			return
 		}
 
-		perlalin.StatusAndalalin = "Berita acara pemeriksaan"
+		perlalin.StatusAndalalin = "Laporan survei"
 
 		ac.DB.Save(&perlalin)
 
