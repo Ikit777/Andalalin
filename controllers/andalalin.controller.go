@@ -990,9 +990,7 @@ func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 		return
 	}
 
-	var andalalin models.Andalalin
-
-	result := ac.DB.Model(&andalalin).Preload("perlalins").Where("id_andalalin = ?", id).Update("status_andalalin", "Persyaratan terpenuhi")
+	result := ac.DB.Joins("andalalins", ac.DB.Where("id_andalalin = ?", id)).Joins("perlalins", ac.DB.Where("id_andalalin = ?", id)).Update("status_andalalin", "Persyaratan terpenuhi")
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
 		return
