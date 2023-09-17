@@ -1035,7 +1035,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 	var andalalin models.Andalalin
 	var perlalin models.Perlalin
 
-	result := ac.DB.Model(&andalalin).Model(&perlalin).Where("id_andalalin = ?", id)
+	result := ac.DB.Model(&andalalin).Model(&perlalin).Where("id_andalalin = ?", id).First(&andalalin).First(&perlalin)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
 		return
