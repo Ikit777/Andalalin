@@ -24,7 +24,6 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.GET("/permohonan", middleware.DeserializeUser(), uc.andalalinController.GetPermohonan)
 	router.GET("/userpermohonan", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanByIdUser)
 	router.GET("/detailpermohonan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanByIdAndalalin)
-	router.GET("/detailperlalin/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanByIdPerlalin)
 	router.GET("/statuspermohonan/:status_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanByStatus)
 
 	router.GET("/tiketpermohonan/:status", middleware.DeserializeUser(), uc.andalalinController.GetAndalalinTicketLevel1)

@@ -517,116 +517,13 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
 	var andalalin models.Andalalin
-
-	results := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
-		return
-	}
-
-	var ticket2 models.TiketLevel2
-	resultTiket2 := ac.DB.Not("status = ?", "Tutup").Where("id_andalalin = ?", id).First(&ticket2)
-	var status string
-	if resultTiket2.Error != nil {
-		status = "Kosong"
-	} else {
-		status = ticket2.Status
-	}
-
-	if currentUser.Role == "User" {
-		dataUser := models.AndalalinResponseUser{
-			IdAndalalin:             andalalin.IdAndalalin,
-			JenisAndalalin:          andalalin.JenisAndalalin,
-			JenisRencanaPembangunan: andalalin.Jenis,
-			Kategori:                andalalin.Kategori,
-			Kode:                    andalalin.Kode,
-			NamaPemohon:             andalalin.NamaPemohon,
-			LokasiPengambilan:       andalalin.LokasiPengambilan,
-			TanggalAndalalin:        andalalin.TanggalAndalalin,
-			StatusAndalalin:         andalalin.StatusAndalalin,
-			TandaTerimaPendaftaran:  andalalin.TandaTerimaPendaftaran,
-			NamaPerusahaan:          andalalin.NamaPerusahaan,
-			JenisKegiatan:           andalalin.JenisKegiatan,
-			Peruntukan:              andalalin.Peruntukan,
-			LuasLahan:               andalalin.LuasLahan,
-			PersyaratanTidakSesuai:  andalalin.PersyaratanTidakSesuai,
-			FileSK:                  andalalin.FileSK,
-		}
-
-		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
-	} else {
-		data := models.AndalalinResponse{
-			IdAndalalin:                  andalalin.IdAndalalin,
-			JenisAndalalin:               andalalin.JenisAndalalin,
-			Kategori:                     andalalin.Kategori,
-			Jenis:                        andalalin.Jenis,
-			Kode:                         andalalin.Kode,
-			NikPemohon:                   andalalin.NikPemohon,
-			NamaPemohon:                  andalalin.NamaPemohon,
-			EmailPemohon:                 andalalin.EmailPemohon,
-			TempatLahirPemohon:           andalalin.TempatLahirPemohon,
-			TanggalLahirPemohon:          andalalin.TanggalLahirPemohon,
-			AlamatPemohon:                andalalin.AlamatPemohon,
-			JenisKelaminPemohon:          andalalin.JenisKelaminPemohon,
-			NomerPemohon:                 andalalin.NomerPemohon,
-			NomerSelulerPemohon:          andalalin.NomerSelulerPemohon,
-			JabatanPemohon:               andalalin.JabatanPemohon,
-			LokasiPengambilan:            andalalin.LokasiPengambilan,
-			WaktuAndalalin:               andalalin.WaktuAndalalin,
-			TanggalAndalalin:             andalalin.TanggalAndalalin,
-			StatusAndalalin:              andalalin.StatusAndalalin,
-			TandaTerimaPendaftaran:       andalalin.TandaTerimaPendaftaran,
-			NamaPerusahaan:               andalalin.NamaPerusahaan,
-			AlamatPerusahaan:             andalalin.AlamatPerusahaan,
-			NomerPerusahaan:              andalalin.NomerPerusahaan,
-			EmailPerusahaan:              andalalin.EmailPerusahaan,
-			ProvinsiPerusahaan:           andalalin.ProvinsiPerusahaan,
-			KabupatenPerusahaan:          andalalin.KabupatenPerusahaan,
-			KecamatanPerusahaan:          andalalin.KecamatanPerusahaan,
-			KelurahaanPerusahaan:         andalalin.KelurahaanPerusahaan,
-			NamaPimpinan:                 andalalin.NamaPimpinan,
-			JabatanPimpinan:              andalalin.JabatanPimpinan,
-			JenisKelaminPimpinan:         andalalin.JenisKelaminPimpinan,
-			JenisKegiatan:                andalalin.JenisKegiatan,
-			Peruntukan:                   andalalin.Peruntukan,
-			LuasLahan:                    andalalin.LuasLahan,
-			AlamatPersil:                 andalalin.AlamatPersil,
-			KelurahanPersil:              andalalin.KelurahanPersil,
-			NomerSKRK:                    andalalin.NomerSKRK,
-			TanggalSKRK:                  andalalin.TanggalSKRK,
-			KartuTandaPenduduk:           andalalin.KartuTandaPenduduk,
-			AktaPendirianBadan:           andalalin.AktaPendirianBadan,
-			SuratKuasa:                   andalalin.SuratKuasa,
-			PersyaratanTidakSesuai:       andalalin.PersyaratanTidakSesuai,
-			IdPetugas:                    andalalin.IdPetugas,
-			NamaPetugas:                  andalalin.NamaPetugas,
-			EmailPetugas:                 andalalin.EmailPetugas,
-			StatusTiketLevel2:            status,
-			PersetujuanDokumen:           andalalin.PersetujuanDokumen,
-			KeteranganPersetujuanDokumen: andalalin.KeteranganPersetujuanDokumen,
-			NomerBAPDasar:                andalalin.NomerBAPDasar,
-			NomerBAPPelaksanaan:          andalalin.NomerBAPPelaksanaan,
-			TanggalBAP:                   andalalin.TanggalBAP,
-			FileBAP:                      andalalin.FileBAP,
-			FileSK:                       andalalin.FileSK,
-			PersyaratanTambahan:          andalalin.PersyaratanTambahan,
-		}
-		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
-	}
-}
-
-func (ac *AndalalinController) GetPermohonanByIdPerlalin(ctx *gin.Context) {
-	id := ctx.Param("id_andalalin")
-
-	currentUser := ctx.MustGet("currentUser").(models.User)
-
 	var perlalin models.Perlalin
 
-	results := ac.DB.First(&perlalin, "id_andalalin = ?", id)
+	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
@@ -639,63 +536,148 @@ func (ac *AndalalinController) GetPermohonanByIdPerlalin(ctx *gin.Context) {
 		status = ticket2.Status
 	}
 
-	if currentUser.Role == "User" {
-		dataUser := models.AndalalinResponseUser{
-			IdAndalalin:             perlalin.IdAndalalin,
-			JenisAndalalin:          perlalin.JenisAndalalin,
-			Kategori:                perlalin.Kategori,
-			JenisRencanaPembangunan: perlalin.Jenis,
-			Kode:                    perlalin.Kode,
-			NamaPemohon:             perlalin.NamaPemohon,
-			LokasiPengambilan:       perlalin.LokasiPengambilan,
-			TanggalAndalalin:        perlalin.TanggalAndalalin,
-			StatusAndalalin:         perlalin.StatusAndalalin,
-			TandaTerimaPendaftaran:  perlalin.TandaTerimaPendaftaran,
-			JenisKegiatan:           perlalin.JenisKegiatan,
-			Peruntukan:              perlalin.Peruntukan,
-			LuasLahan:               perlalin.LuasLahan,
-			PersyaratanTidakSesuai:  perlalin.PersyaratanTidakSesuai,
-		}
+	if andalalin.IdAndalalin != uuid.Nil {
+		if currentUser.Role == "User" {
+			dataUser := models.AndalalinResponseUser{
+				IdAndalalin:             andalalin.IdAndalalin,
+				JenisAndalalin:          andalalin.JenisAndalalin,
+				JenisRencanaPembangunan: andalalin.Jenis,
+				Kategori:                andalalin.Kategori,
+				Kode:                    andalalin.Kode,
+				NamaPemohon:             andalalin.NamaPemohon,
+				LokasiPengambilan:       andalalin.LokasiPengambilan,
+				TanggalAndalalin:        andalalin.TanggalAndalalin,
+				StatusAndalalin:         andalalin.StatusAndalalin,
+				TandaTerimaPendaftaran:  andalalin.TandaTerimaPendaftaran,
+				NamaPerusahaan:          andalalin.NamaPerusahaan,
+				JenisKegiatan:           andalalin.JenisKegiatan,
+				Peruntukan:              andalalin.Peruntukan,
+				LuasLahan:               andalalin.LuasLahan,
+				PersyaratanTidakSesuai:  andalalin.PersyaratanTidakSesuai,
+				FileSK:                  andalalin.FileSK,
+			}
 
-		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
-	} else {
-		data := models.PerlalinResponse{
-			IdAndalalin:            perlalin.IdAndalalin,
-			JenisAndalalin:         perlalin.JenisAndalalin,
-			Kategori:               perlalin.Kategori,
-			Jenis:                  perlalin.Jenis,
-			Kode:                   perlalin.Kode,
-			NikPemohon:             perlalin.NikPemohon,
-			NamaPemohon:            perlalin.NamaPemohon,
-			EmailPemohon:           perlalin.EmailPemohon,
-			TempatLahirPemohon:     perlalin.TempatLahirPemohon,
-			TanggalLahirPemohon:    perlalin.TanggalLahirPemohon,
-			AlamatPemohon:          perlalin.AlamatPemohon,
-			JenisKelaminPemohon:    perlalin.JenisKelaminPemohon,
-			NomerPemohon:           perlalin.NomerPemohon,
-			NomerSelulerPemohon:    perlalin.NomerSelulerPemohon,
-			LokasiPengambilan:      perlalin.LokasiPengambilan,
-			WaktuAndalalin:         perlalin.WaktuAndalalin,
-			TanggalAndalalin:       perlalin.TanggalAndalalin,
-			StatusAndalalin:        perlalin.StatusAndalalin,
-			TandaTerimaPendaftaran: perlalin.TandaTerimaPendaftaran,
-			JenisKegiatan:          perlalin.JenisKegiatan,
-			Peruntukan:             perlalin.Peruntukan,
-			LuasLahan:              perlalin.LuasLahan,
-			AlamatPersil:           perlalin.AlamatPersil,
-			KelurahanPersil:        perlalin.KelurahanPersil,
-			KartuTandaPenduduk:     perlalin.KartuTandaPenduduk,
-			SuratPermohonan:        perlalin.SuratPermohonan,
-			PersyaratanTidakSesuai: perlalin.PersyaratanTidakSesuai,
-			IdPetugas:              perlalin.IdPetugas,
-			NamaPetugas:            perlalin.NamaPetugas,
-			EmailPetugas:           perlalin.EmailPetugas,
-			StatusTiketLevel2:      status,
-			PersyaratanTambahan:    perlalin.PersyaratanTambahan,
+			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
+		} else {
+			data := models.AndalalinResponse{
+				IdAndalalin:                  andalalin.IdAndalalin,
+				JenisAndalalin:               andalalin.JenisAndalalin,
+				Kategori:                     andalalin.Kategori,
+				Jenis:                        andalalin.Jenis,
+				Kode:                         andalalin.Kode,
+				NikPemohon:                   andalalin.NikPemohon,
+				NamaPemohon:                  andalalin.NamaPemohon,
+				EmailPemohon:                 andalalin.EmailPemohon,
+				TempatLahirPemohon:           andalalin.TempatLahirPemohon,
+				TanggalLahirPemohon:          andalalin.TanggalLahirPemohon,
+				AlamatPemohon:                andalalin.AlamatPemohon,
+				JenisKelaminPemohon:          andalalin.JenisKelaminPemohon,
+				NomerPemohon:                 andalalin.NomerPemohon,
+				NomerSelulerPemohon:          andalalin.NomerSelulerPemohon,
+				JabatanPemohon:               andalalin.JabatanPemohon,
+				LokasiPengambilan:            andalalin.LokasiPengambilan,
+				WaktuAndalalin:               andalalin.WaktuAndalalin,
+				TanggalAndalalin:             andalalin.TanggalAndalalin,
+				StatusAndalalin:              andalalin.StatusAndalalin,
+				TandaTerimaPendaftaran:       andalalin.TandaTerimaPendaftaran,
+				NamaPerusahaan:               andalalin.NamaPerusahaan,
+				AlamatPerusahaan:             andalalin.AlamatPerusahaan,
+				NomerPerusahaan:              andalalin.NomerPerusahaan,
+				EmailPerusahaan:              andalalin.EmailPerusahaan,
+				ProvinsiPerusahaan:           andalalin.ProvinsiPerusahaan,
+				KabupatenPerusahaan:          andalalin.KabupatenPerusahaan,
+				KecamatanPerusahaan:          andalalin.KecamatanPerusahaan,
+				KelurahaanPerusahaan:         andalalin.KelurahaanPerusahaan,
+				NamaPimpinan:                 andalalin.NamaPimpinan,
+				JabatanPimpinan:              andalalin.JabatanPimpinan,
+				JenisKelaminPimpinan:         andalalin.JenisKelaminPimpinan,
+				JenisKegiatan:                andalalin.JenisKegiatan,
+				Peruntukan:                   andalalin.Peruntukan,
+				LuasLahan:                    andalalin.LuasLahan,
+				AlamatPersil:                 andalalin.AlamatPersil,
+				KelurahanPersil:              andalalin.KelurahanPersil,
+				NomerSKRK:                    andalalin.NomerSKRK,
+				TanggalSKRK:                  andalalin.TanggalSKRK,
+				KartuTandaPenduduk:           andalalin.KartuTandaPenduduk,
+				AktaPendirianBadan:           andalalin.AktaPendirianBadan,
+				SuratKuasa:                   andalalin.SuratKuasa,
+				PersyaratanTidakSesuai:       andalalin.PersyaratanTidakSesuai,
+				IdPetugas:                    andalalin.IdPetugas,
+				NamaPetugas:                  andalalin.NamaPetugas,
+				EmailPetugas:                 andalalin.EmailPetugas,
+				StatusTiketLevel2:            status,
+				PersetujuanDokumen:           andalalin.PersetujuanDokumen,
+				KeteranganPersetujuanDokumen: andalalin.KeteranganPersetujuanDokumen,
+				NomerBAPDasar:                andalalin.NomerBAPDasar,
+				NomerBAPPelaksanaan:          andalalin.NomerBAPPelaksanaan,
+				TanggalBAP:                   andalalin.TanggalBAP,
+				FileBAP:                      andalalin.FileBAP,
+				FileSK:                       andalalin.FileSK,
+				PersyaratanTambahan:          andalalin.PersyaratanTambahan,
+			}
+			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 		}
-		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
-
 	}
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		if currentUser.Role == "User" {
+			dataUser := models.AndalalinResponseUser{
+				IdAndalalin:             perlalin.IdAndalalin,
+				JenisAndalalin:          perlalin.JenisAndalalin,
+				Kategori:                perlalin.Kategori,
+				JenisRencanaPembangunan: perlalin.Jenis,
+				Kode:                    perlalin.Kode,
+				NamaPemohon:             perlalin.NamaPemohon,
+				LokasiPengambilan:       perlalin.LokasiPengambilan,
+				TanggalAndalalin:        perlalin.TanggalAndalalin,
+				StatusAndalalin:         perlalin.StatusAndalalin,
+				TandaTerimaPendaftaran:  perlalin.TandaTerimaPendaftaran,
+				JenisKegiatan:           perlalin.JenisKegiatan,
+				Peruntukan:              perlalin.Peruntukan,
+				LuasLahan:               perlalin.LuasLahan,
+				PersyaratanTidakSesuai:  perlalin.PersyaratanTidakSesuai,
+			}
+	
+			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
+		} else {
+			data := models.PerlalinResponse{
+				IdAndalalin:            perlalin.IdAndalalin,
+				JenisAndalalin:         perlalin.JenisAndalalin,
+				Kategori:               perlalin.Kategori,
+				Jenis:                  perlalin.Jenis,
+				Kode:                   perlalin.Kode,
+				NikPemohon:             perlalin.NikPemohon,
+				NamaPemohon:            perlalin.NamaPemohon,
+				EmailPemohon:           perlalin.EmailPemohon,
+				TempatLahirPemohon:     perlalin.TempatLahirPemohon,
+				TanggalLahirPemohon:    perlalin.TanggalLahirPemohon,
+				AlamatPemohon:          perlalin.AlamatPemohon,
+				JenisKelaminPemohon:    perlalin.JenisKelaminPemohon,
+				NomerPemohon:           perlalin.NomerPemohon,
+				NomerSelulerPemohon:    perlalin.NomerSelulerPemohon,
+				LokasiPengambilan:      perlalin.LokasiPengambilan,
+				WaktuAndalalin:         perlalin.WaktuAndalalin,
+				TanggalAndalalin:       perlalin.TanggalAndalalin,
+				StatusAndalalin:        perlalin.StatusAndalalin,
+				TandaTerimaPendaftaran: perlalin.TandaTerimaPendaftaran,
+				JenisKegiatan:          perlalin.JenisKegiatan,
+				Peruntukan:             perlalin.Peruntukan,
+				LuasLahan:              perlalin.LuasLahan,
+				AlamatPersil:           perlalin.AlamatPersil,
+				KelurahanPersil:        perlalin.KelurahanPersil,
+				KartuTandaPenduduk:     perlalin.KartuTandaPenduduk,
+				SuratPermohonan:        perlalin.SuratPermohonan,
+				PersyaratanTidakSesuai: perlalin.PersyaratanTidakSesuai,
+				IdPetugas:              perlalin.IdPetugas,
+				NamaPetugas:            perlalin.NamaPetugas,
+				EmailPetugas:           perlalin.EmailPetugas,
+				StatusTiketLevel2:      status,
+				PersyaratanTambahan:    perlalin.PersyaratanTambahan,
+			}
+			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
+		}
+	}
+
 }
 
 func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
