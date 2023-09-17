@@ -916,52 +916,97 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 	}
 
 	var andalalin *models.Andalalin
-	results := ac.DB.Find(&andalalin, "id_andalalin = ?", id)
+	var perlalin *models.Perlalin
 
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+	resultsAndalalin := ac.DB.Find(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.Find(&perlalin, "id_andalalin = ?", id)
+
+	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
-	for key, files := range form.File {
-		for _, file := range files {
-			// Save the uploaded file with key as prefix
-			file, err := file.Open()
+	if andalalin.IdAndalalin != uuid.Nil {
+		for key, files := range form.File {
+			for _, file := range files {
+				// Save the uploaded file with key as prefix
+				file, err := file.Open()
 
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				return
-			}
-			defer file.Close()
+				if err != nil {
+					ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+					return
+				}
+				defer file.Close()
 
-			data, err := io.ReadAll(file)
-			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				return
-			}
+				data, err := io.ReadAll(file)
+				if err != nil {
+					ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+					return
+				}
 
-			switch key {
-			case "Kartu tanda penduduk":
-				andalalin.KartuTandaPenduduk = data
-			case "Akta pendirian badan":
-				andalalin.AktaPendirianBadan = data
-			case "Surat kuasa":
-				andalalin.SuratKuasa = data
-			default:
-				for i := range andalalin.PersyaratanTambahan {
-					if andalalin.PersyaratanTambahan[i].Persyaratan == key {
-						andalalin.PersyaratanTambahan[i].Berkas = data
-						break
+				switch key {
+				case "Kartu tanda penduduk":
+					andalalin.KartuTandaPenduduk = data
+				case "Akta pendirian badan":
+					andalalin.AktaPendirianBadan = data
+				case "Surat kuasa":
+					andalalin.SuratKuasa = data
+				default:
+					for i := range andalalin.PersyaratanTambahan {
+						if andalalin.PersyaratanTambahan[i].Persyaratan == key {
+							andalalin.PersyaratanTambahan[i].Berkas = data
+							break
+						}
 					}
 				}
 			}
 		}
+
+		andalalin.PersyaratanTidakSesuai = nil
+		andalalin.StatusAndalalin = "Cek persyaratan"
+
+		ac.DB.Save(&andalalin)
 	}
 
-	andalalin.PersyaratanTidakSesuai = nil
-	andalalin.StatusAndalalin = "Cek persyaratan"
+	if perlalin.IdAndalalin != uuid.Nil {
+		for key, files := range form.File {
+			for _, file := range files {
+				// Save the uploaded file with key as prefix
+				file, err := file.Open()
 
-	ac.DB.Save(&andalalin)
+				if err != nil {
+					ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+					return
+				}
+				defer file.Close()
+
+				data, err := io.ReadAll(file)
+				if err != nil {
+					ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+					return
+				}
+
+				switch key {
+				case "Kartu tanda penduduk":
+					perlalin.KartuTandaPenduduk = data
+				case "Surat permohonan":
+					perlalin.SuratPermohonan = data
+				default:
+					for i := range andalalin.PersyaratanTambahan {
+						if andalalin.PersyaratanTambahan[i].Persyaratan == key {
+							andalalin.PersyaratanTambahan[i].Berkas = data
+							break
+						}
+					}
+				}
+			}
+		}
+
+		perlalin.PersyaratanTidakSesuai = nil
+		perlalin.StatusAndalalin = "Cek persyaratan"
+
+		ac.DB.Save(&perlalin)
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "msg": "persyaratan berhasil diupdate"})
 }
