@@ -637,7 +637,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				LuasLahan:               perlalin.LuasLahan,
 				PersyaratanTidakSesuai:  perlalin.PersyaratanTidakSesuai,
 			}
-	
+
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
 		} else {
 			data := models.PerlalinResponse{
@@ -677,7 +677,6 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 		}
 	}
-
 }
 
 func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
@@ -1391,6 +1390,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 		for _, s := range ticket {
 			var andalalin models.Andalalin
 			var perlalin models.Perlalin
+			var usulan models.UsulanPengelolaan
 
 			resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ? AND id_petugas = ?", s.IdAndalalin, currentUser.ID)
 			resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ? AND id_petugas = ?", s.IdAndalalin, currentUser.ID)
@@ -1400,30 +1400,33 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 				return
 			}
 
-			if andalalin.IdAndalalin != uuid.Nil {
-				respone = append(respone, models.DaftarAndalalinResponse{
-					IdAndalalin:      andalalin.IdAndalalin,
-					Kode:             andalalin.Kode,
-					TanggalAndalalin: andalalin.TanggalAndalalin,
-					Nama:             andalalin.NamaPemohon,
-					Alamat:           andalalin.AlamatPemohon,
-					JenisAndalalin:   andalalin.JenisAndalalin,
-					StatusAndalalin:  andalalin.StatusAndalalin,
-				})
-			}
+			ac.DB.First(&usulan, "id_andalalin = ?", s.IdAndalalin)
 
-			if perlalin.IdAndalalin != uuid.Nil {
-				respone = append(respone, models.DaftarAndalalinResponse{
-					IdAndalalin:      perlalin.IdAndalalin,
-					Kode:             perlalin.Kode,
-					TanggalAndalalin: perlalin.TanggalAndalalin,
-					Nama:             perlalin.NamaPemohon,
-					Alamat:           perlalin.AlamatPemohon,
-					JenisAndalalin:   perlalin.JenisAndalalin,
-					StatusAndalalin:  perlalin.StatusAndalalin,
-				})
-			}
+			if usulan.IdUsulan == uuid.Nil {
+				if andalalin.IdAndalalin != uuid.Nil {
+					respone = append(respone, models.DaftarAndalalinResponse{
+						IdAndalalin:      andalalin.IdAndalalin,
+						Kode:             andalalin.Kode,
+						TanggalAndalalin: andalalin.TanggalAndalalin,
+						Nama:             andalalin.NamaPemohon,
+						Alamat:           andalalin.AlamatPemohon,
+						JenisAndalalin:   andalalin.JenisAndalalin,
+						StatusAndalalin:  andalalin.StatusAndalalin,
+					})
+				}
 
+				if perlalin.IdAndalalin != uuid.Nil {
+					respone = append(respone, models.DaftarAndalalinResponse{
+						IdAndalalin:      perlalin.IdAndalalin,
+						Kode:             perlalin.Kode,
+						TanggalAndalalin: perlalin.TanggalAndalalin,
+						Nama:             perlalin.NamaPemohon,
+						Alamat:           perlalin.AlamatPemohon,
+						JenisAndalalin:   perlalin.JenisAndalalin,
+						StatusAndalalin:  perlalin.StatusAndalalin,
+					})
+				}
+			}
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
 	}
