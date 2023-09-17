@@ -536,7 +536,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		status = ticket2.Status
 	}
 
-	if andalalin.IdAndalalin != uuid.Nil {
+	if resultsAndalalin.Error != nil {
 		if currentUser.Role == "User" {
 			dataUser := models.AndalalinResponseUser{
 				IdAndalalin:             andalalin.IdAndalalin,
@@ -619,7 +619,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		}
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
+	if resultsPerlalin.Error != nil {
 		if currentUser.Role == "User" {
 			dataUser := models.AndalalinResponseUser{
 				IdAndalalin:             perlalin.IdAndalalin,
@@ -847,7 +847,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 				return
 			}
 
-			if andalalin.IdAndalalin != uuid.Nil {
+			if resultsAndalalin.Error != nil {
 				respone = append(respone, models.DaftarAndalalinResponse{
 					IdAndalalin:      andalalin.IdAndalalin,
 					Kode:             andalalin.Kode,
@@ -859,7 +859,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 				})
 			}
 
-			if perlalin.IdAndalalin != uuid.Nil {
+			if resultsPerlalin.Error != nil {
 				respone = append(respone, models.DaftarAndalalinResponse{
 					IdAndalalin:      perlalin.IdAndalalin,
 					Kode:             perlalin.Kode,
@@ -916,7 +916,7 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 		return
 	}
 
-	if andalalin.IdAndalalin != uuid.Nil {
+	if resultsAndalalin.Error != nil {
 		for key, files := range form.File {
 			for _, file := range files {
 				// Save the uploaded file with key as prefix
@@ -958,7 +958,7 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 		ac.DB.Save(&andalalin)
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
+	if resultsPerlalin.Error != nil {
 		for key, files := range form.File {
 			for _, file := range files {
 				// Save the uploaded file with key as prefix
@@ -1036,15 +1036,15 @@ func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 		return
 	}
 
-	if andalalin.IdAndalalin != uuid.Nil {
-		andalalin.StatusAndalalin = "Cek persyaratan"
+	if resultsAndalalin.Error != nil {
+		andalalin.StatusAndalalin = "Persyaratan terpenuhi"
 
 		ac.DB.Save(&andalalin)
+
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
-		perlalin.StatusAndalalin = "Cek persyaratan"
-
+	if resultsPerlalin.Error != nil {
+		perlalin.StatusAndalalin = "Persyaratan terpenuhi"
 		ac.DB.Save(&perlalin)
 	}
 
@@ -1092,7 +1092,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		return
 	}
 
-	if andalalin.IdAndalalin != uuid.Nil {
+	if resultsAndalalin.Error != nil {
 		andalalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
 		andalalin.PersyaratanTidakSesuai = payload.Persyaratan
 
@@ -1142,7 +1142,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
+	if resultsPerlalin.Error != nil {
 		perlalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
 		perlalin.PersyaratanTidakSesuai = payload.Persyaratan
 
@@ -1231,15 +1231,15 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 		return
 	}
 
-	if andalalin.IdAndalalin != uuid.Nil {
+	if resultsAndalalin.Error != nil {
 		andalalin.StatusAndalalin = status
 
 		ac.DB.Save(&andalalin)
+
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
+	if resultsPerlalin.Error != nil {
 		perlalin.StatusAndalalin = status
-
 		ac.DB.Save(&perlalin)
 	}
 
@@ -1287,7 +1287,7 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 		return
 	}
 
-	if andalalin.IdAndalalin != uuid.Nil {
+	if resultsAndalalin.Error != nil {
 		andalalin.IdPetugas = payload.IdPetugas
 		andalalin.NamaPetugas = payload.NamaPetugas
 		andalalin.EmailPetugas = payload.EmailPetugas
@@ -1298,7 +1298,7 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 		ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, payload.IdPetugas)
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
+	if resultsPerlalin.Error != nil {
 		perlalin.IdPetugas = payload.IdPetugas
 		perlalin.NamaPetugas = payload.NamaPetugas
 		perlalin.EmailPetugas = payload.EmailPetugas
@@ -1353,7 +1353,7 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 		return
 	}
 
-	if andalalin.IdAndalalin != uuid.Nil {
+	if resultsAndalalin.Error != nil {
 		andalalin.IdPetugas = payload.IdPetugas
 		andalalin.NamaPetugas = payload.NamaPetugas
 		andalalin.EmailPetugas = payload.EmailPetugas
@@ -1366,7 +1366,7 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 		ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, payload.IdPetugas)
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
+	if resultsPerlalin.Error != nil {
 		perlalin.IdPetugas = payload.IdPetugas
 		perlalin.NamaPetugas = payload.NamaPetugas
 		perlalin.EmailPetugas = payload.EmailPetugas
@@ -1432,7 +1432,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 			ac.DB.First(&usulan, "id_andalalin = ?", s.IdAndalalin)
 
 			if usulan.IdUsulan == uuid.Nil {
-				if andalalin.IdAndalalin != uuid.Nil {
+				if resultsAndalalin.Error != nil {
 					respone = append(respone, models.DaftarAndalalinResponse{
 						IdAndalalin:      andalalin.IdAndalalin,
 						Kode:             andalalin.Kode,
@@ -1444,7 +1444,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 					})
 				}
 
-				if perlalin.IdAndalalin != uuid.Nil {
+				if resultsPerlalin.Error != nil {
 					respone = append(respone, models.DaftarAndalalinResponse{
 						IdAndalalin:      perlalin.IdAndalalin,
 						Kode:             perlalin.Kode,
@@ -1543,7 +1543,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 		}
 	}
 
-	if andalalin.IdAndalalin != uuid.Nil {
+	if resultsAndalalin.Error != nil {
 		survey := models.Survey{
 			IdAndalalin:   andalalin.IdAndalalin,
 			IdTiketLevel1: ticket1.IdTiketLevel1,
@@ -1577,7 +1577,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 		ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
+	if resultsPerlalin.Error != nil {
 		survey := models.Survey{
 			IdAndalalin:   perlalin.IdAndalalin,
 			IdTiketLevel1: ticket1.IdTiketLevel1,
@@ -1658,7 +1658,7 @@ func (ac *AndalalinController) GetAllSurvey(ctx *gin.Context) {
 				return
 			}
 
-			if andalalin.IdAndalalin != uuid.Nil {
+			if resultsAndalalin.Error != nil {
 				respone = append(respone, models.DaftarAndalalinResponse{
 					IdAndalalin:      andalalin.IdAndalalin,
 					Kode:             andalalin.Kode,
@@ -1670,7 +1670,7 @@ func (ac *AndalalinController) GetAllSurvey(ctx *gin.Context) {
 				})
 			}
 
-			if perlalin.IdAndalalin != uuid.Nil {
+			if resultsPerlalin.Error != nil {
 				respone = append(respone, models.DaftarAndalalinResponse{
 					IdAndalalin:      perlalin.IdAndalalin,
 					Kode:             perlalin.Kode,
@@ -2021,7 +2021,7 @@ func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 		return
 	}
 
-	if andalalin.IdAndalalin != uuid.Nil {
+	if resultsAndalalin.Error != nil {
 		usul := models.UsulanPengelolaan{
 			IdAndalalin:                andalalin.IdAndalalin,
 			IdTiketLevel1:              ticket1.IdTiketLevel1,
@@ -2043,7 +2043,7 @@ func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 		}
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
+	if resultsPerlalin.Error != nil {
 		usul := models.UsulanPengelolaan{
 			IdAndalalin:                perlalin.IdAndalalin,
 			IdTiketLevel1:              ticket1.IdTiketLevel1,
@@ -2114,7 +2114,7 @@ func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
 					return
 				}
 
-				if andalalin.IdAndalalin != uuid.Nil {
+				if resultsAndalalin.Error != nil {
 					respone = append(respone, models.DaftarAndalalinResponse{
 						IdAndalalin:      andalalin.IdAndalalin,
 						Kode:             andalalin.Kode,
@@ -2126,7 +2126,7 @@ func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
 					})
 				}
 
-				if perlalin.IdAndalalin != uuid.Nil {
+				if resultsPerlalin.Error != nil {
 					respone = append(respone, models.DaftarAndalalinResponse{
 						IdAndalalin:      perlalin.IdAndalalin,
 						Kode:             perlalin.Kode,
@@ -2244,7 +2244,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		return
 	}
 
-	if andalalin.IdAndalalin != uuid.Nil {
+	if resultsAndalalin.Error != nil {
 		var userPetugas models.User
 		resultPetugas := ac.DB.First(&userPetugas, "id = ?", andalalin.IdPetugas)
 		if resultPetugas.Error != nil {
@@ -2351,7 +2351,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		}
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
+	if resultsPerlalin.Error != nil {
 		var userPetugas models.User
 		resultPetugas := ac.DB.First(&userPetugas, "id = ?", perlalin.IdPetugas)
 		if resultPetugas.Error != nil {
@@ -2515,7 +2515,7 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 		return
 	}
 
-	if andalalin.IdAndalalin != uuid.Nil {
+	if resultsAndalalin.Error != nil {
 		simpanNotifPengusul := models.Notifikasi{
 			IdUser: userPengusul.ID,
 			Title:  "Usulan tindakan dihapus",
@@ -2536,7 +2536,7 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 		}
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
+	if resultsPerlalin.Error != nil {
 		simpanNotifPengusul := models.Notifikasi{
 			IdUser: userPengusul.ID,
 			Title:  "Usulan tindakan dihapus",
@@ -2612,7 +2612,7 @@ func (ac *AndalalinController) GetAllAndalalinByTiketLevel2(ctx *gin.Context) {
 				return
 			}
 
-			if andalalin.IdAndalalin != uuid.Nil {
+			if resultsAndalalin.Error != nil {
 				respone = append(respone, models.DaftarAndalalinResponse{
 					IdAndalalin:      andalalin.IdAndalalin,
 					Kode:             andalalin.Kode,
@@ -2624,7 +2624,7 @@ func (ac *AndalalinController) GetAllAndalalinByTiketLevel2(ctx *gin.Context) {
 				})
 			}
 
-			if perlalin.IdAndalalin != uuid.Nil {
+			if resultsPerlalin.Error != nil {
 				respone = append(respone, models.DaftarAndalalinResponse{
 					IdAndalalin:      perlalin.IdAndalalin,
 					Kode:             perlalin.Kode,
