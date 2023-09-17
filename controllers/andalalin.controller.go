@@ -1259,20 +1259,37 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 	}
 
 	var andalalin models.Andalalin
-	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+	var perlalin models.Perlalin
+
+	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
+
+	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
-	andalalin.IdPetugas = payload.IdPetugas
-	andalalin.NamaPetugas = payload.NamaPetugas
-	andalalin.EmailPetugas = payload.EmailPetugas
-	andalalin.StatusAndalalin = "Survey lapangan"
+	if andalalin.IdAndalalin != uuid.Nil {
+		andalalin.IdPetugas = payload.IdPetugas
+		andalalin.NamaPetugas = payload.NamaPetugas
+		andalalin.EmailPetugas = payload.EmailPetugas
+		andalalin.StatusAndalalin = "Survey lapangan"
 
-	ac.DB.Save(&andalalin)
+		ac.DB.Save(&andalalin)
 
-	ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, payload.IdPetugas)
+		ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, payload.IdPetugas)
+	}
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		perlalin.IdPetugas = payload.IdPetugas
+		perlalin.NamaPetugas = payload.NamaPetugas
+		perlalin.EmailPetugas = payload.EmailPetugas
+		perlalin.StatusAndalalin = "Survey lapangan"
+
+		ac.DB.Save(&perlalin)
+
+		ac.ReleaseTicketLevel2(ctx, perlalin.IdAndalalin, payload.IdPetugas)
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Tambah petugas berhasil"})
 }
@@ -1308,22 +1325,41 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 	}
 
 	var andalalin models.Andalalin
-	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukand"})
+	var perlalin models.Perlalin
+
+	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
+
+	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
-	andalalin.IdPetugas = payload.IdPetugas
-	andalalin.NamaPetugas = payload.NamaPetugas
-	andalalin.EmailPetugas = payload.EmailPetugas
-	andalalin.StatusAndalalin = "Survey lapangan"
+	if andalalin.IdAndalalin != uuid.Nil {
+		andalalin.IdPetugas = payload.IdPetugas
+		andalalin.NamaPetugas = payload.NamaPetugas
+		andalalin.EmailPetugas = payload.EmailPetugas
+		andalalin.StatusAndalalin = "Survey lapangan"
 
-	ac.DB.Save(&andalalin)
+		ac.DB.Save(&andalalin)
 
-	ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
+		ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
 
-	ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, payload.IdPetugas)
+		ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, payload.IdPetugas)
+	}
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		perlalin.IdPetugas = payload.IdPetugas
+		perlalin.NamaPetugas = payload.NamaPetugas
+		perlalin.EmailPetugas = payload.EmailPetugas
+		perlalin.StatusAndalalin = "Survey lapangan"
+
+		ac.DB.Save(&perlalin)
+
+		ac.CloseTiketLevel2(ctx, perlalin.IdAndalalin)
+
+		ac.ReleaseTicketLevel2(ctx, perlalin.IdAndalalin, payload.IdPetugas)
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ubah petugas berhasil"})
 }
