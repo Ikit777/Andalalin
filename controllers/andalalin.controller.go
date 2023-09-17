@@ -672,6 +672,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				NamaPetugas:            perlalin.NamaPetugas,
 				EmailPetugas:           perlalin.EmailPetugas,
 				StatusTiketLevel2:      status,
+				LaporanSurvei:          perlalin.LaporanSurvei,
 				PersyaratanTambahan:    perlalin.PersyaratanTambahan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
@@ -2743,4 +2744,71 @@ func (ac *AndalalinController) GetAllAndalalinByTiketLevel2(ctx *gin.Context) {
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
 	}
+}
+
+func (ac *AndalalinController) LaporanSurvei(ctx *gin.Context) {
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinSurveyCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var perlalin models.Perlalin
+
+	result := ac.DB.First(&perlalin, "id_andalalin = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		return
+	}
+
+	file, err := ctx.FormFile("ls")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	uploadedFile, err := file.Open()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer uploadedFile.Close()
+
+	data, err := io.ReadAll(uploadedFile)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	perlalin.LaporanSurvei = data
+	perlalin.StatusAndalalin = "Keputusan hasil"
+
+	resultSK := ac.DB.Save(&perlalin)
+
+	if resultSK.Error != nil && strings.Contains(resultSK.Error.Error(), "duplicate key value violates unique") {
+		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data SK sudah tersedia"})
+		return
+	} else if resultSK.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }

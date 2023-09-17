@@ -59,4 +59,6 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.DELETE("/hapususulan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.HapusUsulan)
 
 	router.GET("/getallandalalintiket/:status", middleware.DeserializeUser(), uc.andalalinController.GetAllAndalalinByTiketLevel2)
+
+	router.POST("/laporansurvei/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.LaporanSurvei)
 }
