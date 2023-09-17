@@ -886,48 +886,6 @@ func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 	}
 }
 
-func (ac *AndalalinController) GetPersyaratan(ctx *gin.Context) {
-	id := ctx.Param("id_andalalin")
-
-	config, _ := initializers.LoadConfig(".")
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-	credential := claim.Credentials[repository.AndalalinPersyaratanredential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
-
-	var andalalin models.Andalalin
-
-	results := ac.DB.Find(&andalalin, "id_andalalin = ?", id)
-
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
-		return
-	}
-
-	persyaratan := &models.PersayaratanRespone{
-		IdAndalalin:        andalalin.IdAndalalin,
-		KartuTandaPenduduk: andalalin.KartuTandaPenduduk,
-		AktaPendirianBadan: andalalin.AktaPendirianBadan,
-		SuratKuasa:         andalalin.SuratKuasa,
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": persyaratan})
-}
-
 func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 	config, _ := initializers.LoadConfig(".")
 
@@ -1008,62 +966,6 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "msg": "persyaratan berhasil diupdate"})
 }
 
-func (ac *AndalalinController) GetPerusahaan(ctx *gin.Context) {
-	id := ctx.Param("id_andalalin")
-
-	config, _ := initializers.LoadConfig(".")
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-	credential := claim.Credentials[repository.AndalalinPersyaratanredential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
-
-	var andalalin models.Andalalin
-
-	results := ac.DB.Find(&andalalin, "id_andalalin = ?", id)
-
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
-		return
-	}
-
-	perusahaan := &models.PerusahaanRespone{
-		NamaPerusahaan:       andalalin.NamaPerusahaan,
-		AlamatPerusahaan:     andalalin.AlamatPerusahaan,
-		NomerPerusahaan:      andalalin.NomerPerusahaan,
-		EmailPerusahaan:      andalalin.EmailPerusahaan,
-		ProvinsiPerusahaan:   andalalin.ProvinsiPerusahaan,
-		KabupatenPerusahaan:  andalalin.KabupatenPerusahaan,
-		KecamatanPerusahaan:  andalalin.KecamatanPerusahaan,
-		KelurahaanPerusahaan: andalalin.KelurahaanPerusahaan,
-		NamaPimpinan:         andalalin.NamaPimpinan,
-		JabatanPimpinan:      andalalin.JabatanPimpinan,
-		JenisKelaminPimpinan: andalalin.JenisKelaminPimpinan,
-		JenisKegiatan:        andalalin.JenisKegiatan,
-		Peruntukan:           andalalin.Peruntukan,
-		LuasLahan:            andalalin.LuasLahan,
-		AlamatPersil:         andalalin.AlamatPersil,
-		KelurahanPersil:      andalalin.KelurahanPersil,
-		NomerSKRK:            andalalin.NomerSKRK,
-		TanggalSKRK:          andalalin.TanggalSKRK,
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": perusahaan})
-}
-
 func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 
@@ -1090,7 +992,7 @@ func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 
 	var andalalin models.Andalalin
 
-	result := ac.DB.Model(&andalalin).Where("id_andalalin = ?", id).Update("status_andalalin", "Persyaratan terpenuhi")
+	result := ac.DB.Model(&andalalin).Joins("perlalins").Where("id_andalalin = ?", id).Update("status_andalalin", "Persyaratan terpenuhi")
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
 		return

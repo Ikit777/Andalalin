@@ -192,34 +192,6 @@ type DaftarAndalalinResponse struct {
 	StatusAndalalin  string    `json:"status_andalalin,omitempty"`
 }
 
-type PersayaratanRespone struct {
-	IdAndalalin        uuid.UUID `json:"id_andalalin,omitempty"`
-	KartuTandaPenduduk []byte    `json:"ktp,omitempty"`
-	AktaPendirianBadan []byte    `json:"akta_pendirian_badan,omitempty"`
-	SuratKuasa         []byte    `json:"surat_kuasa,omitempty"`
-}
-
-type PerusahaanRespone struct {
-	NamaPerusahaan       string `json:"nama_perusahaan,omitempty"`
-	AlamatPerusahaan     string `json:"alamat_perusahaan,omitempty"`
-	NomerPerusahaan      string `json:"nomer_perusahaan,omitempty"`
-	EmailPerusahaan      string `json:"email_perusahaan,omitempty"`
-	ProvinsiPerusahaan   string `json:"perovinsi_perusahaan,omitempty"`
-	KabupatenPerusahaan  string `json:"kabupaten_perusahaan,omitempty"`
-	KecamatanPerusahaan  string `json:"kecamatan_perusahaan,omitempty"`
-	KelurahaanPerusahaan string `json:"kelurahan_perusahaan,omitempty"`
-	NamaPimpinan         string `json:"nama_pimpinan,omitempty"`
-	JabatanPimpinan      string `json:"jabatan_pimpinan,omitempty"`
-	JenisKelaminPimpinan string `json:"jenis_kelamin,omitempty"`
-	JenisKegiatan        string `json:"jenis_kegiatan,omitempty"`
-	Peruntukan           string `json:"peruntukan,omitempty"`
-	LuasLahan            string `json:"luas_lahan,omitempty"`
-	AlamatPersil         string `json:"alamat_persil,omitempty"`
-	KelurahanPersil      string `json:"kelurahan_persil,omitempty"`
-	NomerSKRK            string `json:"nomer_skrk,omitempty"`
-	TanggalSKRK          string `json:"tanggal_skrk,omitempty"`
-}
-
 type AndalalinResponse struct {
 	//Data Pemohon
 	IdAndalalin            uuid.UUID `json:"id_andalalin,omitempty"`
