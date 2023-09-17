@@ -1025,13 +1025,13 @@ func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 		return
 	}
 
-	var andalalin *models.Andalalin
-	var perlalin *models.Perlalin
+	var andalalin models.Andalalin
+	var perlalin models.Perlalin
 
-	resultsAndalalin := ac.DB.Find(&andalalin, "id_andalalin = ?", id)
-	resultsPerlalin := ac.DB.Find(&perlalin, "id_andalalin = ?", id)
+	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
-	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
+	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
@@ -1220,13 +1220,13 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 		return
 	}
 
-	var andalalin *models.Andalalin
-	var perlalin *models.Perlalin
+	var andalalin models.Andalalin
+	var perlalin models.Perlalin
 
-	resultsAndalalin := ac.DB.Find(&andalalin, "id_andalalin = ?", id)
-	resultsPerlalin := ac.DB.Find(&perlalin, "id_andalalin = ?", id)
+	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
-	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
+	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
