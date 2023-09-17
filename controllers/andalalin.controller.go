@@ -1217,8 +1217,9 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 	}
 
 	var andalalin models.Andalalin
+	var perlalin models.Andalalin
 
-	result := ac.DB.Model(&andalalin).Where("id_andalalin = ?", id).Update("status_andalalin", status)
+	result := ac.DB.Model(&andalalin).Model(&perlalin).Where("id_andalalin = ?", id).Update("status_andalalin", status)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
 		return
