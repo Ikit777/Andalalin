@@ -2907,3 +2907,43 @@ func (ac *AndalalinController) GetSurveiMandiri(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
 }
+
+func (ac *AndalalinController) TerimaSurvei(ctx *gin.Context) {
+	id := ctx.Param("id_survei")
+	keterangan := ctx.Param("keterangan")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinSurveyCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var survey *models.SurveiMandiri
+
+	result := ac.DB.First(&survey, "id_survey = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		return
+	}
+	survey.StatusSurvei = "Survei diterima"
+	survey.KeteranganTindakan = keterangan
+
+	ac.DB.Save(&survey)
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
+}

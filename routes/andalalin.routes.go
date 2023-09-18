@@ -63,4 +63,5 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.GET("/detailsurveimandiri/:id_survei", middleware.DeserializeUser(), uc.andalalinController.GetSurveiMandiri)
 	router.GET("/daftarsurveimandiri", middleware.DeserializeUser(), uc.andalalinController.GetAllSurveiMandiri)
 	router.GET("/daftarsurveimandiribypetugas", middleware.DeserializeUser(), uc.andalalinController.GetAllSurveiMandiriByPetugas)
+	router.POST("/terimasurvei/:id_survei/:keterangan", middleware.DeserializeUser(), uc.andalalinController.TerimaSurvei)
 }
