@@ -2791,6 +2791,7 @@ func (ac *AndalalinController) IsiSurveyMandiri(ctx *gin.Context) {
 		Foto3:         blobs["foto3"],
 		Latitude:      payload.Data.Latitude,
 		Longitude:     payload.Data.Longitude,
+		StatusSurvei:  "Menunggu tindakan",
 		TanggalSurvei: tanggal,
 		WaktuSurvei:   nowTime.Format("15:04:05"),
 	}
