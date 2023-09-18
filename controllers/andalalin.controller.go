@@ -2898,7 +2898,7 @@ func (ac *AndalalinController) GetSurveiMandiri(ctx *gin.Context) {
 
 	var survey *models.SurveiMandiri
 
-	result := ac.DB.First(&survey, "id_survei = ?", id)
+	result := ac.DB.First(&survey, "id_survey = ?", id)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
 		return
