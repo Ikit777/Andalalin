@@ -1741,16 +1741,16 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 		}
 	}
 
-	var andalalin []models.Andalalin
+	var perlalin []models.Perlalin
 
-	results := dm.DB.Find(&andalalin)
+	results := dm.DB.Find(&perlalin)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
 		dataFile := []file{}
-		for i, permohonan := range andalalin {
+		for i, permohonan := range perlalin {
 			for j, tambahan := range permohonan.PersyaratanTambahan {
 				if tambahan.Persyaratan == persyaratan {
 					oldSubstr := "/"
@@ -1760,7 +1760,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 					fileName := result + ".pdf"
 
 					dataFile = append(dataFile, file{Name: fileName, File: tambahan.Berkas})
-					andalalin[i].PersyaratanTambahan = append(andalalin[i].PersyaratanTambahan[:j], andalalin[i].PersyaratanTambahan[j+1:]...)
+					perlalin[i].PersyaratanTambahan = append(perlalin[i].PersyaratanTambahan[:j], perlalin[i].PersyaratanTambahan[j+1:]...)
 					break
 				}
 			}
@@ -1781,7 +1781,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 
 		base64ZipData := base64.StdEncoding.EncodeToString(zipData)
 
-		dm.DB.Save(&andalalin)
+		dm.DB.Save(&perlalin)
 		resultsSave := dm.DB.Save(&master)
 		if resultsSave.Error != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
