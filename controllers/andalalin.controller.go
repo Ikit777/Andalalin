@@ -1232,7 +1232,6 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 
 	if andalalin.IdAndalalin != uuid.Nil {
 		andalalin.StatusAndalalin = status
-
 		ac.DB.Save(&andalalin)
 
 	}
@@ -1491,6 +1490,11 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 		return
 	}
 
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+
+	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
+
 	var ticket1 models.TiketLevel1
 	var ticket2 models.TiketLevel2
 
@@ -1543,7 +1547,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 	}
 
 	if andalalin.IdAndalalin != uuid.Nil {
-		survey := models.Survey{
+		survey := models.Survei{
 			IdAndalalin:   andalalin.IdAndalalin,
 			IdTiketLevel1: ticket1.IdTiketLevel1,
 			IdTiketLevel2: ticket2.IdTiketLevel2,
@@ -1557,6 +1561,8 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 			Foto3:         blobs["foto3"],
 			Latitude:      payload.Data.Latitude,
 			Longitude:     payload.Data.Longitude,
+			TanggalSurvei: tanggal,
+			WaktuSurvei:   nowTime.Format("15:04:05"),
 		}
 
 		result := ac.DB.Create(&survey)
@@ -1577,7 +1583,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 	}
 
 	if perlalin.IdAndalalin != uuid.Nil {
-		survey := models.Survey{
+		survey := models.Survei{
 			IdAndalalin:   perlalin.IdAndalalin,
 			IdTiketLevel1: ticket1.IdTiketLevel1,
 			IdTiketLevel2: ticket2.IdTiketLevel2,
@@ -1591,6 +1597,8 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 			Foto3:         blobs["foto3"],
 			Latitude:      payload.Data.Latitude,
 			Longitude:     payload.Data.Longitude,
+			TanggalSurvei: tanggal,
+			WaktuSurvei:   nowTime.Format("15:04:05"),
 		}
 
 		result := ac.DB.Create(&survey)
@@ -1636,7 +1644,7 @@ func (ac *AndalalinController) GetAllSurvey(ctx *gin.Context) {
 		return
 	}
 
-	var survey []models.Survey
+	var survey []models.Survei
 
 	results := ac.DB.Find(&survey, "id_petugas = ?", currentUser.ID)
 
@@ -1710,7 +1718,7 @@ func (ac *AndalalinController) GetSurvey(ctx *gin.Context) {
 		return
 	}
 
-	var survey *models.Survey
+	var survey *models.Survei
 
 	result := ac.DB.First(&survey, "id_andalalin = ?", id)
 	if result.Error != nil {
@@ -2705,4 +2713,196 @@ func (ac *AndalalinController) LaporanSurvei(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) IsiSurveyMandiri(ctx *gin.Context) {
+	var payload *models.DataSurvey
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinOfficerCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBind(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+
+	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
+
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	blobs := make(map[string][]byte)
+
+	for key, files := range form.File {
+		for _, file := range files {
+			// Save the uploaded file with key as prefix
+			file, err := file.Open()
+
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			defer file.Close()
+
+			data, err := io.ReadAll(file)
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			// Store the blob data in the map
+			blobs[key] = data
+		}
+	}
+
+	survey := models.SurveiMandiri{
+		IdPetugas:     currentUser.ID,
+		Petugas:       currentUser.Name,
+		EmailPetugas:  currentUser.Email,
+		Lokasi:        payload.Data.Lokasi,
+		Keterangan:    payload.Data.Keterangan,
+		Foto1:         blobs["foto1"],
+		Foto2:         blobs["foto2"],
+		Foto3:         blobs["foto3"],
+		Latitude:      payload.Data.Latitude,
+		Longitude:     payload.Data.Longitude,
+		TanggalSurvei: tanggal,
+		WaktuSurvei:   nowTime.Format("15:04:05"),
+	}
+
+	result := ac.DB.Create(&survey)
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) GetAllSurveiMandiri(ctx *gin.Context) {
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinSurveyCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var survey []models.SurveiMandiri
+
+	results := ac.DB.Find(&survey)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(survey), "data": survey})
+}
+
+func (ac *AndalalinController) GetAllSurveiMandiriByPetugas(ctx *gin.Context) {
+	currentUser := ctx.MustGet("currentUser").(models.User)
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinSurveyCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var survey []models.SurveiMandiri
+
+	results := ac.DB.Find(&survey, "id_petugas = ?", currentUser.ID)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(survey), "data": survey})
+}
+
+func (ac *AndalalinController) GetSurveiMandiri(ctx *gin.Context) {
+	id := ctx.Param("id_survei")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinSurveyCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var survey *models.SurveiMandiri
+
+	result := ac.DB.First(&survey, "id_survei = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
 }
