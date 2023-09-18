@@ -263,7 +263,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	nowTime := time.Now().In(loc)
 
-	kode := "andalalin/" + utils.Generate(6)
+	kode := "perlalin/" + utils.Generate(6)
 	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
 
 	t, err := template.ParseFiles("templates/tandaterimaPerlalin.html")
