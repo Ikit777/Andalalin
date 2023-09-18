@@ -2802,7 +2802,7 @@ func (ac *AndalalinController) IsiSurveyMandiri(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
 }
 
 func (ac *AndalalinController) GetAllSurveiMandiri(ctx *gin.Context) {
