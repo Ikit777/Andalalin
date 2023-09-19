@@ -100,7 +100,7 @@ type Perlalin struct {
 	LokasiPengambilan      string    `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin         string    `gorm:"not null"`
 	TanggalAndalalin       string    `gorm:"not null"`
-	StatusAndalalin        string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Persyaratan terpenuhi', 'Survey lapangan', 'Laporan survei', 'Keputusan hasil', 'Tunda pemasangan', 'Permohonan selesai')"`
+	StatusAndalalin        string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Persyaratan terpenuhi', 'Survey lapangan', 'Laporan survei', 'Menunggu keputusan hasil', 'Tunda pemasangan', 'Permohonan selesai')"`
 	NamaPetugas            string    `gorm:"type:varchar(255);"`
 	EmailPetugas           string    `gorm:"type:varchar(255);"`
 	TandaTerimaPendaftaran []byte

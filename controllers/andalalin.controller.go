@@ -2700,7 +2700,7 @@ func (ac *AndalalinController) LaporanSurvei(ctx *gin.Context) {
 	}
 
 	perlalin.LaporanSurvei = data
-	perlalin.StatusAndalalin = "Keputusan hasil"
+	perlalin.StatusAndalalin = "Menunggu keputusan hasil"
 
 	resultSK := ac.DB.Save(&perlalin)
 
