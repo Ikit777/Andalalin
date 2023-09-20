@@ -2700,7 +2700,7 @@ func (ac *AndalalinController) LaporanSurvei(ctx *gin.Context) {
 	}
 
 	perlalin.LaporanSurvei = data
-	perlalin.StatusAndalalin = "Menunggu keputusan hasil"
+	perlalin.StatusAndalalin = "Menunggu hasil keputusan"
 
 	resultSK := ac.DB.Save(&perlalin)
 
@@ -2791,7 +2791,7 @@ func (ac *AndalalinController) IsiSurveyMandiri(ctx *gin.Context) {
 		Foto3:         blobs["foto3"],
 		Latitude:      payload.Data.Latitude,
 		Longitude:     payload.Data.Longitude,
-		StatusSurvei:  "Menunggu tindakan",
+		StatusSurvei:  "Perlu tindakan",
 		TanggalSurvei: tanggal,
 		WaktuSurvei:   nowTime.Format("15:04:05"),
 	}
