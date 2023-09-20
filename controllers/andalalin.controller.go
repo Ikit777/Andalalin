@@ -1760,6 +1760,7 @@ func (ac *AndalalinController) PersetujuanDokumen(ctx *gin.Context) {
 	andalalin.KeteranganPersetujuanDokumen = payload.Keterangan
 	if payload.Persetujuan == "Dokumen disetujui" {
 		andalalin.StatusAndalalin = "Pembuatan surat keputusan"
+		ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
 	} else {
 		andalalin.StatusAndalalin = "Berita acara pemeriksaan"
 	}
