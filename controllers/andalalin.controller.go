@@ -2702,12 +2702,9 @@ func (ac *AndalalinController) LaporanSurvei(ctx *gin.Context) {
 	perlalin.LaporanSurvei = data
 	perlalin.StatusAndalalin = "Menunggu hasil keputusan"
 
-	resultSK := ac.DB.Save(&perlalin)
+	resultLaporan := ac.DB.Save(&perlalin)
 
-	if resultSK.Error != nil && strings.Contains(resultSK.Error.Error(), "duplicate key value violates unique") {
-		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data SK sudah tersedia"})
-		return
-	} else if resultSK.Error != nil {
+	if resultLaporan.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
@@ -2950,6 +2947,12 @@ func (ac *AndalalinController) TerimaSurvei(ctx *gin.Context) {
 
 func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
+	var payload *models.KeputusanHasil
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -2978,5 +2981,69 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
 		return
+	}
+
+	perlalin.Tindakan = payload.Keputusan
+	perlalin.PertimbanganTindakan = payload.Pertimbangan
+	if payload.Keputusan == "Pemasangan ditunda" {
+		perlalin.StatusAndalalin = "Tunda pemasangan"
+	} else {
+		perlalin.StatusAndalalin = "Segerakan pemasangan"
+	}
+
+	resultKeputusan := ac.DB.Save(&perlalin)
+
+	if resultKeputusan.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+
+	if payload.Keputusan == "Pemasangan ditunda" {
+		ac.TundaPemasangan(ctx, perlalin)
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, permohonan models.Perlalin) {
+	data := utils.PermohonanSelesai{
+		Nomer:   permohonan.Kode,
+		Nama:    permohonan.NamaPemohon,
+		Alamat:  permohonan.AlamatPemohon,
+		Tlp:     permohonan.NomerPemohon,
+		Waktu:   permohonan.WaktuAndalalin,
+		Izin:    permohonan.JenisAndalalin,
+		Status:  permohonan.StatusAndalalin,
+		Subject: "Pemasangan ditunda",
+	}
+
+	utils.SendEmailPermohonanSelesai(permohonan.EmailPemohon, &data)
+
+	var user models.User
+	resultUser := ac.DB.First(&user, "id = ?", permohonan.IdUser)
+	if resultUser.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+		return
+	}
+
+	simpanNotif := models.Notifikasi{
+		IdUser: user.ID,
+		Title:  "Pemasangan ditunda",
+		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah ditunda pemasangan, harap cek email untuk lebih jelas",
+	}
+
+	ac.DB.Create(&simpanNotif)
+
+	if user.PushToken != "" {
+		notif := utils.Notification{
+			IdUser: user.ID,
+			Title:  "Pemasangan ditunda",
+			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah ditunda pemasangan, harap cek email untuk lebih jelas",
+			Token:  user.PushToken,
+		}
+
+		utils.SendPushNotifications(&notif)
 	}
 }

@@ -100,7 +100,7 @@ type Perlalin struct {
 	LokasiPengambilan      string    `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin         string    `gorm:"not null"`
 	TanggalAndalalin       string    `gorm:"not null"`
-	StatusAndalalin        string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Persyaratan terpenuhi', 'Survey lapangan', 'Laporan survei', 'Menunggu hasil keputusan', 'Tunda pemasangan', 'Permohonan selesai')"`
+	StatusAndalalin        string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Persyaratan terpenuhi', 'Survey lapangan', 'Laporan survei', 'Menunggu hasil keputusan', 'Tunda pemasangan', 'Segerakan pemasangan', 'Permohonan selesai')"`
 	NamaPetugas            string    `gorm:"type:varchar(255);"`
 	EmailPetugas           string    `gorm:"type:varchar(255);"`
 	TandaTerimaPendaftaran []byte
@@ -342,6 +342,11 @@ type PersayaratanTidakSesuaiInput struct {
 type Persetujuan struct {
 	Persetujuan string  `json:"persetujuan" binding:"required"`
 	Keterangan  *string `json:"keterangan" binding:"required"`
+}
+
+type KeputusanHasil struct {
+	Keputusan    string `json:"keputusan" binding:"required"`
+	Pertimbangan string `json:"pertimbangan" binding:"required"`
 }
 
 type InputBAP struct {
