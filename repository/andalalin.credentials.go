@@ -28,4 +28,6 @@ const (
 	AndalalinPengajuanCredential string = "andalalin:pengajuan"
 
 	AndalalinKelolaTiket string = "andalalin:kelola"
+
+	AndalalinKeputusanHasil string = "andalalin:keputusan"
 )

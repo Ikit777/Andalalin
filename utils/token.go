@@ -55,6 +55,7 @@ func CreateToken(ttl time.Duration, id uuid.UUID, privateKey string, credentials
 	claims["andalalin:sk"] = false
 	claims["andalalin:pengajuan"] = false
 	claims["andalalin:kelola"] = false
+	claims["andalalin:keputusan"] = false
 
 	claims["product:add"] = false
 	claims["product:delete"] = false
@@ -126,6 +127,7 @@ func ValidateToken(token string, publicKey string) (*TokenMetadata, error) {
 			"andalalin:sk":            claims["andalalin:sk"].(bool),
 			"andalalin:pengajuan":     claims["andalalin:pengajuan"].(bool),
 			"andalalin:kelola":        claims["andalalin:kelola"].(bool),
+			"andalalin:keputusan":     claims["andalalin:keputusan"].(bool),
 
 			"product:add":    claims["product:add"].(bool),
 			"product:delete": claims["product:delete"].(bool),

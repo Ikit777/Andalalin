@@ -33,6 +33,7 @@ func GetCredentialsByRole(role string) ([]string, error) {
 			repository.AndalalinBAPCredential,
 			repository.AndalalinSKCredential,
 			repository.AndalalinKelolaTiket,
+			repository.AndalalinKeputusanHasil,
 
 			repository.ProductAddCredential,
 			repository.ProductDeleteCredential,
@@ -53,6 +54,7 @@ func GetCredentialsByRole(role string) ([]string, error) {
 			repository.AndalalinTicket2Credential,
 			repository.AndalalinGetCredential,
 			repository.AndalalinSurveyCredential,
+			repository.AndalalinKeputusanHasil,
 
 			repository.ProductAddCredential,
 			repository.ProductDeleteCredential,
