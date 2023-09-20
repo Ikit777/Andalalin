@@ -8,7 +8,6 @@ type Andalalin struct {
 	//Data Pemohon
 	IdAndalalin            uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
 	IdUser                 uuid.UUID `gorm:"type:varchar(255);not null"`
-	IdPetugas              uuid.UUID `gorm:"type:varchar(255);"`
 	JenisAndalalin         string    `gorm:"type:varchar(255);not null"`
 	Kategori               string    `gorm:"type:varchar(255);not null"`
 	Jenis                  string    `gorm:"type:varchar(255);not null"`
@@ -26,9 +25,7 @@ type Andalalin struct {
 	LokasiPengambilan      string    `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin         string    `gorm:"not null"`
 	TanggalAndalalin       string    `gorm:"not null"`
-	StatusAndalalin        string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Persyaratan terpenuhi', 'Survey lapangan', 'Berita acara pemeriksaan', 'Persetujuan dokumen', 'Pembuatan surat keputusan', 'Permohonan selesai')"`
-	NamaPetugas            string    `gorm:"type:varchar(255);"`
-	EmailPetugas           string    `gorm:"type:varchar(255);"`
+	StatusAndalalin        string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Berita acara pemeriksaan', 'Persetujuan dokumen', 'Pembuatan surat keputusan', 'Permohonan selesai')"`
 	TandaTerimaPendaftaran []byte
 
 	//Data Perusahaan
