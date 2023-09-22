@@ -454,5 +454,5 @@ type SurveiKepuasan struct {
 type SurveiKepuasanInput struct {
 	IdAndalalin uuid.UUID `json:"id_andalalin" binding:"required"`
 	KritikSaran string    `json:"saran" binding:"required"`
-	DataSurvei  []string  `gorm:"serializer:json"`
+	DataSurvei  []string  `json:"data" binding:"required"`
 }
