@@ -448,10 +448,15 @@ type SurveiKepuasan struct {
 	Email              string    `gorm:"type:varchar(255);not null"`
 	KritikSaran        *string
 	TanggalPelaksanaan string
-	DataSurvei         []string `gorm:"serializer:json"`
+	DataSurvei         []Kepuasan `gorm:"serializer:json"`
 }
 
 type SurveiKepuasanInput struct {
-	KritikSaran *string  `json:"saran" binding:"required"`
-	DataSurvei  []string `json:"data" binding:"required"`
+	KritikSaran *string    `json:"saran" binding:"required"`
+	DataSurvei  []Kepuasan `json:"data" binding:"required"`
+}
+
+type Kepuasan struct {
+	Jenis string
+	Nilai string
 }
