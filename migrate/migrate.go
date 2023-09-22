@@ -42,6 +42,7 @@ func main() {
 	initializers.DB.Migrator().DropTable(&models.Notifikasi{})
 	initializers.DB.Migrator().DropTable(&models.DataMaster{})
 	initializers.DB.Migrator().DropTable(&models.UsulanPengelolaan{})
+	initializers.DB.Migrator().DropTable(&models.SurveiKepuasan{})
 
 	initializers.DB.AutoMigrate(&models.User{})
 	initializers.DB.AutoMigrate(&models.Andalalin{})
@@ -53,6 +54,7 @@ func main() {
 	initializers.DB.AutoMigrate(&models.Notifikasi{})
 	initializers.DB.AutoMigrate(&models.DataMaster{})
 	initializers.DB.AutoMigrate(&models.UsulanPengelolaan{})
+	initializers.DB.AutoMigrate(&models.SurveiKepuasan{})
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")

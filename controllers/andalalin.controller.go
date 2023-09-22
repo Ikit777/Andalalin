@@ -2774,3 +2774,52 @@ func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, permohonan mode
 		utils.SendPushNotifications(&notif)
 	}
 }
+
+func (ac *AndalalinController) SurveiKepuasan(ctx *gin.Context) {
+	var payload *models.SurveiKepuasanInput
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+
+	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
+
+	kepuasan := models.SurveiKepuasan{
+		IdAndalalin:        payload.IdAndalalin,
+		IdUser:             currentUser.ID,
+		Nama:               currentUser.Name,
+		Email:              currentUser.Email,
+		KritikSaran:        payload.KritikSaran,
+		TanggalPelaksanaan: tanggal,
+		DataSurvei:         payload.DataSurvei,
+	}
+
+	result := ac.DB.Create(&kepuasan)
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) CekSurveiKepuasan(ctx *gin.Context) {
+	id := ctx.Param("id_andalalin")
+
+	var survei models.SurveiKepuasan
+
+	result := ac.DB.First(&survei, "id_andalalin", id)
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
