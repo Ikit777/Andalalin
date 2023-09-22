@@ -2779,7 +2779,7 @@ func (ac *AndalalinController) SurveiKepuasan(ctx *gin.Context) {
 	var payload *models.SurveiKepuasanInput
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
+	if err := ctx.ShouldBind(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}

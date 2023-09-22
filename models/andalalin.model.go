@@ -446,13 +446,13 @@ type SurveiKepuasan struct {
 	IdUser             uuid.UUID `gorm:"type:varchar(255);not null"`
 	Nama               string    `gorm:"type:varchar(255);not null"`
 	Email              string    `gorm:"type:varchar(255);not null"`
-	KritikSaran        string
+	KritikSaran        *string
 	TanggalPelaksanaan string
 	DataSurvei         []string `gorm:"serializer:json"`
 }
 
 type SurveiKepuasanInput struct {
 	IdAndalalin uuid.UUID `json:"id_andalalin" binding:"required"`
-	KritikSaran string    `json:"saran" binding:"required"`
+	KritikSaran *string   `json:"saran" binding:"required"`
 	DataSurvei  []string  `json:"data" binding:"required"`
 }
