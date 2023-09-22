@@ -2777,6 +2777,7 @@ func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, permohonan mode
 
 func (ac *AndalalinController) SurveiKepuasan(ctx *gin.Context) {
 	var payload *models.SurveiKepuasanInput
+	id := ctx.Param("id_andalalin")
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
 	if err := ctx.ShouldBind(&payload); err != nil {
@@ -2789,21 +2790,53 @@ func (ac *AndalalinController) SurveiKepuasan(ctx *gin.Context) {
 
 	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
 
-	kepuasan := models.SurveiKepuasan{
-		IdAndalalin:        payload.IdAndalalin,
-		IdUser:             currentUser.ID,
-		Nama:               currentUser.Name,
-		Email:              currentUser.Email,
-		KritikSaran:        payload.KritikSaran,
-		TanggalPelaksanaan: tanggal,
-		DataSurvei:         payload.DataSurvei,
+	var andalalin models.Perlalin
+	var perlalin models.Andalalin
+
+	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
+
+	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		return
 	}
 
-	result := ac.DB.Create(&kepuasan)
+	if andalalin.IdAndalalin != uuid.Nil {
+		kepuasan := models.SurveiKepuasan{
+			IdAndalalin:        andalalin.IdAndalalin,
+			IdUser:             currentUser.ID,
+			Nama:               currentUser.Name,
+			Email:              currentUser.Email,
+			KritikSaran:        payload.KritikSaran,
+			TanggalPelaksanaan: tanggal,
+			DataSurvei:         payload.DataSurvei,
+		}
 
-	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
-		return
+		result := ac.DB.Create(&kepuasan)
+
+		if result.Error != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+			return
+		}
+	}
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		kepuasan := models.SurveiKepuasan{
+			IdAndalalin:        perlalin.IdAndalalin,
+			IdUser:             currentUser.ID,
+			Nama:               currentUser.Name,
+			Email:              currentUser.Email,
+			KritikSaran:        payload.KritikSaran,
+			TanggalPelaksanaan: tanggal,
+			DataSurvei:         payload.DataSurvei,
+		}
+
+		result := ac.DB.Create(&kepuasan)
+
+		if result.Error != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+			return
+		}
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
