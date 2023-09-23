@@ -2800,7 +2800,8 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 	c := context.Background()
 
-	if payload.Keputusan == "Pemasangan ditunda" {
+	switch payload.Keputusan {
+	case "Pemasangan ditunda":
 		ac.TundaPemasangan(ctx, perlalin)
 		var wg sync.WaitGroup
 		wg.Add(1)
@@ -2809,7 +2810,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			defer wg.Done()
 
 			select {
-			case <-time.After(5 * time.Minute):
+			case <-time.After(3 * time.Minute):
 				ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 				perlalin.StatusAndalalin = "Permohonan dibatalkan"
 				ac.DB.Save(&perlalin)
@@ -2819,12 +2820,12 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		}()
 		ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 		wg.Wait()
-	} else if payload.Keputusan == "Segerakan pemasangan" {
+	case "Segerakan pemasangan":
 		ac.SegerakanPemasangan(ctx, perlalin)
 		_, cancel := context.WithCancel(c)
 		defer cancel()
 		ctx.JSON(http.StatusOK, gin.H{"status": "success"})
-	} else if payload.Keputusan == "Batalkan permohonan" {
+	case "Batalkan permohonan":
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		perlalin.StatusAndalalin = "Permohonan dibatalkan"
 		ac.DB.Save(&perlalin)
