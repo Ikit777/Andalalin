@@ -2784,7 +2784,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 	if payload.Keputusan == "Pemasangan ditunda" {
 		perlalin.StatusAndalalin = "Tunda pemasangan"
-	} else if payload.Keputusan == "Segerakan pemasangan" {
+	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		perlalin.StatusAndalalin = "Segerakan pemasangan"
 	} else if payload.Keputusan == "Permohonan dibatalkan" {
 		perlalin.StatusAndalalin = "Permohonan dibatalkan"
@@ -2817,8 +2817,12 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				updateChannel <- struct{}{}
 			}
 		}()
-	} else if payload.Keputusan == "Segerakan pemasangan" {
+	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		ac.SegerakanPemasangan(ctx, perlalin)
+		perlalin.Tindakan = "Permohonan dibatalkan"
+		perlalin.PertimbanganTindakan = "Permohonan dibatalkan"
+		perlalin.StatusAndalalin = "Permohonan dibatalkan"
+		ac.DB.Save(&perlalin)
 		mutex.Lock()
 		defer mutex.Unlock()
 	} else if payload.Keputusan == "Batalkan permohonan" {
