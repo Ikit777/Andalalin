@@ -2927,22 +2927,17 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", Nilai: jenisSkor})
 	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: jenisSkor})
 
-	survey := []models.Kepuasan{}
-
 	for _, data := range survei {
 		for _, isi := range data.DataSurvei {
-			survey = append(survey, models.Kepuasan{Jenis: isi.Jenis, Nilai: isi.Nilai})
-		}
-	}
-
-	for _, data := range survey {
-		for i, jenis := range nilai {
-			if jenis.Jenis == data.Jenis {
-				for j, skor := range jenis.Nilai {
-					if skor.JenisNilai == data.Nilai {
-						nilai[i].Nilai[j].Nilai++
-						break
+			for i, item := range nilai {
+				if item.Jenis == isi.Jenis {
+					for j, nilaiSurvey := range item.Nilai {
+						if nilaiSurvey.JenisNilai == isi.Nilai {
+							nilai[i].Nilai[j].Nilai++
+							break
+						}
 					}
+					break
 				}
 			}
 		}
