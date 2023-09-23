@@ -2929,11 +2929,12 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 
 	for _, data := range survei {
 		for _, survey := range data.DataSurvei {
-			for _, nilai := range nilai {
-				if nilai.Jenis == survey.Jenis {
-					for _, skor := range nilai.Nilai {
+			for i, jenis := range nilai {
+				if jenis.Jenis == survey.Jenis {
+					for j, skor := range jenis.Nilai {
 						if skor.JenisNilai == survey.Nilai {
-							skor.Nilai = skor.Nilai + 1
+							
+							nilai[i].Nilai[j].Nilai = skor.Nilai + 1
 							break
 						}
 					}
