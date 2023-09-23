@@ -2819,18 +2819,10 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		}()
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		ac.SegerakanPemasangan(ctx, perlalin)
-		perlalin.Tindakan = "Permohonan dibatalkan"
-		perlalin.PertimbanganTindakan = "Permohonan dibatalkan"
-		perlalin.StatusAndalalin = "Permohonan dibatalkan"
-		ac.DB.Save(&perlalin)
 		mutex.Lock()
 		defer mutex.Unlock()
 	} else if payload.Keputusan == "Batalkan permohonan" {
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
-		perlalin.Tindakan = "Permohonan dibatalkan"
-		perlalin.PertimbanganTindakan = "Permohonan dibatalkan"
-		perlalin.StatusAndalalin = "Permohonan dibatalkan"
-		ac.DB.Save(&perlalin)
 		ac.BatalkanPermohonan(ctx, perlalin)
 		mutex.Lock()
 		defer mutex.Unlock()
