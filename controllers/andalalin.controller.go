@@ -2797,7 +2797,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 	var wg sync.WaitGroup
 
-	c, cancel := context.WithCancel(context.Background())
+	c := context.Background()
 
 	wg.Add(1)
 
@@ -2817,9 +2817,9 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		}()
 	} else {
 		ac.SegerakanPemasangan(ctx, perlalin)
-	}s
-
-	cancel()
+		_, cancel := context.WithCancel(c)
+		defer cancel()
+	}
 
 	wg.Wait()
 
