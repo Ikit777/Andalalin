@@ -31,7 +31,7 @@ type AndalalinController struct {
 type data struct {
 	Jenis string
 	Nilai int
-	Hasil float64
+	Hasil string
 }
 
 func NewAndalalinController(DB *gorm.DB) AndalalinController {
@@ -2907,15 +2907,15 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 
 	nilai := []data{}
 
-	nilai = append(nilai, data{Jenis: "Persyaratan pelayanan", Nilai: 0, Hasil: 0})
-	nilai = append(nilai, data{Jenis: "Prosedur pelayanan", Nilai: 0, Hasil: 0})
-	nilai = append(nilai, data{Jenis: "Waktu pelayanan", Nilai: 0, Hasil: 0})
-	nilai = append(nilai, data{Jenis: "Biaya / tarif pelayanan", Nilai: 0, Hasil: 0})
-	nilai = append(nilai, data{Jenis: "Produk pelayanan", Nilai: 0, Hasil: 0})
-	nilai = append(nilai, data{Jenis: "Kompetensi pelaksana", Nilai: 0, Hasil: 0})
-	nilai = append(nilai, data{Jenis: "Perilaku / sikap petugas", Nilai: 0, Hasil: 0})
-	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", Nilai: 0, Hasil: 0})
-	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: 0, Hasil: 0})
+	nilai = append(nilai, data{Jenis: "Persyaratan pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Prosedur pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Waktu pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Biaya / tarif pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Produk pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Kompetensi pelaksana", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Perilaku / sikap petugas", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: 0, Hasil: "0"})
 
 	for _, data := range survei {
 		for _, isi := range data.DataSurvei {
@@ -2940,22 +2940,23 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	total := 0
 
 	for i, item := range nilai {
-		nilai[i].Hasil = float64(item.Nilai * 100 / len(survei) / 4)
+		hasil := float64(item.Nilai * 100 / len(survei) / 4)
+		nilai[i].Hasil = fmt.Sprintf("%.2f", hasil)
 		total = total + item.Nilai
 	}
 
-	indeks := new(float64)
-	*indeks = float64(total * 100 / 9 / 4 / len(survei))
+	indeksHasil := float64(total * 100 / 9 / 4 / len(survei))
+	indeks := fmt.Sprintf("%.2f", indeksHasil)
 
 	hasil := struct {
-		Periode        string  `json:"periode,omitempty"`
-		Responden      string  `json:"responden,omitempty"`
-		IndeksKepuasan float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"indeks_kepuasan,omitempty"`
-		DataHasil      []data  `json:"hasil,omitempty"`
+		Periode        string `json:"periode,omitempty"`
+		Responden      string `json:"responden,omitempty"`
+		IndeksKepuasan string `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"indeks_kepuasan,omitempty"`
+		DataHasil      []data `json:"hasil,omitempty"`
 	}{
 		Periode:        periode,
 		Responden:      strconv.Itoa(len(survei)),
-		IndeksKepuasan: *indeks,
+		IndeksKepuasan: indeks,
 		DataHasil:      nilai,
 	}
 
