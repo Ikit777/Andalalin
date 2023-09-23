@@ -2799,9 +2799,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 	var mutex sync.Mutex
 
-	UpdatedAt := time.Now()
-
-	// Create a channel to signal when the update should occur.
 	updateChannel := make(chan struct{})
 	if payload.Keputusan == "Pemasangan ditunda" {
 		ac.TundaPemasangan(ctx, perlalin)
@@ -2810,7 +2807,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			time.Sleep(3 * time.Minute)
 			mutex.Lock()
 			defer mutex.Unlock()
-			if !UpdatedAt.After(time.Now().Add(3 * time.Hour)) {
+			if !time.Now().After(time.Now().Add(3 * time.Hour)) {
 				ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 				perlalin.Tindakan = "Permohonan dibatalkan"
 				perlalin.PertimbanganTindakan = "Permohonan dibatalkan"
@@ -2824,14 +2821,14 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		time.Sleep(30 * time.Second)
 		mutex.Lock()
 		defer mutex.Unlock()
-		UpdatedAt = time.Now()
+		updateChannel <- struct{}{}
 	} else if payload.Keputusan == "Batalkan permohonan" {
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		ac.BatalkanPermohonan(ctx, perlalin)
 		time.Sleep(30 * time.Second)
 		mutex.Lock()
 		defer mutex.Unlock()
-		UpdatedAt = time.Now()
+		updateChannel <- struct{}{}
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
