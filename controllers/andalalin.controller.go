@@ -2782,10 +2782,13 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 	perlalin.Tindakan = payload.Keputusan
 	perlalin.PertimbanganTindakan = payload.Pertimbangan
-	if payload.Keputusan == "Pemasangan ditunda" {
+	switch payload.Keputusan {
+	case "Pemasangan ditunda":
 		perlalin.StatusAndalalin = "Tunda pemasangan"
-	} else {
+	case "Segerakan pemasangan":
 		perlalin.StatusAndalalin = "Segerakan pemasangan"
+	case "Batalkan permohonan":
+		perlalin.StatusAndalalin = "Permohonan dibatalkan"
 	}
 
 	resultKeputusan := ac.DB.Save(&perlalin)
@@ -2801,22 +2804,30 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 	wg.Add(1)
 
-	if payload.Keputusan == "Pemasangan ditunda" {
+	switch payload.Keputusan {
+	case "Pemasangan ditunda":
 		ac.TundaPemasangan(ctx, perlalin)
 		go func() {
 			defer wg.Done()
 
 			select {
-			case <-time.After(3 * time.Minute):
+			case <-time.After(5 * time.Minute):
 				ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
-				// perlalin.StatusAndalalin = "Permohonan dibatalkan"
-				// ac.DB.Save(&perlalin)
+				perlalin.StatusAndalalin = "Permohonan dibatalkan"
+				ac.DB.Save(&perlalin)
 			case <-c.Done():
 				fmt.Println("Update canceled.")
 			}
 		}()
-	} else {
+	case "Segerakan pemasangan":
 		ac.SegerakanPemasangan(ctx, perlalin)
+		_, cancel := context.WithCancel(c)
+		defer cancel()
+	case "Batalkan permohonan":
+		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+		perlalin.StatusAndalalin = "Permohonan dibatalkan"
+		ac.DB.Save(&perlalin)
+		ac.BatalkanPermohonan(ctx, perlalin)
 		_, cancel := context.WithCancel(c)
 		defer cancel()
 	}
@@ -2901,6 +2912,47 @@ func (ac *AndalalinController) SegerakanPemasangan(ctx *gin.Context, permohonan 
 			IdUser: user.ID,
 			Title:  "Pemasangan disegerakan",
 			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah disegerakan untuk pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
+			Token:  user.PushToken,
+		}
+
+		utils.SendPushNotifications(&notif)
+	}
+}
+
+func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context, permohonan models.Perlalin) {
+	data := utils.PermohonanSelesai{
+		Nomer:   permohonan.Kode,
+		Nama:    permohonan.NamaPemohon,
+		Alamat:  permohonan.AlamatPemohon,
+		Tlp:     permohonan.NomerPemohon,
+		Waktu:   permohonan.WaktuAndalalin,
+		Izin:    permohonan.JenisAndalalin,
+		Status:  permohonan.StatusAndalalin,
+		Subject: "Permohonan dibatalkan",
+	}
+
+	utils.SendEmailPermohonanSelesai(permohonan.EmailPemohon, &data)
+
+	var user models.User
+	resultUser := ac.DB.First(&user, "id = ?", permohonan.IdUser)
+	if resultUser.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+		return
+	}
+
+	simpanNotif := models.Notifikasi{
+		IdUser: user.ID,
+		Title:  "Permohonan dibatalkan",
+		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah dibatalkan, harap cek email untuk lebih jelas",
+	}
+
+	ac.DB.Create(&simpanNotif)
+
+	if user.PushToken != "" {
+		notif := utils.Notification{
+			IdUser: user.ID,
+			Title:  "Permohonan dibatalkan",
+			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah dibatalkan, harap cek email untuk lebih jelas",
 			Token:  user.PushToken,
 		}
 
