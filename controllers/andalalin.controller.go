@@ -2798,15 +2798,14 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		return
 	}
 
-	var wg sync.WaitGroup
-
 	c := context.Background()
-
-	wg.Add(1)
 
 	switch payload.Keputusan {
 	case "Pemasangan ditunda":
 		ac.TundaPemasangan(ctx, perlalin)
+		var wg sync.WaitGroup
+		wg.Add(1)
+
 		go func() {
 			defer wg.Done()
 
@@ -2820,6 +2819,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			}
 		}()
 		ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+		wg.Wait()
 	case "Segerakan pemasangan":
 		ac.SegerakanPemasangan(ctx, perlalin)
 		_, cancel := context.WithCancel(c)
@@ -2834,8 +2834,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		defer cancel()
 		ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 	}
-
-	wg.Wait()
 }
 
 func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, permohonan models.Perlalin) {
