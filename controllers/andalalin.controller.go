@@ -2939,6 +2939,13 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 		}
 	}
 
+	for i, item := range nilai {
+		nilai[i].SangatBaik = item.SangatBaik * 100 * len(survei)
+		nilai[i].Baik = item.Baik * 100 * len(survei)
+		nilai[i].KurangBaik = item.KurangBaik * 100 * len(survei)
+		nilai[i].Buruk = item.Buruk * 100 * len(survei)
+	}
+
 	hasil := struct {
 		Periode   string `json:"periode,omitempty"`
 		Responden string `json:"responden,omitempty"`
