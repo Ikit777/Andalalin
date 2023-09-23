@@ -30,4 +30,6 @@ const (
 	AndalalinKelolaTiket string = "andalalin:kelola"
 
 	AndalalinKeputusanHasil string = "andalalin:keputusan"
+
+	AndalalinSurveiKepuasan string = "andalalin:kepuasan"
 )

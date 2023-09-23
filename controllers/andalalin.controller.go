@@ -2856,3 +2856,63 @@ func (ac *AndalalinController) CekSurveiKepuasan(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
+
+func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinSurveiKepuasan]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+
+	startOfMonth := getStartOfMonth(nowTime.Year(), nowTime.Month())
+
+	endOfMonth := getEndOfMonth(nowTime.Year(), nowTime.Month())
+
+	periode := startOfMonth.Format("02") + " - " + endOfMonth.Format("02") + utils.Bulan(nowTime.Month()) + nowTime.Format("2006")
+
+	var survei []models.SurveiKepuasan
+
+	result := ac.DB.Where("tanggal_pelaksanaan LIKE ?", utils.Bulan(nowTime.Month())).Find(&survei)
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	hasil := struct {
+		Periode   string `json:"periode,omitempty"`
+		Responden int    `json:"responden,omitempty"`
+	}{
+		Periode:   periode,
+		Responden: len(survei),
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
+}
+
+func getStartOfMonth(year int, month time.Month) time.Time {
+	return time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
+}
+
+func getEndOfMonth(year int, month time.Month) time.Time {
+	nextMonth := getStartOfMonth(year, month).AddDate(0, 1, 0)
+	return nextMonth.Add(-time.Second)
+}
