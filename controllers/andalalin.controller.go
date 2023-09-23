@@ -28,14 +28,12 @@ type AndalalinController struct {
 	DB *gorm.DB
 }
 
-type skor struct {
-	JenisNilai string
-	Nilai      int
-}
-
 type data struct {
-	Jenis string
-	Nilai []skor
+	Jenis      string
+	SangatBaik int
+	Baik       int
+	KurangBaik int
+	Buruk      int
 }
 
 func NewAndalalinController(DB *gorm.DB) AndalalinController {
@@ -2909,35 +2907,36 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 		return
 	}
 
-	jenisSkor := []skor{}
-	jenisSkor = append(jenisSkor, skor{JenisNilai: "Sangat baik", Nilai: 0})
-	jenisSkor = append(jenisSkor, skor{JenisNilai: "Baik", Nilai: 0})
-	jenisSkor = append(jenisSkor, skor{JenisNilai: "Kurang baik", Nilai: 0})
-	jenisSkor = append(jenisSkor, skor{JenisNilai: "Buruk", Nilai: 0})
-
 	nilai := []data{}
 
-	nilai = append(nilai, data{Jenis: "Persyaratan pelayanan", Nilai: jenisSkor})
-	nilai = append(nilai, data{Jenis: "Prosedur pelayanan", Nilai: jenisSkor})
-	nilai = append(nilai, data{Jenis: "Waktu pelayanan", Nilai: jenisSkor})
-	nilai = append(nilai, data{Jenis: "Biaya / tarif pelayanan", Nilai: jenisSkor})
-	nilai = append(nilai, data{Jenis: "Produk pelayanan", Nilai: jenisSkor})
-	nilai = append(nilai, data{Jenis: "Kompetensi pelaksana", Nilai: jenisSkor})
-	nilai = append(nilai, data{Jenis: "Perilaku / sikap petugas", Nilai: jenisSkor})
-	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", Nilai: jenisSkor})
-	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: jenisSkor})
+	nilai = append(nilai, data{Jenis: "Persyaratan pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
+	nilai = append(nilai, data{Jenis: "Prosedur pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
+	nilai = append(nilai, data{Jenis: "Waktu pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
+	nilai = append(nilai, data{Jenis: "Biaya / tarif pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
+	nilai = append(nilai, data{Jenis: "Produk pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
+	nilai = append(nilai, data{Jenis: "Kompetensi pelaksana", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
+	nilai = append(nilai, data{Jenis: "Perilaku / sikap petugas", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
+	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
+	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
 
 	for _, data := range survei {
 		for _, isi := range data.DataSurvei {
 			for i, item := range nilai {
 				if item.Jenis == isi.Jenis {
-					for j, nilaiSurvey := range item.Nilai {
-						if nilaiSurvey.JenisNilai == isi.Nilai {
-							nilai[i].Nilai[j].Nilai++
-							break
-						}
+					switch isi.Nilai {
+					case "Sangat baik":
+						nilai[i].SangatBaik++
+						break
+					case "Baik":
+						nilai[i].Baik++
+						break
+					case "Kurang baik":
+						nilai[i].KurangBaik++
+						break
+					case "Buruk":
+						nilai[i].Buruk++
+						break
 					}
-					break
 				}
 			}
 		}
