@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"html/template"
 	"io"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/Ikit777/E-Andalalin/initializers"
@@ -37,6 +39,61 @@ type data struct {
 type komentar struct {
 	Nama     string
 	Komentar string
+}
+
+func interval(hasil float64) string {
+	intervalNilai := ""
+	if hasil < 26.00 {
+		cekInterval := float64(hasil) / float64(25.00)
+		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
+	} else if hasil >= 43.76 && hasil <= 62.50 {
+		cekInterval := float64(hasil) / float64(25.00)
+		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
+	} else if hasil >= 62.51 && hasil <= 81.25 {
+		cekInterval := float64(hasil) / float64(25.00)
+		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
+	} else if hasil >= 81.26 && hasil <= 100 {
+		cekInterval := float64(hasil) / float64(25.00)
+		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
+	}
+	return intervalNilai
+}
+
+func mutu(hasil float64) string {
+	mutuNilai := ""
+	if hasil <= 43.75 {
+		mutuNilai = "D"
+	} else if hasil >= 43.76 && hasil <= 62.50 {
+		mutuNilai = "C"
+	} else if hasil >= 62.51 && hasil <= 81.25 {
+		mutuNilai = "B"
+	} else if hasil >= 81.26 && hasil <= 100 {
+		mutuNilai = "A"
+	}
+	return mutuNilai
+}
+
+func kinerja(hasil float64) string {
+	kinerjaNilai := ""
+	if hasil <= 43.75 {
+		kinerjaNilai = "Buruk"
+	} else if hasil >= 43.76 && hasil <= 62.50 {
+		kinerjaNilai = "Kurang baik"
+	} else if hasil >= 62.51 && hasil <= 81.25 {
+		kinerjaNilai = "Baik"
+	} else if hasil >= 81.26 && hasil <= 100 {
+		kinerjaNilai = "Sangat baik"
+	}
+	return kinerjaNilai
+}
+
+func getStartOfMonth(year int, month time.Month) time.Time {
+	return time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
+}
+
+func getEndOfMonth(year int, month time.Month) time.Time {
+	nextMonth := getStartOfMonth(year, month).AddDate(0, 1, 0)
+	return nextMonth.Add(-time.Second)
 }
 
 func NewAndalalinController(DB *gorm.DB) AndalalinController {
@@ -2738,11 +2795,33 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		return
 	}
 
-	ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+	var wg sync.WaitGroup
+
+	c, cancel := context.WithCancel(context.Background())
+
+	wg.Add(1)
 
 	if payload.Keputusan == "Pemasangan ditunda" {
 		ac.TundaPemasangan(ctx, perlalin)
-	}
+		go func() {
+			defer wg.Done()
+
+			select {
+			case <-time.After(3 * time.Minute):
+				ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+				// perlalin.StatusAndalalin = "Permohonan dibatalkan"
+				// ac.DB.Save(&perlalin)
+			case <-c.Done():
+				fmt.Println("Update canceled.")
+			}
+		}()
+	} else {
+		ac.SegerakanPemasangan(ctx, perlalin)
+	}s
+
+	cancel()
+
+	wg.Wait()
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
@@ -2771,7 +2850,7 @@ func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, permohonan mode
 	simpanNotif := models.Notifikasi{
 		IdUser: user.ID,
 		Title:  "Pemasangan ditunda",
-		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah ditunda pemasangan, harap cek email untuk lebih jelas",
+		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah ditunda untuk pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
 	}
 
 	ac.DB.Create(&simpanNotif)
@@ -2780,7 +2859,48 @@ func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, permohonan mode
 		notif := utils.Notification{
 			IdUser: user.ID,
 			Title:  "Pemasangan ditunda",
-			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah ditunda pemasangan, harap cek email untuk lebih jelas",
+			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah ditunda untuk pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
+			Token:  user.PushToken,
+		}
+
+		utils.SendPushNotifications(&notif)
+	}
+}
+
+func (ac *AndalalinController) SegerakanPemasangan(ctx *gin.Context, permohonan models.Perlalin) {
+	data := utils.PermohonanSelesai{
+		Nomer:   permohonan.Kode,
+		Nama:    permohonan.NamaPemohon,
+		Alamat:  permohonan.AlamatPemohon,
+		Tlp:     permohonan.NomerPemohon,
+		Waktu:   permohonan.WaktuAndalalin,
+		Izin:    permohonan.JenisAndalalin,
+		Status:  permohonan.StatusAndalalin,
+		Subject: "Pemasangan disegerakan",
+	}
+
+	utils.SendEmailPermohonanSelesai(permohonan.EmailPemohon, &data)
+
+	var user models.User
+	resultUser := ac.DB.First(&user, "id = ?", permohonan.IdUser)
+	if resultUser.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+		return
+	}
+
+	simpanNotif := models.Notifikasi{
+		IdUser: user.ID,
+		Title:  "Pemasangan disegerakan",
+		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah disegerakan untuk pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
+	}
+
+	ac.DB.Create(&simpanNotif)
+
+	if user.PushToken != "" {
+		notif := utils.Notification{
+			IdUser: user.ID,
+			Title:  "Pemasangan disegerakan",
+			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah disegerakan untuk pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
 			Token:  user.PushToken,
 		}
 
@@ -2977,59 +3097,4 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
-}
-
-func interval(hasil float64) string {
-	intervalNilai := ""
-	if hasil < 26.00 {
-		cekInterval := float64(hasil) / float64(25.00)
-		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
-	} else if hasil >= 43.76 && hasil <= 62.50 {
-		cekInterval := float64(hasil) / float64(25.00)
-		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
-	} else if hasil >= 62.51 && hasil <= 81.25 {
-		cekInterval := float64(hasil) / float64(25.00)
-		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
-	} else if hasil >= 81.26 && hasil <= 100 {
-		cekInterval := float64(hasil) / float64(25.00)
-		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
-	}
-	return intervalNilai
-}
-
-func mutu(hasil float64) string {
-	mutuNilai := ""
-	if hasil <= 43.75 {
-		mutuNilai = "D"
-	} else if hasil >= 43.76 && hasil <= 62.50 {
-		mutuNilai = "C"
-	} else if hasil >= 62.51 && hasil <= 81.25 {
-		mutuNilai = "B"
-	} else if hasil >= 81.26 && hasil <= 100 {
-		mutuNilai = "A"
-	}
-	return mutuNilai
-}
-
-func kinerja(hasil float64) string {
-	kinerjaNilai := ""
-	if hasil <= 43.75 {
-		kinerjaNilai = "Buruk"
-	} else if hasil >= 43.76 && hasil <= 62.50 {
-		kinerjaNilai = "Kurang baik"
-	} else if hasil >= 62.51 && hasil <= 81.25 {
-		kinerjaNilai = "Baik"
-	} else if hasil >= 81.26 && hasil <= 100 {
-		kinerjaNilai = "Sangat baik"
-	}
-	return kinerjaNilai
-}
-
-func getStartOfMonth(year int, month time.Month) time.Time {
-	return time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
-}
-
-func getEndOfMonth(year int, month time.Month) time.Time {
-	nextMonth := getStartOfMonth(year, month).AddDate(0, 1, 0)
-	return nextMonth.Add(-time.Second)
 }
