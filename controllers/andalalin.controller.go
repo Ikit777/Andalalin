@@ -2937,18 +2937,25 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 		}
 	}
 
+	total := 0
+
 	for i, item := range nilai {
 		nilai[i].Hasil = float64(item.Nilai * 100 / len(survei) / 4)
+		total = total + item.Nilai
 	}
 
+	indeks := float64(total * 100 / 9 / 4 / len(survei))
+
 	hasil := struct {
-		Periode   string `json:"periode,omitempty"`
-		Responden string `json:"responden,omitempty"`
-		DataHasil []data `json:"hasil,omitempty"`
+		Periode        string  `json:"periode,omitempty"`
+		Responden      string  `json:"responden,omitempty"`
+		IndeksKepuasan float64 `json:"indeks_kepuasan,omitempty"`
+		DataHasil      []data  `json:"hasil,omitempty"`
 	}{
-		Periode:   periode,
-		Responden: strconv.Itoa(len(survei)),
-		DataHasil: nilai,
+		Periode:        periode,
+		Responden:      strconv.Itoa(len(survei)),
+		IndeksKepuasan: indeks,
+		DataHasil:      nilai,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
