@@ -2832,9 +2832,8 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		defer cancel()
 	}
 
-	wg.Wait()
-
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+	wg.Wait()
 }
 
 func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, permohonan models.Perlalin) {
