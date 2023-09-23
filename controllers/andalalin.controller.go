@@ -2934,9 +2934,11 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 					for j, skor := range jenis.Nilai {
 						if skor.JenisNilai == survey.Nilai {
 
-							nilai[i].Nilai[j].Nilai = nilai[i].Nilai[j].Nilai + 1
+							nilai[i].Nilai[j].Nilai++
+							break
 						}
 					}
+					break
 				}
 			}
 		}
