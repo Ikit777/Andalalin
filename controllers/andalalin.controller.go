@@ -2787,7 +2787,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		perlalin.StatusAndalalin = "Tunda pemasangan"
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		perlalin.Cancelled = true
-		perlalin.StatusAndalalin = "Segerakan pemasangan"
+		perlalin.StatusAndalalin = "Segera dilakukan pemasangan"
 	} else if payload.Keputusan == "Permohonan dibatalkan" {
 		perlalin.Cancelled = true
 		perlalin.StatusAndalalin = "Permohonan dibatalkan"
