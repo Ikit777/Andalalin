@@ -2940,12 +2940,12 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	total := 0
 
 	for i, item := range nilai {
-		hasil := float64(item.Nilai * 100 / len(survei) / 4)
+		hasil := float64(item.Nilai) * float64(100) / float64(len(survei)) / float64(4)
 		nilai[i].Hasil = fmt.Sprintf("%.2f", hasil)
 		total = total + item.Nilai
 	}
 
-	indeksHasil := float64(total * 100 / 9 / 4 / len(survei))
+	indeksHasil := float64(total) * float64(100) / float64(9) / float64(4) / float64(len(survei))
 	indeks := fmt.Sprintf("%.2f", indeksHasil)
 
 	hasil := struct {
