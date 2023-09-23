@@ -2960,12 +2960,31 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 		Periode:        periode,
 		Responden:      strconv.Itoa(len(survei)),
 		IndeksKepuasan: indeks,
+		NilaiInterval:  interval(indeksHasil),
 		Mutu:           mutu(indeksHasil),
 		Kinerja:        kinerja(indeksHasil),
 		DataHasil:      nilai,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
+}
+
+func interval(hasil float64) string {
+	intervalNilai := ""
+	if hasil < 26.00 {
+		cekInterval := float64(hasil) / float64(25.00)
+		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
+	} else if hasil >= 43.76 && hasil <= 62.50 {
+		cekInterval := float64(hasil) / float64(25.00)
+		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
+	} else if hasil >= 62.51 && hasil <= 81.25 {
+		cekInterval := float64(hasil) / float64(25.00)
+		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
+	} else if hasil >= 81.26 && hasil <= 100 {
+		cekInterval := float64(hasil) / float64(25.00)
+		intervalNilai = fmt.Sprintf("%.2f", cekInterval)
+	}
+	return intervalNilai
 }
 
 func mutu(hasil float64) string {
