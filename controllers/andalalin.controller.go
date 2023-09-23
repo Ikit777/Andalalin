@@ -2926,17 +2926,14 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 					switch isi.Nilai {
 					case "Sangat baik":
 						nilai[i].SangatBaik++
-						break
 					case "Baik":
 						nilai[i].Baik++
-						break
 					case "Kurang baik":
 						nilai[i].KurangBaik++
-						break
 					case "Buruk":
 						nilai[i].Buruk++
-						break
 					}
+					break
 				}
 			}
 		}
