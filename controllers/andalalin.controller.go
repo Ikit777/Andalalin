@@ -2781,12 +2781,12 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 	perlalin.Tindakan = payload.Keputusan
 	perlalin.PertimbanganTindakan = payload.Pertimbangan
-	switch payload.Keputusan {
-	case "Pemasangan ditunda":
+
+	if payload.Keputusan == "Pemasangan ditunda" {
 		perlalin.StatusAndalalin = "Tunda pemasangan"
-	case "Segerakan pemasangan":
+	} else if payload.Keputusan == "Segerakan pemasangan" {
 		perlalin.StatusAndalalin = "Segerakan pemasangan"
-	case "Batalkan permohonan":
+	} else if payload.Keputusan == "Permohonan dibatalkan" {
 		perlalin.StatusAndalalin = "Permohonan dibatalkan"
 	}
 
@@ -2801,9 +2801,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 	// Create a channel to signal when the update should occur.
 	updateChannel := make(chan struct{})
-
-	switch payload.Keputusan {
-	case "Pemasangan ditunda":
+	if payload.Keputusan == "Pemasangan ditunda" {
 		ac.TundaPemasangan(ctx, perlalin)
 
 		go func() {
@@ -2819,11 +2817,11 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				updateChannel <- struct{}{}
 			}
 		}()
-	case "Segerakan pemasangan":
+	} else if payload.Keputusan == "Segerakan pemasangan" {
 		ac.SegerakanPemasangan(ctx, perlalin)
 		mutex.Lock()
 		defer mutex.Unlock()
-	case "Batalkan permohonan":
+	} else if payload.Keputusan == "Batalkan permohonan" {
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		perlalin.Tindakan = "Permohonan dibatalkan"
 		perlalin.PertimbanganTindakan = "Permohonan dibatalkan"
