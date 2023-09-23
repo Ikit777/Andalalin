@@ -2818,16 +2818,10 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		}()
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		ac.SegerakanPemasangan(ctx, perlalin)
-		time.Sleep(30 * time.Second)
-		mutex.Lock()
-		defer mutex.Unlock()
 		updateChannel <- struct{}{}
 	} else if payload.Keputusan == "Batalkan permohonan" {
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		ac.BatalkanPermohonan(ctx, perlalin)
-		time.Sleep(30 * time.Second)
-		mutex.Lock()
-		defer mutex.Unlock()
 		updateChannel <- struct{}{}
 	}
 
