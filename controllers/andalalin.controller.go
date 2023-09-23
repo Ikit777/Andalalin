@@ -2931,7 +2931,6 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 		for i, skor := range data.DataSurvei {
 			if skor.Jenis == nilai[findIndex(nilai, skor.Jenis)].Jenis {
 				nilai[i].Nilai[findIndexNilai(nilai[i].Nilai, skor.Nilai)].Nilai++
-				break
 			}
 		}
 	}
