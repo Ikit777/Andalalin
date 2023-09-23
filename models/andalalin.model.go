@@ -114,6 +114,8 @@ type Perlalin struct {
 
 	Tindakan             string
 	PertimbanganTindakan string
+
+	Cancelled bool
 }
 
 type PersyaratanTambahanPermohonan struct {

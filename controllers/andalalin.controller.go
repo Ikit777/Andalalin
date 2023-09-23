@@ -2783,10 +2783,13 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 	perlalin.PertimbanganTindakan = payload.Pertimbangan
 
 	if payload.Keputusan == "Pemasangan ditunda" {
+		perlalin.Cancelled = false
 		perlalin.StatusAndalalin = "Tunda pemasangan"
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
+		perlalin.Cancelled = true
 		perlalin.StatusAndalalin = "Segerakan pemasangan"
 	} else if payload.Keputusan == "Permohonan dibatalkan" {
+		perlalin.Cancelled = true
 		perlalin.StatusAndalalin = "Permohonan dibatalkan"
 	}
 
@@ -2807,7 +2810,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			time.Sleep(3 * time.Minute)
 			mutex.Lock()
 			defer mutex.Unlock()
-			if !time.Now().After(time.Now().Add(3 * time.Hour)) {
+			if !perlalin.Cancelled {
 				ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 				perlalin.Tindakan = "Permohonan dibatalkan"
 				perlalin.PertimbanganTindakan = "Permohonan dibatalkan"
@@ -2818,11 +2821,9 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		}()
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		ac.SegerakanPemasangan(ctx, perlalin)
-		updateChannel <- struct{}{}
 	} else if payload.Keputusan == "Batalkan permohonan" {
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		ac.BatalkanPermohonan(ctx, perlalin)
-		updateChannel <- struct{}{}
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
