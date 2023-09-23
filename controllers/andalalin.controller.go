@@ -28,6 +28,16 @@ type AndalalinController struct {
 	DB *gorm.DB
 }
 
+type skor struct {
+	JenisNilai string
+	Nilai      int
+}
+
+type data struct {
+	Jenis string
+	Nilai []skor
+}
+
 func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
@@ -2899,16 +2909,6 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 		return
 	}
 
-	type skor struct {
-		JenisNilai string
-		Nilai      int
-	}
-
-	type data struct {
-		Jenis string
-		Nilai []skor
-	}
-
 	jenisSkor := []skor{}
 	jenisSkor = append(jenisSkor, skor{JenisNilai: "Sangat baik", Nilai: 0})
 	jenisSkor = append(jenisSkor, skor{JenisNilai: "Baik", Nilai: 0})
@@ -2928,18 +2928,15 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: jenisSkor})
 
 	for _, data := range survei {
-		for i, jenis := range nilai {
-			if jenis.Jenis == data.DataSurvei[i].Jenis {
-				for j, skor := range jenis.Nilai {
-					if skor.JenisNilai == data.DataSurvei[i].Nilai {
-
-						nilai[i].Nilai[j].Nilai++
-						break
-					}
+		for _, survey := range data.DataSurvei {
+			for j, skor := range nilai[findIndex(nilai, survey.Jenis)].Nilai {
+				if skor.JenisNilai == survey.Nilai {
+					nilai[findIndex(nilai, survey.Jenis)].Nilai[j].Nilai++
+					break
 				}
 			}
-		}
 
+		}
 	}
 
 	hasil := struct {
@@ -2953,6 +2950,15 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
+}
+
+func findIndex(arr []data, target string) int {
+	for index, value := range arr {
+		if value.Jenis == target {
+			return index
+		}
+	}
+	return -1 // Element not found
 }
 
 func getStartOfMonth(year int, month time.Month) time.Time {
