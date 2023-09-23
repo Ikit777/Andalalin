@@ -31,6 +31,7 @@ type AndalalinController struct {
 type data struct {
 	Jenis string
 	Nilai int
+	Hasil float64
 }
 
 func NewAndalalinController(DB *gorm.DB) AndalalinController {
@@ -2906,15 +2907,15 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 
 	nilai := []data{}
 
-	nilai = append(nilai, data{Jenis: "Persyaratan pelayanan", Nilai: 0})
-	nilai = append(nilai, data{Jenis: "Prosedur pelayanan", Nilai: 0})
-	nilai = append(nilai, data{Jenis: "Waktu pelayanan", Nilai: 0})
-	nilai = append(nilai, data{Jenis: "Biaya / tarif pelayanan", Nilai: 0})
-	nilai = append(nilai, data{Jenis: "Produk pelayanan", Nilai: 0})
-	nilai = append(nilai, data{Jenis: "Kompetensi pelaksana", Nilai: 0})
-	nilai = append(nilai, data{Jenis: "Perilaku / sikap petugas", Nilai: 0})
-	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", Nilai: 0})
-	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: 0})
+	nilai = append(nilai, data{Jenis: "Persyaratan pelayanan", Nilai: 0, Hasil: 0})
+	nilai = append(nilai, data{Jenis: "Prosedur pelayanan", Nilai: 0, Hasil: 0})
+	nilai = append(nilai, data{Jenis: "Waktu pelayanan", Nilai: 0, Hasil: 0})
+	nilai = append(nilai, data{Jenis: "Biaya / tarif pelayanan", Nilai: 0, Hasil: 0})
+	nilai = append(nilai, data{Jenis: "Produk pelayanan", Nilai: 0, Hasil: 0})
+	nilai = append(nilai, data{Jenis: "Kompetensi pelaksana", Nilai: 0, Hasil: 0})
+	nilai = append(nilai, data{Jenis: "Perilaku / sikap petugas", Nilai: 0, Hasil: 0})
+	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", Nilai: 0, Hasil: 0})
+	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: 0, Hasil: 0})
 
 	for _, data := range survei {
 		for _, isi := range data.DataSurvei {
@@ -2937,7 +2938,7 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	}
 
 	for i, item := range nilai {
-		nilai[i].Nilai = item.Nilai * 100 / len(survei) / 4
+		nilai[i].Hasil = float64(item.Nilai * 100 / len(survei) / 4)
 	}
 
 	hasil := struct {
