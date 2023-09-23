@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -2886,11 +2887,11 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 
 	endOfMonth := getEndOfMonth(nowTime.Year(), nowTime.Month())
 
-	periode := startOfMonth.Format("02") + " - " + endOfMonth.Format("02") + utils.Bulan(nowTime.Month()) + nowTime.Format("2006")
+	periode := startOfMonth.Format("02") + " - " + endOfMonth.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
 
 	var survei []models.SurveiKepuasan
 
-	result := ac.DB.Where("tanggal_pelaksanaan LIKE ?", utils.Bulan(nowTime.Month())).Find(&survei)
+	result := ac.DB.Where("tanggal_pelaksanaan LIKE ?", fmt.Sprintf("%%%s%%", utils.Bulan(nowTime.Month()))).Find(&survei)
 
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
