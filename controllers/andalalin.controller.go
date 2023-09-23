@@ -2951,16 +2951,49 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	hasil := struct {
 		Periode        string `json:"periode,omitempty"`
 		Responden      string `json:"responden,omitempty"`
-		IndeksKepuasan string `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"indeks_kepuasan,omitempty"`
+		IndeksKepuasan string `json:"indeks_kepuasan,omitempty"`
+		NilaiInterval  string `json:"nilai_interval,omitempty"`
+		Mutu           string `json:"mutu,omitempty"`
+		Kinerja        string `json:"kinerja,omitempty"`
 		DataHasil      []data `json:"hasil,omitempty"`
 	}{
 		Periode:        periode,
 		Responden:      strconv.Itoa(len(survei)),
 		IndeksKepuasan: indeks,
+		Mutu:           mutu(indeksHasil),
+		Kinerja:        kinerja(indeksHasil),
 		DataHasil:      nilai,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
+}
+
+func mutu(hasil float64) string {
+	mutuNilai := ""
+	if hasil <= 43.75 {
+		mutuNilai = "D"
+	} else if hasil >= 43.76 && hasil <= 62.50 {
+		mutuNilai = "C"
+	} else if hasil >= 62.51 && hasil <= 81.25 {
+		mutuNilai = "B"
+	} else if hasil >= 81.26 && hasil <= 100 {
+		mutuNilai = "A"
+	}
+	return mutuNilai
+}
+
+func kinerja(hasil float64) string {
+	kinerjaNilai := ""
+	if hasil <= 43.75 {
+		kinerjaNilai = "Buruk"
+	} else if hasil >= 43.76 && hasil <= 62.50 {
+		kinerjaNilai = "Kurang baik"
+	} else if hasil >= 62.51 && hasil <= 81.25 {
+		kinerjaNilai = "Baik"
+	} else if hasil >= 81.26 && hasil <= 100 {
+		kinerjaNilai = "Sangat baik"
+	}
+	return kinerjaNilai
 }
 
 func getStartOfMonth(year int, month time.Month) time.Time {
