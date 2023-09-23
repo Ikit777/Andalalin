@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"html/template"
 	"io"
@@ -2798,36 +2797,33 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+	var mutex sync.Mutex
 
-	c := context.Background()
+	// Create a channel to signal when the update should occur.
+	updateChannel := make(chan struct{})
 
 	switch payload.Keputusan {
 	case "Pemasangan ditunda":
 		ac.TundaPemasangan(ctx, perlalin)
-		var wg sync.WaitGroup
-		wg.Add(1)
 
 		go func() {
-			defer wg.Done()
-
-			select {
-			case <-time.After(3 * time.Minute):
+			time.Sleep(3 * 24 * time.Hour)
+			mutex.Lock()
+			defer mutex.Unlock()
+			if !time.Now().After(time.Now().Add(-3 * 24 * time.Hour)) {
 				ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 				perlalin.Tindakan = "Permohonan dibatalkan"
 				perlalin.PertimbanganTindakan = "Permohonan dibatalkan"
 				perlalin.StatusAndalalin = "Permohonan dibatalkan"
 				ac.DB.Save(&perlalin)
-			case <-c.Done():
-				fmt.Println("Update canceled.")
+				updateChannel <- struct{}{}
 			}
 		}()
-
-		wg.Wait()
+		<-updateChannel
 	case "Segerakan pemasangan":
 		ac.SegerakanPemasangan(ctx, perlalin)
-		_, cancel := context.WithCancel(c)
-		defer cancel()
+		mutex.Lock()
+		defer mutex.Unlock()
 	case "Batalkan permohonan":
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		perlalin.Tindakan = "Permohonan dibatalkan"
@@ -2835,9 +2831,11 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		perlalin.StatusAndalalin = "Permohonan dibatalkan"
 		ac.DB.Save(&perlalin)
 		ac.BatalkanPermohonan(ctx, perlalin)
-		_, cancel := context.WithCancel(c)
-		defer cancel()
+		mutex.Lock()
+		defer mutex.Unlock()
 	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 
 }
 
