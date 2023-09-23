@@ -2807,7 +2807,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		ac.TundaPemasangan(ctx, perlalin)
 
 		go func() {
-			time.Sleep(3 * time.Minute)
+			time.Sleep(3 * 24 * time.Hour)
 			mutex.Lock()
 			defer mutex.Unlock()
 
