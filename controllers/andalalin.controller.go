@@ -2807,10 +2807,10 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		ac.TundaPemasangan(ctx, perlalin)
 
 		go func() {
-			time.Sleep(3 * 24 * time.Hour)
+			time.Sleep(3 * time.Minute)
 			mutex.Lock()
 			defer mutex.Unlock()
-			if !time.Now().After(time.Now().Add(-3 * 24 * time.Hour)) {
+			if !time.Now().After(time.Now().Add(3 * time.Hour)) {
 				ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 				perlalin.Tindakan = "Permohonan dibatalkan"
 				perlalin.PertimbanganTindakan = "Permohonan dibatalkan"
@@ -2819,7 +2819,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				updateChannel <- struct{}{}
 			}
 		}()
-		<-updateChannel
 	case "Segerakan pemasangan":
 		ac.SegerakanPemasangan(ctx, perlalin)
 		mutex.Lock()
