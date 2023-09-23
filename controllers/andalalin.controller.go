@@ -2928,15 +2928,17 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: jenisSkor})
 
 	for i, data := range survei {
-		switch data.DataSurvei[i].Jenis {
-		case "Sangat baik":
-			nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai[findIndexNilai(nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai, "Sangat baik")].Nilai++
-		case "Baik":
-			nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai[findIndexNilai(nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai, "Baik")].Nilai++
-		case "Kurang baik":
-			nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai[findIndexNilai(nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai, "Kurang baik")].Nilai++
-		case "Buruk":
-			nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai[findIndexNilai(nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai, "Buruk")].Nilai++
+		for _, survey := range data.DataSurvei {
+			switch survey.Jenis {
+			case "Sangat baik":
+				nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai[findIndexNilai(nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai, "Sangat baik")].Nilai++
+			case "Baik":
+				nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai[findIndexNilai(nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai, "Baik")].Nilai++
+			case "Kurang baik":
+				nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai[findIndexNilai(nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai, "Kurang baik")].Nilai++
+			case "Buruk":
+				nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai[findIndexNilai(nilai[findIndex(nilai, data.DataSurvei[i].Jenis)].Nilai, "Buruk")].Nilai++
+			}
 		}
 	}
 
