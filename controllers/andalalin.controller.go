@@ -2949,7 +2949,7 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	hasil := struct {
 		Periode        string  `json:"periode,omitempty"`
 		Responden      string  `json:"responden,omitempty"`
-		IndeksKepuasan float64 `json:"indeks_kepuasan,omitempty"`
+		IndeksKepuasan float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"indeks_kepuasan,omitempty"`
 		DataHasil      []data  `json:"hasil,omitempty"`
 	}{
 		Periode:        periode,
