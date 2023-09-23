@@ -2944,7 +2944,8 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 		total = total + item.Nilai
 	}
 
-	indeks := float64(total * 100 / 9 / 4 / len(survei))
+	indeks := new(float64)
+	*indeks = float64(total * 100 / 9 / 4 / len(survei))
 
 	hasil := struct {
 		Periode        string  `json:"periode,omitempty"`
@@ -2954,7 +2955,7 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	}{
 		Periode:        periode,
 		Responden:      strconv.Itoa(len(survei)),
-		IndeksKepuasan: indeks,
+		IndeksKepuasan: *indeks,
 		DataHasil:      nilai,
 	}
 
