@@ -2812,6 +2812,8 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			select {
 			case <-time.After(3 * time.Minute):
 				ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+				perlalin.Tindakan = "Permohonan dibatalkan"
+				perlalin.PertimbanganTindakan = "Permohonan dibatalkan"
 				perlalin.StatusAndalalin = "Permohonan dibatalkan"
 				ac.DB.Save(&perlalin)
 			case <-c.Done():
@@ -2827,6 +2829,8 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 	case "Batalkan permohonan":
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+		perlalin.Tindakan = "Permohonan dibatalkan"
+		perlalin.PertimbanganTindakan = "Permohonan dibatalkan"
 		perlalin.StatusAndalalin = "Permohonan dibatalkan"
 		ac.DB.Save(&perlalin)
 		ac.BatalkanPermohonan(ctx, perlalin)
