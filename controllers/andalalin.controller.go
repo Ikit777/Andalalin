@@ -2928,10 +2928,19 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: jenisSkor})
 
 	for _, data := range survei {
-		for i, skor := range data.DataSurvei {
-			if skor.Jenis == nilai[findIndex(nilai, skor.Jenis)].Jenis {
-				nilai[i].Nilai[findIndexNilai(nilai[i].Nilai, skor.Nilai)].Nilai++
+		for _, survey := range data.DataSurvei {
+			for i, jenis := range nilai {
+				if jenis.Jenis == survey.Jenis {
+					for j, skor := range jenis.Nilai {
+						if skor.JenisNilai == survey.Nilai {
+							nilai[i].Nilai[j].Nilai++
+							break
+						}
+					}
+					break
+				}
 			}
+
 		}
 	}
 
