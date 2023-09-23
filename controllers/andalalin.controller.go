@@ -2940,7 +2940,7 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 					break
 				}
 			}
-
+			break
 		}
 	}
 
@@ -2955,24 +2955,6 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
-}
-
-func findIndex(arr []data, target string) int {
-	for index, value := range arr {
-		if value.Jenis == target {
-			return index
-		}
-	}
-	return -1 // Element not found
-}
-
-func findIndexNilai(arr []skor, target string) int {
-	for index, value := range arr {
-		if value.JenisNilai == target {
-			return index
-		}
-	}
-	return -1 // Element not found
 }
 
 func getStartOfMonth(year int, month time.Month) time.Time {
