@@ -2819,10 +2819,12 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				fmt.Println("Update canceled.")
 			}
 		}()
+		ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 	case "Segerakan pemasangan":
 		ac.SegerakanPemasangan(ctx, perlalin)
 		_, cancel := context.WithCancel(c)
 		defer cancel()
+		ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 	case "Batalkan permohonan":
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		perlalin.StatusAndalalin = "Permohonan dibatalkan"
@@ -2830,9 +2832,9 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		ac.BatalkanPermohonan(ctx, perlalin)
 		_, cancel := context.WithCancel(c)
 		defer cancel()
+		ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 	wg.Wait()
 }
 
