@@ -34,6 +34,11 @@ type data struct {
 	Hasil string
 }
 
+type komentar struct {
+	Nama     string
+	Komentar string
+}
+
 func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
@@ -2917,7 +2922,10 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", Nilai: 0, Hasil: "0"})
 	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: 0, Hasil: "0"})
 
+	komen := []komentar{}
+
 	for _, data := range survei {
+		komen = append(komen, komentar{Nama: data.Nama, Komentar: *data.KritikSaran})
 		for _, isi := range data.DataSurvei {
 			for i, item := range nilai {
 				if item.Jenis == isi.Jenis {
@@ -2949,13 +2957,14 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	indeks := fmt.Sprintf("%.2f", indeksHasil)
 
 	hasil := struct {
-		Periode        string `json:"periode,omitempty"`
-		Responden      string `json:"responden,omitempty"`
-		IndeksKepuasan string `json:"indeks_kepuasan,omitempty"`
-		NilaiInterval  string `json:"nilai_interval,omitempty"`
-		Mutu           string `json:"mutu,omitempty"`
-		Kinerja        string `json:"kinerja,omitempty"`
-		DataHasil      []data `json:"hasil,omitempty"`
+		Periode        string     `json:"periode,omitempty"`
+		Responden      string     `json:"responden,omitempty"`
+		IndeksKepuasan string     `json:"indeks_kepuasan,omitempty"`
+		NilaiInterval  string     `json:"nilai_interval,omitempty"`
+		Mutu           string     `json:"mutu,omitempty"`
+		Kinerja        string     `json:"kinerja,omitempty"`
+		DataHasil      []data     `json:"hasil,omitempty"`
+		Komentar       []komentar `json:"komentar,omitempty"`
 	}{
 		Periode:        periode,
 		Responden:      strconv.Itoa(len(survei)),
@@ -2964,6 +2973,7 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 		Mutu:           mutu(indeksHasil),
 		Kinerja:        kinerja(indeksHasil),
 		DataHasil:      nilai,
+		Komentar:       komen,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
