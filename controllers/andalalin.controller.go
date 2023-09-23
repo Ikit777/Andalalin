@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -2898,12 +2899,57 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 		return
 	}
 
+	type skor struct {
+		JenisNilai string
+		Nilai      int
+	}
+
+	type data struct {
+		Jenis string
+		Nilai []skor
+	}
+
+	jenisSkor := []skor{}
+	jenisSkor = append(jenisSkor, skor{JenisNilai: "Sangat baik", Nilai: 0})
+	jenisSkor = append(jenisSkor, skor{JenisNilai: "Baik", Nilai: 0})
+	jenisSkor = append(jenisSkor, skor{JenisNilai: "Kurang baik", Nilai: 0})
+	jenisSkor = append(jenisSkor, skor{JenisNilai: "Buruk", Nilai: 0})
+
+	nilai := []data{}
+
+	nilai = append(nilai, data{Jenis: "Persyaratan pelayanan", Nilai: jenisSkor})
+	nilai = append(nilai, data{Jenis: "Prosedur pelayanan", Nilai: jenisSkor})
+	nilai = append(nilai, data{Jenis: "Waktu pelayanan", Nilai: jenisSkor})
+	nilai = append(nilai, data{Jenis: "Biaya / tarif pelayanan", Nilai: jenisSkor})
+	nilai = append(nilai, data{Jenis: "Produk pelayanan", Nilai: jenisSkor})
+	nilai = append(nilai, data{Jenis: "Kompetensi pelaksana", Nilai: jenisSkor})
+	nilai = append(nilai, data{Jenis: "Perilaku / sikap petugas", Nilai: jenisSkor})
+	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", Nilai: jenisSkor})
+	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: jenisSkor})
+
+	for _, data := range survei {
+		for _, survey := range data.DataSurvei {
+			for _, nilai := range nilai {
+				if nilai.Jenis == survey.Jenis {
+					for _, skor := range nilai.Nilai {
+						if skor.JenisNilai == survey.Nilai {
+							skor.Nilai = skor.Nilai + 1
+							break
+						}
+					}
+				}
+			}
+		}
+	}
+
 	hasil := struct {
 		Periode   string `json:"periode,omitempty"`
-		Responden int    `json:"responden,omitempty"`
+		Responden string `json:"responden,omitempty"`
+		DataHasil []data `json:"hasil,omitempty"`
 	}{
 		Periode:   periode,
-		Responden: len(survei),
+		Responden: strconv.Itoa(len(survei)),
+		DataHasil: nilai,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
