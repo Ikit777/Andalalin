@@ -29,11 +29,8 @@ type AndalalinController struct {
 }
 
 type data struct {
-	Jenis      string
-	SangatBaik int
-	Baik       int
-	KurangBaik int
-	Buruk      int
+	Jenis string
+	Nilai int
 }
 
 func NewAndalalinController(DB *gorm.DB) AndalalinController {
@@ -2909,15 +2906,15 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 
 	nilai := []data{}
 
-	nilai = append(nilai, data{Jenis: "Persyaratan pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
-	nilai = append(nilai, data{Jenis: "Prosedur pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
-	nilai = append(nilai, data{Jenis: "Waktu pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
-	nilai = append(nilai, data{Jenis: "Biaya / tarif pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
-	nilai = append(nilai, data{Jenis: "Produk pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
-	nilai = append(nilai, data{Jenis: "Kompetensi pelaksana", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
-	nilai = append(nilai, data{Jenis: "Perilaku / sikap petugas", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
-	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
-	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", SangatBaik: 0, Baik: 0, KurangBaik: 0, Buruk: 0})
+	nilai = append(nilai, data{Jenis: "Persyaratan pelayanan", Nilai: 0})
+	nilai = append(nilai, data{Jenis: "Prosedur pelayanan", Nilai: 0})
+	nilai = append(nilai, data{Jenis: "Waktu pelayanan", Nilai: 0})
+	nilai = append(nilai, data{Jenis: "Biaya / tarif pelayanan", Nilai: 0})
+	nilai = append(nilai, data{Jenis: "Produk pelayanan", Nilai: 0})
+	nilai = append(nilai, data{Jenis: "Kompetensi pelaksana", Nilai: 0})
+	nilai = append(nilai, data{Jenis: "Perilaku / sikap petugas", Nilai: 0})
+	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", Nilai: 0})
+	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: 0})
 
 	for _, data := range survei {
 		for _, isi := range data.DataSurvei {
@@ -2925,13 +2922,13 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 				if item.Jenis == isi.Jenis {
 					switch isi.Nilai {
 					case "Sangat baik":
-						nilai[i].SangatBaik++
+						nilai[i].Nilai = nilai[i].Nilai + 4
 					case "Baik":
-						nilai[i].Baik++
+						nilai[i].Nilai = nilai[i].Nilai + 3
 					case "Kurang baik":
-						nilai[i].KurangBaik++
+						nilai[i].Nilai = nilai[i].Nilai + 2
 					case "Buruk":
-						nilai[i].Buruk++
+						nilai[i].Nilai = nilai[i].Nilai + 1
 					}
 					break
 				}
@@ -2940,10 +2937,7 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	}
 
 	for i, item := range nilai {
-		nilai[i].SangatBaik = item.SangatBaik * 100 * len(survei)
-		nilai[i].Baik = item.Baik * 100 * len(survei)
-		nilai[i].KurangBaik = item.KurangBaik * 100 * len(survei)
-		nilai[i].Buruk = item.Buruk * 100 * len(survei)
+		nilai[i].Nilai = item.Nilai * 100 / len(survei) / 4
 	}
 
 	hasil := struct {
