@@ -2929,7 +2929,7 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 
 	for _, data := range survei {
 		for _, survey := range data.DataSurvei {
-			nilai[findIndex(nilai, survey.Jenis)].Nilai[findIndexNilai(nilai, survey.Nilai, findIndex(nilai, survey.Jenis))].Nilai++
+			nilai[findIndex(nilai, survey.Jenis)].Nilai[findIndexNilai(nilai[findIndex(nilai, survey.Jenis)].Nilai, survey.Nilai)].Nilai++
 		}
 	}
 
@@ -2955,9 +2955,9 @@ func findIndex(arr []data, target string) int {
 	return -1 // Element not found
 }
 
-func findIndexNilai(arr []data, target string, indexJenis int) int {
+func findIndexNilai(arr []skor, target string) int {
 	for index, value := range arr {
-		if value.Nilai[indexJenis].JenisNilai == target {
+		if value.JenisNilai == target {
 			return index
 		}
 	}
