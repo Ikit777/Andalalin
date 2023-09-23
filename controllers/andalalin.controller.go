@@ -2821,9 +2821,15 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		}()
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		ac.SegerakanPemasangan(ctx, perlalin)
+		mutex.Lock()
+		defer mutex.Unlock()
+		updateChannel <- struct{}{}
 	} else if payload.Keputusan == "Batalkan permohonan" {
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		ac.BatalkanPermohonan(ctx, perlalin)
+		mutex.Lock()
+		defer mutex.Unlock()
+		updateChannel <- struct{}{}
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
