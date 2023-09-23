@@ -2935,20 +2935,17 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 		}
 	}
 
-	if survey != nil {
-		for _, data := range survey {
-			for i, jenis := range nilai {
-				if jenis.Jenis == data.Jenis {
-					for j, skor := range jenis.Nilai {
-						if skor.JenisNilai == data.Nilai {
-							nilai[i].Nilai[j].Nilai++
-							break
-						}
+	for _, data := range survey {
+		for i, jenis := range nilai {
+			if jenis.Jenis == data.Jenis {
+				for j, skor := range jenis.Nilai {
+					if skor.JenisNilai == data.Nilai {
+						nilai[i].Nilai[j].Nilai++
+						break
 					}
 				}
 			}
 		}
-
 	}
 
 	hasil := struct {
