@@ -3441,27 +3441,6 @@ func (ac *AndalalinController) GetAllPemasangan(ctx *gin.Context) {
 func (ac *AndalalinController) GetPemasangan(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinSurveyCredential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
-
 	var pemasangan *models.Pemasangan
 
 	result := ac.DB.First(&pemasangan, "id_andalalin = ?", id)
