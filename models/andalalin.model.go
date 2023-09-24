@@ -306,6 +306,9 @@ type PerlalinResponse struct {
 	LaporanSurvei []byte `json:"laporan_survei,omitempty"`
 
 	PersyaratanTambahan []PersyaratanTambahanPermohonan `json:"persyaratan_tambahan,omitempty"`
+
+	Tindakan             string `json:"keputusan_hasil,omitempty"`
+	PertimbanganTindakan string `json:"pertimbangan,omitempty"`
 }
 
 type AndalalinResponseUser struct {
