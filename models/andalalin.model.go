@@ -462,3 +462,21 @@ type Kepuasan struct {
 	Jenis string
 	Nilai string
 }
+
+type Pemasangan struct {
+	IdPemasangan      uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
+	IdAndalalin       uuid.UUID `gorm:"type:varchar(255);uniqueIndex;not null"`
+	IdTiketLevel1     uuid.UUID `gorm:"type:varchar(255);not null"`
+	IdPetugas         uuid.UUID `gorm:"type:varchar(255);not null"`
+	Petugas           string    `gorm:"type:varchar(255);not null"`
+	EmailPetugas      string    `gorm:"type:varchar(255);not null"`
+	Keterangan        *string
+	Foto1             []byte
+	Foto2             []byte
+	Foto3             []byte
+	Lokasi            string
+	Latitude          float64
+	Longitude         float64
+	WaktuPemasangan   string `gorm:"not null"`
+	TanggalPemasangan string `gorm:"not null"`
+}
