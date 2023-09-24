@@ -2787,7 +2787,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		perlalin.StatusAndalalin = "Tunda pemasangan"
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		perlalin.Cancelled = true
-		perlalin.StatusAndalalin = "Segera dilakukan pemasangan"
+		perlalin.StatusAndalalin = "Pemasangan sedang dilakukan"
 	} else if payload.Keputusan == "Permohonan dibatalkan" {
 		perlalin.Cancelled = true
 		perlalin.StatusAndalalin = "Permohonan dibatalkan"
@@ -3150,4 +3150,52 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
+}
+
+func (ac *AndalalinController) GetPermohonanPemasanganLalin(ctx *gin.Context) {
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinGetCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var perlalin []models.Perlalin
+
+	resultsPerlalin := ac.DB.Order("tanggal_andalalin").Find(&perlalin, "status_andalalin = ? AND id_petugas", "Pemasangan sedang dilakukan", currentUser.ID)
+
+	if resultsPerlalin != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		return
+	} else {
+		var respone []models.DaftarAndalalinResponse
+		for _, s := range perlalin {
+			respone = append(respone, models.DaftarAndalalinResponse{
+				IdAndalalin:      s.IdAndalalin,
+				Kode:             s.Kode,
+				TanggalAndalalin: s.TanggalAndalalin,
+				Nama:             s.NamaPemohon,
+				Alamat:           s.AlamatPemohon,
+				JenisAndalalin:   s.JenisAndalalin,
+				StatusAndalalin:  s.StatusAndalalin,
+			})
+		}
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
+	}
 }
