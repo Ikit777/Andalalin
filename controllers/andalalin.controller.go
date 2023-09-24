@@ -740,6 +740,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				StatusTiketLevel2:      status,
 				LaporanSurvei:          perlalin.LaporanSurvei,
 				PersyaratanTambahan:    perlalin.PersyaratanTambahan,
+				Tindakan: perlalin.Tindakan,
+				PertimbanganTindakan: perlalin.PertimbanganTindakan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 		}
