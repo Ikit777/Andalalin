@@ -1547,7 +1547,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 	}
 
 	var perlalin models.Perlalin
-	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ? AND id_petugas = ?", id, currentUser.ID)
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if resultsPerlalin.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
@@ -3267,7 +3267,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 	}
 
 	var perlalin models.Perlalin
-	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ? AND id_petugas = ?", id, currentUser.ID)
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if resultsPerlalin.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
