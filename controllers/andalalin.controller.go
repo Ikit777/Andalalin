@@ -3414,8 +3414,28 @@ func (ac *AndalalinController) GetAllPemasangan(ctx *gin.Context) {
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
 		return
+	} else {
+		var respone []models.DaftarAndalalinResponse
+		for _, s := range pemasangan {
+			var perlalin models.Perlalin
+
+			ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin)
+
+			if perlalin.IdAndalalin != uuid.Nil {
+				respone = append(respone, models.DaftarAndalalinResponse{
+					IdAndalalin:      perlalin.IdAndalalin,
+					Kode:             perlalin.Kode,
+					TanggalAndalalin: perlalin.TanggalAndalalin,
+					Nama:             perlalin.NamaPemohon,
+					Alamat:           perlalin.AlamatPemohon,
+					JenisAndalalin:   perlalin.JenisAndalalin,
+					StatusAndalalin:  perlalin.StatusAndalalin,
+				})
+			}
+
+		}
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
 	}
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(pemasangan), "data": pemasangan})
 }
 
 func (ac *AndalalinController) GetPemasangan(ctx *gin.Context) {
