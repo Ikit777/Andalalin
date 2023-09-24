@@ -3337,6 +3337,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 		ac.DB.Save(&perlalin)
 
 		ac.PemasanganSelesai(ctx, perlalin)
+		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
