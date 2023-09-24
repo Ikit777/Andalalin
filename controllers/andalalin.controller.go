@@ -1655,7 +1655,7 @@ func (ac *AndalalinController) GetAllSurvey(ctx *gin.Context) {
 		for _, s := range survey {
 			var perlalin models.Perlalin
 
-			ac.DB.First(&perlalin, "id_andalalin = ? AND id_petugas = ?", s.IdAndalalin, s.IdPetugas)
+			ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin, s.IdPetugas)
 
 			if perlalin.IdAndalalin != uuid.Nil {
 				respone = append(respone, models.DaftarAndalalinResponse{
@@ -2836,7 +2836,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
-
 }
 
 func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, permohonan models.Perlalin) {
