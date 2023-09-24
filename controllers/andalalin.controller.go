@@ -3181,7 +3181,7 @@ func (ac *AndalalinController) GetPermohonanPemasanganLalin(ctx *gin.Context) {
 
 	var perlalin []models.Perlalin
 
-	resultsPerlalin := ac.DB.Order("tanggal_andalalin").Find(&perlalin, "status_andalalin = ? AND id_petugas", "Pemasangan sedang dilakukan", currentUser.ID)
+	resultsPerlalin := ac.DB.Order("tanggal_andalalin").Find(&perlalin, "status_andalalin = ? AND id_petugas = ?", "Pemasangan sedang dilakukan", currentUser.ID)
 
 	if resultsPerlalin != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
