@@ -3181,12 +3181,7 @@ func (ac *AndalalinController) GetPermohonanPemasanganLalin(ctx *gin.Context) {
 
 	var perlalin []models.Perlalin
 
-	resultsPerlalin := ac.DB.Order("tanggal_andalalin").Find(&perlalin)
-
-	if resultsPerlalin != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
-		return
-	}
+	ac.DB.Order("tanggal_andalalin").Find(&perlalin)
 
 	var respone []models.DaftarAndalalinResponse
 	for _, s := range perlalin {
