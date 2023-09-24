@@ -2833,6 +2833,28 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		}()
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		ac.SegerakanPemasangan(ctx, perlalin)
+		go func() {
+			time.Sleep(3 * 24 * time.Hour)
+			mutex.Lock()
+			defer mutex.Unlock()
+
+			var data models.Perlalin
+
+			result := ac.DB.First(&data, "id_andalalin = ?", id)
+			if result.Error != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+				return
+			}
+
+			if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
+				ac.CloseTiketLevel1(ctx, data.IdAndalalin)
+				data.Tindakan = "Permohonan dibatalkan"
+				data.PertimbanganTindakan = "Permohonan dibatalkan"
+				data.StatusAndalalin = "Permohonan dibatalkan"
+				ac.DB.Save(&data)
+				updateChannel <- struct{}{}
+			}
+		}()
 	} else if payload.Keputusan == "Batalkan permohonan" {
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		ac.BatalkanPermohonan(ctx, perlalin)
@@ -3198,5 +3220,169 @@ func (ac *AndalalinController) GetPermohonanPemasanganLalin(ctx *gin.Context) {
 		}
 	}
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
+}
+
+func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context) {
+	var payload *models.DataSurvey
+	currentUser := ctx.MustGet("currentUser").(models.User)
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinOfficerCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBind(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+
+	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
+
+	var ticket1 models.TiketLevel1
+
+	resultTiket1 := ac.DB.Find(&ticket1, "id_andalalin = ?", id)
+	if resultTiket1.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
+		return
+	}
+
+	var perlalin models.Perlalin
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ? AND id_petugas = ?", id, currentUser.ID)
+
+	if resultsPerlalin.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		return
+	}
+
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	blobs := make(map[string][]byte)
+
+	for key, files := range form.File {
+		for _, file := range files {
+			// Save the uploaded file with key as prefix
+			file, err := file.Open()
+
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			defer file.Close()
+
+			data, err := io.ReadAll(file)
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			// Store the blob data in the map
+			blobs[key] = data
+		}
+	}
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		survey := models.Pemasangan{
+			IdAndalalin:       perlalin.IdAndalalin,
+			IdTiketLevel1:     ticket1.IdTiketLevel1,
+			IdPetugas:         currentUser.ID,
+			Petugas:           currentUser.Name,
+			EmailPetugas:      currentUser.Email,
+			Lokasi:            payload.Data.Lokasi,
+			Keterangan:        payload.Data.Keterangan,
+			Foto1:             blobs["foto1"],
+			Foto2:             blobs["foto2"],
+			Foto3:             blobs["foto3"],
+			Latitude:          payload.Data.Latitude,
+			Longitude:         payload.Data.Longitude,
+			WaktuPemasangan:   tanggal,
+			TanggalPemasangan: nowTime.Format("15:04:05"),
+		}
+
+		result := ac.DB.Create(&survey)
+
+		if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
+			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data survey sudah tersedia"})
+			return
+		} else if result.Error != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+			return
+		}
+
+		perlalin.StatusAndalalin = "Pemasangan selesai"
+
+		ac.DB.Save(&perlalin)
+
+		ac.PemasanganSelesai(ctx, perlalin)
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) PemasanganSelesai(ctx *gin.Context, permohonan models.Perlalin) {
+	data := utils.PermohonanSelesai{
+		Nomer:   permohonan.Kode,
+		Nama:    permohonan.NamaPemohon,
+		Alamat:  permohonan.AlamatPemohon,
+		Tlp:     permohonan.NomerPemohon,
+		Waktu:   permohonan.WaktuAndalalin,
+		Izin:    permohonan.JenisAndalalin,
+		Status:  permohonan.StatusAndalalin,
+		Subject: "Pemasangan selesai",
+	}
+
+	utils.SendEmailPermohonanSelesai(permohonan.EmailPemohon, &data)
+
+	var user models.User
+	resultUser := ac.DB.First(&user, "id = ?", permohonan.IdUser)
+	if resultUser.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+		return
+	}
+
+	simpanNotif := models.Notifikasi{
+		IdUser: user.ID,
+		Title:  "Pemasangan selesai",
+		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah selesai pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
+	}
+
+	ac.DB.Create(&simpanNotif)
+
+	if user.PushToken != "" {
+		notif := utils.Notification{
+			IdUser: user.ID,
+			Title:  "Pemasangan selesai",
+			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah selesai pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
+			Token:  user.PushToken,
+		}
+
+		utils.SendPushNotifications(&notif)
+	}
+}
+
+func (ac *AndalalinController) GetAllPemasangan(ctx *gin.Context) {
 
 }
