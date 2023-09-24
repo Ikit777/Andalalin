@@ -3419,7 +3419,7 @@ func (ac *AndalalinController) GetAllPemasangan(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) GetPemasangan(ctx *gin.Context) {
-	id := ctx.Param("id_pemasangan")
+	id := ctx.Param("id_andalalin")
 
 	config, _ := initializers.LoadConfig(".")
 
@@ -3444,7 +3444,7 @@ func (ac *AndalalinController) GetPemasangan(ctx *gin.Context) {
 
 	var pemasangan *models.Pemasangan
 
-	result := ac.DB.First(&pemasangan, "id_pemasangan = ?", id)
+	result := ac.DB.First(&pemasangan, "id_andalalin = ?", id)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
 		return
