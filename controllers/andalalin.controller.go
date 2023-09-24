@@ -3384,5 +3384,70 @@ func (ac *AndalalinController) PemasanganSelesai(ctx *gin.Context, permohonan mo
 }
 
 func (ac *AndalalinController) GetAllPemasangan(ctx *gin.Context) {
+	currentUser := ctx.MustGet("currentUser").(models.User)
+	config, _ := initializers.LoadConfig(".")
 
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinOfficerCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var pemasangan []models.Pemasangan
+
+	results := ac.DB.Find(&pemasangan, "id_petugas = ?", currentUser.ID)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(pemasangan), "data": pemasangan})
+}
+
+func (ac *AndalalinController) GetPemasangan(ctx *gin.Context) {
+	id := ctx.Param("id_pemasangan")
+
+	config, _ := initializers.LoadConfig(".")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinSurveyCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var pemasangan *models.Pemasangan
+
+	result := ac.DB.First(&pemasangan, "id_pemasangan = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": pemasangan})
 }
