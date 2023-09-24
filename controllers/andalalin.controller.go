@@ -740,8 +740,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				StatusTiketLevel2:      status,
 				LaporanSurvei:          perlalin.LaporanSurvei,
 				PersyaratanTambahan:    perlalin.PersyaratanTambahan,
-				Tindakan: perlalin.Tindakan,
-				PertimbanganTindakan: perlalin.PertimbanganTindakan,
+				Tindakan:               perlalin.Tindakan,
+				PertimbanganTindakan:   perlalin.PertimbanganTindakan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 		}
@@ -1355,7 +1355,7 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 		perlalin.IdPetugas = payload.IdPetugas
 		perlalin.NamaPetugas = payload.NamaPetugas
 		perlalin.EmailPetugas = payload.EmailPetugas
-		perlalin.StatusAndalalin = "Survey lapangan"
+		perlalin.StatusAndalalin = "Survei lapangan"
 
 		ac.DB.Save(&perlalin)
 
@@ -1408,13 +1408,14 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 		perlalin.IdPetugas = payload.IdPetugas
 		perlalin.NamaPetugas = payload.NamaPetugas
 		perlalin.EmailPetugas = payload.EmailPetugas
-		perlalin.StatusAndalalin = "Survey lapangan"
+		if perlalin.StatusAndalalin == "Survei lapangan" {
+			ac.CloseTiketLevel2(ctx, perlalin.IdAndalalin)
+
+			ac.ReleaseTicketLevel2(ctx, perlalin.IdAndalalin, payload.IdPetugas)
+		}
 
 		ac.DB.Save(&perlalin)
 
-		ac.CloseTiketLevel2(ctx, perlalin.IdAndalalin)
-
-		ac.ReleaseTicketLevel2(ctx, perlalin.IdAndalalin, payload.IdPetugas)
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ubah petugas berhasil"})
