@@ -3181,7 +3181,7 @@ func (ac *AndalalinController) GetPermohonanPemasanganLalin(ctx *gin.Context) {
 
 	var perlalin []models.Perlalin
 
-	resultsPerlalin := ac.DB.Where("status_andalalin = ? AND id_petugas = ?", "Pemasangan sedang dilakukan", currentUser.ID).Find(&perlalin)
+	resultsPerlalin := ac.DB.Order("tanggal_andalalin").Find(&perlalin)
 
 	if resultsPerlalin != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
@@ -3189,15 +3189,17 @@ func (ac *AndalalinController) GetPermohonanPemasanganLalin(ctx *gin.Context) {
 	} else {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range perlalin {
-			respone = append(respone, models.DaftarAndalalinResponse{
-				IdAndalalin:      s.IdAndalalin,
-				Kode:             s.Kode,
-				TanggalAndalalin: s.TanggalAndalalin,
-				Nama:             s.NamaPemohon,
-				Alamat:           s.AlamatPemohon,
-				JenisAndalalin:   s.JenisAndalalin,
-				StatusAndalalin:  s.StatusAndalalin,
-			})
+			if s.StatusAndalalin == "Pemasangan sedang dilakukan" && s.IdPetugas == currentUser.ID {
+				respone = append(respone, models.DaftarAndalalinResponse{
+					IdAndalalin:      s.IdAndalalin,
+					Kode:             s.Kode,
+					TanggalAndalalin: s.TanggalAndalalin,
+					Nama:             s.NamaPemohon,
+					Alamat:           s.AlamatPemohon,
+					JenisAndalalin:   s.JenisAndalalin,
+					StatusAndalalin:  s.StatusAndalalin,
+				})
+			}
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
 	}
