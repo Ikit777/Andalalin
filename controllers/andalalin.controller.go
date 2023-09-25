@@ -2846,9 +2846,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				data.PertimbanganTindakan = "Tunda pemasangan"
 				data.StatusAndalalin = "Tunda pemasangan"
 				ac.DB.Save(&data)
-				updateChannel <- struct{}{}
-
-				updateChannel2 := make(chan struct{})
 				go func() {
 					time.Sleep(3 * time.Minute)
 					mutex.Lock()
@@ -2861,7 +2858,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 						data.PertimbanganTindakan = "Permohonan dibatalkan"
 						data.StatusAndalalin = "Permohonan dibatalkan"
 						ac.DB.Save(&data)
-						updateChannel2 <- struct{}{}
+						updateChannel <- struct{}{}
 					}
 				}()
 			}
