@@ -2849,10 +2849,12 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 					ac.DB.Save(&data)
 
 					time.Sleep(1 * time.Minute)
+					mutex.Lock()
+					defer mutex.Unlock()
 
 					var data2 models.Perlalin
 
-					result2 := ac.DB.First(&data2, "id_andalalin = ?", id)
+					result2 := ac.DB.First(&data2, "id_andalalin = ?", data.IdAndalalin)
 					if result2.Error != nil {
 						ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result2.Error})
 						return
