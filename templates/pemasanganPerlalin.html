@@ -102,9 +102,6 @@
     }
     
     @media (max-width: 480px) {
-      #u_content_heading_1 .v-font-size {
-        font-size: 28px !important;
-      }
       #u_content_menu_1 .v-container-padding-padding {
         padding: 5px 10px !important;
       }
@@ -191,50 +188,11 @@
                           <tr>
                             <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:20px 20px 5px;font-family:arial,helvetica,sans-serif;" align="left">
 
-                              <div class="v-font-size" style="font-size: 14px; color: #333333; line-height: 140%; text-align: left; word-wrap: break-word;">
-                                <p style="line-height: 140%;">Halo, pengguna <strong>Andalalin</strong></p>
+                              <div style="font-size: 14px; color: #333333; line-height: 140%; text-align: left; word-wrap: break-word;">
+                                <p style="line-height: 140%;">Halo, <strong>{{.Nama}}</strong></p>
                                 <p style="line-height: 140%;">&nbsp;</p>
-                                <p style="line-height: 140%;">Kami menerima sebuah permintaan untuk mereset akun anda. Gunakan kode berikut ini untuk menyelesaikan reset:</p>
+                                <p style="line-height: 140%;">Kami ingin memberitahukan anda bahwa pemasangan perlengkapan lalu lintas berikut telah {{.Keputusan}}:</p>
                               </div>
-
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-
-                      <!--[if (!mso)&(!IE)]><!-->
-                    </div>
-                    <!--<![endif]-->
-                  </div>
-                </div>
-                <!--[if (mso)|(IE)]></td><![endif]-->
-                <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
-              </div>
-            </div>
-          </div>
-
-
-
-
-
-          <div class="u-row-container" style="padding: 0px;background-color: transparent">
-            <div class="u-row" style="margin: 0 auto;min-width: 320px;max-width: 500px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;">
-              <div style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
-                <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding: 0px;background-color: transparent;" align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:500px;"><tr style="background-color: transparent;"><![endif]-->
-
-                <!--[if (mso)|(IE)]><td align="center" width="500" style="background-color: #ffffff;width: 500px;padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign="top"><![endif]-->
-                <div class="u-col u-col-100" style="max-width: 320px;min-width: 500px;display: table-cell;vertical-align: top;">
-                  <div style="background-color: #ffffff;height: 100%;width: 100% !important;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;">
-                    <!--[if (!mso)&(!IE)]><!-->
-                    <div style="box-sizing: border-box; height: 100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;">
-                      <!--<![endif]-->
-
-                      <table id="u_content_heading_1" style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-                        <tbody>
-                          <tr>
-                            <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:0px 20px;font-family:arial,helvetica,sans-serif;" align="left">
-
-                              <h1 class="v-font-size" style="margin: 0px; color: #333333; line-height: 140%; text-align: center; word-wrap: break-word; font-size: 28px; font-weight: 400;">{{.Code}}</h1>
 
                             </td>
                           </tr>
@@ -271,10 +229,60 @@
                       <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
                         <tbody>
                           <tr>
+                            <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:5px 20px 5px 40px;font-family:arial,helvetica,sans-serif;" align="left">
+
+                              <div style="font-size: 14px; color: #333333; line-height: 140%; text-align: left; word-wrap: break-word;">
+							  <table>
+                <tr>
+                    <td style="line-height: 140%;">Nomor</td>
+                    <td style="line-height: 140%;padding: 0 0 0 10px;">:</td>
+                    <td style="line-height: 140%;">{{.Nomer}}</td>
+                </tr>
+                <tr>
+                    <td style="line-height: 140%;">Nama</td>
+                    <td style="line-height: 140%;padding: 0 0 0 10px;">:</td>
+                    <td style="line-height: 140%;">{{.Nama}}</td>
+                </tr>
+                <tr>
+                    <td style="line-height: 140%;">Alamat</td>
+                    <td style="line-height: 140%;padding: 0 0 0 10px;">:</td>
+                    <td style="line-height: 140%;">{{.Alamat}}</td>
+                </tr>
+				<tr>
+                    <td style="line-height: 140%;">No. Tlp/Hp</td>
+                    <td style="line-height: 140%;padding: 0 0 0 10px;">:</td>
+                    <td style="line-height: 140%;">{{.Tlp}}</td>
+                </tr>
+                <tr>
+                    <td style="line-height: 140%;">Waktu</td>
+                    <td style="line-height: 140%;padding: 0 0 0 10px;">:</td>
+                    <td style="line-height: 140%;">{{.Waktu}}</td>
+                </tr>
+                <tr>
+                    <td style="line-height: 140%;">Izin</td>
+                    <td style="line-height: 140%;padding: 0 0 0 10px;">:</td>
+                    <td style="line-height: 140%;">{{.Izin}}</td>
+                </tr>
+				<tr>
+                    <td style="line-height: 140%;">Status</td>
+                    <td style="line-height: 140%;padding: 0 0 0 10px;">:</td>
+                    <td style="line-height: 140%;">{{.Status}}</td>
+                </tr>
+            </table>
+                              </div>
+
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      <table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                        <tbody>
+                          <tr>
                             <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:5px 20px 20px;font-family:arial,helvetica,sans-serif;" align="left">
 
-                              <div class="v-font-size" style="font-size: 14px; color: #333333; line-height: 140%; text-align: left; word-wrap: break-word;">
-                                <p style="line-height: 140%;">Jika Anda tidak ingin mereset akun, abaikan email ini.</p>
+                              <div style="font-size: 14px; color: #333333; line-height: 140%; text-align: left; word-wrap: break-word;">
+                                <p style="line-height: 140%;">Apabila anda merasa tidak melakukan permohonan, maka abaikan email ini.</p>
                                 <p style="line-height: 140%;">&nbsp;</p>
                                 <p style="line-height: 140%;">Salam hangat,</p>
                                 <p style="line-height: 140%;">Tim <strong>Andalalin</strong></p>
@@ -322,6 +330,7 @@
                                   <!--[if (mso)|(IE)]><table width="110" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-collapse:collapse;" align="center"><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; mso-table-lspace: 0pt;mso-table-rspace: 0pt; width:110px;"><tr><![endif]-->
 
 
+
                                   <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
                                 </div>
                               </div>
@@ -336,7 +345,7 @@
                           <tr>
                             <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:5px 20px;font-family:arial,helvetica,sans-serif;" align="left">
 
-                              <div class="v-font-size" style="font-size: 14px; color: #333333; line-height: 140%; text-align: center; word-wrap: break-word;">
+                              <div style="font-size: 14px; color: #333333; line-height: 140%; text-align: center; word-wrap: break-word;">
                                 <p style="line-height: 140%;">Copyright © 2023&nbsp;Andalalin. All Rights Reserved.</p>
                               </div>
 
@@ -355,14 +364,14 @@
 
                                 <!--[if (mso)|(IE)]><td style="padding:5px 8px"><![endif]-->
 
-                                <span style="padding:5px 8px;display:inline-block;color:#333333;font-size:14px;" class="v-font-size">
+                                <span style="padding:5px 8px;display:inline-block;color:#333333;font-size:14px;">
     Visit Us
   </span>
 
                                 <!--[if (mso)|(IE)]></td><![endif]-->
 
                                 <!--[if (mso)|(IE)]><td style="padding:5px 8px"><![endif]-->
-                                <span style="padding:5px 8px;display:inline-block;color:#333333;font-size:14px;" class="v-font-size hide-mobile">
+                                <span style="padding:5px 8px;display:inline-block;color:#333333;font-size:14px;" class="hide-mobile">
       |
     </span>
                                 <!--[if (mso)|(IE)]></td><![endif]-->
@@ -370,14 +379,14 @@
 
                                 <!--[if (mso)|(IE)]><td style="padding:5px 8px"><![endif]-->
 
-                                <span style="padding:5px 8px;display:inline-block;color:#333333;font-size:14px;" class="v-font-size">
+                                <span style="padding:5px 8px;display:inline-block;color:#333333;font-size:14px;">
     Privacy Policy
   </span>
 
                                 <!--[if (mso)|(IE)]></td><![endif]-->
 
                                 <!--[if (mso)|(IE)]><td style="padding:5px 8px"><![endif]-->
-                                <span style="padding:5px 8px;display:inline-block;color:#333333;font-size:14px;" class="v-font-size hide-mobile">
+                                <span style="padding:5px 8px;display:inline-block;color:#333333;font-size:14px;" class="hide-mobile">
       |
     </span>
                                 <!--[if (mso)|(IE)]></td><![endif]-->
@@ -385,7 +394,7 @@
 
                                 <!--[if (mso)|(IE)]><td style="padding:5px 8px"><![endif]-->
 
-                                <span style="padding:5px 8px;display:inline-block;color:#333333;font-size:14px;" class="v-font-size">
+                                <span style="padding:5px 8px;display:inline-block;color:#333333;font-size:14px;">
     Terms of Use
   </span>
 

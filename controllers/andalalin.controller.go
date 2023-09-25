@@ -2864,18 +2864,19 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, permohonan models.Perlalin) {
-	data := utils.PermohonanSelesai{
-		Nomer:   permohonan.Kode,
-		Nama:    permohonan.NamaPemohon,
-		Alamat:  permohonan.AlamatPemohon,
-		Tlp:     permohonan.NomerPemohon,
-		Waktu:   permohonan.WaktuAndalalin,
-		Izin:    permohonan.JenisAndalalin,
-		Status:  permohonan.StatusAndalalin,
-		Subject: "Pemasangan ditunda",
+	data := utils.Pemasangan{
+		Nomer:     permohonan.Kode,
+		Nama:      permohonan.NamaPemohon,
+		Alamat:    permohonan.AlamatPemohon,
+		Tlp:       permohonan.NomerPemohon,
+		Waktu:     permohonan.WaktuAndalalin,
+		Izin:      permohonan.JenisAndalalin,
+		Status:    permohonan.StatusAndalalin,
+		Subject:   "Pemasangan ditunda",
+		Keputusan: "ditunda",
 	}
 
-	utils.SendEmailPermohonanSelesai(permohonan.EmailPemohon, &data)
+	utils.SendEmailPemasangan(permohonan.EmailPemohon, &data)
 
 	var user models.User
 	resultUser := ac.DB.First(&user, "id = ?", permohonan.IdUser)
@@ -2905,18 +2906,19 @@ func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, permohonan mode
 }
 
 func (ac *AndalalinController) SegerakanPemasangan(ctx *gin.Context, permohonan models.Perlalin) {
-	data := utils.PermohonanSelesai{
-		Nomer:   permohonan.Kode,
-		Nama:    permohonan.NamaPemohon,
-		Alamat:  permohonan.AlamatPemohon,
-		Tlp:     permohonan.NomerPemohon,
-		Waktu:   permohonan.WaktuAndalalin,
-		Izin:    permohonan.JenisAndalalin,
-		Status:  permohonan.StatusAndalalin,
-		Subject: "Pemasangan disegerakan",
+	data := utils.Pemasangan{
+		Nomer:     permohonan.Kode,
+		Nama:      permohonan.NamaPemohon,
+		Alamat:    permohonan.AlamatPemohon,
+		Tlp:       permohonan.NomerPemohon,
+		Waktu:     permohonan.WaktuAndalalin,
+		Izin:      permohonan.JenisAndalalin,
+		Status:    permohonan.StatusAndalalin,
+		Subject:   "Pemasangan disegerakan",
+		Keputusan: "disegerakan",
 	}
 
-	utils.SendEmailPermohonanSelesai(permohonan.EmailPemohon, &data)
+	utils.SendEmailPemasangan(permohonan.EmailPemohon, &data)
 
 	var user models.User
 	resultUser := ac.DB.First(&user, "id = ?", permohonan.IdUser)
@@ -2957,7 +2959,7 @@ func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context, permohonan m
 		Subject: "Permohonan dibatalkan",
 	}
 
-	utils.SendEmailPermohonanSelesai(permohonan.EmailPemohon, &data)
+	utils.SendEmailPermohonanDibatalkan(permohonan.EmailPemohon, &data)
 
 	var user models.User
 	resultUser := ac.DB.First(&user, "id = ?", permohonan.IdUser)
@@ -3344,18 +3346,19 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 }
 
 func (ac *AndalalinController) PemasanganSelesai(ctx *gin.Context, permohonan models.Perlalin) {
-	data := utils.PermohonanSelesai{
-		Nomer:   permohonan.Kode,
-		Nama:    permohonan.NamaPemohon,
-		Alamat:  permohonan.AlamatPemohon,
-		Tlp:     permohonan.NomerPemohon,
-		Waktu:   permohonan.WaktuAndalalin,
-		Izin:    permohonan.JenisAndalalin,
-		Status:  permohonan.StatusAndalalin,
-		Subject: "Pemasangan selesai",
+	data := utils.Pemasangan{
+		Nomer:     permohonan.Kode,
+		Nama:      permohonan.NamaPemohon,
+		Alamat:    permohonan.AlamatPemohon,
+		Tlp:       permohonan.NomerPemohon,
+		Waktu:     permohonan.WaktuAndalalin,
+		Izin:      permohonan.JenisAndalalin,
+		Status:    permohonan.StatusAndalalin,
+		Subject:   "Pemasangan selesai",
+		Keputusan: "selesai",
 	}
 
-	utils.SendEmailPermohonanSelesai(permohonan.EmailPemohon, &data)
+	utils.SendEmailPemasangan(permohonan.EmailPemohon, &data)
 
 	var user models.User
 	resultUser := ac.DB.First(&user, "id = ?", permohonan.IdUser)
