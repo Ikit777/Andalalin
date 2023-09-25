@@ -2847,6 +2847,10 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				data.StatusAndalalin = "Tunda pemasangan"
 				ac.DB.Save(&data)
 
+				updateChannel <- struct{}{}
+			}
+
+			if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
 				go func() {
 					time.Sleep(1 * time.Minute)
 
@@ -2865,9 +2869,10 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 						data2.PertimbanganTindakan = "Permohonan dibatalkan"
 						data2.StatusAndalalin = "Permohonan dibatalkan"
 						ac.DB.Save(&data2)
-						updateChannel <- struct{}{}
 					}
 				}()
+
+				updateChannel <- struct{}{}
 			}
 		}()
 	} else if payload.Keputusan == "Batalkan permohonan" {
