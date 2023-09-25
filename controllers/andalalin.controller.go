@@ -2850,6 +2850,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 				go func() {
 					time.Sleep(2 * time.Minute)
+					mutex.Lock()
 
 					var data2 models.Perlalin
 
@@ -2868,6 +2869,8 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 						ac.DB.Save(&data2)
 						updateChannel <- struct{}{}
 					}
+
+					mutex.Unlock()
 				}()
 			}
 		}()
