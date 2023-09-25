@@ -2842,15 +2842,14 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			}
 
 			if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
-				go func() {
-					data.Tindakan = "Pemasangan ditunda"
-					data.PertimbanganTindakan = "Pemasangan ditunda"
-					data.StatusAndalalin = "Tunda pemasangan"
-					ac.DB.Save(&data)
+				data.Tindakan = "Pemasangan ditunda"
+				data.PertimbanganTindakan = "Pemasangan ditunda"
+				data.StatusAndalalin = "Tunda pemasangan"
+				ac.DB.Save(&data)
+				updateChannel <- struct{}{}
 
-					time.Sleep(1 * time.Minute)
-					mutex.Lock()
-					defer mutex.Unlock()
+				go func() {
+					time.Sleep(2 * time.Minute)
 
 					var data2 models.Perlalin
 
@@ -2867,6 +2866,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 						data2.PertimbanganTindakan = "Permohonan dibatalkan"
 						data2.StatusAndalalin = "Permohonan dibatalkan"
 						ac.DB.Save(&data2)
+						updateChannel <- struct{}{}
 					}
 				}()
 			}
