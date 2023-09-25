@@ -2842,12 +2842,12 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			}
 
 			if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
-				data.Tindakan = "Pemasangan ditunda"
-				data.PertimbanganTindakan = "Pemasangan ditunda"
-				data.StatusAndalalin = "Tunda pemasangan"
-				ac.DB.Save(&data)
-
 				go func() {
+					data.Tindakan = "Pemasangan ditunda"
+					data.PertimbanganTindakan = "Pemasangan ditunda"
+					data.StatusAndalalin = "Tunda pemasangan"
+					ac.DB.Save(&data)
+
 					time.Sleep(1 * time.Minute)
 
 					var data2 models.Perlalin
