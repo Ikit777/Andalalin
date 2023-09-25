@@ -2846,10 +2846,14 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				data.PertimbanganTindakan = "Tunda pemasangan"
 				data.StatusAndalalin = "Tunda pemasangan"
 				ac.DB.Save(&data)
+
+				var mutex2 sync.Mutex
+
+				updateChannel2 := make(chan struct{})
 				go func() {
 					time.Sleep(3 * time.Minute)
-					mutex.Lock()
-					defer mutex.Unlock()
+					mutex2.Lock()
+					defer mutex2.Unlock()
 
 					if data.StatusAndalalin == "Tunda pemasangan" {
 						ac.CloseTiketLevel1(ctx, data.IdAndalalin)
@@ -2858,9 +2862,11 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 						data.PertimbanganTindakan = "Permohonan dibatalkan"
 						data.StatusAndalalin = "Permohonan dibatalkan"
 						ac.DB.Save(&data)
-						updateChannel <- struct{}{}
+						updateChannel2 <- struct{}{}
 					}
 				}()
+
+				updateChannel <- struct{}{}
 			}
 		}()
 	} else if payload.Keputusan == "Batalkan permohonan" {
