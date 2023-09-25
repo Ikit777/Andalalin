@@ -2848,8 +2848,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				ac.DB.Save(&data)
 
 				time.Sleep(3 * time.Minute)
-				mutex.Lock()
-				defer mutex.Unlock()
 
 				if data.StatusAndalalin == "Tunda pemasangan" {
 					ac.CloseTiketLevel1(ctx, data.IdAndalalin)
