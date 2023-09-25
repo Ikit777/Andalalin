@@ -2846,28 +2846,31 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				data.PertimbanganTindakan = "Pemasangan ditunda"
 				data.StatusAndalalin = "Tunda pemasangan"
 				ac.DB.Save(&data)
+				updateChannel <- struct{}{}
 
-				time.Sleep(1 * time.Minute)
-				mutex.Lock()
-				defer mutex.Unlock()
+				updateChannel2 := make(chan struct{})
 
-				var data2 models.Perlalin
+				go func() {
+					time.Sleep(1 * time.Minute)
 
-				result := ac.DB.First(&data2, "id_andalalin = ?", id)
-				if result.Error != nil {
-					ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
-					return
-				}
+					var data models.Perlalin
 
-				if data2.StatusAndalalin == "Tunda pemasangan" {
-					ac.CloseTiketLevel1(ctx, data2.IdAndalalin)
-					ac.BatalkanPermohonan(ctx, data2)
-					data2.Tindakan = "Permohonan dibatalkan"
-					data2.PertimbanganTindakan = "Permohonan dibatalkan"
-					data2.StatusAndalalin = "Permohonan dibatalkan"
-					ac.DB.Save(&data2)
-					updateChannel <- struct{}{}
-				}
+					result := ac.DB.First(&data, "id_andalalin = ?", id)
+					if result.Error != nil {
+						ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+						return
+					}
+
+					if data.StatusAndalalin == "Tunda pemasangan" {
+						ac.CloseTiketLevel1(ctx, data.IdAndalalin)
+						ac.BatalkanPermohonan(ctx, data)
+						data.Tindakan = "Permohonan dibatalkan"
+						data.PertimbanganTindakan = "Permohonan dibatalkan"
+						data.StatusAndalalin = "Permohonan dibatalkan"
+						ac.DB.Save(&data)
+						updateChannel2 <- struct{}{}
+					}
+				}()
 
 			}
 		}()
