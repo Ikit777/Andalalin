@@ -45,15 +45,14 @@ type PermohonanSelesai struct {
 }
 
 type Pemasangan struct {
-	Nomer     string
-	Nama      string
-	Alamat    string
-	Tlp       string
-	Waktu     string
-	Izin      string
-	Status    string
-	Subject   string
-	Keputusan string
+	Nomer   string
+	Nama    string
+	Alamat  string
+	Tlp     string
+	Waktu   string
+	Izin    string
+	Status  string
+	Subject string
 }
 
 func SendEmailVerification(email string, data *Verification) {
@@ -306,7 +305,7 @@ func SendEmailPemasangan(email string, data *Pemasangan) {
 	smtpHost := config.SMTPHost
 	smtpPort := config.SMTPPort
 
-	t, err := template.ParseFiles("templates/permohonanDibatalkan.html")
+	t, err := template.ParseFiles("templates/pemasanganPerlalin.html")
 	if err != nil {
 		log.Fatal("Error reading the email template:", err)
 		return

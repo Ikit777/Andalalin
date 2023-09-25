@@ -2807,8 +2807,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 	updateChannel := make(chan struct{})
 	if payload.Keputusan == "Pemasangan ditunda" {
-		ac.TundaPemasangan(ctx, perlalin)
-
 		go func() {
 			time.Sleep(3 * 24 * time.Hour)
 			mutex.Lock()
@@ -2832,7 +2830,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			}
 		}()
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
-		ac.SegerakanPemasangan(ctx, perlalin)
 		go func() {
 			time.Sleep(3 * 24 * time.Hour)
 			mutex.Lock()
@@ -2861,90 +2858,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
-}
-
-func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, permohonan models.Perlalin) {
-	data := utils.Pemasangan{
-		Nomer:     permohonan.Kode,
-		Nama:      permohonan.NamaPemohon,
-		Alamat:    permohonan.AlamatPemohon,
-		Tlp:       permohonan.NomerPemohon,
-		Waktu:     permohonan.WaktuAndalalin,
-		Izin:      permohonan.JenisAndalalin,
-		Status:    permohonan.StatusAndalalin,
-		Subject:   "Pemasangan ditunda",
-		Keputusan: "ditunda",
-	}
-
-	utils.SendEmailPemasangan(permohonan.EmailPemohon, &data)
-
-	var user models.User
-	resultUser := ac.DB.First(&user, "id = ?", permohonan.IdUser)
-	if resultUser.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
-		return
-	}
-
-	simpanNotif := models.Notifikasi{
-		IdUser: user.ID,
-		Title:  "Pemasangan ditunda",
-		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah ditunda untuk pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
-	}
-
-	ac.DB.Create(&simpanNotif)
-
-	if user.PushToken != "" {
-		notif := utils.Notification{
-			IdUser: user.ID,
-			Title:  "Pemasangan ditunda",
-			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah ditunda untuk pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
-			Token:  user.PushToken,
-		}
-
-		utils.SendPushNotifications(&notif)
-	}
-}
-
-func (ac *AndalalinController) SegerakanPemasangan(ctx *gin.Context, permohonan models.Perlalin) {
-	data := utils.Pemasangan{
-		Nomer:     permohonan.Kode,
-		Nama:      permohonan.NamaPemohon,
-		Alamat:    permohonan.AlamatPemohon,
-		Tlp:       permohonan.NomerPemohon,
-		Waktu:     permohonan.WaktuAndalalin,
-		Izin:      permohonan.JenisAndalalin,
-		Status:    permohonan.StatusAndalalin,
-		Subject:   "Pemasangan disegerakan",
-		Keputusan: "disegerakan",
-	}
-
-	utils.SendEmailPemasangan(permohonan.EmailPemohon, &data)
-
-	var user models.User
-	resultUser := ac.DB.First(&user, "id = ?", permohonan.IdUser)
-	if resultUser.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
-		return
-	}
-
-	simpanNotif := models.Notifikasi{
-		IdUser: user.ID,
-		Title:  "Pemasangan disegerakan",
-		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah disegerakan untuk pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
-	}
-
-	ac.DB.Create(&simpanNotif)
-
-	if user.PushToken != "" {
-		notif := utils.Notification{
-			IdUser: user.ID,
-			Title:  "Pemasangan disegerakan",
-			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah disegerakan untuk pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
-			Token:  user.PushToken,
-		}
-
-		utils.SendPushNotifications(&notif)
-	}
 }
 
 func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context, permohonan models.Perlalin) {
@@ -3347,15 +3260,14 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 
 func (ac *AndalalinController) PemasanganSelesai(ctx *gin.Context, permohonan models.Perlalin) {
 	data := utils.Pemasangan{
-		Nomer:     permohonan.Kode,
-		Nama:      permohonan.NamaPemohon,
-		Alamat:    permohonan.AlamatPemohon,
-		Tlp:       permohonan.NomerPemohon,
-		Waktu:     permohonan.WaktuAndalalin,
-		Izin:      permohonan.JenisAndalalin,
-		Status:    permohonan.StatusAndalalin,
-		Subject:   "Pemasangan selesai",
-		Keputusan: "selesai",
+		Nomer:   permohonan.Kode,
+		Nama:    permohonan.NamaPemohon,
+		Alamat:  permohonan.AlamatPemohon,
+		Tlp:     permohonan.NomerPemohon,
+		Waktu:   permohonan.WaktuAndalalin,
+		Izin:    permohonan.JenisAndalalin,
+		Status:  permohonan.StatusAndalalin,
+		Subject: "Pemasangan selesai",
 	}
 
 	utils.SendEmailPemasangan(permohonan.EmailPemohon, &data)
