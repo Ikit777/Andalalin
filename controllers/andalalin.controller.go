@@ -2847,16 +2847,12 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				data.StatusAndalalin = "Tunda pemasangan"
 				ac.DB.Save(&data)
 
-				updateChannel <- struct{}{}
-			}
-
-			if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
 				go func() {
 					time.Sleep(1 * time.Minute)
 
 					var data2 models.Perlalin
 
-					result2 := ac.DB.First(&data2, "id_andalalin = ?", data.IdAndalalin)
+					result2 := ac.DB.First(&data2, "id_andalalin = ?", id)
 					if result2.Error != nil {
 						ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result2.Error})
 						return
@@ -2871,8 +2867,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 						ac.DB.Save(&data2)
 					}
 				}()
-
-				updateChannel <- struct{}{}
 			}
 		}()
 	} else if payload.Keputusan == "Batalkan permohonan" {
