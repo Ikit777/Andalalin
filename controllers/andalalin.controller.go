@@ -2829,7 +2829,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		}()
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		go func() {
-			time.Sleep(3 * time.Minute)
+			time.Sleep(1 * time.Minute)
 			mutex.Lock()
 			defer mutex.Unlock()
 
@@ -2842,11 +2842,33 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			}
 
 			if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
-				data.Tindakan = "Tunda pemasangan"
-				data.PertimbanganTindakan = "Tunda pemasangan"
+				data.Tindakan = "Pemasangan ditunda"
+				data.PertimbanganTindakan = "Pemasangan ditunda"
 				data.StatusAndalalin = "Tunda pemasangan"
 				ac.DB.Save(&data)
-				ac.TundaPemasangan(ctx, id)
+				go func() {
+					time.Sleep(1 * time.Minute)
+					mutex.Lock()
+					defer mutex.Unlock()
+
+					var data models.Perlalin
+
+					result := ac.DB.First(&data, "id_andalalin = ?", id)
+					if result.Error != nil {
+						ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+						return
+					}
+
+					if data.StatusAndalalin == "Tunda pemasangan" {
+						ac.CloseTiketLevel1(ctx, data.IdAndalalin)
+						ac.BatalkanPermohonan(ctx, data)
+						data.Tindakan = "Permohonan dibatalkan"
+						data.PertimbanganTindakan = "Permohonan dibatalkan"
+						data.StatusAndalalin = "Permohonan dibatalkan"
+						ac.DB.Save(&data)
+						updateChannel <- struct{}{}
+					}
+				}()
 				updateChannel <- struct{}{}
 
 			}
@@ -2900,35 +2922,6 @@ func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context, permohonan m
 	}
 }
 
-func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context, id string) {
-	var mutex sync.Mutex
-
-	updateChannel := make(chan struct{})
-
-	go func() {
-		time.Sleep(3 * time.Minute)
-		mutex.Lock()
-		defer mutex.Unlock()
-
-		var data models.Perlalin
-
-		result := ac.DB.First(&data, "id_andalalin = ?", id)
-		if result.Error != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
-			return
-		}
-
-		if data.StatusAndalalin == "Tunda pemasangan" {
-			ac.CloseTiketLevel1(ctx, data.IdAndalalin)
-			ac.BatalkanPermohonan(ctx, data)
-			data.Tindakan = "Permohonan dibatalkan"
-			data.PertimbanganTindakan = "Permohonan dibatalkan"
-			data.StatusAndalalin = "Permohonan dibatalkan"
-			ac.DB.Save(&data)
-			updateChannel <- struct{}{}
-		}
-	}()
-}
 func (ac *AndalalinController) SurveiKepuasan(ctx *gin.Context) {
 	var payload *models.SurveiKepuasanInput
 	id := ctx.Param("id_andalalin")
