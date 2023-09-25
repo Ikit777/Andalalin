@@ -2786,13 +2786,10 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 	perlalin.PertimbanganTindakan = payload.Pertimbangan
 
 	if payload.Keputusan == "Pemasangan ditunda" {
-		perlalin.Cancelled = false
 		perlalin.StatusAndalalin = "Tunda pemasangan"
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
-		perlalin.Cancelled = true
 		perlalin.StatusAndalalin = "Pemasangan sedang dilakukan"
 	} else if payload.Keputusan == "Permohonan dibatalkan" {
-		perlalin.Cancelled = true
 		perlalin.StatusAndalalin = "Permohonan dibatalkan"
 	}
 
@@ -2820,7 +2817,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				return
 			}
 
-			if !data.Cancelled {
+			if data.StatusAndalalin == "Tunda pemasangan" {
 				ac.CloseTiketLevel1(ctx, data.IdAndalalin)
 				data.Tindakan = "Permohonan dibatalkan"
 				data.PertimbanganTindakan = "Permohonan dibatalkan"
@@ -2831,7 +2828,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		}()
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		go func() {
-			time.Sleep(3 * 24 * time.Hour)
+			time.Sleep(3 * time.Minute)
 			mutex.Lock()
 			defer mutex.Unlock()
 
@@ -2844,12 +2841,27 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			}
 
 			if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
-				ac.CloseTiketLevel1(ctx, data.IdAndalalin)
-				data.Tindakan = "Permohonan dibatalkan"
-				data.PertimbanganTindakan = "Permohonan dibatalkan"
-				data.StatusAndalalin = "Permohonan dibatalkan"
+				data.Tindakan = "Tunda pemasangan"
+				data.PertimbanganTindakan = "Tunda pemasangan"
+				data.StatusAndalalin = "Tunda pemasangan"
 				ac.DB.Save(&data)
 				updateChannel <- struct{}{}
+
+				updateChannel2 := make(chan struct{})
+				go func() {
+					time.Sleep(3 * time.Minute)
+					mutex.Lock()
+					defer mutex.Unlock()
+
+					if data.StatusAndalalin == "Tunda pemasangan" {
+						ac.CloseTiketLevel1(ctx, data.IdAndalalin)
+						data.Tindakan = "Permohonan dibatalkan"
+						data.PertimbanganTindakan = "Permohonan dibatalkan"
+						data.StatusAndalalin = "Permohonan dibatalkan"
+						ac.DB.Save(&data)
+						updateChannel2 <- struct{}{}
+					}
+				}()
 			}
 		}()
 	} else if payload.Keputusan == "Batalkan permohonan" {
