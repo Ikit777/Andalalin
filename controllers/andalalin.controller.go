@@ -2865,7 +2865,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 					ac.DB.Save(&data)
 
 					go func() {
-						duration := 3 * 24 * time.Hour
+						duration := 1 * time.Minute
 						timer := time.NewTimer(duration)
 
 						select {
