@@ -2840,7 +2840,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		}
 
 		go func() {
-			duration := 1 * time.Minute
+			duration := 3 * 24 * time.Hour
 			timer := time.NewTimer(duration)
 
 			select {
@@ -2865,7 +2865,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 					updateChannelTunda = make(chan struct{})
 
 					go func() {
-						duration := 3 * time.Minute
+						duration := 3 * 24 * time.Hour
 						timer := time.NewTimer(duration)
 
 						select {
