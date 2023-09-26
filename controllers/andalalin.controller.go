@@ -2871,18 +2871,14 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 						select {
 						case <-timer2.C:
-							mutex.Lock()
-							defer mutex.Unlock()
+							// ac.CloseTiketLevel1(ctx, data.IdAndalalin)
+							ac.BatalkanPermohonan(ctx, data)
+							data.Tindakan = "Permohonan dibatalkan"
+							data.PertimbanganTindakan = "Permohonan dibatalkan"
+							data.StatusAndalalin = "Permohonan dibatalkan"
+							ac.DB.Save(&data)
+							updateChannelTunda <- struct{}{}
 
-							if data.StatusAndalalin == "Tunda pemasangan" {
-								// ac.CloseTiketLevel1(ctx, data.IdAndalalin)
-								ac.BatalkanPermohonan(ctx, data)
-								data.Tindakan = "Permohonan dibatalkan"
-								data.PertimbanganTindakan = "Permohonan dibatalkan"
-								data.StatusAndalalin = "Permohonan dibatalkan"
-								ac.DB.Save(&data)
-								updateChannelTunda <- struct{}{}
-							}
 						case <-updateChannelTunda:
 							// The update was canceled, do nothing
 						}
