@@ -2889,7 +2889,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				}
 
 				if data.StatusAndalalin == "Tunda pemasangan" {
-					ac.CloseTiketLevel1(ctx, data.IdAndalalin)
+					// ac.CloseTiketLevel1(ctx, data.IdAndalalin)
 					ac.BatalkanPermohonan(ctx, data)
 					data.Tindakan = "Permohonan dibatalkan"
 					data.PertimbanganTindakan = "Permohonan dibatalkan"
