@@ -2744,12 +2744,6 @@ func (ac *AndalalinController) TerimaSurvei(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
 }
 
-var (
-	mutex                    sync.Mutex
-	updateChannelTunda       chan struct{}
-	updateChannelDisegerakan chan struct{}
-)
-
 func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 	var payload *models.KeputusanHasil
@@ -2806,12 +2800,14 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		return
 	}
 
-	updateChannelTunda = make(chan struct{})
-	updateChannelDisegerakan = make(chan struct{})
+	var mutex sync.Mutex
+
+	updateChannelTunda := make(chan struct{})
+	updateChannelDisegerakan := make(chan struct{})
 
 	if payload.Keputusan == "Pemasangan ditunda" {
 		go func() {
-			duration := 1 * time.Minute
+			duration := 3 * 24 * time.Hour
 			timer := time.NewTimer(duration)
 
 			select {
@@ -2841,9 +2837,9 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			}
 		}()
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
-		if perlalin.StatusAndalalin == "Tunda pemasangan" {
-			close(updateChannelTunda)
-		}
+		// if perlalin.StatusAndalalin == "Tunda pemasangan" {
+		// 	close(updateChannelTunda)
+		// }
 
 		go func() {
 			duration := 1 * time.Minute
@@ -2869,17 +2865,16 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 					ac.DB.Save(&data)
 					updateChannelDisegerakan <- struct{}{}
 
-					updateChannelTunda = make(chan struct{})
-
+					updateChannelTunda := make(chan struct{})
 					go func() {
 						duration := 1 * time.Minute
 						timer := time.NewTimer(duration)
-						fmt.Println("Berhasil 1")
+
 						select {
 						case <-timer.C:
 							mutex.Lock()
 							defer mutex.Unlock()
-							fmt.Println("Berhasil2")
+
 							var data models.Perlalin
 
 							result := ac.DB.First(&data, "id_andalalin = ?", id)
