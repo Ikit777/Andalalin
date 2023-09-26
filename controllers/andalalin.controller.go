@@ -2870,6 +2870,14 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 						select {
 						case <-timerTunda.C:
+							var data models.Perlalin
+
+							result := ac.DB.First(&data, "id_andalalin = ?", id)
+							if result.Error != nil {
+								ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+								return
+							}
+
 							ac.CloseTiketLevel1(ctx, data.IdAndalalin)
 							ac.BatalkanPermohonan(ctx, data)
 							data.Tindakan = "Permohonan dibatalkan"
