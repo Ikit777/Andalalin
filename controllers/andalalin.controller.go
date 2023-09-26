@@ -2870,7 +2870,37 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 					updateChannelDisegerakan <- struct{}{}
 
 					updateChannelTunda = make(chan struct{})
-					go ac.tunda(ctx, id)
+
+					go func() {
+						duration := 1 * time.Minute
+						timer := time.NewTimer(duration)
+						fmt.Println("Berhasil 1")
+						select {
+						case <-timer.C:
+							mutex.Lock()
+							defer mutex.Unlock()
+							fmt.Println("Berhasil2")
+							var data models.Perlalin
+
+							result := ac.DB.First(&data, "id_andalalin = ?", id)
+							if result.Error != nil {
+								ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+								return
+							}
+
+							if data.StatusAndalalin == "Tunda pemasangan" {
+								ac.CloseTiketLevel1(ctx, data.IdAndalalin)
+								ac.BatalkanPermohonan(ctx, data)
+								data.Tindakan = "Permohonan dibatalkan"
+								data.PertimbanganTindakan = "Permohonan dibatalkan"
+								data.StatusAndalalin = "Permohonan dibatalkan"
+								ac.DB.Save(&data)
+								updateChannelTunda <- struct{}{}
+							}
+						case <-updateChannelTunda:
+							// The update was canceled, do nothing
+						}
+					}()
 				}
 			case <-updateChannelDisegerakan:
 				// The update was canceled, do nothing
@@ -2886,37 +2916,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
-}
-
-func (ac *AndalalinController) tunda(ctx *gin.Context, id string) {
-	duration := 2 * time.Minute
-	timer := time.NewTimer(duration)
-
-	select {
-	case <-timer.C:
-		mutex.Lock()
-		defer mutex.Unlock()
-
-		var data models.Perlalin
-
-		result := ac.DB.First(&data, "id_andalalin = ?", id)
-		if result.Error != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
-			return
-		}
-
-		if data.StatusAndalalin == "Tunda pemasangan" {
-			ac.CloseTiketLevel1(ctx, data.IdAndalalin)
-			ac.BatalkanPermohonan(ctx, data)
-			data.Tindakan = "Permohonan dibatalkan"
-			data.PertimbanganTindakan = "Permohonan dibatalkan"
-			data.StatusAndalalin = "Permohonan dibatalkan"
-			ac.DB.Save(&data)
-			updateChannelTunda <- struct{}{}
-		}
-	case <-updateChannelTunda:
-		// The update was canceled, do nothing
-	}
 }
 
 func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context, permohonan models.Perlalin) {
