@@ -2864,22 +2864,26 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 					data.StatusAndalalin = "Tunda pemasangan"
 					ac.DB.Save(&data)
 
-					duration := 1 * time.Minute
-					timer := time.NewTimer(duration)
+					data.Tindakan = "Permohonan dibatalkan"
+					data.PertimbanganTindakan = "Permohonan dibatalkan"
+					data.StatusAndalalin = "Permohonan dibatalkan"
 
-					select {
-					case <-timer.C:
-						// ac.CloseTiketLevel1(ctx, data.IdAndalalin)
-						ac.BatalkanPermohonan(ctx, data)
-						data.Tindakan = "Permohonan dibatalkan"
-						data.PertimbanganTindakan = "Permohonan dibatalkan"
-						data.StatusAndalalin = "Permohonan dibatalkan"
-						ac.DB.Save(&data)
-						updateChannelDisegerakan <- struct{}{}
-						updateChannelTunda <- struct{}{}
-					case <-updateChannelTunda:
-						// The update was canceled, do nothing
-					}
+					go func() {
+						duration := 1 * time.Minute
+						timer := time.NewTimer(duration)
+
+						select {
+						case <-timer.C:
+							// ac.CloseTiketLevel1(ctx, data.IdAndalalin)
+							ac.BatalkanPermohonan(ctx, data)
+
+							ac.DB.Save(&data)
+							updateChannelDisegerakan <- struct{}{}
+							updateChannelTunda <- struct{}{}
+						case <-updateChannelTunda:
+							// The update was canceled, do nothing
+						}
+					}()
 				}
 			case <-updateChannelDisegerakan:
 				// The update was canceled, do nothing
