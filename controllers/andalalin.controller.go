@@ -2862,6 +2862,8 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 					data.StatusAndalalin = "Tunda pemasangan"
 					ac.DB.Save(&data)
 
+					updateChannelTunda = make(chan struct{})
+
 					go func() {
 						duration := 3 * time.Minute
 						timer := time.NewTimer(duration)
