@@ -2859,36 +2859,29 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				}
 
 				if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
-					// data.Tindakan = "Pemasangan ditunda"
-					// data.PertimbanganTindakan = "Pemasangan ditunda"
-					// data.StatusAndalalin = "Tunda pemasangan"
-					// ac.DB.Save(&data)
-					data.Tindakan = "Permohonan dibatalkan"
-					data.PertimbanganTindakan = "Permohonan dibatalkan"
-					data.StatusAndalalin = "Permohonan dibatalkan"
+					data.Tindakan = "Pemasangan ditunda"
+					data.PertimbanganTindakan = "Pemasangan ditunda"
+					data.StatusAndalalin = "Tunda pemasangan"
 					ac.DB.Save(&data)
-					updateChannelDisegerakan <- struct{}{}
 
-					// go func() {
-					// 	duration := 1 * time.Minute
-					// 	timer := time.NewTimer(duration)
+					go func() {
+						duration := 1 * time.Minute
+						timer := time.NewTimer(duration)
 
-					// 	select {
-					// 	case <-timer.C:
-					// 		mutex.Lock()
-					// 		defer mutex.Unlock()
-
-					// 		// ac.CloseTiketLevel1(ctx, data.IdAndalalin)
-					// 		ac.BatalkanPermohonan(ctx, data)
-					// 		data.Tindakan = "Permohonan dibatalkan"
-					// 		data.PertimbanganTindakan = "Permohonan dibatalkan"
-					// 		data.StatusAndalalin = "Permohonan dibatalkan"
-					// 		ac.DB.Save(&data)
-					// 		updateChannelTunda <- struct{}{}
-					// 	case <-updateChannelTunda:
-					// 		// The update was canceled, do nothing
-					// 	}
-					// }()
+						select {
+						case <-timer.C:
+							// ac.CloseTiketLevel1(ctx, data.IdAndalalin)
+							ac.BatalkanPermohonan(ctx, data)
+							data.Tindakan = "Permohonan dibatalkan"
+							data.PertimbanganTindakan = "Permohonan dibatalkan"
+							data.StatusAndalalin = "Permohonan dibatalkan"
+							ac.DB.Save(&data)
+							updateChannelDisegerakan <- struct{}{}
+							updateChannelTunda <- struct{}{}
+						case <-updateChannelTunda:
+							// The update was canceled, do nothing
+						}
+					}()
 				}
 			case <-updateChannelDisegerakan:
 				// The update was canceled, do nothing
