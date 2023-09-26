@@ -2865,8 +2865,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 						data.StatusAndalalin = "Tunda pemasangan"
 						ac.DB.Save(&data)
 
-						updateChannelTunda = make(chan struct{})
-
 						durationTunda := 1 * time.Minute
 						timerTunda := time.NewTimer(durationTunda)
 
@@ -2878,6 +2876,8 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 							data.PertimbanganTindakan = "Permohonan dibatalkan"
 							data.StatusAndalalin = "Permohonan dibatalkan"
 							ac.DB.Save(&data)
+
+							updateChannelDisegerakan <- struct{}{}
 							updateChannelTunda <- struct{}{}
 
 						case <-updateChannelTunda:
