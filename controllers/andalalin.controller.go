@@ -2870,6 +2870,9 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 						select {
 						case <-timerTunda.C:
+							mutex.Lock()
+							defer mutex.Unlock()
+
 							var data models.Perlalin
 
 							result := ac.DB.First(&data, "id_andalalin = ?", id)
@@ -2878,16 +2881,15 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 								return
 							}
 
-							ac.CloseTiketLevel1(ctx, data.IdAndalalin)
-							ac.BatalkanPermohonan(ctx, data)
-							data.Tindakan = "Permohonan dibatalkan"
-							data.PertimbanganTindakan = "Permohonan dibatalkan"
-							data.StatusAndalalin = "Permohonan dibatalkan"
-							ac.DB.Save(&data)
-
-							updateChannelDisegerakan <- struct{}{}
-							updateChannelTunda <- struct{}{}
-
+							if data.StatusAndalalin == "Tunda pemasangan" {
+								ac.CloseTiketLevel1(ctx, data.IdAndalalin)
+								ac.BatalkanPermohonan(ctx, data)
+								data.Tindakan = "Permohonan dibatalkan"
+								data.PertimbanganTindakan = "Permohonan dibatalkan"
+								data.StatusAndalalin = "Permohonan dibatalkan"
+								ac.DB.Save(&data)
+								updateChannelTunda <- struct{}{}
+							}
 						case <-updateChannelTunda:
 							// The update was canceled, do nothing
 						}
