@@ -2871,9 +2871,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 						select {
 						case <-timer2.C:
-							mutex.Lock()
-							defer mutex.Unlock()
-
 							var data2 models.Perlalin
 
 							result2 := ac.DB.First(&data2, "id_andalalin = ?", data.IdAndalalin)
