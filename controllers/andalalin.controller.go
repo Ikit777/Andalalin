@@ -2859,37 +2859,52 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				}
 
 				if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
-					data.Tindakan = "Pemasangan ditunda"
-					data.PertimbanganTindakan = "Pemasangan ditunda"
-					data.StatusAndalalin = "Tunda pemasangan"
-					ac.DB.Save(&data)
-					updateChannelDisegerakan <- struct{}{}
+					// data.Tindakan = "Pemasangan ditunda"
+					// data.PertimbanganTindakan = "Pemasangan ditunda"
+					// data.StatusAndalalin = "Tunda pemasangan"
+					// ac.DB.Save(&data)
+					// updateChannelDisegerakan <- struct{}{}
 
-					go func() {
-						duration2 := 1 * time.Minute
-						timer2 := time.NewTimer(duration2)
+					var data2 models.Perlalin
 
-						select {
-						case <-timer2.C:
-							var data2 models.Perlalin
+					result2 := ac.DB.First(&data2, "id_andalalin = ?", perlalin.IdAndalalin)
+					if result2.Error != nil {
+						ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result2.Error})
+						return
+					}
 
-							result2 := ac.DB.First(&data2, "id_andalalin = ?", perlalin.IdAndalalin)
-							if result2.Error != nil {
-								ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result2.Error})
-								return
-							}
+					// ac.CloseTiketLevel1(ctx, data2.IdAndalalin)
+					ac.BatalkanPermohonan(ctx, data2)
+					data2.Tindakan = "Permohonan dibatalkan"
+					data2.PertimbanganTindakan = "Permohonan dibatalkan"
+					data2.StatusAndalalin = "Permohonan dibatalkan"
+					ac.DB.Save(&data2)
 
-							// ac.CloseTiketLevel1(ctx, data2.IdAndalalin)
-							ac.BatalkanPermohonan(ctx, data2)
-							data2.Tindakan = "Permohonan dibatalkan"
-							data2.PertimbanganTindakan = "Permohonan dibatalkan"
-							data2.StatusAndalalin = "Permohonan dibatalkan"
-							ac.DB.Save(&data2)
-							updateChannelTunda <- struct{}{}
-						case <-updateChannelTunda:
-							// The update was canceled, do nothing
-						}
-					}()
+					// go func() {
+					// 	duration2 := 1 * time.Minute
+					// 	timer2 := time.NewTimer(duration2)
+
+					// 	select {
+					// 	case <-timer2.C:
+					// 		var data2 models.Perlalin
+
+					// 		result2 := ac.DB.First(&data2, "id_andalalin = ?", perlalin.IdAndalalin)
+					// 		if result2.Error != nil {
+					// 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result2.Error})
+					// 			return
+					// 		}
+
+					// 		// ac.CloseTiketLevel1(ctx, data2.IdAndalalin)
+					// 		ac.BatalkanPermohonan(ctx, data2)
+					// 		data2.Tindakan = "Permohonan dibatalkan"
+					// 		data2.PertimbanganTindakan = "Permohonan dibatalkan"
+					// 		data2.StatusAndalalin = "Permohonan dibatalkan"
+					// 		ac.DB.Save(&data2)
+					// 		updateChannelTunda <- struct{}{}
+					// 	case <-updateChannelTunda:
+					// 		// The update was canceled, do nothing
+					// 	}
+					// }()
 				}
 			case <-updateChannelDisegerakan:
 				// The update was canceled, do nothing
