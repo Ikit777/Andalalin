@@ -2876,23 +2876,14 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 							mutex.Lock()
 							defer mutex.Unlock()
 
-							var data models.Perlalin
+							ac.CloseTiketLevel1(ctx, data.IdAndalalin)
+							ac.BatalkanPermohonan(ctx, data)
+							data.Tindakan = "Permohonan dibatalkan"
+							data.PertimbanganTindakan = "Permohonan dibatalkan"
+							data.StatusAndalalin = "Permohonan dibatalkan"
+							ac.DB.Save(&data)
+							updateChannelTunda <- struct{}{}
 
-							result := ac.DB.First(&data, "id_andalalin = ?", id)
-							if result.Error != nil {
-								ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
-								return
-							}
-
-							if data.StatusAndalalin == "Tunda pemasangan" {
-								ac.CloseTiketLevel1(ctx, data.IdAndalalin)
-								ac.BatalkanPermohonan(ctx, data)
-								data.Tindakan = "Permohonan dibatalkan"
-								data.PertimbanganTindakan = "Permohonan dibatalkan"
-								data.StatusAndalalin = "Permohonan dibatalkan"
-								ac.DB.Save(&data)
-								updateChannelTunda <- struct{}{}
-							}
 						case <-updateChannelTunda:
 							// The update was canceled, do nothing
 						}
