@@ -2837,9 +2837,9 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			}
 		}()
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
-		// if perlalin.StatusAndalalin == "Tunda pemasangan" {
-		// 	close(updateChannelTunda)
-		// }
+		if perlalin.StatusAndalalin == "Tunda pemasangan" {
+			close(updateChannelTunda)
+		}
 
 		go func() {
 			duration := 1 * time.Minute
@@ -2850,28 +2850,29 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				mutex.Lock()
 				defer mutex.Unlock()
 
-				var data models.Perlalin
+				go func() {
+					var data models.Perlalin
 
-				result := ac.DB.First(&data, "id_andalalin = ?", id)
-				if result.Error != nil {
-					ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
-					return
-				}
+					result := ac.DB.First(&data, "id_andalalin = ?", id)
+					if result.Error != nil {
+						ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+						return
+					}
 
-				if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
-					data.Tindakan = "Pemasangan ditunda"
-					data.PertimbanganTindakan = "Pemasangan ditunda"
-					data.StatusAndalalin = "Tunda pemasangan"
-					ac.DB.Save(&data)
-					updateChannelDisegerakan <- struct{}{}
+					if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
+						data.Tindakan = "Pemasangan ditunda"
+						data.PertimbanganTindakan = "Pemasangan ditunda"
+						data.StatusAndalalin = "Tunda pemasangan"
+						ac.DB.Save(&data)
+						updateChannelDisegerakan <- struct{}{}
 
-					go func() {
 						updateChannelTunda = make(chan struct{})
-						duration := 1 * time.Minute
-						timer := time.NewTimer(duration)
+
+						durationTunda := 1 * time.Minute
+						timerTunda := time.NewTimer(durationTunda)
 
 						select {
-						case <-timer.C:
+						case <-timerTunda.C:
 							ac.CloseTiketLevel1(ctx, data.IdAndalalin)
 							ac.BatalkanPermohonan(ctx, data)
 							data.Tindakan = "Permohonan dibatalkan"
@@ -2883,8 +2884,9 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 						case <-updateChannelTunda:
 							// The update was canceled, do nothing
 						}
-					}()
-				}
+					}
+				}()
+
 			case <-updateChannelDisegerakan:
 				// The update was canceled, do nothing
 			}
