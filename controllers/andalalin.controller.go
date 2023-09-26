@@ -2859,10 +2859,11 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				}
 
 				if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
-					data.Tindakan = "Pemasangan ditunda"
-					data.PertimbanganTindakan = "Pemasangan ditunda"
-					data.StatusAndalalin = "Tunda pemasangan"
-					ac.DB.Save(&data)
+					// data.Tindakan = "Pemasangan ditunda"
+					// data.PertimbanganTindakan = "Pemasangan ditunda"
+					// data.StatusAndalalin = "Tunda pemasangan"
+					// ac.DB.Save(&data)
+					// updateChannelDisegerakan <- struct{}{}
 
 					go func() {
 						duration2 := 1 * time.Minute
