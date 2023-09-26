@@ -2868,18 +2868,18 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 						duration := 1 * time.Minute
 						timer := time.NewTimer(duration)
 
+						var data2 models.Perlalin
+
+						result2 := ac.DB.First(&data2, "id_andalalin = ?", id)
+						if result2.Error != nil {
+							ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result2.Error})
+							return
+						}
+
 						select {
 						case <-timer.C:
 							mutex.Lock()
 							defer mutex.Unlock()
-
-							var data2 models.Perlalin
-
-							result2 := ac.DB.First(&data2, "id_andalalin = ?", id)
-							if result2.Error != nil {
-								ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result2.Error})
-								return
-							}
 
 							if data.StatusAndalalin == "Tunda pemasangan" {
 								ac.CloseTiketLevel1(ctx, data2.IdAndalalin)
