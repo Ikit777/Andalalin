@@ -2865,16 +2865,13 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 					ac.DB.Save(&data)
 					updateChannelDisegerakan <- struct{}{}
 
-					updateChannelTunda = make(chan struct{})
 					go func() {
+						updateChannelTunda = make(chan struct{})
 						duration := 1 * time.Minute
 						timer := time.NewTimer(duration)
 
 						select {
 						case <-timer.C:
-							mutex.Lock()
-							defer mutex.Unlock()
-
 							ac.CloseTiketLevel1(ctx, data.IdAndalalin)
 							ac.BatalkanPermohonan(ctx, data)
 							data.Tindakan = "Permohonan dibatalkan"
