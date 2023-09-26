@@ -2864,7 +2864,6 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 						data.PertimbanganTindakan = "Pemasangan ditunda"
 						data.StatusAndalalin = "Tunda pemasangan"
 						ac.DB.Save(&data)
-						updateChannelDisegerakan <- struct{}{}
 
 						updateChannelTunda = make(chan struct{})
 
