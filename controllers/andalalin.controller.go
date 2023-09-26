@@ -2811,7 +2811,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 	if payload.Keputusan == "Pemasangan ditunda" {
 		go func() {
-			duration := 3 * 24 * time.Hour
+			duration := 1 * time.Minute
 			timer := time.NewTimer(duration)
 
 			select {
