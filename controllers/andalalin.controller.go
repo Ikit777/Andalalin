@@ -3281,41 +3281,39 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 		}
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
-		survey := models.Pemasangan{
-			IdAndalalin:       perlalin.IdAndalalin,
-			IdTiketLevel1:     ticket1.IdTiketLevel1,
-			IdPetugas:         currentUser.ID,
-			Petugas:           currentUser.Name,
-			EmailPetugas:      currentUser.Email,
-			Lokasi:            payload.Data.Lokasi,
-			Keterangan:        payload.Data.Keterangan,
-			Foto1:             blobs["foto1"],
-			Foto2:             blobs["foto2"],
-			Foto3:             blobs["foto3"],
-			Latitude:          payload.Data.Latitude,
-			Longitude:         payload.Data.Longitude,
-			WaktuPemasangan:   tanggal,
-			TanggalPemasangan: nowTime.Format("15:04:05"),
-		}
-
-		result := ac.DB.Create(&survey)
-
-		if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
-			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data survey sudah tersedia"})
-			return
-		} else if result.Error != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
-			return
-		}
-
-		perlalin.StatusAndalalin = "Pemasangan selesai"
-
-		ac.DB.Save(&perlalin)
-
-		ac.PemasanganSelesai(ctx, perlalin)
-		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+	survey := models.Pemasangan{
+		IdAndalalin:       perlalin.IdAndalalin,
+		IdTiketLevel1:     ticket1.IdTiketLevel1,
+		IdPetugas:         currentUser.ID,
+		Petugas:           currentUser.Name,
+		EmailPetugas:      currentUser.Email,
+		Lokasi:            payload.Data.Lokasi,
+		Keterangan:        payload.Data.Keterangan,
+		Foto1:             blobs["foto1"],
+		Foto2:             blobs["foto2"],
+		Foto3:             blobs["foto3"],
+		Latitude:          payload.Data.Latitude,
+		Longitude:         payload.Data.Longitude,
+		WaktuPemasangan:   tanggal,
+		TanggalPemasangan: nowTime.Format("15:04:05"),
 	}
+
+	result := ac.DB.Create(&survey)
+
+	if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
+		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data survey sudah tersedia"})
+		return
+	} else if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	perlalin.StatusAndalalin = "Pemasangan selesai"
+
+	ac.DB.Save(&perlalin)
+
+	ac.PemasanganSelesai(ctx, perlalin)
+	ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }
