@@ -31,7 +31,7 @@ func DeserializeUser() gin.HandlerFunc {
 			return
 		}
 
-		config, _ := initializers.LoadConfig(".")
+		config, _ := initializers.LoadConfig()
 
 		claim, err := utils.ValidateToken(access_token, config.AccessTokenPublicKey)
 		if err != nil {

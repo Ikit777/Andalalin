@@ -32,9 +32,8 @@ type Config struct {
 	SMTPUser  string `mapstructure:"SMTP_USER"`
 }
 
-func LoadConfig(path string) (config Config, err error) {
-	viper.AddConfigPath(path)
-	viper.SetConfigName(".env")
+func LoadConfig() (config Config, err error) {
+	viper.SetConfigFile(".env")
 
 	viper.AutomaticEnv()
 

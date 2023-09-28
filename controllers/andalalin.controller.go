@@ -103,7 +103,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	var payload *models.DataAndalalin
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -303,7 +303,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 	var payload *models.DataPerlalin
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -751,7 +751,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
 	status := ctx.Param("status_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -810,7 +810,7 @@ func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) GetPermohonan(ctx *gin.Context) {
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -871,7 +871,7 @@ func (ac *AndalalinController) GetPermohonan(ctx *gin.Context) {
 func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 	status := ctx.Param("status")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -945,7 +945,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1072,7 +1072,7 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1122,7 +1122,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 	var payload *models.PersayaratanTidakSesuaiInput
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1266,7 +1266,7 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 	status := ctx.Param("status")
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1316,7 +1316,7 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 	var payload *models.TambahPetugas
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1369,7 +1369,7 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 	var payload *models.TambahPetugas
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1425,7 +1425,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 	status := ctx.Param("status")
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1505,7 +1505,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 	currentUser := ctx.MustGet("currentUser").(models.User)
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1625,7 +1625,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 
 func (ac *AndalalinController) GetAllSurvey(ctx *gin.Context) {
 	currentUser := ctx.MustGet("currentUser").(models.User)
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1680,7 +1680,7 @@ func (ac *AndalalinController) GetAllSurvey(ctx *gin.Context) {
 func (ac *AndalalinController) GetSurvey(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1716,7 +1716,7 @@ func (ac *AndalalinController) LaporanBAP(ctx *gin.Context) {
 	var payload *models.BAPData
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1789,7 +1789,7 @@ func (ac *AndalalinController) PersetujuanDokumen(ctx *gin.Context) {
 	var payload *models.Persetujuan
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1840,7 +1840,7 @@ func (ac *AndalalinController) PersetujuanDokumen(ctx *gin.Context) {
 func (ac *AndalalinController) LaporanSK(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1965,7 +1965,7 @@ func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2036,7 +2036,7 @@ func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2100,7 +2100,7 @@ func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
 func (ac *AndalalinController) GetDetailUsulan(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2146,7 +2146,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 	jenis := ctx.Param("jenis_pelaksanaan")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2311,7 +2311,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2390,7 +2390,7 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 func (ac *AndalalinController) GetAllAndalalinByTiketLevel2(ctx *gin.Context) {
 	status := ctx.Param("status")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2450,7 +2450,7 @@ func (ac *AndalalinController) GetAllAndalalinByTiketLevel2(ctx *gin.Context) {
 func (ac *AndalalinController) LaporanSurvei(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2515,7 +2515,7 @@ func (ac *AndalalinController) IsiSurveyMandiri(ctx *gin.Context) {
 	var payload *models.DataSurvey
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2603,7 +2603,7 @@ func (ac *AndalalinController) IsiSurveyMandiri(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) GetAllSurveiMandiri(ctx *gin.Context) {
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2637,7 +2637,7 @@ func (ac *AndalalinController) GetAllSurveiMandiri(ctx *gin.Context) {
 
 func (ac *AndalalinController) GetAllSurveiMandiriByPetugas(ctx *gin.Context) {
 	currentUser := ctx.MustGet("currentUser").(models.User)
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2672,7 +2672,7 @@ func (ac *AndalalinController) GetAllSurveiMandiriByPetugas(ctx *gin.Context) {
 func (ac *AndalalinController) GetSurveiMandiri(ctx *gin.Context) {
 	id := ctx.Param("id_survei")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2708,7 +2708,7 @@ func (ac *AndalalinController) TerimaSurvei(ctx *gin.Context) {
 	id := ctx.Param("id_survei")
 	keterangan := ctx.Param("keterangan")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -2753,7 +2753,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 		return
 	}
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -3046,7 +3046,7 @@ func (ac *AndalalinController) CekSurveiKepuasan(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -3157,7 +3157,7 @@ func (ac *AndalalinController) HasilSurveiKepuasan(ctx *gin.Context) {
 func (ac *AndalalinController) GetPermohonanPemasanganLalin(ctx *gin.Context) {
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -3204,7 +3204,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 	currentUser := ctx.MustGet("currentUser").(models.User)
 	id := ctx.Param("id_andalalin")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -3363,7 +3363,7 @@ func (ac *AndalalinController) PemasanganSelesai(ctx *gin.Context, permohonan mo
 
 func (ac *AndalalinController) GetAllPemasangan(ctx *gin.Context) {
 	currentUser := ctx.MustGet("currentUser").(models.User)
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 

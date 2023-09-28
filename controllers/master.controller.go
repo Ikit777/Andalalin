@@ -124,7 +124,7 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 	lokasi := ctx.Param("lokasi")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -194,7 +194,7 @@ func (dm *DataMasterControler) HapusLokasi(ctx *gin.Context) {
 	lokasi := ctx.Param("lokasi")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -263,7 +263,7 @@ func (dm *DataMasterControler) EditLokasi(ctx *gin.Context) {
 	newLokasi := ctx.Param("new_lokasi")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -337,7 +337,7 @@ func (dm *DataMasterControler) TambahKategori(ctx *gin.Context) {
 	kategori := ctx.Param("kategori")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -407,7 +407,7 @@ func (dm *DataMasterControler) HapusKategori(ctx *gin.Context) {
 	kategori := ctx.Param("kategori")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -483,7 +483,7 @@ func (dm *DataMasterControler) EditKategori(ctx *gin.Context) {
 	newKategori := ctx.Param("new_kategori")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -570,7 +570,7 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 	rencana := ctx.Param("rencana")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -662,7 +662,7 @@ func (dm *DataMasterControler) HapusJenisRencanaPembangunan(ctx *gin.Context) {
 	rencana := ctx.Param("rencana")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -735,7 +735,7 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 	newRencana := ctx.Param("rencana_new")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -815,7 +815,7 @@ func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
 	kategori := ctx.Param("kategori")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -885,7 +885,7 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 	kategori := ctx.Param("kategori")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -961,7 +961,7 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 	newKategori := ctx.Param("new_kategori")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1048,7 +1048,7 @@ func (dm *DataMasterControler) TambahPerlengkapan(ctx *gin.Context) {
 	perlengkapan := ctx.Param("perlengkapan")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1167,7 +1167,7 @@ func (dm *DataMasterControler) HapuspPerlengkapan(ctx *gin.Context) {
 	perlengkapan := ctx.Param("perlengkapan")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1240,7 +1240,7 @@ func (dm *DataMasterControler) EditPerlengkapan(ctx *gin.Context) {
 	newPerlengkapan := ctx.Param("perlengkapan_new")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1339,7 +1339,7 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 	var payload *models.PersyaratanTambahanInput
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1423,7 +1423,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 	persyaratan := ctx.Param("persyaratan")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1534,7 +1534,7 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 	id := ctx.Param("id")
 	syarat := ctx.Param("persyaratan")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1620,7 +1620,7 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 	var payload *models.PersyaratanTambahanInput
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1704,7 +1704,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 	persyaratan := ctx.Param("persyaratan")
 	id := ctx.Param("id")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -1815,7 +1815,7 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 	id := ctx.Param("id")
 	syarat := ctx.Param("persyaratan")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 

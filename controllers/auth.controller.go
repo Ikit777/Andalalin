@@ -187,7 +187,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		}
 	}
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, config.AccessTokenPrivateKey, credentials)
 	if err != nil {
@@ -235,7 +235,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 		refresh_token = fields[1]
 	}
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	claim, err := utils.ValidateToken(refresh_token, config.RefreshTokenPublicKey)
 	if err != nil {

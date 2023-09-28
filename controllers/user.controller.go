@@ -55,7 +55,7 @@ func (ac *UserController) GetMe(ctx *gin.Context) {
 }
 
 func (ac *UserController) GetUserByEmail(ctx *gin.Context) {
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -102,7 +102,7 @@ func (ac *UserController) GetUserByEmail(ctx *gin.Context) {
 
 func (ac *UserController) GetUsers(ctx *gin.Context) {
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -183,7 +183,7 @@ func (ac *UserController) ClearNotifikasi(ctx *gin.Context) {
 func (ac *UserController) GetUsersSortRole(ctx *gin.Context) {
 	role := ctx.Param("role")
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -231,7 +231,7 @@ func (ac *UserController) GetUsersSortRole(ctx *gin.Context) {
 }
 
 func (ac *UserController) GetPetugas(ctx *gin.Context) {
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
 
@@ -290,7 +290,7 @@ func (ac *UserController) Add(ctx *gin.Context) {
 		return
 	}
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	currentUser := ctx.MustGet("currentUser").(models.User)
 	accessUser := ctx.MustGet("accessUser").(string)
@@ -373,7 +373,7 @@ func (ac *UserController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	config, _ := initializers.LoadConfig(".")
+	config, _ := initializers.LoadConfig()
 
 	currentUser := ctx.MustGet("currentUser").(models.User)
 

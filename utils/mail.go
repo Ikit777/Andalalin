@@ -56,7 +56,7 @@ type Pemasangan struct {
 }
 
 func SendEmailVerification(email string, data *Verification) {
-	config, err := initializers.LoadConfig(".")
+	config, err := initializers.LoadConfig()
 
 	if err != nil {
 		log.Fatal("could not load config", err)
@@ -103,7 +103,7 @@ func SendEmailVerification(email string, data *Verification) {
 }
 
 func SendEmailReset(email string, data *ResetPassword) {
-	config, err := initializers.LoadConfig(".")
+	config, err := initializers.LoadConfig()
 
 	if err != nil {
 		log.Fatal("could not load config", err)
@@ -150,7 +150,7 @@ func SendEmailReset(email string, data *ResetPassword) {
 }
 
 func SendEmailPersyaratan(email string, data *PersyaratanTidakSesuai) {
-	config, err := initializers.LoadConfig(".")
+	config, err := initializers.LoadConfig()
 
 	if err != nil {
 		log.Fatal("could not load config", err)
@@ -197,7 +197,7 @@ func SendEmailPersyaratan(email string, data *PersyaratanTidakSesuai) {
 }
 
 func SendEmailPermohonanSelesai(email string, data *PermohonanSelesai) {
-	config, err := initializers.LoadConfig(".")
+	config, err := initializers.LoadConfig()
 
 	if err != nil {
 		log.Fatal("could not load config", err)
@@ -244,7 +244,7 @@ func SendEmailPermohonanSelesai(email string, data *PermohonanSelesai) {
 }
 
 func SendEmailPermohonanDibatalkan(email string, data *PermohonanSelesai) {
-	config, err := initializers.LoadConfig(".")
+	config, err := initializers.LoadConfig()
 
 	if err != nil {
 		log.Fatal("could not load config", err)
@@ -291,7 +291,7 @@ func SendEmailPermohonanDibatalkan(email string, data *PermohonanSelesai) {
 }
 
 func SendEmailPemasangan(email string, data *Pemasangan) {
-	config, err := initializers.LoadConfig(".")
+	config, err := initializers.LoadConfig()
 
 	if err != nil {
 		log.Fatal("could not load config", err)
