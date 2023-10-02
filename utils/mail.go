@@ -88,9 +88,7 @@ func SendEmailVerification(email string, data *Verification) {
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", data.Subject)
 	m.SetBody("text/html", buffer.String())
-	m.Embed("assets/facebook.png")
-	m.Embed("assets/instagram.png")
-	m.Embed("assets/twitter.png")
+
 	m.Embed("assets/andalalin.png")
 
 	d := gomail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
@@ -135,9 +133,7 @@ func SendEmailReset(email string, data *ResetPassword) {
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", data.Subject)
 	m.SetBody("text/html", buffer.String())
-	m.Embed("assets/facebook.png")
-	m.Embed("assets/instagram.png")
-	m.Embed("assets/twitter.png")
+
 	m.Embed("assets/andalalin.png")
 
 	d := gomail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
@@ -182,9 +178,7 @@ func SendEmailPersyaratan(email string, data *PersyaratanTidakSesuai) {
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", data.Subject)
 	m.SetBody("text/html", buffer.String())
-	m.Embed("assets/facebook.png")
-	m.Embed("assets/instagram.png")
-	m.Embed("assets/twitter.png")
+
 	m.Embed("assets/andalalin.png")
 
 	d := gomail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
@@ -229,9 +223,7 @@ func SendEmailPermohonanSelesai(email string, data *PermohonanSelesai) {
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", data.Subject)
 	m.SetBody("text/html", buffer.String())
-	m.Embed("assets/facebook.png")
-	m.Embed("assets/instagram.png")
-	m.Embed("assets/twitter.png")
+
 	m.Embed("assets/andalalin.png")
 
 	d := gomail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
@@ -276,9 +268,7 @@ func SendEmailPermohonanDibatalkan(email string, data *PermohonanSelesai) {
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", data.Subject)
 	m.SetBody("text/html", buffer.String())
-	m.Embed("assets/facebook.png")
-	m.Embed("assets/instagram.png")
-	m.Embed("assets/twitter.png")
+
 	m.Embed("assets/andalalin.png")
 
 	d := gomail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
@@ -323,9 +313,7 @@ func SendEmailPemasangan(email string, data *Pemasangan) {
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", data.Subject)
 	m.SetBody("text/html", buffer.String())
-	m.Embed("assets/facebook.png")
-	m.Embed("assets/instagram.png")
-	m.Embed("assets/twitter.png")
+
 	m.Embed("assets/andalalin.png")
 
 	d := gomail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
