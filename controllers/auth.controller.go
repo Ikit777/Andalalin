@@ -35,13 +35,13 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	}
 
 	if payload.Password != payload.PasswordConfirm {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Password tidak sama"})
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": "Password tidak sama"})
 		return
 	}
 
 	hashedPassword, err := utils.HashPassword(payload.Password)
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
 
@@ -74,7 +74,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Email sudah digunakan"})
 		return
 	} else if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
