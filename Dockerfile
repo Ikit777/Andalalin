@@ -15,5 +15,8 @@ RUN apt-get update && apt-get install -y \
 # Build the Go app
 RUN go build -o main .
 
+# Expose the port
+EXPOSE 8080
+
 # Command to run the executable
 CMD ["./main"]
