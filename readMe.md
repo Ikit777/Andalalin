@@ -1,2 +1,2 @@
 # Andalalin
-Andalalin adalah aplikasi pengajuan permohonan terhadap dokumen andalalin lalala
+Andalalin adalah aplikasi management lalu lintas
