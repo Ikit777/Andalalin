@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"log"
 	"os"
@@ -226,6 +227,86 @@ func main() {
 	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu perintah", Perlengkapan: perlengkapanPerintah})
 	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu petunjuk", Perlengkapan: perlengkapanPetunjuk})
 
+	fileProvinsi, err := os.Open("assets/Indonesia/provinces.csv")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer fileProvinsi.Close()
+
+	csvProvinsi := csv.NewReader(fileProvinsi)
+
+	var provinsi []models.Provinsi
+
+	for {
+		record, err := csvProvinsi.Read()
+		if err != nil {
+			break // End of file
+		}
+
+		provinsi = append(provinsi, models.Provinsi{Id: record[0], Provinsi: record[1]})
+	}
+
+	fileKabupaten, err := os.Open("assets/Indonesia/regencies.csv")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer fileKabupaten.Close()
+
+	csvKabupaten := csv.NewReader(fileKabupaten)
+
+	var Kabupaten []models.Kabupaten
+
+	for {
+		record, err := csvKabupaten.Read()
+		if err != nil {
+			break // End of file
+		}
+
+		Kabupaten = append(Kabupaten, models.Kabupaten{Id: record[0], IdProvinsi: record[1], Kabupaten: record[2]})
+	}
+
+	fileKecamatan, err := os.Open("assets/Indonesia/districts.csv")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer fileKecamatan.Close()
+
+	csvKecamatan := csv.NewReader(fileKecamatan)
+
+	var kecamatan []models.Kecamatan
+
+	for {
+		record, err := csvKecamatan.Read()
+		if err != nil {
+			break // End of file
+		}
+
+		kecamatan = append(kecamatan, models.Kecamatan{Id: record[0], IdKabupaten: record[1], Kecamatan: record[2]})
+	}
+
+	fileKelurahan, err := os.Open("assets/Indonesia/villages.csv")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer fileKelurahan.Close()
+
+	csvKelurahan := csv.NewReader(fileKelurahan)
+
+	var kelurahan []models.Kelurahan
+
+	for {
+		record, err := csvKelurahan.Read()
+		if err != nil {
+			break // End of file
+		}
+
+		kelurahan = append(kelurahan, models.Kelurahan{Id: record[0], IdKecamatan: record[1], Kelurahan: record[2]})
+	}
+
 	initializers.DB.Create(&models.DataMaster{
 		LokasiPengambilan:       lokasi,
 		JenisRencanaPembangunan: jenis_kegiatan,
@@ -233,6 +314,10 @@ func main() {
 		PersyaratanTambahan:     persyaratan,
 		KategoriPerlengkapan:    ketegori_perlengkapan,
 		PerlengkapanLaluLintas:  perlengkapan,
+		Provinsi:                provinsi,
+		Kabupaten:               Kabupaten,
+		Kecamatan:               kecamatan,
+		Kelurahan:               kelurahan,
 	})
 
 	fmt.Println("Migration complete")
