@@ -23,26 +23,26 @@ type Jenis []string
 type Perlengkapan []string
 
 type Provinsi struct {
-	Id       string
-	Provinsi string
+	Id   string
+	Name string
 }
 
 type Kabupaten struct {
 	Id         string
 	IdProvinsi string
-	Kabupaten  string
+	Name       string
 }
 
 type Kecamatan struct {
 	Id          string
 	IdKabupaten string
-	Kecamatan   string
+	Name        string
 }
 
 type Kelurahan struct {
 	Id          string
 	IdKecamatan string
-	Kelurahan   string
+	Name        string
 }
 
 type Rencana struct {

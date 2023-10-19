@@ -244,7 +244,7 @@ func main() {
 			break // End of file
 		}
 
-		provinsi = append(provinsi, models.Provinsi{Id: record[0], Provinsi: record[1]})
+		provinsi = append(provinsi, models.Provinsi{Id: record[0], Name: record[1]})
 	}
 
 	fileKabupaten, err := os.Open("assets/Indonesia/regencies.csv")
@@ -264,7 +264,7 @@ func main() {
 			break // End of file
 		}
 
-		Kabupaten = append(Kabupaten, models.Kabupaten{Id: record[0], IdProvinsi: record[1], Kabupaten: record[2]})
+		Kabupaten = append(Kabupaten, models.Kabupaten{Id: record[0], IdProvinsi: record[1], Name: record[2]})
 	}
 
 	fileKecamatan, err := os.Open("assets/Indonesia/districts.csv")
@@ -284,7 +284,7 @@ func main() {
 			break // End of file
 		}
 
-		kecamatan = append(kecamatan, models.Kecamatan{Id: record[0], IdKabupaten: record[1], Kecamatan: record[2]})
+		kecamatan = append(kecamatan, models.Kecamatan{Id: record[0], IdKabupaten: record[1], Name: record[2]})
 	}
 
 	fileKelurahan, err := os.Open("assets/Indonesia/villages.csv")
@@ -304,7 +304,7 @@ func main() {
 			break // End of file
 		}
 
-		kelurahan = append(kelurahan, models.Kelurahan{Id: record[0], IdKecamatan: record[1], Kelurahan: record[2]})
+		kelurahan = append(kelurahan, models.Kelurahan{Id: record[0], IdKecamatan: record[1], Name: record[2]})
 	}
 
 	initializers.DB.Create(&models.DataMaster{
