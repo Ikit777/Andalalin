@@ -73,7 +73,7 @@ func main() {
 
 	initializers.DB.Create(&models.User{
 		Name:      "Super admin",
-		Email:     strings.ToLower("superadmin@gmail.com"),
+		Email:     strings.ToLower("ssuper.adm1n@gmail.com"),
 		Password:  hashedPassword,
 		Role:      "Super Admin",
 		Photo:     fileData,

@@ -10,6 +10,10 @@ type DataMaster struct {
 	KategoriPerlengkapan    Perlengkapan        `gorm:"serializer:json"`
 	PerlengkapanLaluLintas  []JenisPerlengkapan `gorm:"serializer:json"`
 	PersyaratanTambahan     PersyaratanTambahan `gorm:"serializer:json"`
+	Provinsi                []Provinsi          `gorm:"serializer:json"`
+	Kabupaten               []Kabupaten         `gorm:"serializer:json"`
+	Kecamatan               []Kecamatan         `gorm:"serializer:json"`
+	Kelurahan               []Kelurahan         `gorm:"serializer:json"`
 }
 
 type Lokasi []string
@@ -17,6 +21,29 @@ type Lokasi []string
 type Jenis []string
 
 type Perlengkapan []string
+
+type Provinsi struct {
+	Id       string
+	Provinsi string
+}
+
+type Kabupaten struct {
+	Id         string
+	IdProvinsi string
+	Kabupaten  string
+}
+
+type Kecamatan struct {
+	Id          string
+	IdKabupaten string
+	Kecamatan   string
+}
+
+type Kelurahan struct {
+	Id          string
+	IdKecamatan string
+	Kelurahan   string
+}
 
 type Rencana struct {
 	Kategori     string
