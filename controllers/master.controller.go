@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/Ikit777/E-Andalalin/initializers"
 	"github.com/Ikit777/E-Andalalin/models"
@@ -64,6 +65,27 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		Kabupaten:              master.Kabupaten,
 		Kecamatan:              master.Kecamatan,
 		Kelurahan:              master.Kelurahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {
+	var master models.DataMaster
+
+	results := dm.DB.First(&master)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	}
+
+	respone := struct {
+		IdDataMaster uuid.UUID `json:"id_data_master,omitempty"`
+		UpdatedAt    string    `json:"update,omitempty"`
+	}{
+		IdDataMaster: master.IdDataMaster,
+		UpdatedAt:    master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -171,6 +193,11 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 
 	master.LokasiPengambilan = append(master.LokasiPengambilan, lokasi)
 
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
@@ -246,6 +273,11 @@ func (dm *DataMasterControler) HapusLokasi(ctx *gin.Context) {
 			break
 		}
 	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
@@ -329,6 +361,11 @@ func (dm *DataMasterControler) EditLokasi(ctx *gin.Context) {
 	if itemIndex != -1 {
 		master.LokasiPengambilan[itemIndex] = newLokasi
 	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {

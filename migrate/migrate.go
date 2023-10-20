@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path"
@@ -295,13 +296,18 @@ func main() {
 	defer fileKelurahan.Close()
 
 	csvKelurahan := csv.NewReader(fileKelurahan)
+	csvKelurahan.Comma = ','
 
 	var kelurahan []models.Kelurahan
 
 	for {
 		record, err := csvKelurahan.Read()
+		if err == io.EOF {
+			break
+		}
+
 		if err != nil {
-			break // End of file
+			log.Fatal(err)
 		}
 
 		kelurahan = append(kelurahan, models.Kelurahan{Id: record[0], IdKecamatan: record[1], Name: record[2]})
@@ -318,6 +324,7 @@ func main() {
 		Kabupaten:               Kabupaten,
 		Kecamatan:               kecamatan,
 		Kelurahan:               kelurahan,
+		UpdatedAt:               now + " " + time.Now().In(loc).Format("15:04:05"),
 	})
 
 	fmt.Println("Migration complete")

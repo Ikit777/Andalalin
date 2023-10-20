@@ -14,6 +14,7 @@ type DataMaster struct {
 	Kabupaten               []Kabupaten         `gorm:"serializer:json"`
 	Kecamatan               []Kecamatan         `gorm:"serializer:json"`
 	Kelurahan               []Kelurahan         `gorm:"serializer:json"`
+	UpdatedAt               string              `gorm:"not null"`
 }
 
 type Lokasi []string
