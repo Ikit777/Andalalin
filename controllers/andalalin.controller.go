@@ -150,13 +150,12 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	}
 
 	bukti := struct {
-		Tanggal      string
-		Waktu        string
-		Kode         string
-		Nama         string
-		Instansi     *string
-		Nomor        string
-		NomorSeluler string
+		Tanggal  string
+		Waktu    string
+		Kode     string
+		Nama     string
+		Instansi *string
+		Nomor    string
 	}{
 		Tanggal:  tanggal,
 		Waktu:    nowTime.Format("15:04:05"),
