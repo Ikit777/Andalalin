@@ -6,47 +6,45 @@ import (
 
 type Andalalin struct {
 	//Data Pemohon
-	IdAndalalin            uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	IdUser                 uuid.UUID `gorm:"type:varchar(255);not null"`
-	JenisAndalalin         string    `gorm:"type:varchar(255);not null"`
-	Kategori               string    `gorm:"type:varchar(255);not null"`
-	Jenis                  string    `gorm:"type:varchar(255);not null"`
-	Kode                   string    `gorm:"type:varchar(255);not null"`
-	NikPemohon             string    `gorm:"type:varchar(255);not null"`
-	NamaPemohon            string    `gorm:"type:varchar(255);not null"`
-	EmailPemohon           string    `gorm:"type:varchar(255);not null"`
-	TempatLahirPemohon     string    `gorm:"type:varchar(255);not null"`
-	TanggalLahirPemohon    string    `gorm:"type:varchar(255);not null"`
-	AlamatPemohon          string    `gorm:"type:varchar(255);not null"`
-	JenisKelaminPemohon    string    `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
-	NomerPemohon           string    `gorm:"type:varchar(255);not null"`
-	NomerSelulerPemohon    string    `gorm:"type:varchar(255);not null"`
-	JabatanPemohon         string    `gorm:"type:varchar(255);not null"`
-	LokasiPengambilan      string    `gorm:"type:varchar(255);not null"`
-	WaktuAndalalin         string    `gorm:"not null"`
-	TanggalAndalalin       string    `gorm:"not null"`
-	StatusAndalalin        string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Berita acara pemeriksaan', 'Persetujuan dokumen', 'Pembuatan surat keputusan', 'Permohonan selesai')"`
-	TandaTerimaPendaftaran []byte
+	IdAndalalin                 uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
+	IdUser                      uuid.UUID `gorm:"type:varchar(255);not null"`
+	JenisAndalalin              string    `gorm:"type:varchar(255);not null"`
+	Bangkitan                   string    `gorm:"type:varchar(255);not null"`
+	Pemohon                     string    `gorm:"type:varchar(255);not null"`
+	Kategori                    string    `gorm:"type:varchar(255);not null"`
+	Jenis                       string    `gorm:"type:varchar(255);not null"`
+	Kode                        string    `gorm:"type:varchar(255);not null"`
+	NikPemohon                  string    `gorm:"type:varchar(255);not null"`
+	NamaPemohon                 string    `gorm:"type:varchar(255);not null"`
+	EmailPemohon                string    `gorm:"type:varchar(255);not null"`
+	TempatLahirPemohon          string    `gorm:"type:varchar(255);not null"`
+	TanggalLahirPemohon         string    `gorm:"type:varchar(255);not null"`
+	WilayahAdministratifPemohon string    `gorm:"type:varchar(255);"`
+	AlamatPemohon               string    `gorm:"type:varchar(255);not null"`
+	JenisKelaminPemohon         string    `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
+	NomerPemohon                string    `gorm:"type:varchar(255);not null"`
+	JabatanPemohon              string    `gorm:"type:varchar(255);"`
+	LokasiPengambilan           string    `gorm:"type:varchar(255);not null"`
+	WaktuAndalalin              string    `gorm:"not null"`
+	TanggalAndalalin            string    `gorm:"not null"`
+	StatusAndalalin             string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Berita acara pemeriksaan', 'Persetujuan dokumen', 'Pembuatan surat keputusan', 'Permohonan selesai')"`
+	TandaTerimaPendaftaran      []byte
 
 	//Data Perusahaan
-	NamaPerusahaan       string `gorm:"type:varchar(255);not null"`
-	AlamatPerusahaan     string `gorm:"type:varchar(255);not null"`
-	NomerPerusahaan      string `gorm:"type:varchar(255);not null"`
-	EmailPerusahaan      string `gorm:"type:varchar(255);not null"`
-	ProvinsiPerusahaan   string `gorm:"type:varchar(255);not null"`
-	KabupatenPerusahaan  string `gorm:"type:varchar(255);not null"`
-	KecamatanPerusahaan  string `gorm:"type:varchar(255);not null"`
-	KelurahaanPerusahaan string `gorm:"type:varchar(255);not null"`
-	NamaPimpinan         string `gorm:"type:varchar(255);not null"`
-	JabatanPimpinan      string `gorm:"type:varchar(255);not null"`
-	JenisKelaminPimpinan string `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
-	JenisKegiatan        string `gorm:"type:varchar(255);not null"`
-	Peruntukan           string `gorm:"type:varchar(255);not null"`
-	LuasLahan            string `gorm:"type:varchar(255);not null"`
-	AlamatPersil         string `gorm:"type:varchar(255);not null"`
-	KelurahanPersil      string `gorm:"type:varchar(255);not null"`
-	NomerSKRK            string `gorm:"type:varchar(255);not null"`
-	TanggalSKRK          string `gorm:"type:varchar(255);not null"`
+	NamaPerusahaan                 string `gorm:"type:varchar(255);"`
+	WilayahAdministratifPerusahaan string `gorm:"type:varchar(255);"`
+	AlamatPerusahaan               string `gorm:"type:varchar(255);"`
+	NomerPerusahaan                string `gorm:"type:varchar(255);"`
+	EmailPerusahaan                string `gorm:"type:varchar(255);"`
+	NamaPimpinan                   string `gorm:"type:varchar(255);"`
+	JabatanPimpinan                string `gorm:"type:varchar(255);"`
+	JenisKelaminPimpinan           string `sql:"type:enum('Laki-laki', 'Perempuan');"`
+	Aktivitas                      string `gorm:"type:varchar(255);not null"`
+	Peruntukan                     string `gorm:"type:varchar(255);not null"`
+	KriteriaKhusus                 string `gorm:"type:varchar(255);"`
+	LokasiBangunan                 string `gorm:"type:varchar(255);not null"`
+	NomerSKRK                      string `gorm:"type:varchar(255);not null"`
+	TanggalSKRK                    string `gorm:"type:varchar(255);not null"`
 
 	//Data Persyaratan
 	KartuTandaPenduduk []byte
@@ -122,33 +120,31 @@ type PersyaratanTambahanPermohonan struct {
 }
 
 type InputAndalalin struct {
+	Bangkitan                       string `json:"kategori_bangkita" binding:"required"`
+	Pemohon                         string `json:"kategori_pemohon" binding:"required"`
 	KategoriJenisRencanaPembangunan string `json:"kategori" binding:"required"`
 	JenisRencanaPembangunan         string `json:"jenis_rencana_pembangunan" binding:"required"`
 	NikPemohon                      string `json:"nik_pemohon" binding:"required"`
 	TempatLahirPemohon              string `json:"tempat_lahir_pemohon" binding:"required"`
 	TanggalLahirPemohon             string `json:"tanggal_lahir_pemohon" binding:"required"`
 	AlamatPemohon                   string `json:"alamat_pemohon" binding:"required"`
+	WilayahAdministratifPemohon     string `json:"wilayah_administratif_pemohon" binding:"required"`
 	JenisKelaminPemohon             string `json:"jenis_kelamin_pemohon" binding:"required"`
 	NomerPemohon                    string `json:"nomer_pemohon" binding:"required"`
-	NomerSelulerPemohon             string `json:"nomer_seluler_pemohon" binding:"required"`
 	JabatanPemohon                  string `json:"jabatan_pemohon" binding:"required"`
 	LokasiPengambilan               string `json:"lokasi_pengambilan" binding:"required"`
 	NamaPerusahaan                  string `json:"nama_perusahaan" binding:"required"`
 	AlamatPerusahaan                string `json:"alamat_perusahaan" binding:"required"`
+	WilayahAdministratifPerusahaan  string `json:"wilayah_administratif_perusahaan" binding:"required"`
 	NomerPerusahaan                 string `json:"nomer_perusahaan" binding:"required"`
 	EmailPerusahaan                 string `json:"email_perusahaan" binding:"required"`
-	ProvinsiPerusahaan              string `json:"provinsi_perusahaan" binding:"required"`
-	KabupatenPerusahaan             string `json:"kabupaten_perusahaan" binding:"required"`
-	KecamatanPerusahaan             string `json:"kecamatan_perusahaan" binding:"required"`
-	KelurahaanPerusahaan            string `json:"kelurahan_perusahaan" binding:"required"`
 	NamaPimpinan                    string `json:"nama_pimpinan" binding:"required"`
 	JabatanPimpinan                 string `json:"jabatan_pimpinan" binding:"required"`
 	JenisKelaminPimpinan            string `json:"jenis_kelamin_pimpinan" binding:"required"`
-	JenisKegiatan                   string `json:"jenis_kegiatan" binding:"required"`
+	Aktivitas                       string `json:"aktivitas" binding:"required"`
 	Peruntukan                      string `json:"peruntukan" binding:"required"`
-	LuasLahan                       string `json:"luas_lahan" binding:"required"`
-	AlamatPersil                    string `json:"alamat_persil" binding:"required"`
-	KelurahanPersil                 string `json:"kelurahan_persil" binding:"required"`
+	KriteriaKhusus                  string `json:"kriteria_khusus" binding:"required"`
+	LokasiBangunan                  string `json:"lokasi_bangunan" binding:"required"`
 	NomerSKRK                       string `json:"nomer_skrk" binding:"required"`
 	TanggalSKRK                     string `json:"tanggal_skrk" binding:"required"`
 }
@@ -191,46 +187,44 @@ type DaftarAndalalinResponse struct {
 
 type AndalalinResponse struct {
 	//Data Pemohon
-	IdAndalalin            uuid.UUID `json:"id_andalalin,omitempty"`
-	JenisAndalalin         string    `json:"jenis_andalalin,omitempty"`
-	Kategori               string    `json:"kategori,omitempty"`
-	Jenis                  string    `json:"jenis_rencana_pembangunan,omitempty"`
-	Kode                   string    `json:"kode_andalalin,omitempty"`
-	NikPemohon             string    `json:"nik_pemohon,omitempty"`
-	NamaPemohon            string    `json:"nama_pemohon,omitempty"`
-	EmailPemohon           string    `json:"email_pemohon,omitempty"`
-	TempatLahirPemohon     string    `json:"tempat_lahir_pemohon,omitempty"`
-	TanggalLahirPemohon    string    `json:"tanggal_lahir_pemohon,omitempty"`
-	AlamatPemohon          string    `json:"alamat_pemohon,omitempty"`
-	JenisKelaminPemohon    string    `json:"jenis_kelamin_pemohon,omitempty"`
-	NomerPemohon           string    `json:"nomer_pemohon,omitempty"`
-	NomerSelulerPemohon    string    `json:"nomer_seluler_pemohon,omitempty"`
-	JabatanPemohon         string    `json:"jabatan_pemohon,omitempty"`
-	LokasiPengambilan      string    `json:"lokasi_pengambilan,omitempty"`
-	WaktuAndalalin         string    `json:"waktu_andalalin,omitempty"`
-	TanggalAndalalin       string    `json:"tanggal_andalalin,omitempty"`
-	StatusAndalalin        string    `json:"status_andalalin,omitempty"`
-	TandaTerimaPendaftaran []byte    `json:"tanda_terima_pendaftaran,omitempty"`
+	IdAndalalin                 uuid.UUID `json:"id_andalalin,omitempty"`
+	Bangkitan                   string    `json:"kategori_bangkitan,omitempty"`
+	Pemohon                     string    `json:"kategori_pemohon,omitempty"`
+	JenisAndalalin              string    `json:"jenis_andalalin,omitempty"`
+	Kategori                    string    `json:"kategori,omitempty"`
+	Jenis                       string    `json:"jenis_rencana_pembangunan,omitempty"`
+	Kode                        string    `json:"kode_andalalin,omitempty"`
+	NikPemohon                  string    `json:"nik_pemohon,omitempty"`
+	NamaPemohon                 string    `json:"nama_pemohon,omitempty"`
+	EmailPemohon                string    `json:"email_pemohon,omitempty"`
+	TempatLahirPemohon          string    `json:"tempat_lahir_pemohon,omitempty"`
+	TanggalLahirPemohon         string    `json:"tanggal_lahir_pemohon,omitempty"`
+	WilayahAdministratifPemohon string    `json:"wilayah_administratif_pemohon,omitempty"`
+	AlamatPemohon               string    `json:"alamat_pemohon,omitempty"`
+	JenisKelaminPemohon         string    `json:"jenis_kelamin_pemohon,omitempty"`
+	NomerPemohon                string    `json:"nomer_pemohon,omitempty"`
+	JabatanPemohon              string    `json:"jabatan_pemohon,omitempty"`
+	LokasiPengambilan           string    `json:"lokasi_pengambilan,omitempty"`
+	WaktuAndalalin              string    `json:"waktu_andalalin,omitempty"`
+	TanggalAndalalin            string    `json:"tanggal_andalalin,omitempty"`
+	StatusAndalalin             string    `json:"status_andalalin,omitempty"`
+	TandaTerimaPendaftaran      []byte    `json:"tanda_terima_pendaftaran,omitempty"`
 
 	//Data Perusahaan
-	NamaPerusahaan       string `json:"nama_perusahaan,omitempty"`
-	AlamatPerusahaan     string `json:"alamat_perusahaan,omitempty"`
-	NomerPerusahaan      string `json:"nomer_perusahaan,omitempty"`
-	EmailPerusahaan      string `json:"email_perusahaan,omitempty"`
-	ProvinsiPerusahaan   string `json:"perovinsi_perusahaan,omitempty"`
-	KabupatenPerusahaan  string `json:"kabupaten_perusahaan,omitempty"`
-	KecamatanPerusahaan  string `json:"kecamatan_perusahaan,omitempty"`
-	KelurahaanPerusahaan string `json:"kelurahan_perusahaan,omitempty"`
-	NamaPimpinan         string `json:"nama_pimpinan,omitempty"`
-	JabatanPimpinan      string `json:"jabatan_pimpinan,omitempty"`
-	JenisKelaminPimpinan string `json:"jenis_kelamin,omitempty"`
-	JenisKegiatan        string `json:"jenis_kegiatan,omitempty"`
-	Peruntukan           string `json:"peruntukan,omitempty"`
-	LuasLahan            string `json:"luas_lahan,omitempty"`
-	AlamatPersil         string `json:"alamat_persil,omitempty"`
-	KelurahanPersil      string `json:"kelurahan_persil,omitempty"`
-	NomerSKRK            string `json:"nomer_skrk,omitempty"`
-	TanggalSKRK          string `json:"tanggal_skrk,omitempty"`
+	NamaPerusahaan                 string `json:"nama_perusahaan,omitempty"`
+	WilayahAdministratifPerusahaan string `json:"wilayah_administratif_perusahaan,omitempty"`
+	AlamatPerusahaan               string `json:"alamat_perusahaan,omitempty"`
+	NomerPerusahaan                string `json:"nomer_perusahaan,omitempty"`
+	EmailPerusahaan                string `json:"email_perusahaan,omitempty"`
+	NamaPimpinan                   string `json:"nama_pimpinan,omitempty"`
+	JabatanPimpinan                string `json:"jabatan_pimpinan,omitempty"`
+	JenisKelaminPimpinan           string `json:"jenis_kelamin,omitempty"`
+	Aktivitas                      string `json:"aktivitas,omitempty"`
+	Peruntukan                     string `json:"peruntukan,omitempty"`
+	KriteriaKhusus                 string `json:"kriteria_khusus,omitempty"`
+	LokasiBangunan                 string `json:"alamat_persil,omitempty"`
+	NomerSKRK                      string `json:"nomer_skrk,omitempty"`
+	TanggalSKRK                    string `json:"tanggal_skrk,omitempty"`
 
 	//Data Persyaratan
 	KartuTandaPenduduk []byte `json:"ktp,omitempty"`
@@ -313,6 +307,8 @@ type AndalalinResponseUser struct {
 	//Data Pemohon
 	IdAndalalin             uuid.UUID `json:"id_andalalin,omitempty"`
 	JenisAndalalin          string    `json:"jenis_andalalin,omitempty"`
+	Bangkitan               string    `json:"kategori_bangkitan,omitempty"`
+	Pemohon                 string    `json:"kategori_pemohon,omitempty"`
 	Kode                    string    `json:"kode_andalalin,omitempty"`
 	NamaPemohon             string    `json:"nama_pemohon,omitempty"`
 	LokasiPengambilan       string    `json:"lokasi_pengambilan,omitempty"`
@@ -324,7 +320,33 @@ type AndalalinResponseUser struct {
 
 	//Data Perusahaan
 	NamaPerusahaan string `json:"nama_perusahaan,omitempty"`
-	JenisKegiatan  string `json:"jenis_kegiatan,omitempty"`
+	Aktivitas      string `json:"aktivitas,omitempty"`
+	Peruntukan     string `json:"peruntukan,omitempty"`
+	KriteriaKhusus string `json:"kriteria_khusus,omitempty"`
+
+	//Persyaratan tidak terpenuhi
+	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
+
+	//Data SK
+	FileSK []byte `json:"file_sk,omitempty"`
+}
+
+type PerlalinResponseUser struct {
+	//Data Pemohon
+	IdAndalalin             uuid.UUID `json:"id_andalalin,omitempty"`
+	JenisAndalalin          string    `json:"jenis_andalalin,omitempty"`
+	Kode                    string    `json:"kode_andalalin,omitempty"`
+	NamaPemohon             string    `json:"nama_pemohon,omitempty"`
+	LokasiPengambilan       string    `json:"lokasi_pengambilan,omitempty"`
+	TanggalAndalalin        string    `json:"tanggal_andalalin,omitempty"`
+	StatusAndalalin         string    `json:"status_andalalin,omitempty"`
+	TandaTerimaPendaftaran  []byte    `json:"tanda_terima_pendaftaran,omitempty"`
+	JenisRencanaPembangunan string    `json:"jenis_rencana_pembangunan,omitempty"`
+	Kategori                string    `json:"kategori,omitempty"`
+
+	//Data Perusahaan
+	NamaPerusahaan string `json:"nama_perusahaan,omitempty"`
+	Alasan         string `json:"alasan,omitempty"`
 	Peruntukan     string `json:"peruntukan,omitempty"`
 	LuasLahan      string `json:"luas_lahan,omitempty"`
 
