@@ -42,7 +42,10 @@ type Andalalin struct {
 	Aktivitas                      string `gorm:"type:varchar(255);not null"`
 	Peruntukan                     string `gorm:"type:varchar(255);not null"`
 	KriteriaKhusus                 string `gorm:"type:varchar(255);"`
+	NilaiKriteria                  string `gorm:"type:varchar(255);"`
 	LokasiBangunan                 string `gorm:"type:varchar(255);not null"`
+	LatitudeBangunan               float64
+	LongitudeBangunan              float64
 	NomerSKRK                      string `gorm:"type:varchar(255);not null"`
 	TanggalSKRK                    string `gorm:"type:varchar(255);not null"`
 
@@ -120,33 +123,36 @@ type PersyaratanTambahanPermohonan struct {
 }
 
 type InputAndalalin struct {
-	Bangkitan                       string `json:"kategori_bangkita" binding:"required"`
-	Pemohon                         string `json:"kategori_pemohon" binding:"required"`
-	KategoriJenisRencanaPembangunan string `json:"kategori" binding:"required"`
-	JenisRencanaPembangunan         string `json:"jenis_rencana_pembangunan" binding:"required"`
-	NikPemohon                      string `json:"nik_pemohon" binding:"required"`
-	TempatLahirPemohon              string `json:"tempat_lahir_pemohon" binding:"required"`
-	TanggalLahirPemohon             string `json:"tanggal_lahir_pemohon" binding:"required"`
-	AlamatPemohon                   string `json:"alamat_pemohon" binding:"required"`
-	WilayahAdministratifPemohon     string `json:"wilayah_administratif_pemohon" binding:"required"`
-	JenisKelaminPemohon             string `json:"jenis_kelamin_pemohon" binding:"required"`
-	NomerPemohon                    string `json:"nomer_pemohon" binding:"required"`
-	JabatanPemohon                  string `json:"jabatan_pemohon" binding:"required"`
-	LokasiPengambilan               string `json:"lokasi_pengambilan" binding:"required"`
-	NamaPerusahaan                  string `json:"nama_perusahaan" binding:"required"`
-	AlamatPerusahaan                string `json:"alamat_perusahaan" binding:"required"`
-	WilayahAdministratifPerusahaan  string `json:"wilayah_administratif_perusahaan" binding:"required"`
-	NomerPerusahaan                 string `json:"nomer_perusahaan" binding:"required"`
-	EmailPerusahaan                 string `json:"email_perusahaan" binding:"required"`
-	NamaPimpinan                    string `json:"nama_pimpinan" binding:"required"`
-	JabatanPimpinan                 string `json:"jabatan_pimpinan" binding:"required"`
-	JenisKelaminPimpinan            string `json:"jenis_kelamin_pimpinan" binding:"required"`
-	Aktivitas                       string `json:"aktivitas" binding:"required"`
-	Peruntukan                      string `json:"peruntukan" binding:"required"`
-	KriteriaKhusus                  string `json:"kriteria_khusus" binding:"required"`
-	LokasiBangunan                  string `json:"lokasi_bangunan" binding:"required"`
-	NomerSKRK                       string `json:"nomer_skrk" binding:"required"`
-	TanggalSKRK                     string `json:"tanggal_skrk" binding:"required"`
+	Bangkitan                       string  `json:"kategori_bangkita" binding:"required"`
+	Pemohon                         string  `json:"kategori_pemohon" binding:"required"`
+	KategoriJenisRencanaPembangunan string  `json:"kategori" binding:"required"`
+	JenisRencanaPembangunan         string  `json:"jenis_rencana_pembangunan" binding:"required"`
+	NikPemohon                      string  `json:"nik_pemohon" binding:"required"`
+	TempatLahirPemohon              string  `json:"tempat_lahir_pemohon" binding:"required"`
+	TanggalLahirPemohon             string  `json:"tanggal_lahir_pemohon" binding:"required"`
+	AlamatPemohon                   string  `json:"alamat_pemohon" binding:"required"`
+	WilayahAdministratifPemohon     string  `json:"wilayah_administratif_pemohon" binding:"required"`
+	JenisKelaminPemohon             string  `json:"jenis_kelamin_pemohon" binding:"required"`
+	NomerPemohon                    string  `json:"nomer_pemohon" binding:"required"`
+	JabatanPemohon                  string  `json:"jabatan_pemohon" binding:"required"`
+	LokasiPengambilan               string  `json:"lokasi_pengambilan" binding:"required"`
+	NamaPerusahaan                  string  `json:"nama_perusahaan" binding:"required"`
+	AlamatPerusahaan                string  `json:"alamat_perusahaan" binding:"required"`
+	WilayahAdministratifPerusahaan  string  `json:"wilayah_administratif_perusahaan" binding:"required"`
+	NomerPerusahaan                 string  `json:"nomer_perusahaan" binding:"required"`
+	EmailPerusahaan                 string  `json:"email_perusahaan" binding:"required"`
+	NamaPimpinan                    string  `json:"nama_pimpinan" binding:"required"`
+	JabatanPimpinan                 string  `json:"jabatan_pimpinan" binding:"required"`
+	JenisKelaminPimpinan            string  `json:"jenis_kelamin_pimpinan" binding:"required"`
+	Aktivitas                       string  `json:"aktivitas" binding:"required"`
+	Peruntukan                      string  `json:"peruntukan" binding:"required"`
+	KriteriaKhusus                  string  `json:"kriteria_khusus" binding:"required"`
+	NilaiKriteria                   string  `json:"nilai_kriteria" binding:"required"`
+	LokasiBangunan                  string  `json:"lokasi_bangunan" binding:"required"`
+	LatitudeBangunan                float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
+	LongitudeBangunan               float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
+	NomerSKRK                       string  `json:"nomer_skrk" binding:"required"`
+	TanggalSKRK                     string  `json:"tanggal_skrk" binding:"required"`
 }
 
 type InputPerlalin struct {
@@ -211,20 +217,23 @@ type AndalalinResponse struct {
 	TandaTerimaPendaftaran      []byte    `json:"tanda_terima_pendaftaran,omitempty"`
 
 	//Data Perusahaan
-	NamaPerusahaan                 string `json:"nama_perusahaan,omitempty"`
-	WilayahAdministratifPerusahaan string `json:"wilayah_administratif_perusahaan,omitempty"`
-	AlamatPerusahaan               string `json:"alamat_perusahaan,omitempty"`
-	NomerPerusahaan                string `json:"nomer_perusahaan,omitempty"`
-	EmailPerusahaan                string `json:"email_perusahaan,omitempty"`
-	NamaPimpinan                   string `json:"nama_pimpinan,omitempty"`
-	JabatanPimpinan                string `json:"jabatan_pimpinan,omitempty"`
-	JenisKelaminPimpinan           string `json:"jenis_kelamin,omitempty"`
-	Aktivitas                      string `json:"aktivitas,omitempty"`
-	Peruntukan                     string `json:"peruntukan,omitempty"`
-	KriteriaKhusus                 string `json:"kriteria_khusus,omitempty"`
-	LokasiBangunan                 string `json:"alamat_persil,omitempty"`
-	NomerSKRK                      string `json:"nomer_skrk,omitempty"`
-	TanggalSKRK                    string `json:"tanggal_skrk,omitempty"`
+	NamaPerusahaan                 string  `json:"nama_perusahaan,omitempty"`
+	WilayahAdministratifPerusahaan string  `json:"wilayah_administratif_perusahaan,omitempty"`
+	AlamatPerusahaan               string  `json:"alamat_perusahaan,omitempty"`
+	NomerPerusahaan                string  `json:"nomer_perusahaan,omitempty"`
+	EmailPerusahaan                string  `json:"email_perusahaan,omitempty"`
+	NamaPimpinan                   string  `json:"nama_pimpinan,omitempty"`
+	JabatanPimpinan                string  `json:"jabatan_pimpinan,omitempty"`
+	JenisKelaminPimpinan           string  `json:"jenis_kelamin,omitempty"`
+	Aktivitas                      string  `json:"aktivitas,omitempty"`
+	Peruntukan                     string  `json:"peruntukan,omitempty"`
+	KriteriaKhusus                 string  `json:"kriteria_khusus,omitempty"`
+	NilaiKriteria                  string  `json:"nilai_kriteria,omitempty"`
+	LatitudeBangunan               float64 `json:"latitude,omitempty"`
+	LongitudeBangunan              float64 `json:"longitude,omitempty"`
+	LokasiBangunan                 string  `json:"alamat_persil,omitempty"`
+	NomerSKRK                      string  `json:"nomer_skrk,omitempty"`
+	TanggalSKRK                    string  `json:"tanggal_skrk,omitempty"`
 
 	//Data Persyaratan
 	KartuTandaPenduduk []byte `json:"ktp,omitempty"`
@@ -323,6 +332,7 @@ type AndalalinResponseUser struct {
 	Aktivitas      string `json:"aktivitas,omitempty"`
 	Peruntukan     string `json:"peruntukan,omitempty"`
 	KriteriaKhusus string `json:"kriteria_khusus,omitempty"`
+	NilaiKriteria  string `json:"nilai_kriteria,omitempty"`
 
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
