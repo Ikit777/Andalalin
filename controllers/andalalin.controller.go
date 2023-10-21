@@ -618,6 +618,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 			dataUser := models.AndalalinResponseUser{
 				IdAndalalin:             andalalin.IdAndalalin,
 				JenisAndalalin:          andalalin.JenisAndalalin,
+				Bangkitan:               andalalin.Bangkitan,
+				Pemohon:                 andalalin.Pemohon,
 				JenisRencanaPembangunan: andalalin.Jenis,
 				Kategori:                andalalin.Kategori,
 				Kode:                    andalalin.Kode,
