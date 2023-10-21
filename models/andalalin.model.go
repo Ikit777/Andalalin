@@ -123,7 +123,7 @@ type PersyaratanTambahanPermohonan struct {
 }
 
 type InputAndalalin struct {
-	Bangkitan                       string  `json:"kategori_bangkita" binding:"required"`
+	Bangkitan                       string  `json:"kategori_bangkitan" binding:"required"`
 	Pemohon                         string  `json:"kategori_pemohon" binding:"required"`
 	KategoriJenisRencanaPembangunan string  `json:"kategori" binding:"required"`
 	JenisRencanaPembangunan         string  `json:"jenis_rencana_pembangunan" binding:"required"`
