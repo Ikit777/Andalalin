@@ -48,7 +48,13 @@ type Kelurahan struct {
 
 type Rencana struct {
 	Kategori     string
-	JenisRencana []string
+	JenisRencana []JenisRencana
+}
+
+type JenisRencana struct {
+	Jenis    string
+	Kriteria string
+	Satuan   string
 }
 
 type JenisPerlengkapan struct {

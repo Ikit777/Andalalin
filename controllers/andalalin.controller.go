@@ -266,7 +266,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		JenisKelaminPimpinan: payload.Andalalin.JenisKelaminPimpinan,
 		JenisKegiatan:        payload.Andalalin.JenisKegiatan,
 		Peruntukan:           payload.Andalalin.Peruntukan,
-		LuasLahan:            payload.Andalalin.LuasLahan + "m²",
+		LuasLahan:            payload.Andalalin.LuasLahan,
 		AlamatPersil:         payload.Andalalin.AlamatPersil,
 		KelurahanPersil:      payload.Andalalin.KelurahanPersil,
 		NomerSKRK:            payload.Andalalin.NomerSKRK,

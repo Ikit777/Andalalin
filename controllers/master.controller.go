@@ -704,7 +704,7 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 			kategoriExists = true
 			itemIndex = i
 			for _, item := range master.RencanaPembangunan[i].JenisRencana {
-				if item == rencana {
+				if item.Jenis == rencana {
 					jenisExists = true
 					ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 					return
@@ -714,15 +714,18 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 	}
 
 	if !kategoriExists {
-		jenis := models.Rencana{
-			Kategori:     kategori,
-			JenisRencana: []string{rencana},
-		}
-		master.RencanaPembangunan = append(master.RencanaPembangunan, jenis)
+		jenis_rencana := []models.JenisRencana{}
+		jenis_rencana = append(jenis_rencana, models.JenisRencana{Jenis: rencana,
+			Kriteria: "",
+			Satuan:   ""})
+
+		master.RencanaPembangunan = append(master.RencanaPembangunan, models.Rencana{Kategori: kategori, JenisRencana: jenis_rencana})
 	}
 
 	if !jenisExists && kategoriExists {
-		master.RencanaPembangunan[itemIndex].JenisRencana = append(master.RencanaPembangunan[itemIndex].JenisRencana, rencana)
+		master.RencanaPembangunan[itemIndex].JenisRencana = append(master.RencanaPembangunan[itemIndex].JenisRencana, models.JenisRencana{Jenis: rencana,
+			Kriteria: "",
+			Satuan:   ""})
 	}
 
 	resultsSave := dm.DB.Save(&master)
@@ -798,7 +801,7 @@ func (dm *DataMasterControler) HapusJenisRencanaPembangunan(ctx *gin.Context) {
 	for i := range master.RencanaPembangunan {
 		if master.RencanaPembangunan[i].Kategori == kategori {
 			for j, item := range master.RencanaPembangunan[i].JenisRencana {
-				if item == rencana {
+				if item.Jenis == rencana {
 					master.RencanaPembangunan[i].JenisRencana = append(master.RencanaPembangunan[i].JenisRencana[:j], master.RencanaPembangunan[i].JenisRencana[j+1:]...)
 				}
 			}
@@ -883,7 +886,7 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 		if master.RencanaPembangunan[i].Kategori == kategori {
 			itemIndexKategori = i
 			for j, item := range master.RencanaPembangunan[i].JenisRencana {
-				if item == rencana {
+				if item.Jenis == rencana {
 					itemIndexRencana = j
 					break
 				}
@@ -892,7 +895,9 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 	}
 
 	if itemIndexKategori != -1 && itemIndexRencana != -1 {
-		master.RencanaPembangunan[itemIndexKategori].JenisRencana[itemIndexRencana] = newRencana
+		master.RencanaPembangunan[itemIndexKategori].JenisRencana[itemIndexRencana] = models.JenisRencana{Jenis: newRencana,
+			Kriteria: "",
+			Satuan:   ""}
 	}
 
 	resultsSave := dm.DB.Save(&master)
