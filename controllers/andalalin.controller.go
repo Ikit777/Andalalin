@@ -135,7 +135,15 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	kode := "andalalin/" + utils.Generate(6)
 	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
 
-	t, err := template.ParseFiles("templates/tandaterimaTemplate.html")
+	var path string
+
+	if payload.Andalalin.Pemohon == "Perorangan" {
+		path = "templates/tandaterimaTemplate.html"
+	} else {
+		path = "templates/tandaterimaTemplatePerorangan.html"
+	}
+
+	t, err := template.ParseFiles(path)
 	if err != nil {
 		log.Fatal("Error reading the email template:", err)
 		return
@@ -146,7 +154,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		Waktu        string
 		Kode         string
 		Nama         string
-		Instansi     string
+		Instansi     *string
 		Nomor        string
 		NomorSeluler string
 	}{
