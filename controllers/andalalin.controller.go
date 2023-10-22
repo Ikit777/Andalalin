@@ -302,6 +302,24 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	} else {
 		ac.ReleaseTicketLevel1(ctx, permohonan.IdAndalalin)
+
+		var user []models.User
+
+		ac.DB.Find(&user, "role = ?", "Operator")
+
+		for _, users := range user {
+			if users.PushToken != "" {
+				notif := utils.Notification{
+					IdUser: users.ID,
+					Title:  "Permohonan baru",
+					Body:   "Permohonan baru dengan kode " + permohonan.Kode + " telah diajukan, silahkan menindaklanjuti permohonan",
+					Token:  users.PushToken,
+				}
+
+				utils.SendPushNotifications(&notif)
+			}
+		}
+
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 	}
 }
