@@ -319,7 +319,11 @@ type AndalalinResponseUser struct {
 	Bangkitan               string    `json:"kategori_bangkitan,omitempty"`
 	Pemohon                 string    `json:"kategori_pemohon,omitempty"`
 	Kode                    string    `json:"kode_andalalin,omitempty"`
+	NikPemohon              string    `json:"nik_pemohon,omitempty"`
 	NamaPemohon             string    `json:"nama_pemohon,omitempty"`
+	JabatanPemohon          *string   `json:"jabatan_pemohon,omitempty"`
+	EmailPemohon            string    `json:"email_pemohon,omitempty"`
+	NomerPemohon            string    `json:"nomer_pemohon,omitempty"`
 	LokasiPengambilan       string    `json:"lokasi_pengambilan,omitempty"`
 	TanggalAndalalin        string    `json:"tanggal_andalalin,omitempty"`
 	StatusAndalalin         string    `json:"status_andalalin,omitempty"`
