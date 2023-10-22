@@ -309,6 +309,14 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 
 		for _, users := range user {
 			if users.PushToken != "" {
+				simpanNotif := models.Notifikasi{
+					IdUser: users.ID,
+					Title:  "Pemasangan selesai",
+					Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah selesai pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
+				}
+
+				ac.DB.Create(&simpanNotif)
+
 				notif := utils.Notification{
 					IdUser: users.ID,
 					Title:  "Permohonan baru",
