@@ -624,7 +624,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				Kode:                    andalalin.Kode,
 				NikPemohon:              andalalin.NikPemohon,
 				EmailPemohon:            andalalin.EmailPemohon,
-				NomerPemohon:            andalalin.EmailPemohon,
+				NomerPemohon:            andalalin.NomerPemohon,
 				NamaPemohon:             andalalin.NamaPemohon,
 				JabatanPemohon:          andalalin.JabatanPemohon,
 				LokasiPengambilan:       andalalin.LokasiPengambilan,
