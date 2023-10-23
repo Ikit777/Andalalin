@@ -86,7 +86,7 @@ func main() {
 
 	lokasi := []string{"Banjarmasin"}
 
-	jenis_kegiatan := []string{"Pusat kegiatan", "Pemukiman", "Infrastruktur", "Lainnya"}
+	jenis_kegiatan := []string{"Pusat kegiatan", "Pemukiman", "Infrastruktur"}
 
 	pusat_kegiatan := []models.JenisRencana{}
 	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Pusat perbelanjaan atau retail", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
