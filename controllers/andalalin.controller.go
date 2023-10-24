@@ -201,9 +201,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	}
 
-	blobs := make(map[string][]byte)
-
-	tambahan := []models.PersyaratanTambahanPermohonan{}
+	dokumen := []models.PersyaratanPermohonan{}
 
 	for key, files := range form.File {
 		for _, file := range files {
@@ -223,17 +221,8 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 			}
 
 			// Store the blob data in the map
+			dokumen = append(dokumen, models.PersyaratanPermohonan{Persyaratan: key, Berkas: data})
 
-			switch key {
-			case "ktp":
-				blobs[key] = data
-			case "apb":
-				blobs[key] = data
-			case "sk":
-				blobs[key] = data
-			default:
-				tambahan = append(tambahan, models.PersyaratanTambahanPermohonan{Persyaratan: key, Berkas: data})
-			}
 		}
 	}
 
@@ -279,10 +268,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		NomerSKRK:                      payload.Andalalin.NomerSKRK,
 		TanggalSKRK:                    payload.Andalalin.TanggalSKRK,
 
-		KartuTandaPenduduk:  blobs["ktp"],
-		AktaPendirianBadan:  blobs["apb"],
-		SuratKuasa:          blobs["sk"],
-		PersyaratanTambahan: tambahan,
+		Persyaratan: dokumen,
 	}
 
 	result := ac.DB.Create(&permohonan)
@@ -426,9 +412,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		return
 	}
 
-	blobs := make(map[string][]byte)
-
-	tambahan := []models.PersyaratanTambahanPermohonan{}
+	dokumen := []models.PersyaratanPermohonan{}
 
 	for key, files := range form.File {
 		for _, file := range files {
@@ -448,15 +432,8 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 			}
 
 			// Store the blob data in the map
+			dokumen = append(dokumen, models.PersyaratanPermohonan{Persyaratan: key, Berkas: data})
 
-			switch key {
-			case "ktp":
-				blobs[key] = data
-			case "sp":
-				blobs[key] = data
-			default:
-				tambahan = append(tambahan, models.PersyaratanTambahanPermohonan{Persyaratan: key, Berkas: data})
-			}
 		}
 	}
 
@@ -486,9 +463,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		StatusAndalalin:        "Cek persyaratan",
 		TandaTerimaPendaftaran: pdfg.Bytes(),
 
-		KartuTandaPenduduk:  blobs["ktp"],
-		SuratPermohonan:     blobs["sp"],
-		PersyaratanTambahan: tambahan,
+		Persyaratan: dokumen,
 	}
 
 	result := ac.DB.Create(&permohonan)
@@ -708,9 +683,6 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				NilaiKriteria:                  andalalin.NilaiKriteria,
 				NomerSKRK:                      andalalin.NomerSKRK,
 				TanggalSKRK:                    andalalin.TanggalSKRK,
-				KartuTandaPenduduk:             andalalin.KartuTandaPenduduk,
-				AktaPendirianBadan:             andalalin.AktaPendirianBadan,
-				SuratKuasa:                     andalalin.SuratKuasa,
 				PersyaratanTidakSesuai:         andalalin.PersyaratanTidakSesuai,
 				StatusTiketLevel2:              status,
 				PersetujuanDokumen:             andalalin.PersetujuanDokumen,
@@ -720,7 +692,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				TanggalBAP:                     andalalin.TanggalBAP,
 				FileBAP:                        andalalin.FileBAP,
 				FileSK:                         andalalin.FileSK,
-				PersyaratanTambahan:            andalalin.PersyaratanTambahan,
+				Persyaratan:                    andalalin.Persyaratan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 		}
@@ -771,15 +743,13 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				LuasLahan:              perlalin.LuasLahan,
 				AlamatPersil:           perlalin.AlamatPersil,
 				KelurahanPersil:        perlalin.KelurahanPersil,
-				KartuTandaPenduduk:     perlalin.KartuTandaPenduduk,
-				SuratPermohonan:        perlalin.SuratPermohonan,
 				PersyaratanTidakSesuai: perlalin.PersyaratanTidakSesuai,
 				IdPetugas:              perlalin.IdPetugas,
 				NamaPetugas:            perlalin.NamaPetugas,
 				EmailPetugas:           perlalin.EmailPetugas,
 				StatusTiketLevel2:      status,
 				LaporanSurvei:          perlalin.LaporanSurvei,
-				PersyaratanTambahan:    perlalin.PersyaratanTambahan,
+				Persyaratan:            perlalin.Persyaratan,
 				Tindakan:               perlalin.Tindakan,
 				PertimbanganTindakan:   perlalin.PertimbanganTindakan,
 			}
@@ -1042,21 +1012,13 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 					return
 				}
 
-				switch key {
-				case "Kartu tanda penduduk":
-					andalalin.KartuTandaPenduduk = data
-				case "Akta pendirian badan":
-					andalalin.AktaPendirianBadan = data
-				case "Surat kuasa":
-					andalalin.SuratKuasa = data
-				default:
-					for i := range andalalin.PersyaratanTambahan {
-						if andalalin.PersyaratanTambahan[i].Persyaratan == key {
-							andalalin.PersyaratanTambahan[i].Berkas = data
-							break
-						}
+				for i := range andalalin.Persyaratan {
+					if andalalin.Persyaratan[i].Persyaratan == key {
+						andalalin.Persyaratan[i].Berkas = data
+						break
 					}
 				}
+
 			}
 		}
 
@@ -1084,19 +1046,13 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 					return
 				}
 
-				switch key {
-				case "Kartu tanda penduduk":
-					perlalin.KartuTandaPenduduk = data
-				case "Surat permohonan":
-					perlalin.SuratPermohonan = data
-				default:
-					for i := range andalalin.PersyaratanTambahan {
-						if andalalin.PersyaratanTambahan[i].Persyaratan == key {
-							andalalin.PersyaratanTambahan[i].Berkas = data
-							break
-						}
+				for i := range andalalin.Persyaratan {
+					if andalalin.Persyaratan[i].Persyaratan == key {
+						andalalin.Persyaratan[i].Berkas = data
+						break
 					}
 				}
+
 			}
 		}
 

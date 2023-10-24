@@ -50,11 +50,7 @@ type Andalalin struct {
 	TanggalSKRK                    string `gorm:"type:varchar(255);not null"`
 
 	//Data Persyaratan
-	KartuTandaPenduduk []byte
-	AktaPendirianBadan []byte
-	SuratKuasa         []byte
-
-	PersyaratanTambahan []PersyaratanTambahanPermohonan `gorm:"serializer:json"`
+	Persyaratan []PersyaratanPermohonan `gorm:"serializer:json"`
 
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `gorm:"serializer:json"`
@@ -103,10 +99,7 @@ type Perlalin struct {
 	EmailPetugas           string    `gorm:"type:varchar(255);"`
 	TandaTerimaPendaftaran []byte
 
-	KartuTandaPenduduk []byte
-	SuratPermohonan    []byte
-
-	PersyaratanTambahan []PersyaratanTambahanPermohonan `gorm:"serializer:json"`
+	Persyaratan []PersyaratanPermohonan `gorm:"serializer:json"`
 
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `gorm:"serializer:json"`
@@ -117,7 +110,7 @@ type Perlalin struct {
 	PertimbanganTindakan string
 }
 
-type PersyaratanTambahanPermohonan struct {
+type PersyaratanPermohonan struct {
 	Persyaratan string
 	Berkas      []byte
 }
@@ -235,11 +228,6 @@ type AndalalinResponse struct {
 	NomerSKRK                      string  `json:"nomer_skrk,omitempty"`
 	TanggalSKRK                    string  `json:"tanggal_skrk,omitempty"`
 
-	//Data Persyaratan
-	KartuTandaPenduduk []byte `json:"ktp,omitempty"`
-	AktaPendirianBadan []byte `json:"akta_pendirian_badan,omitempty"`
-	SuratKuasa         []byte `json:"surat_kuasa,omitempty"`
-
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
 
@@ -262,7 +250,7 @@ type AndalalinResponse struct {
 	//Data SK
 	FileSK []byte `json:"file_sk,omitempty"`
 
-	PersyaratanTambahan []PersyaratanTambahanPermohonan `json:"persyaratan_tambahan,omitempty"`
+	Persyaratan []PersyaratanPermohonan `json:"persyaratan,omitempty"`
 }
 
 type PerlalinResponse struct {
@@ -291,10 +279,6 @@ type PerlalinResponse struct {
 	AlamatPersil           string    `json:"alamat_persil,omitempty"`
 	KelurahanPersil        string    `json:"kelurahan_persil,omitempty"`
 
-	//Data Persyaratan
-	KartuTandaPenduduk []byte `json:"ktp,omitempty"`
-	SuratPermohonan    []byte `json:"surat_kuasa,omitempty"`
-
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
 
@@ -306,7 +290,7 @@ type PerlalinResponse struct {
 
 	LaporanSurvei []byte `json:"laporan_survei,omitempty"`
 
-	PersyaratanTambahan []PersyaratanTambahanPermohonan `json:"persyaratan_tambahan,omitempty"`
+	Persyaratan []PersyaratanPermohonan `json:"persyaratan,omitempty"`
 
 	Tindakan             string `json:"keputusan_hasil,omitempty"`
 	PertimbanganTindakan string `json:"pertimbangan,omitempty"`
