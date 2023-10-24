@@ -48,7 +48,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
 		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
 		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
-		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+		Persyaratan            models.Persyaratan         `json:"persyaratan,omitempty"`
 		Provinsi               []models.Provinsi          `json:"provinsi,omitempty"`
 		Kabupaten              []models.Kabupaten         `json:"kabupaten,omitempty"`
 		Kecamatan              []models.Kecamatan         `json:"kecamatan,omitempty"`
@@ -61,7 +61,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		RencanaPembangunan:     master.RencanaPembangunan,
 		KategoriPerlengkapan:   master.KategoriPerlengkapan,
 		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
-		PersyaratanTambahan:    master.PersyaratanTambahan,
+		Persyaratan:            master.Persyaratan,
 		Provinsi:               master.Provinsi,
 		Kabupaten:              master.Kabupaten,
 		Kecamatan:              master.Kecamatan,
@@ -1246,7 +1246,7 @@ func (dm *DataMasterControler) EditPerlengkapan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
-	var payload *models.PersyaratanTambahanInput
+	var payload *models.PersyaratanAndalalinInput
 	id := ctx.Param("id")
 
 	config, _ := initializers.LoadConfig()
@@ -1286,8 +1286,8 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 
 	persyaratanExist := false
 
-	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == payload.Persyaratan {
+	for i := range master.Persyaratan.PersyaratanAndalalin {
+		if master.Persyaratan.PersyaratanAndalalin[i].Persyaratan == payload.Persyaratan {
 			persyaratanExist = true
 			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 			return
@@ -1295,11 +1295,12 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	if !persyaratanExist {
-		persyaratan := models.PersyaratanTambahanInput{
+		persyaratan := models.PersyaratanAndalalinInput{
+			Bangkitan:             payload.Bangkitan,
 			Persyaratan:           payload.Persyaratan,
 			KeteranganPersyaratan: payload.KeteranganPersyaratan,
 		}
-		master.PersyaratanTambahan.PersyaratanTambahanAndalalin = append(master.PersyaratanTambahan.PersyaratanTambahanAndalalin, persyaratan)
+		master.Persyaratan.PersyaratanAndalalin = append(master.Persyaratan.PersyaratanAndalalin, persyaratan)
 	}
 
 	resultsSave := dm.DB.Save(&master)
@@ -1309,29 +1310,11 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
-		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
-		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
-		Provinsi               []models.Provinsi          `json:"provinsi,omitempty"`
-		Kabupaten              []models.Kabupaten         `json:"kabupaten,omitempty"`
-		Kecamatan              []models.Kecamatan         `json:"kecamatan,omitempty"`
-		Kelurahan              []models.Kelurahan         `json:"kelurahan,omitempty"`
+		Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
+		UpdatedAt   string             `json:"update,omitempty"`
 	}{
-		IdDataMaster:           master.IdDataMaster,
-		Lokasi:                 master.LokasiPengambilan,
-		JenisRencana:           master.JenisRencanaPembangunan,
-		RencanaPembangunan:     master.RencanaPembangunan,
-		KategoriPerlengkapan:   master.KategoriPerlengkapan,
-		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
-		PersyaratanTambahan:    master.PersyaratanTambahan,
-		Provinsi:               master.Provinsi,
-		Kabupaten:              master.Kabupaten,
-		Kecamatan:              master.Kecamatan,
-		Kelurahan:              master.Kelurahan,
+		Persyaratan: master.Persyaratan,
+		UpdatedAt:   master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -1371,9 +1354,9 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		return
 	}
 
-	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == persyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanAndalalin = append(master.PersyaratanTambahan.PersyaratanTambahanAndalalin[:i], master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i+1:]...)
+	for i := range master.Persyaratan.PersyaratanAndalalin {
+		if master.Persyaratan.PersyaratanAndalalin[i].Persyaratan == persyaratan {
+			master.Persyaratan.PersyaratanAndalalin = append(master.Persyaratan.PersyaratanAndalalin[:i], master.Persyaratan.PersyaratanAndalalin[i+1:]...)
 			break
 		}
 	}
@@ -1426,21 +1409,11 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		}
 
 		respone := struct {
-			IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
-			Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
-			JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
-			RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-			KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
-			PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
-			PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+			Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
+			UpdatedAt   string             `json:"update,omitempty"`
 		}{
-			IdDataMaster:           master.IdDataMaster,
-			Lokasi:                 master.LokasiPengambilan,
-			JenisRencana:           master.JenisRencanaPembangunan,
-			RencanaPembangunan:     master.RencanaPembangunan,
-			KategoriPerlengkapan:   master.KategoriPerlengkapan,
-			PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
-			PersyaratanTambahan:    master.PersyaratanTambahan,
+			Persyaratan: master.Persyaratan,
+			UpdatedAt:   master.UpdatedAt,
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone, "file": base64ZipData})
@@ -1448,7 +1421,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
-	var payload *models.PersyaratanTambahanInput
+	var payload *models.PersyaratanAndalalinInput
 	id := ctx.Param("id")
 	syarat := ctx.Param("persyaratan")
 
@@ -1489,20 +1462,20 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 
 	itemIndex := -1
 
-	for i := range master.PersyaratanTambahan.PersyaratanTambahanAndalalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[i].Persyaratan == syarat {
+	for i := range master.Persyaratan.PersyaratanAndalalin {
+		if master.Persyaratan.PersyaratanAndalalin[i].Persyaratan == syarat {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan != payload.Persyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].Persyaratan = payload.Persyaratan
+		if master.Persyaratan.PersyaratanAndalalin[itemIndex].Persyaratan != payload.Persyaratan {
+			master.Persyaratan.PersyaratanAndalalin[itemIndex].Persyaratan = payload.Persyaratan
 		}
 
-		if master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanAndalalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
+		if master.Persyaratan.PersyaratanAndalalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
+			master.Persyaratan.PersyaratanAndalalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
 		}
 
 	}
@@ -1514,36 +1487,18 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
-		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
-		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
-		Provinsi               []models.Provinsi          `json:"provinsi,omitempty"`
-		Kabupaten              []models.Kabupaten         `json:"kabupaten,omitempty"`
-		Kecamatan              []models.Kecamatan         `json:"kecamatan,omitempty"`
-		Kelurahan              []models.Kelurahan         `json:"kelurahan,omitempty"`
+		Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
+		UpdatedAt   string             `json:"update,omitempty"`
 	}{
-		IdDataMaster:           master.IdDataMaster,
-		Lokasi:                 master.LokasiPengambilan,
-		JenisRencana:           master.JenisRencanaPembangunan,
-		RencanaPembangunan:     master.RencanaPembangunan,
-		KategoriPerlengkapan:   master.KategoriPerlengkapan,
-		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
-		PersyaratanTambahan:    master.PersyaratanTambahan,
-		Provinsi:               master.Provinsi,
-		Kabupaten:              master.Kabupaten,
-		Kecamatan:              master.Kecamatan,
-		Kelurahan:              master.Kelurahan,
+		Persyaratan: master.Persyaratan,
+		UpdatedAt:   master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
 
 func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
-	var payload *models.PersyaratanTambahanInput
+	var payload *models.PersyaratanPerlalinInput
 	id := ctx.Param("id")
 
 	config, _ := initializers.LoadConfig()
@@ -1583,8 +1538,8 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 
 	persyaratanExist := false
 
-	for i := range master.PersyaratanTambahan.PersyaratanTambahanPerlalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanPerlalin[i].Persyaratan == payload.Persyaratan {
+	for i := range master.Persyaratan.PersyaratanPerlalin {
+		if master.Persyaratan.PersyaratanPerlalin[i].Persyaratan == payload.Persyaratan {
 			persyaratanExist = true
 			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 			return
@@ -1592,11 +1547,11 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 	}
 
 	if !persyaratanExist {
-		persyaratan := models.PersyaratanTambahanInput{
+		persyaratan := models.PersyaratanPerlalinInput{
 			Persyaratan:           payload.Persyaratan,
 			KeteranganPersyaratan: payload.KeteranganPersyaratan,
 		}
-		master.PersyaratanTambahan.PersyaratanTambahanPerlalin = append(master.PersyaratanTambahan.PersyaratanTambahanPerlalin, persyaratan)
+		master.Persyaratan.PersyaratanPerlalin = append(master.Persyaratan.PersyaratanPerlalin, persyaratan)
 	}
 
 	resultsSave := dm.DB.Save(&master)
@@ -1606,29 +1561,11 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
-		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
-		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
-		Provinsi               []models.Provinsi          `json:"provinsi,omitempty"`
-		Kabupaten              []models.Kabupaten         `json:"kabupaten,omitempty"`
-		Kecamatan              []models.Kecamatan         `json:"kecamatan,omitempty"`
-		Kelurahan              []models.Kelurahan         `json:"kelurahan,omitempty"`
+		Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
+		UpdatedAt   string             `json:"update,omitempty"`
 	}{
-		IdDataMaster:           master.IdDataMaster,
-		Lokasi:                 master.LokasiPengambilan,
-		JenisRencana:           master.JenisRencanaPembangunan,
-		RencanaPembangunan:     master.RencanaPembangunan,
-		KategoriPerlengkapan:   master.KategoriPerlengkapan,
-		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
-		PersyaratanTambahan:    master.PersyaratanTambahan,
-		Provinsi:               master.Provinsi,
-		Kabupaten:              master.Kabupaten,
-		Kecamatan:              master.Kecamatan,
-		Kelurahan:              master.Kelurahan,
+		Persyaratan: master.Persyaratan,
+		UpdatedAt:   master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -1668,9 +1605,9 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 		return
 	}
 
-	for i := range master.PersyaratanTambahan.PersyaratanTambahanPerlalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanPerlalin[i].Persyaratan == persyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanPerlalin = append(master.PersyaratanTambahan.PersyaratanTambahanPerlalin[:i], master.PersyaratanTambahan.PersyaratanTambahanPerlalin[i+1:]...)
+	for i := range master.Persyaratan.PersyaratanPerlalin {
+		if master.Persyaratan.PersyaratanPerlalin[i].Persyaratan == persyaratan {
+			master.Persyaratan.PersyaratanPerlalin = append(master.Persyaratan.PersyaratanPerlalin[:i], master.Persyaratan.PersyaratanPerlalin[i+1:]...)
 			break
 		}
 	}
@@ -1723,21 +1660,11 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 		}
 
 		respone := struct {
-			IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
-			Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
-			JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
-			RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-			KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
-			PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
-			PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
+			Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
+			UpdatedAt   string             `json:"update,omitempty"`
 		}{
-			IdDataMaster:           master.IdDataMaster,
-			Lokasi:                 master.LokasiPengambilan,
-			JenisRencana:           master.JenisRencanaPembangunan,
-			RencanaPembangunan:     master.RencanaPembangunan,
-			KategoriPerlengkapan:   master.KategoriPerlengkapan,
-			PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
-			PersyaratanTambahan:    master.PersyaratanTambahan,
+			Persyaratan: master.Persyaratan,
+			UpdatedAt:   master.UpdatedAt,
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone, "file": base64ZipData})
@@ -1745,7 +1672,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
-	var payload *models.PersyaratanTambahanInput
+	var payload *models.PersyaratanPerlalinInput
 	id := ctx.Param("id")
 	syarat := ctx.Param("persyaratan")
 
@@ -1786,20 +1713,20 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 
 	itemIndex := -1
 
-	for i := range master.PersyaratanTambahan.PersyaratanTambahanPerlalin {
-		if master.PersyaratanTambahan.PersyaratanTambahanPerlalin[i].Persyaratan == syarat {
+	for i := range master.Persyaratan.PersyaratanPerlalin {
+		if master.Persyaratan.PersyaratanPerlalin[i].Persyaratan == syarat {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		if master.PersyaratanTambahan.PersyaratanTambahanPerlalin[itemIndex].Persyaratan != payload.Persyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanPerlalin[itemIndex].Persyaratan = payload.Persyaratan
+		if master.Persyaratan.PersyaratanPerlalin[itemIndex].Persyaratan != payload.Persyaratan {
+			master.Persyaratan.PersyaratanPerlalin[itemIndex].Persyaratan = payload.Persyaratan
 		}
 
-		if master.PersyaratanTambahan.PersyaratanTambahanPerlalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
-			master.PersyaratanTambahan.PersyaratanTambahanPerlalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
+		if master.Persyaratan.PersyaratanPerlalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
+			master.Persyaratan.PersyaratanPerlalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
 		}
 	}
 
@@ -1810,29 +1737,11 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
-		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
-		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
-		PersyaratanTambahan    models.PersyaratanTambahan `json:"persyaratan_tambahan,omitempty"`
-		Provinsi               []models.Provinsi          `json:"provinsi,omitempty"`
-		Kabupaten              []models.Kabupaten         `json:"kabupaten,omitempty"`
-		Kecamatan              []models.Kecamatan         `json:"kecamatan,omitempty"`
-		Kelurahan              []models.Kelurahan         `json:"kelurahan,omitempty"`
+		Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
+		UpdatedAt   string             `json:"update,omitempty"`
 	}{
-		IdDataMaster:           master.IdDataMaster,
-		Lokasi:                 master.LokasiPengambilan,
-		JenisRencana:           master.JenisRencanaPembangunan,
-		RencanaPembangunan:     master.RencanaPembangunan,
-		KategoriPerlengkapan:   master.KategoriPerlengkapan,
-		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
-		PersyaratanTambahan:    master.PersyaratanTambahan,
-		Provinsi:               master.Provinsi,
-		Kabupaten:              master.Kabupaten,
-		Kecamatan:              master.Kecamatan,
-		Kelurahan:              master.Kelurahan,
+		Persyaratan: master.Persyaratan,
+		UpdatedAt:   master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})

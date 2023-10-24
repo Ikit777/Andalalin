@@ -9,7 +9,7 @@ type DataMaster struct {
 	RencanaPembangunan      []Rencana           `gorm:"serializer:json"`
 	KategoriPerlengkapan    Perlengkapan        `gorm:"serializer:json"`
 	PerlengkapanLaluLintas  []JenisPerlengkapan `gorm:"serializer:json"`
-	PersyaratanTambahan     PersyaratanTambahan `gorm:"serializer:json"`
+	Persyaratan             Persyaratan         `gorm:"serializer:json"`
 	Provinsi                []Provinsi          `gorm:"serializer:json"`
 	Kabupaten               []Kabupaten         `gorm:"serializer:json"`
 	Kecamatan               []Kecamatan         `gorm:"serializer:json"`
@@ -67,12 +67,19 @@ type PerlengkapanItem struct {
 	GambarPerlengkapan []byte
 }
 
-type PersyaratanTambahan struct {
-	PersyaratanTambahanAndalalin []PersyaratanTambahanInput
-	PersyaratanTambahanPerlalin  []PersyaratanTambahanInput
+type Persyaratan struct {
+	PersyaratanAndalalin []PersyaratanAndalalinInput
+	PersyaratanPerlalin  []PersyaratanPerlalinInput
 }
 
-type PersyaratanTambahanInput struct {
+type PersyaratanAndalalinInput struct {
+	Bangkitan             string `json:"bangkitan" binding:"required"`
+	Persyaratan           string `json:"persyaratan" binding:"required"`
+	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
+}
+
+type PersyaratanPerlalinInput struct {
+	Bangkitan             string `json:"bangkitan" binding:"required"`
 	Persyaratan           string `json:"persyaratan" binding:"required"`
 	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
 }
