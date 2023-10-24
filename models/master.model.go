@@ -79,7 +79,6 @@ type PersyaratanAndalalinInput struct {
 }
 
 type PersyaratanPerlalinInput struct {
-	Bangkitan             string `json:"bangkitan" binding:"required"`
 	Persyaratan           string `json:"persyaratan" binding:"required"`
 	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
 }
