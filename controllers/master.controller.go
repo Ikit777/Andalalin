@@ -393,6 +393,11 @@ func (dm *DataMasterControler) TambahKategori(ctx *gin.Context) {
 
 	master.JenisRencanaPembangunan = append(master.JenisRencanaPembangunan, kategori)
 
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
@@ -457,6 +462,11 @@ func (dm *DataMasterControler) HapusKategori(ctx *gin.Context) {
 			break
 		}
 	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
@@ -534,6 +544,11 @@ func (dm *DataMasterControler) EditKategori(ctx *gin.Context) {
 	if itemIndexRencana != -1 {
 		master.RencanaPembangunan[itemIndexRencana].Kategori = newKategori
 	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
@@ -622,6 +637,11 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 			Satuan:   satuan})
 	}
 
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
@@ -685,6 +705,11 @@ func (dm *DataMasterControler) HapusJenisRencanaPembangunan(ctx *gin.Context) {
 			}
 		}
 	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
@@ -764,6 +789,11 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 			Satuan:   satuan}
 	}
 
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
@@ -823,6 +853,11 @@ func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
 	}
 
 	master.KategoriPerlengkapan = append(master.KategoriPerlengkapan, kategori)
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
@@ -888,6 +923,11 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 			break
 		}
 	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
@@ -965,6 +1005,11 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 	if itemIndexKategori != -1 {
 		master.PerlengkapanLaluLintas[itemIndexKategori].Kategori = newKategori
 	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
@@ -1075,6 +1120,11 @@ func (dm *DataMasterControler) TambahPerlengkapan(ctx *gin.Context) {
 		master.PerlengkapanLaluLintas[itemIndex].Perlengkapan = append(master.PerlengkapanLaluLintas[itemIndex].Perlengkapan, perlengkapan)
 	}
 
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
@@ -1136,6 +1186,11 @@ func (dm *DataMasterControler) HapuspPerlengkapan(ctx *gin.Context) {
 			}
 		}
 	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
@@ -1228,6 +1283,11 @@ func (dm *DataMasterControler) EditPerlengkapan(ctx *gin.Context) {
 
 	}
 
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
@@ -1302,6 +1362,11 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 		}
 		master.Persyaratan.PersyaratanAndalalin = append(master.Persyaratan.PersyaratanAndalalin, persyaratan)
 	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
@@ -1402,6 +1467,12 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		base64ZipData := base64.StdEncoding.EncodeToString(zipData)
 
 		dm.DB.Save(&andalalin)
+
+		loc, _ := time.LoadLocation("Asia/Singapore")
+		now := time.Now().In(loc).Format("02-01-2006")
+
+		master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
 		resultsSave := dm.DB.Save(&master)
 		if resultsSave.Error != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
@@ -1480,6 +1551,11 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 
 	}
 
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
@@ -1553,6 +1629,11 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 		}
 		master.Persyaratan.PersyaratanPerlalin = append(master.Persyaratan.PersyaratanPerlalin, persyaratan)
 	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
@@ -1653,6 +1734,12 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 		base64ZipData := base64.StdEncoding.EncodeToString(zipData)
 
 		dm.DB.Save(&perlalin)
+
+		loc, _ := time.LoadLocation("Asia/Singapore")
+		now := time.Now().In(loc).Format("02-01-2006")
+
+		master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
 		resultsSave := dm.DB.Save(&master)
 		if resultsSave.Error != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
@@ -1729,6 +1816,11 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 			master.Persyaratan.PersyaratanPerlalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
 		}
 	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
