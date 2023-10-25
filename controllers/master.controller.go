@@ -2182,7 +2182,7 @@ func (dm *DataMasterControler) HapusKabupaten(ctx *gin.Context) {
 
 	for i, item := range master.Kabupaten {
 		if item.Name == kabupaten {
-			master.Provinsi = append(master.Provinsi[:i], master.Provinsi[i+1:]...)
+			master.Kabupaten = append(master.Kabupaten[:i], master.Kabupaten[i+1:]...)
 			break
 		}
 	}
