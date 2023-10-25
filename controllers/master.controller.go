@@ -1877,7 +1877,7 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 	dataId := utils.Encode(2)
 
 	for _, item := range master.Provinsi {
-		if item.Name == provinsi && item.Id == dataId {
+		if item.Name == provinsi {
 			exist = true
 			break
 		}
@@ -1893,7 +1893,7 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 
 	if !exist {
 		data := models.Provinsi{
-			Id:   "45",
+			Id:   dataId,
 			Name: provinsi,
 		}
 		master.Provinsi = append(master.Provinsi, data)
@@ -2030,6 +2030,98 @@ func (dm *DataMasterControler) EditProvinsi(ctx *gin.Context) {
 
 	if itemIndex != -1 {
 		master.Provinsi[itemIndex].Name = newProvinsi
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Provinsi  []models.Provinsi `json:"provinsi,omitempty"`
+		UpdatedAt string            `json:"update,omitempty"`
+	}{
+		UpdatedAt: master.UpdatedAt,
+		Provinsi:  master.Provinsi,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
+	kabupaten := ctx.Param("kabupaten")
+	provinsi := ctx.Param("provinsi")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductDeleteCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	exist := false
+	dataId := utils.Encode(2)
+	var id_provinsi string
+
+	for _, item := range master.Provinsi {
+		if item.Name == provinsi {
+			id_provinsi = item.Id
+			break
+		}
+	}
+
+	for _, item := range master.Kabupaten {
+		if item.Name == kabupaten {
+			exist = true
+			break
+		}
+	}
+
+	for _, item := range master.Provinsi {
+		if item.Id == dataId {
+			dataId = utils.Encode(2)
+		} else {
+			break
+		}
+	}
+
+	if !exist {
+		data := models.Kabupaten{
+			Id:         id_provinsi + dataId,
+			IdProvinsi: id_provinsi,
+			Name:       kabupaten,
+		}
+		master.Kabupaten = append(master.Kabupaten, data)
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
