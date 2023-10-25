@@ -2346,7 +2346,7 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 		data := models.Kecamatan{
 			Id:          dataId,
 			IdKabupaten: id_kabupaten,
-			Name:        kabupaten,
+			Name:        kecamatan,
 		}
 		master.Kecamatan = append(master.Kecamatan, data)
 	}
