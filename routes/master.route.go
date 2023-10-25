@@ -52,4 +52,8 @@ func (dm *DataMasterRouteController) DataMasterRoute(rg *gin.RouterGroup) {
 	router.POST("/tambahprovinsi/:id/:provinsi", middleware.DeserializeUser(), dm.dataMasterController.TambahProvinsi)
 	router.POST("/hapusprovinsi/:id/:provinsi", middleware.DeserializeUser(), dm.dataMasterController.HapusProvinsi)
 	router.POST("/editprovinsi/:id/:provinsi/:new_provinsi", middleware.DeserializeUser(), dm.dataMasterController.EditProvinsi)
+
+	router.POST("/tambahkabupaten/:id/:provinsi/:kabupaten", middleware.DeserializeUser(), dm.dataMasterController.TambahKabupaten)
+	router.POST("/hapuskabupaten/:id/:kabupaten", middleware.DeserializeUser(), dm.dataMasterController.HapusKabupaten)
+	router.POST("/editkabupaten/:id/:kabupaten/:new_kabupaten", middleware.DeserializeUser(), dm.dataMasterController.EditKabupaten)
 }

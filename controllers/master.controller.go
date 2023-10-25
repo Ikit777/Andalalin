@@ -2136,11 +2136,144 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi `json:"provinsi,omitempty"`
-		UpdatedAt string            `json:"update,omitempty"`
+		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
+		UpdatedAt string             `json:"update,omitempty"`
 	}{
 		UpdatedAt: master.UpdatedAt,
-		Provinsi:  master.Provinsi,
+		Kabupaten: master.Kabupaten,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) HapusKabupaten(ctx *gin.Context) {
+	kabupaten := ctx.Param("kabupaten")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductDeleteCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	for i, item := range master.Kabupaten {
+		if item.Name == kabupaten {
+			master.Provinsi = append(master.Provinsi[:i], master.Provinsi[i+1:]...)
+			break
+		}
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
+		UpdatedAt string             `json:"update,omitempty"`
+	}{
+		UpdatedAt: master.UpdatedAt,
+		Kabupaten: master.Kabupaten,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) EditKabupaten(ctx *gin.Context) {
+	kabupaten := ctx.Param("kabupaten")
+	newKabupaten := ctx.Param("new_kabupaten")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductUpdateCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	itemIndex := -1
+
+	for i, item := range master.Kabupaten {
+		if item.Name == kabupaten {
+			itemIndex = i
+			break
+		}
+	}
+
+	if itemIndex != -1 {
+		master.Kabupaten[itemIndex].Name = newKabupaten
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
+		UpdatedAt string             `json:"update,omitempty"`
+	}{
+		UpdatedAt: master.UpdatedAt,
+		Kabupaten: master.Kabupaten,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
