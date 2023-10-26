@@ -574,13 +574,8 @@ func (ac *AndalalinController) TolakPermohonan(ctx *gin.Context) {
 	var andalalin models.Andalalin
 	var perlalin models.Perlalin
 
-	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
-
-	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
-		return
-	}
+	ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if andalalin.IdAndalalin != uuid.Nil {
 		andalalin.StatusAndalalin = "Permohonan ditolak"
@@ -680,13 +675,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	var andalalin models.Andalalin
 	var perlalin models.Perlalin
 
-	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
-
-	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
-		return
-	}
+	ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	var ticket2 models.TiketLevel2
 	resultTiket2 := ac.DB.Not("status = ?", "Tutup").Where("id_andalalin = ?", id).First(&ticket2)
@@ -1176,13 +1166,8 @@ func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 	var andalalin models.Andalalin
 	var perlalin models.Perlalin
 
-	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
-
-	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
-		return
-	}
+	ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if andalalin.IdAndalalin != uuid.Nil {
 		andalalin.StatusAndalalin = "Berita acara pemeriksaan"
@@ -1231,13 +1216,8 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 	var andalalin models.Andalalin
 	var perlalin models.Perlalin
 
-	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
-
-	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
-		return
-	}
+	ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if andalalin.IdAndalalin != uuid.Nil {
 		andalalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
@@ -1366,13 +1346,8 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 	var andalalin models.Andalalin
 	var perlalin models.Perlalin
 
-	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
-
-	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
-		return
-	}
+	ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if andalalin.IdAndalalin != uuid.Nil {
 		andalalin.StatusAndalalin = status
@@ -3053,13 +3028,8 @@ func (ac *AndalalinController) SurveiKepuasan(ctx *gin.Context) {
 	var andalalin models.Perlalin
 	var perlalin models.Andalalin
 
-	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
-
-	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
-		return
-	}
+	ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if andalalin.IdAndalalin != uuid.Nil {
 		kepuasan := models.SurveiKepuasan{
