@@ -578,6 +578,7 @@ func (ac *AndalalinController) TolakPermohonan(ctx *gin.Context) {
 	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if andalalin.IdAndalalin != uuid.Nil {
+		ac.CloseTiketLevel1(ctx, andalalin.IdAndalalin)
 		andalalin.StatusAndalalin = "Permohonan ditolak"
 		andalalin.PertimbanganPenolakan = pertimbangan
 		ac.DB.Save(&andalalin)
