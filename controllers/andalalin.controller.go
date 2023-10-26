@@ -713,6 +713,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				NilaiKriteria:           andalalin.NilaiKriteria,
 				PersyaratanTidakSesuai:  andalalin.PersyaratanTidakSesuai,
 				FileSK:                  andalalin.FileSK,
+				PertimbanganPenolakan:   andalalin.PertimbanganPenolakan,
 			}
 
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
@@ -767,6 +768,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				FileBAP:                        andalalin.FileBAP,
 				FileSK:                         andalalin.FileSK,
 				Persyaratan:                    andalalin.Persyaratan,
+				PertimbanganPenolakan:          andalalin.PertimbanganPenolakan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 		}

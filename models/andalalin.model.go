@@ -233,6 +233,8 @@ type AndalalinResponse struct {
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
 
+	PertimbanganPenolakan string `json:"pertimbangan_penolakan,omitempty"`
+
 	//Data Petugas
 	IdPetugas         uuid.UUID `json:"id_petugas,omitempty"`
 	NamaPetugas       string    `json:"nama_petugas,omitempty"`
@@ -326,6 +328,8 @@ type AndalalinResponseUser struct {
 
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
+
+	PertimbanganPenolakan string `json:"pertimbangan_penolakan,omitempty"`
 
 	//Data SK
 	FileSK []byte `json:"file_sk,omitempty"`
