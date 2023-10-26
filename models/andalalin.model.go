@@ -27,7 +27,7 @@ type Andalalin struct {
 	LokasiPengambilan           string    `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin              string    `gorm:"not null"`
 	TanggalAndalalin            string    `gorm:"not null"`
-	StatusAndalalin             string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Berita acara pemeriksaan', 'Persetujuan dokumen', 'Pembuatan surat keputusan', 'Permohonan selesai')"`
+	StatusAndalalin             string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Berita acara pemeriksaan', 'Persetujuan dokumen', 'Pembuatan surat keputusan', 'Permohonan selesai', 'Permohonan ditolak')"`
 	TandaTerimaPendaftaran      []byte
 
 	//Data Perusahaan
@@ -51,6 +51,8 @@ type Andalalin struct {
 
 	//Data Persyaratan
 	Persyaratan []PersyaratanPermohonan `gorm:"serializer:json"`
+
+	PertimbanganPenolakan string
 
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `gorm:"serializer:json"`

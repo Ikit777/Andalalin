@@ -361,19 +361,17 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 	}
 
 	bukti := struct {
-		Tanggal      string
-		Waktu        string
-		Kode         string
-		Nama         string
-		Nomor        string
-		NomorSeluler string
+		Tanggal string
+		Waktu   string
+		Kode    string
+		Nama    string
+		Nomor   string
 	}{
-		Tanggal:      tanggal,
-		Waktu:        nowTime.Format("15:04:05"),
-		Kode:         kode,
-		Nama:         currentUser.Name,
-		Nomor:        payload.Perlalin.NomerPemohon,
-		NomorSeluler: payload.Perlalin.NomerSelulerPemohon,
+		Tanggal: tanggal,
+		Waktu:   nowTime.Format("15:04:05"),
+		Kode:    kode,
+		Nama:    currentUser.Name,
+		Nomor:   payload.Perlalin.NomerPemohon,
 	}
 
 	buffer := new(bytes.Buffer)
@@ -546,6 +544,92 @@ func (ac *AndalalinController) CloseTiketLevel2(ctx *gin.Context, id uuid.UUID) 
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
 		return
 	}
+}
+
+func (ac *AndalalinController) TolakPermohonan(ctx *gin.Context) {
+	id := ctx.Param("id_andalalin")
+	pertimbangan := ctx.Param("pertimbangan")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinStatusCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var andalalin models.Andalalin
+	var perlalin models.Perlalin
+
+	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
+
+	if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		return
+	}
+
+	if andalalin.IdAndalalin != uuid.Nil {
+		andalalin.StatusAndalalin = "Permohonan ditolak"
+		andalalin.PertimbanganPenolakan = pertimbangan
+		ac.DB.Save(&andalalin)
+
+		data := utils.PermohonanDitolak{
+			Kode:    andalalin.Kode,
+			Nama:    andalalin.NamaPemohon,
+			Tlp:     andalalin.NomerPemohon,
+			Jenis:   andalalin.JenisAndalalin,
+			Status:  andalalin.StatusAndalalin,
+			Subject: "Permohonan ditolak",
+		}
+
+		utils.SendEmailPermohonanDitolak(andalalin.EmailPemohon, &data)
+
+		var user models.User
+		resultUser := ac.DB.First(&user, "id = ?", andalalin.IdUser)
+		if resultUser.Error != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+			return
+		}
+
+		simpanNotif := models.Notifikasi{
+			IdUser: user.ID,
+			Title:  "Permohonan ditolak",
+			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah ditolak, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+		}
+
+		ac.DB.Create(&simpanNotif)
+
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Permohonan ditolak",
+				Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah ditolak, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+				Token:  user.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+		}
+	}
+
+	// if perlalin.IdAndalalin != uuid.Nil {
+
+	// }
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
 func (ac *AndalalinController) GetPermohonanByIdUser(ctx *gin.Context) {
@@ -1164,12 +1248,10 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		justString := strings.Join(payload.Persyaratan, "\n")
 
 		data := utils.PersyaratanTidakSesuai{
-			Nomer:       andalalin.Kode,
+			Kode:        andalalin.Kode,
 			Nama:        andalalin.NamaPemohon,
-			Alamat:      andalalin.AlamatPemohon,
 			Tlp:         andalalin.NomerPemohon,
-			Waktu:       andalalin.WaktuAndalalin,
-			Izin:        andalalin.JenisAndalalin,
+			Jenis:       andalalin.JenisAndalalin,
 			Status:      andalalin.StatusAndalalin,
 			Persyaratan: justString,
 			Subject:     "Persyaratan tidak terpenuhi",
@@ -1187,7 +1269,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		simpanNotif := models.Notifikasi{
 			IdUser: user.ID,
 			Title:  "Persyaratan tidak terpenuhi",
-			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
+			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email untuk lebih jelas",
 		}
 
 		ac.DB.Create(&simpanNotif)
@@ -1196,7 +1278,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 			notif := utils.Notification{
 				IdUser: user.ID,
 				Title:  "Persyaratan tidak terpenuhi",
-				Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
+				Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email untuk lebih jelas",
 				Token:  user.PushToken,
 			}
 
@@ -1214,12 +1296,10 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		justString := strings.Join(payload.Persyaratan, "\n")
 
 		data := utils.PersyaratanTidakSesuai{
-			Nomer:       perlalin.Kode,
+			Kode:        perlalin.Kode,
 			Nama:        perlalin.NamaPemohon,
-			Alamat:      perlalin.AlamatPemohon,
 			Tlp:         perlalin.NomerPemohon,
-			Waktu:       perlalin.WaktuAndalalin,
-			Izin:        perlalin.JenisAndalalin,
+			Jenis:       perlalin.JenisAndalalin,
 			Status:      perlalin.StatusAndalalin,
 			Persyaratan: justString,
 			Subject:     "Persyaratan tidak terpenuhi",
@@ -1237,7 +1317,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		simpanNotif := models.Notifikasi{
 			IdUser: user.ID,
 			Title:  "Persyaratan tidak terpenuhi",
-			Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
+			Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email untuk lebih jelas",
 		}
 
 		ac.DB.Create(&simpanNotif)
@@ -1246,7 +1326,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 			notif := utils.Notification{
 				IdUser: user.ID,
 				Title:  "Persyaratan tidak terpenuhi",
-				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak sesuai, harap cek email untuk lebih jelas",
+				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email untuk lebih jelas",
 				Token:  user.PushToken,
 			}
 
@@ -1917,12 +1997,10 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 	ac.DB.Save(&andalalin)
 
 	data := utils.PermohonanSelesai{
-		Nomer:   andalalin.Kode,
+		Kode:    andalalin.Kode,
 		Nama:    andalalin.NamaPemohon,
-		Alamat:  andalalin.AlamatPemohon,
 		Tlp:     andalalin.NomerPemohon,
-		Waktu:   andalalin.WaktuAndalalin,
-		Izin:    andalalin.JenisAndalalin,
+		Jenis:   andalalin.JenisAndalalin,
 		Status:  andalalin.StatusAndalalin,
 		Subject: "Permohonan telah selesai",
 	}
@@ -1939,7 +2017,7 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 	simpanNotif := models.Notifikasi{
 		IdUser: user.ID,
 		Title:  "Permohonan selesai",
-		Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, harap cek email untuk lebih jelas",
+		Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, silahkan cek permohonan pada aplikasi untuk lebih jelas",
 	}
 
 	ac.DB.Create(&simpanNotif)
@@ -1948,7 +2026,7 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 		notif := utils.Notification{
 			IdUser: user.ID,
 			Title:  "Permohonan selesai",
-			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, harap cek email untuk lebih jelas",
+			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, silahkan cek permohonan pada aplikasi untuk lebih jelas",
 			Token:  user.PushToken,
 		}
 
@@ -2919,13 +2997,11 @@ func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context, id string) {
 	permohonan.StatusAndalalin = "Permohonan dibatalkan"
 	ac.DB.Save(&permohonan)
 
-	data := utils.PermohonanSelesai{
-		Nomer:   permohonan.Kode,
+	data := utils.PermohonanDibatalkan{
+		Kode:    permohonan.Kode,
 		Nama:    permohonan.NamaPemohon,
-		Alamat:  permohonan.AlamatPemohon,
 		Tlp:     permohonan.NomerPemohon,
-		Waktu:   permohonan.WaktuAndalalin,
-		Izin:    permohonan.JenisAndalalin,
+		Jenis:   permohonan.JenisAndalalin,
 		Status:  permohonan.StatusAndalalin,
 		Subject: "Permohonan dibatalkan",
 	}
@@ -2942,7 +3018,7 @@ func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context, id string) {
 	simpanNotif := models.Notifikasi{
 		IdUser: user.ID,
 		Title:  "Permohonan dibatalkan",
-		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah dibatalkan, harap cek email untuk lebih jelas",
+		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah dibatalkan, silahkan cek permohonan pada aplikasi untuk lebih jelas",
 	}
 
 	ac.DB.Create(&simpanNotif)
@@ -2951,7 +3027,7 @@ func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context, id string) {
 		notif := utils.Notification{
 			IdUser: user.ID,
 			Title:  "Permohonan dibatalkan",
-			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah dibatalkan, harap cek email untuk lebih jelas",
+			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah dibatalkan, silahkan cek permohona pada aplikasi untuk lebih jelas",
 			Token:  user.PushToken,
 		}
 
@@ -3316,12 +3392,10 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 
 func (ac *AndalalinController) PemasanganSelesai(ctx *gin.Context, permohonan models.Perlalin) {
 	data := utils.Pemasangan{
-		Nomer:   permohonan.Kode,
+		Kode:    permohonan.Kode,
 		Nama:    permohonan.NamaPemohon,
-		Alamat:  permohonan.AlamatPemohon,
 		Tlp:     permohonan.NomerPemohon,
-		Waktu:   permohonan.WaktuAndalalin,
-		Izin:    permohonan.JenisAndalalin,
+		Jenis:   permohonan.JenisAndalalin,
 		Status:  permohonan.StatusAndalalin,
 		Subject: "Pemasangan selesai",
 	}
@@ -3338,7 +3412,7 @@ func (ac *AndalalinController) PemasanganSelesai(ctx *gin.Context, permohonan mo
 	simpanNotif := models.Notifikasi{
 		IdUser: user.ID,
 		Title:  "Pemasangan selesai",
-		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah selesai pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
+		Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah selesai pemasangan perlengkapan lalu lintas, silahkan cek permohonan pada aplikasi untuk lebih jelas",
 	}
 
 	ac.DB.Create(&simpanNotif)
@@ -3347,7 +3421,7 @@ func (ac *AndalalinController) PemasanganSelesai(ctx *gin.Context, permohonan mo
 		notif := utils.Notification{
 			IdUser: user.ID,
 			Title:  "Pemasangan selesai",
-			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah selesai pemasangan perlengkapan lalu lintas, harap cek email untuk lebih jelas",
+			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah selesai pemasangan perlengkapan lalu lintas, silahkan cek permohonan pada aplikasi untuk lebih jelas",
 			Token:  user.PushToken,
 		}
 
