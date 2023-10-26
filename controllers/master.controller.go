@@ -1955,9 +1955,37 @@ func (dm *DataMasterControler) HapusProvinsi(ctx *gin.Context) {
 		return
 	}
 
+	var id_provinsi string
+	var id_kabupaten string
+	var id_kecamatan string
+
 	for i, item := range master.Provinsi {
 		if item.Name == provinsi {
+			id_provinsi = item.Id
 			master.Provinsi = append(master.Provinsi[:i], master.Provinsi[i+1:]...)
+			break
+		}
+	}
+
+	for i, item := range master.Kabupaten {
+		if item.IdProvinsi == id_provinsi {
+			id_kabupaten = item.Id
+			master.Kabupaten = append(master.Kabupaten[:i], master.Kabupaten[i+1:]...)
+			break
+		}
+	}
+
+	for i, item := range master.Kecamatan {
+		if item.IdKabupaten == id_kabupaten {
+			id_kecamatan = item.Id
+			master.Kecamatan = append(master.Kecamatan[:i], master.Kecamatan[i+1:]...)
+			break
+		}
+	}
+
+	for i, item := range master.Kelurahan {
+		if item.IdKecamatan == id_kecamatan {
+			master.Kelurahan = append(master.Kelurahan[:i], master.Kelurahan[i+1:]...)
 			break
 		}
 	}
@@ -2109,7 +2137,7 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 	dataId := id_provinsi + utils.Encode(2)
 
 	for _, item := range master.Kabupaten {
-		if item.Id == id_provinsi+dataId {
+		if item.Id == dataId {
 			dataId = id_provinsi + utils.Encode(2)
 		} else {
 			break
@@ -2181,9 +2209,28 @@ func (dm *DataMasterControler) HapusKabupaten(ctx *gin.Context) {
 		return
 	}
 
+	var id_kabupaten string
+	var id_kecamatan string
+
 	for i, item := range master.Kabupaten {
 		if item.Name == kabupaten {
+			id_kabupaten = item.Id
 			master.Kabupaten = append(master.Kabupaten[:i], master.Kabupaten[i+1:]...)
+			break
+		}
+	}
+
+	for i, item := range master.Kecamatan {
+		if item.IdKabupaten == id_kabupaten {
+			id_kecamatan = item.Id
+			master.Kecamatan = append(master.Kecamatan[:i], master.Kecamatan[i+1:]...)
+			break
+		}
+	}
+
+	for i, item := range master.Kelurahan {
+		if item.IdKecamatan == id_kecamatan {
+			master.Kelurahan = append(master.Kelurahan[:i], master.Kelurahan[i+1:]...)
 			break
 		}
 	}
@@ -2335,7 +2382,7 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 	dataId := id_kabupaten + utils.Encode(3)
 
 	for _, item := range master.Kecamatan {
-		if item.Id == id_kabupaten+dataId {
+		if item.Id == dataId {
 			dataId = id_kabupaten + utils.Encode(3)
 		} else {
 			break
@@ -2407,9 +2454,19 @@ func (dm *DataMasterControler) HapusKecamatan(ctx *gin.Context) {
 		return
 	}
 
+	var id_kecamatan string
+
 	for i, item := range master.Kecamatan {
 		if item.Name == kecamatan {
+			id_kecamatan = item.Id
 			master.Kecamatan = append(master.Kecamatan[:i], master.Kecamatan[i+1:]...)
+			break
+		}
+	}
+
+	for i, item := range master.Kelurahan {
+		if item.IdKecamatan == id_kecamatan {
+			master.Kelurahan = append(master.Kelurahan[:i], master.Kelurahan[i+1:]...)
 			break
 		}
 	}
@@ -2501,6 +2558,232 @@ func (dm *DataMasterControler) EditKecamatan(ctx *gin.Context) {
 	}{
 		UpdatedAt: master.UpdatedAt,
 		Kecamatan: master.Kecamatan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
+	kecamatan := ctx.Param("kecamatan")
+	kelurahan := ctx.Param("kelurahan")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductDeleteCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	exist := false
+	var id_kecamatan string
+
+	for _, item := range master.Kecamatan {
+		if item.Name == kecamatan {
+			id_kecamatan = item.Id
+			break
+		}
+	}
+
+	for _, item := range master.Kelurahan {
+		if item.Name == kelurahan {
+			exist = true
+			break
+		}
+	}
+
+	dataId := id_kecamatan + utils.Encode(3)
+
+	for _, item := range master.Kelurahan {
+		if item.Id == dataId {
+			dataId = id_kecamatan + utils.Encode(3)
+		} else {
+			break
+		}
+	}
+
+	if !exist {
+		data := models.Kelurahan{
+			Id:          dataId,
+			IdKecamatan: id_kecamatan,
+			Name:        kelurahan,
+		}
+		master.Kelurahan = append(master.Kelurahan, data)
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
+		UpdatedAt string             `json:"update,omitempty"`
+	}{
+		UpdatedAt: master.UpdatedAt,
+		Kelurahan: master.Kelurahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) HapusKelurahan(ctx *gin.Context) {
+	kelurahan := ctx.Param("kelurahan")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductDeleteCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	for i, item := range master.Kelurahan {
+		if item.Name == kelurahan {
+			master.Kelurahan = append(master.Kelurahan[:i], master.Kelurahan[i+1:]...)
+			break
+		}
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
+		UpdatedAt string             `json:"update,omitempty"`
+	}{
+		UpdatedAt: master.UpdatedAt,
+		Kelurahan: master.Kelurahan,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) EditKelurahan(ctx *gin.Context) {
+	kelurahan := ctx.Param("kelurahan")
+	newKelurahan := ctx.Param("new_kelurahan")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductUpdateCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	itemIndex := -1
+
+	for i, item := range master.Kelurahan {
+		if item.Name == kelurahan {
+			itemIndex = i
+			break
+		}
+	}
+
+	if itemIndex != -1 {
+		master.Kelurahan[itemIndex].Name = newKelurahan
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
+		UpdatedAt string             `json:"update,omitempty"`
+	}{
+		UpdatedAt: master.UpdatedAt,
+		Kelurahan: master.Kelurahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
