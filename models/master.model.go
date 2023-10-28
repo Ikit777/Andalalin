@@ -23,6 +23,16 @@ type Jenis []string
 
 type Perlengkapan []string
 
+type JenisPerlengkapan struct {
+	Kategori     string
+	Perlengkapan []PerlengkapanItem
+}
+
+type PerlengkapanItem struct {
+	JenisPerlengkapan  string
+	GambarPerlengkapan []byte
+}
+
 type Provinsi struct {
 	Id   string
 	Name string
@@ -55,16 +65,6 @@ type JenisRencana struct {
 	Jenis    string
 	Kriteria string
 	Satuan   string
-}
-
-type JenisPerlengkapan struct {
-	Kategori     string
-	Perlengkapan []PerlengkapanItem
-}
-
-type PerlengkapanItem struct {
-	JenisPerlengkapan  string
-	GambarPerlengkapan []byte
 }
 
 type Persyaratan struct {
