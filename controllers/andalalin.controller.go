@@ -688,6 +688,17 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		status = ticket2.Status
 	}
 
+	var persyaratan_andalalin []string
+	var persyaratan_perlalin []string
+
+	for _, persyaratan := range andalalin.Persyaratan {
+		persyaratan_andalalin = append(persyaratan_andalalin, persyaratan.Persyaratan)
+	}
+
+	for _, persyaratan := range perlalin.Persyaratan {
+		persyaratan_perlalin = append(persyaratan_perlalin, persyaratan.Persyaratan)
+	}
+
 	if andalalin.IdAndalalin != uuid.Nil {
 		if currentUser.Role == "User" {
 			dataUser := models.AndalalinResponseUser{
@@ -772,7 +783,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				TanggalBAP:                     andalalin.TanggalBAP,
 				FileBAP:                        andalalin.FileBAP,
 				FileSK:                         andalalin.FileSK,
-				Persyaratan:                    andalalin.Persyaratan,
+				Persyaratan:                    persyaratan_andalalin,
 				PertimbanganPenolakan:          andalalin.PertimbanganPenolakan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
@@ -837,7 +848,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				EmailPetugas:                perlalin.EmailPetugas,
 				StatusTiketLevel2:           status,
 				LaporanSurvei:               perlalin.LaporanSurvei,
-				Persyaratan:                 perlalin.Persyaratan,
+				Persyaratan:                 persyaratan_perlalin,
 				Tindakan:                    perlalin.Tindakan,
 				PertimbanganTindakan:        perlalin.PertimbanganTindakan,
 			}

@@ -254,7 +254,7 @@ type AndalalinResponse struct {
 	//Data SK
 	FileSK []byte `json:"file_sk,omitempty"`
 
-	Persyaratan []PersyaratanPermohonan `json:"persyaratan,omitempty"`
+	Persyaratan []string `json:"persyaratan,omitempty"`
 }
 
 type PerlalinResponse struct {
@@ -294,7 +294,7 @@ type PerlalinResponse struct {
 
 	LaporanSurvei []byte `json:"laporan_survei,omitempty"`
 
-	Persyaratan []PersyaratanPermohonan `json:"persyaratan,omitempty"`
+	Persyaratan []string `json:"persyaratan,omitempty"`
 
 	Tindakan             string `json:"keputusan_hasil,omitempty"`
 	PertimbanganTindakan string `json:"pertimbangan,omitempty"`
