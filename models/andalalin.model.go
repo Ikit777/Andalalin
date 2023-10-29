@@ -313,6 +313,7 @@ type AndalalinResponseUser struct {
 	EmailPemohon            string    `json:"email_pemohon,omitempty"`
 	NomerPemohon            string    `json:"nomer_pemohon,omitempty"`
 	LokasiPengambilan       string    `json:"lokasi_pengambilan,omitempty"`
+	WaktuAndalalin          string    `json:"waktu_andalalin,omitempty"`
 	TanggalAndalalin        string    `json:"tanggal_andalalin,omitempty"`
 	StatusAndalalin         string    `json:"status_andalalin,omitempty"`
 	TandaTerimaPendaftaran  []byte    `json:"tanda_terima_pendaftaran,omitempty"`
@@ -349,6 +350,7 @@ type PerlalinResponseUser struct {
 	JenisAndalalin         string    `json:"jenis_andalalin,omitempty"`
 	Kode                   string    `json:"kode_andalalin,omitempty"`
 	LokasiPengambilan      string    `json:"lokasi_pengambilan,omitempty"`
+	WaktuAndalalin         string    `json:"waktu_andalalin,omitempty"`
 	TanggalAndalalin       string    `json:"tanggal_andalalin,omitempty"`
 	StatusAndalalin        string    `json:"status_andalalin,omitempty"`
 	TandaTerimaPendaftaran []byte    `json:"tanda_terima_pendaftaran,omitempty"`
