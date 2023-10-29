@@ -817,7 +817,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				EmailPemohon:                perlalin.EmailPemohon,
 				TempatLahirPemohon:          perlalin.TempatLahirPemohon,
 				TanggalLahirPemohon:         perlalin.TanggalLahirPemohon,
-				WilayahAdministratifPemohon: andalalin.WilayahAdministratifPemohon,
+				WilayahAdministratifPemohon: perlalin.WilayahAdministratifPemohon,
 				AlamatPemohon:               perlalin.AlamatPemohon,
 				JenisKelaminPemohon:         perlalin.JenisKelaminPemohon,
 				NomerPemohon:                perlalin.NomerPemohon,
