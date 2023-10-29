@@ -261,7 +261,7 @@ type PerlalinResponse struct {
 	IdAndalalin                 uuid.UUID `json:"id_andalalin,omitempty"`
 	JenisAndalalin              string    `json:"jenis_andalalin,omitempty"`
 	Kategori                    string    `json:"kategori,omitempty"`
-	Jenis                       string    `json:"jenis_rencana_pembangunan,omitempty"`
+	Jenis                       string    `json:"jenis,omitempty"`
 	Kode                        string    `json:"kode_andalalin,omitempty"`
 	NikPemohon                  string    `json:"nik_pemohon,omitempty"`
 	NamaPemohon                 string    `json:"nama_pemohon,omitempty"`
