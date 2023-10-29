@@ -209,7 +209,6 @@ type AndalalinResponse struct {
 	WaktuAndalalin              string    `json:"waktu_andalalin,omitempty"`
 	TanggalAndalalin            string    `json:"tanggal_andalalin,omitempty"`
 	StatusAndalalin             string    `json:"status_andalalin,omitempty"`
-	TandaTerimaPendaftaran      []byte    `json:"tanda_terima_pendaftaran,omitempty"`
 
 	//Data Perusahaan
 	NamaPerusahaan                 *string `json:"nama_perusahaan,omitempty"`
@@ -249,10 +248,6 @@ type AndalalinResponse struct {
 	NomerBAPDasar       string `json:"nomer_bap_dasar,omitempty"`
 	NomerBAPPelaksanaan string `json:"nomer_bap_pelaksanaan,omitempty"`
 	TanggalBAP          string `json:"tanggal_bap,omitempty"`
-	FileBAP             []byte `json:"file_bap,omitempty"`
-
-	//Data SK
-	FileSK []byte `json:"file_sk,omitempty"`
 
 	Persyaratan []string `json:"persyaratan,omitempty"`
 }
@@ -276,7 +271,6 @@ type PerlalinResponse struct {
 	WaktuAndalalin              string    `json:"waktu_andalalin,omitempty"`
 	TanggalAndalalin            string    `json:"tanggal_andalalin,omitempty"`
 	StatusAndalalin             string    `json:"status_andalalin,omitempty"`
-	TandaTerimaPendaftaran      []byte    `json:"tanda_terima_pendaftaran,omitempty"`
 	Alasan                      string    `json:"alasan,omitempty"`
 	Peruntukan                  string    `json:"peruntukan,omitempty"`
 	LokasiPemasangan            string    `json:"lokasi_pemasangan,omitempty"`
@@ -291,8 +285,6 @@ type PerlalinResponse struct {
 	NamaPetugas       string    `json:"nama_petugas,omitempty"`
 	EmailPetugas      string    `json:"email_petugas,omitempty"`
 	StatusTiketLevel2 string    `json:"status_tiket,omitempty"`
-
-	LaporanSurvei []byte `json:"laporan_survei,omitempty"`
 
 	Persyaratan []string `json:"persyaratan,omitempty"`
 
@@ -316,7 +308,6 @@ type AndalalinResponseUser struct {
 	WaktuAndalalin          string    `json:"waktu_andalalin,omitempty"`
 	TanggalAndalalin        string    `json:"tanggal_andalalin,omitempty"`
 	StatusAndalalin         string    `json:"status_andalalin,omitempty"`
-	TandaTerimaPendaftaran  []byte    `json:"tanda_terima_pendaftaran,omitempty"`
 	JenisRencanaPembangunan string    `json:"jenis_rencana_pembangunan,omitempty"`
 	Kategori                string    `json:"kategori,omitempty"`
 
@@ -334,9 +325,6 @@ type AndalalinResponseUser struct {
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
 
 	PertimbanganPenolakan string `json:"pertimbangan_penolakan,omitempty"`
-
-	//Data SK
-	FileSK []byte `json:"file_sk,omitempty"`
 }
 
 type PerlalinResponseUser struct {
@@ -346,16 +334,15 @@ type PerlalinResponseUser struct {
 	EmailPemohon string `json:"email_pemohon,omitempty"`
 	NomerPemohon string `json:"nomer_pemohon,omitempty"`
 
-	IdAndalalin            uuid.UUID `json:"id_andalalin,omitempty"`
-	JenisAndalalin         string    `json:"jenis_andalalin,omitempty"`
-	Kode                   string    `json:"kode_andalalin,omitempty"`
-	LokasiPengambilan      string    `json:"lokasi_pengambilan,omitempty"`
-	WaktuAndalalin         string    `json:"waktu_andalalin,omitempty"`
-	TanggalAndalalin       string    `json:"tanggal_andalalin,omitempty"`
-	StatusAndalalin        string    `json:"status_andalalin,omitempty"`
-	TandaTerimaPendaftaran []byte    `json:"tanda_terima_pendaftaran,omitempty"`
-	Jenis                  string    `json:"jenis,omitempty"`
-	Kategori               string    `json:"kategori,omitempty"`
+	IdAndalalin       uuid.UUID `json:"id_andalalin,omitempty"`
+	JenisAndalalin    string    `json:"jenis_andalalin,omitempty"`
+	Kode              string    `json:"kode_andalalin,omitempty"`
+	LokasiPengambilan string    `json:"lokasi_pengambilan,omitempty"`
+	WaktuAndalalin    string    `json:"waktu_andalalin,omitempty"`
+	TanggalAndalalin  string    `json:"tanggal_andalalin,omitempty"`
+	StatusAndalalin   string    `json:"status_andalalin,omitempty"`
+	Jenis             string    `json:"jenis,omitempty"`
+	Kategori          string    `json:"kategori,omitempty"`
 
 	//Data Perusahaan
 	Alasan              string  `json:"alasan,omitempty"`
