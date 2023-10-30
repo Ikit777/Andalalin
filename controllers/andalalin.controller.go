@@ -668,6 +668,58 @@ func (ac *AndalalinController) GetPermohonanByIdUser(ctx *gin.Context) {
 	}
 }
 
+func (ac *AndalalinController) GetDokumen(ctx *gin.Context) {
+	id := ctx.Param("id_andalalin")
+	dokumen := ctx.Param("dokumen")
+
+	var andalalin models.Andalalin
+	var perlalin models.Perlalin
+
+	ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	ac.DB.First(&perlalin, "id_andalalin = ?", id)
+
+	var docs []byte
+
+	if andalalin.IdAndalalin != uuid.Nil {
+
+		if dokumen == "Tanda terima pendaftaran" {
+			docs = andalalin.TandaTerimaPendaftaran
+		}
+
+		if dokumen == "Berita acara pemeriksaan" {
+			docs = andalalin.FileBAP
+		}
+
+		if dokumen == "Surat keputusan" {
+			docs = andalalin.FileSK
+		}
+
+		for _, item := range andalalin.Persyaratan {
+			if item.Persyaratan == dokumen {
+				docs = item.Berkas
+			}
+		}
+	}
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		if dokumen == "Tanda terima pendaftaran" {
+			docs = perlalin.TandaTerimaPendaftaran
+		}
+
+		if dokumen == "Laporan survei" {
+			docs = perlalin.LaporanSurvei
+		}
+
+		for _, item := range perlalin.Persyaratan {
+			if item.Persyaratan == dokumen {
+				docs = item.Berkas
+			}
+		}
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": docs})
+}
+
 func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 
