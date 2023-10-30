@@ -1578,33 +1578,14 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 	} else {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range ticket {
-			var andalalin models.Andalalin
 			var perlalin models.Perlalin
 			var usulan models.UsulanPengelolaan
 
-			resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ? AND id_petugas = ?", s.IdAndalalin, currentUser.ID)
-			resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ? AND id_petugas = ?", s.IdAndalalin, currentUser.ID)
-
-			if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
-				return
-			}
+			ac.DB.First(&perlalin, "id_andalalin = ? AND id_petugas = ?", s.IdAndalalin, currentUser.ID)
 
 			ac.DB.First(&usulan, "id_andalalin = ?", s.IdAndalalin)
 
 			if usulan.IdUsulan == uuid.Nil {
-				if andalalin.IdAndalalin != uuid.Nil {
-					respone = append(respone, models.DaftarAndalalinResponse{
-						IdAndalalin:      andalalin.IdAndalalin,
-						Kode:             andalalin.Kode,
-						TanggalAndalalin: andalalin.TanggalAndalalin,
-						Nama:             andalalin.NamaPemohon,
-						Alamat:           andalalin.AlamatPemohon,
-						JenisAndalalin:   andalalin.JenisAndalalin,
-						StatusAndalalin:  andalalin.StatusAndalalin,
-					})
-				}
-
 				if perlalin.IdAndalalin != uuid.Nil {
 					respone = append(respone, models.DaftarAndalalinResponse{
 						IdAndalalin:      perlalin.IdAndalalin,
