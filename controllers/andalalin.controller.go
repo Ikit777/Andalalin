@@ -697,6 +697,7 @@ func (ac *AndalalinController) GetDokumen(ctx *gin.Context) {
 		for _, item := range andalalin.Persyaratan {
 			if item.Persyaratan == dokumen {
 				docs = item.Berkas
+				break
 			}
 		}
 	}
@@ -713,6 +714,7 @@ func (ac *AndalalinController) GetDokumen(ctx *gin.Context) {
 		for _, item := range perlalin.Persyaratan {
 			if item.Persyaratan == dokumen {
 				docs = item.Berkas
+				break
 			}
 		}
 	}
