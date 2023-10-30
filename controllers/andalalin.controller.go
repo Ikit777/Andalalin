@@ -1585,19 +1585,18 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 
 			ac.DB.First(&usulan, "id_andalalin = ?", s.IdAndalalin)
 
-			if usulan.IdUsulan == uuid.Nil {
-				if perlalin.IdAndalalin != uuid.Nil {
-					respone = append(respone, models.DaftarAndalalinResponse{
-						IdAndalalin:      perlalin.IdAndalalin,
-						Kode:             perlalin.Kode,
-						TanggalAndalalin: perlalin.TanggalAndalalin,
-						Nama:             perlalin.NamaPemohon,
-						Alamat:           perlalin.AlamatPemohon,
-						JenisAndalalin:   perlalin.JenisAndalalin,
-						StatusAndalalin:  perlalin.StatusAndalalin,
-					})
-				}
+			if perlalin.IdAndalalin != uuid.Nil && usulan.IdUsulan == uuid.Nil {
+				respone = append(respone, models.DaftarAndalalinResponse{
+					IdAndalalin:      perlalin.IdAndalalin,
+					Kode:             perlalin.Kode,
+					TanggalAndalalin: perlalin.TanggalAndalalin,
+					Nama:             perlalin.NamaPemohon,
+					Alamat:           perlalin.AlamatPemohon,
+					JenisAndalalin:   perlalin.JenisAndalalin,
+					StatusAndalalin:  perlalin.StatusAndalalin,
+				})
 			}
+
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
 	}
