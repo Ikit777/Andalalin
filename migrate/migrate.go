@@ -84,6 +84,8 @@ func main() {
 		UpdatedAt: now,
 	})
 
+	jenis_proyek := []string{"Pembangunan", "Pengembangan", "Operasional"}
+
 	lokasi := []string{"Banjarmasin"}
 
 	jenis_kegiatan := []string{"Pusat kegiatan", "Pemukiman", "Infrastruktur"}
@@ -382,6 +384,7 @@ func main() {
 	}
 
 	initializers.DB.Create(&models.DataMaster{
+		JenisProyek:             jenis_proyek,
 		LokasiPengambilan:       lokasi,
 		JenisRencanaPembangunan: jenis_kegiatan,
 		RencanaPembangunan:      rencana,

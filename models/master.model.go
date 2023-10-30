@@ -4,6 +4,7 @@ import "github.com/google/uuid"
 
 type DataMaster struct {
 	IdDataMaster            uuid.UUID           `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
+	JenisProyek             JenisProyek         `gorm:"serializer:json"`
 	LokasiPengambilan       Lokasi              `gorm:"serializer:json"`
 	JenisRencanaPembangunan Jenis               `gorm:"serializer:json"`
 	RencanaPembangunan      []Rencana           `gorm:"serializer:json"`
@@ -22,6 +23,8 @@ type Lokasi []string
 type Jenis []string
 
 type Perlengkapan []string
+
+type JenisProyek []string
 
 type JenisPerlengkapan struct {
 	Kategori     string

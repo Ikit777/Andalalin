@@ -43,6 +43,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 
 	respone := struct {
 		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
+		JenisProyek            []string                   `json:"jenis_proyek,omitempty"`
 		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
 		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
 		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
@@ -56,6 +57,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		UpdatedAt              string                     `json:"update,omitempty"`
 	}{
 		IdDataMaster:           master.IdDataMaster,
+		JenisProyek:            master.JenisProyek,
 		Lokasi:                 master.LokasiPengambilan,
 		JenisRencana:           master.JenisRencanaPembangunan,
 		RencanaPembangunan:     master.RencanaPembangunan,
