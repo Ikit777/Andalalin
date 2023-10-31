@@ -2850,7 +2850,7 @@ func (dm *DataMasterControler) TambahJenisProyek(ctx *gin.Context) {
 		UpdatedAt   string   `json:"update,omitempty"`
 	}{
 		UpdatedAt:   master.UpdatedAt,
-		JenisProyek: master.LokasiPengambilan,
+		JenisProyek: master.JenisProyek,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -2913,7 +2913,7 @@ func (dm *DataMasterControler) HapusJenisProyek(ctx *gin.Context) {
 		UpdatedAt   string   `json:"update,omitempty"`
 	}{
 		UpdatedAt:   master.UpdatedAt,
-		JenisProyek: master.LokasiPengambilan,
+		JenisProyek: master.JenisProyek,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -2983,7 +2983,7 @@ func (dm *DataMasterControler) EditJenisProyek(ctx *gin.Context) {
 		UpdatedAt   string   `json:"update,omitempty"`
 	}{
 		UpdatedAt:   master.UpdatedAt,
-		JenisProyek: master.LokasiPengambilan,
+		JenisProyek: master.JenisProyek,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
