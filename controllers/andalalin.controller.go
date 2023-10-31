@@ -138,9 +138,9 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	var path string
 
 	if payload.Andalalin.Pemohon == "Perorangan" {
-		path = "templates/tandaterimaTemplate.html"
-	} else {
 		path = "templates/tandaterimaTemplatePerorangan.html"
+	} else {
+		path = "templates/tandaterimaTemplate.html"
 	}
 
 	t, err := template.ParseFiles(path)
@@ -150,19 +150,21 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	}
 
 	bukti := struct {
-		Tanggal  string
-		Waktu    string
-		Kode     string
-		Nama     string
-		Instansi *string
-		Nomor    string
+		Tanggal    string
+		Waktu      string
+		Kode       string
+		Nama       string
+		Instansi   *string
+		Nomor      string
+		Pengembang string
 	}{
-		Tanggal:  tanggal,
-		Waktu:    nowTime.Format("15:04:05"),
-		Kode:     kode,
-		Nama:     currentUser.Name,
-		Instansi: payload.Andalalin.NamaPerusahaan,
-		Nomor:    payload.Andalalin.NomerPemohon,
+		Tanggal:    tanggal,
+		Waktu:      nowTime.Format("15:04:05"),
+		Kode:       kode,
+		Nama:       currentUser.Name,
+		Instansi:   payload.Andalalin.NamaPerusahaan,
+		Nomor:      payload.Andalalin.NomerPemohon,
+		Pengembang: payload.Andalalin.NamaPengembang,
 	}
 
 	buffer := new(bytes.Buffer)
@@ -292,6 +294,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		LongitudeBangunan: payload.Andalalin.LongitudeBangunan,
 		NomerSKRK:         payload.Andalalin.NomerSKRK,
 		TanggalSKRK:       payload.Andalalin.TanggalSKRK,
+		Catatan:           payload.Andalalin.Catatan,
 
 		//Tanda Terima Pendaftaran
 		TandaTerimaPendaftaran: pdfg.Bytes(),
@@ -487,6 +490,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		LokasiPemasangan:            payload.Perlalin.LokasiPemasangan,
 		LatitudePemasangan:          payload.Perlalin.LatitudePemasangan,
 		LongitudePemasangan:         payload.Perlalin.LongitudePemasangan,
+		Catatan:                     payload.Perlalin.Catatan,
 		StatusAndalalin:             "Cek persyaratan",
 		TandaTerimaPendaftaran:      pdfg.Bytes(),
 
@@ -847,6 +851,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				LongitudeBangunan: andalalin.LongitudeBangunan,
 				KriteriaKhusus:    andalalin.KriteriaKhusus,
 				NilaiKriteria:     andalalin.NilaiKriteria,
+				Catatan:           andalalin.Catatan,
 
 				//Data Persyaratan dan Pertimbangan
 				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
@@ -921,6 +926,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				NilaiKriteria:     andalalin.NilaiKriteria,
 				NomerSKRK:         andalalin.NomerSKRK,
 				TanggalSKRK:       andalalin.TanggalSKRK,
+				Catatan:           andalalin.Catatan,
 
 				//Data Persyaratan
 				Persyaratan:            persyaratan_andalalin,
@@ -964,6 +970,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				LatitudePemasangan:     perlalin.LatitudePemasangan,
 				LongitudePemasangan:    perlalin.LongitudePemasangan,
 				PersyaratanTidakSesuai: perlalin.PersyaratanTidakSesuai,
+				Catatan:                perlalin.Catatan,
 			}
 
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
@@ -1000,6 +1007,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				Persyaratan:                 persyaratan_perlalin,
 				Tindakan:                    perlalin.Tindakan,
 				PertimbanganTindakan:        perlalin.PertimbanganTindakan,
+				Catatan:                     perlalin.Catatan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 		}
@@ -1344,7 +1352,7 @@ func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if andalalin.IdAndalalin != uuid.Nil {
-		andalalin.StatusAndalalin = "Berita acara pemeriksaan"
+		andalalin.StatusAndalalin = "Persyaratan terpenuhi"
 		ac.DB.Save(&andalalin)
 		ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, andalalin.IdAndalalin)
 	}

@@ -11,7 +11,7 @@ type Andalalin struct {
 	JenisAndalalin    string    `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin    string    `gorm:"not null"`
 	TanggalAndalalin  string    `gorm:"not null"`
-	StatusAndalalin   string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Berita acara pemeriksaan', 'Persetujuan dokumen', 'Pembuatan surat keputusan', 'Permohonan selesai', 'Permohonan ditolak')"`
+	StatusAndalalin   string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Persyaratan terpenuhi', 'Berita acara pemeriksaan', 'Persetujuan dokumen', 'Pembuatan surat keputusan', 'Permohonan selesai', 'Permohonan ditolak')"`
 	Bangkitan         string    `gorm:"type:varchar(255);not null"`
 	Pemohon           string    `gorm:"type:varchar(255);not null"`
 	Kategori          string    `gorm:"type:varchar(255);not null"`
@@ -71,6 +71,7 @@ type Andalalin struct {
 	LongitudeBangunan float64
 	NomerSKRK         string `gorm:"type:varchar(255);not null"`
 	TanggalSKRK       string `gorm:"type:varchar(255);not null"`
+	Catatan           *string
 
 	//Tanda terima pendaftaran
 	TandaTerimaPendaftaran []byte
@@ -121,6 +122,7 @@ type Perlalin struct {
 	LatitudePemasangan          float64
 	LongitudePemasangan         float64
 	LokasiPengambilan           string `gorm:"type:varchar(255);not null"`
+	Catatan                     *string
 	WaktuAndalalin              string `gorm:"not null"`
 	TanggalAndalalin            string `gorm:"not null"`
 	StatusAndalalin             string `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Persyaratan terpenuhi', 'Survei lapangan', 'Laporan survei', 'Menunggu hasil keputusan', 'Tunda pemasangan', 'Pemasangan sedang dilakukan', 'Permohonan ditolak', 'Permohonan ditunda', 'Permohonan dibatalkan', 'Pemasangan selesai')"`
@@ -202,6 +204,7 @@ type InputAndalalin struct {
 	LongitudeBangunan float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
 	NomerSKRK         string  `json:"nomer_skrk" binding:"required"`
 	TanggalSKRK       string  `json:"tanggal_skrk" binding:"required"`
+	Catatan           *string `json:"catatan" binding:"required"`
 }
 
 type InputPerlalin struct {
@@ -220,6 +223,7 @@ type InputPerlalin struct {
 	LokasiPemasangan            string  `json:"lokasi_pemasangan" binding:"required"`
 	LatitudePemasangan          float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
 	LongitudePemasangan         float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
+	Catatan                     *string `json:"catatan" binding:"required"`
 }
 
 type DataAndalalin struct {
@@ -306,6 +310,7 @@ type AndalalinResponse struct {
 	LokasiBangunan    string  `json:"alamat_persil,omitempty"`
 	NomerSKRK         string  `json:"nomer_skrk,omitempty"`
 	TanggalSKRK       string  `json:"tanggal_skrk,omitempty"`
+	Catatan           *string `json:"catatan,omitempty"`
 
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
@@ -348,6 +353,7 @@ type PerlalinResponse struct {
 	LokasiPemasangan            string    `json:"lokasi_pemasangan,omitempty"`
 	LatitudePemasangan          float64   `json:"latitude,omitempty"`
 	LongitudePemasangan         float64   `json:"longitude,omitempty"`
+	Catatan                     *string   `json:"catatan,omitempty"`
 
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
@@ -403,6 +409,7 @@ type AndalalinResponseUser struct {
 	LatitudeBangunan  float64 `json:"latitude,omitempty"`
 	LongitudeBangunan float64 `json:"longitude,omitempty"`
 	LokasiBangunan    string  `json:"alamat_persil,omitempty"`
+	Catatan           *string `json:"catatan,omitempty"`
 
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
@@ -433,6 +440,7 @@ type PerlalinResponseUser struct {
 	LokasiPemasangan    string  `json:"lokasi_pemasangan,omitempty"`
 	LatitudePemasangan  float64 `json:"latitude,omitempty"`
 	LongitudePemasangan float64 `json:"longitude,omitempty"`
+	Catatan             *string `json:"catatan,omitempty"`
 
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
