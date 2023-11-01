@@ -381,3 +381,48 @@ func SendEmailPermohonanDitolak(email string, data *PermohonanDitolak) {
 		log.Fatal("Could not send email: ", err)
 	}
 }
+
+func SendEmailPermohonanDitunda(email string, data *PermohonanDitolak) {
+	config, err := initializers.LoadConfig()
+
+	if err != nil {
+		log.Fatal("could not load config", err)
+	}
+
+	// Sender data.
+	from := config.EmailFrom
+	smtpPass := config.SMTPPass
+	smtpUser := config.SMTPUser
+	to := email
+	smtpHost := config.SMTPHost
+	smtpPort := config.SMTPPort
+
+	t, err := template.ParseFiles("templates/permohonanDitunda.html")
+	if err != nil {
+		log.Fatal("Error reading the email template:", err)
+		return
+	}
+
+	buffer := new(bytes.Buffer)
+	if err = t.Execute(buffer, data); err != nil {
+		log.Fatal("Error reading the email template:", err)
+		return
+	}
+
+	m := gomail.NewMessage()
+
+	m.SetHeader("From", from)
+	m.SetHeader("To", to)
+	m.SetHeader("Subject", data.Subject)
+	m.SetBody("text/html", buffer.String())
+
+	m.Embed("assets/andalalin.png")
+
+	d := gomail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// Send Email
+	if err := d.DialAndSend(m); err != nil {
+		log.Fatal("Could not send email: ", err)
+	}
+}

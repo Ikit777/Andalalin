@@ -603,6 +603,145 @@ func (ac *AndalalinController) CloseTiketLevel2(ctx *gin.Context, id uuid.UUID) 
 	}
 }
 
+func (ac *AndalalinController) TundaPermohonan(ctx *gin.Context) {
+	id := ctx.Param("id_andalalin")
+	pertimbangan := ctx.Param("pertimbangan")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinStatusCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var perlalin models.Perlalin
+
+	ac.DB.First(&perlalin, "id_andalalin = ?", id)
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+		perlalin.StatusAndalalin = "Permohonan ditunda"
+		perlalin.PertimbanganPenolakan = pertimbangan
+		ac.DB.Save(&perlalin)
+
+		data := utils.PermohonanDitolak{
+			Kode:    perlalin.Kode,
+			Nama:    perlalin.NamaPemohon,
+			Tlp:     perlalin.NomerPemohon,
+			Jenis:   perlalin.JenisAndalalin,
+			Status:  perlalin.StatusAndalalin,
+			Subject: "Permohonan ditunda",
+		}
+
+		utils.SendEmailPermohonanDitunda(perlalin.EmailPemohon, &data)
+
+		var user models.User
+		resultUser := ac.DB.First(&user, "id = ?", perlalin.IdUser)
+		if resultUser.Error != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+			return
+		}
+
+		simpanNotif := models.Notifikasi{
+			IdUser: user.ID,
+			Title:  "Permohonan ditunda",
+			Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah ditunda, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+		}
+
+		ac.DB.Create(&simpanNotif)
+
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Permohonan ditunda",
+				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah ditunda, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+				Token:  user.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+		}
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) LanjutkanPermohonan(ctx *gin.Context) {
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinStatusCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var perlalin models.Perlalin
+
+	ac.DB.First(&perlalin, "id_andalalin = ?", id)
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+		perlalin.StatusAndalalin = "Cek persyaratan"
+		ac.DB.Save(&perlalin)
+
+		var user models.User
+		resultUser := ac.DB.First(&user, "id = ?", perlalin.IdUser)
+		if resultUser.Error != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+			return
+		}
+
+		simpanNotif := models.Notifikasi{
+			IdUser: user.ID,
+			Title:  "Permohonan dilanjutkan",
+			Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah dilanjutkan, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+		}
+
+		ac.DB.Create(&simpanNotif)
+
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Permohonan dilanjutkan",
+				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah dilanjutkan, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+				Token:  user.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+		}
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
 func (ac *AndalalinController) TolakPermohonan(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 	pertimbangan := ctx.Param("pertimbangan")
@@ -682,7 +821,7 @@ func (ac *AndalalinController) TolakPermohonan(ctx *gin.Context) {
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		perlalin.StatusAndalalin = "Permohonan ditolak"
 		perlalin.PertimbanganPenolakan = pertimbangan
-		ac.DB.Save(&andalalin)
+		ac.DB.Save(&perlalin)
 
 		data := utils.PermohonanDitolak{
 			Kode:    perlalin.Kode,
