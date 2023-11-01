@@ -635,7 +635,7 @@ func (ac *AndalalinController) TundaPermohonan(ctx *gin.Context) {
 	if perlalin.IdAndalalin != uuid.Nil {
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		perlalin.StatusAndalalin = "Permohonan ditunda"
-		perlalin.PertimbanganPenolakan = pertimbangan
+		perlalin.PertimbanganPenundaan = pertimbangan
 		ac.DB.Save(&perlalin)
 
 		data := utils.PermohonanDitolak{
@@ -710,6 +710,7 @@ func (ac *AndalalinController) LanjutkanPermohonan(ctx *gin.Context) {
 	if perlalin.IdAndalalin != uuid.Nil {
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		perlalin.StatusAndalalin = "Cek persyaratan"
+		perlalin.PertimbanganPenundaan = ""
 		ac.DB.Save(&perlalin)
 
 		var user models.User
