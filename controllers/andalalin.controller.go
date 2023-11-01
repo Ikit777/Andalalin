@@ -678,9 +678,49 @@ func (ac *AndalalinController) TolakPermohonan(ctx *gin.Context) {
 		}
 	}
 
-	// if perlalin.IdAndalalin != uuid.Nil {
+	if perlalin.IdAndalalin != uuid.Nil {
+		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+		perlalin.StatusAndalalin = "Permohonan ditolak"
+		perlalin.PertimbanganPenolakan = pertimbangan
+		ac.DB.Save(&andalalin)
 
-	// }
+		data := utils.PermohonanDitolak{
+			Kode:    perlalin.Kode,
+			Nama:    perlalin.NamaPemohon,
+			Tlp:     perlalin.NomerPemohon,
+			Jenis:   perlalin.JenisAndalalin,
+			Status:  perlalin.StatusAndalalin,
+			Subject: "Permohonan ditolak",
+		}
+
+		utils.SendEmailPermohonanDitolak(perlalin.EmailPemohon, &data)
+
+		var user models.User
+		resultUser := ac.DB.First(&user, "id = ?", perlalin.IdUser)
+		if resultUser.Error != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+			return
+		}
+
+		simpanNotif := models.Notifikasi{
+			IdUser: user.ID,
+			Title:  "Permohonan ditolak",
+			Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah ditolak, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+		}
+
+		ac.DB.Create(&simpanNotif)
+
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Permohonan ditolak",
+				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah ditolak, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+				Token:  user.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+		}
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
@@ -951,36 +991,54 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	if perlalin.IdAndalalin != uuid.Nil {
 		if currentUser.Role == "User" {
 			dataUser := models.PerlalinResponseUser{
-				IdAndalalin:            perlalin.IdAndalalin,
-				JenisAndalalin:         perlalin.JenisAndalalin,
-				Kategori:               perlalin.Kategori,
-				Jenis:                  perlalin.Jenis,
-				Kode:                   perlalin.Kode,
-				NamaPemohon:            perlalin.NamaPemohon,
-				NikPemohon:             perlalin.NikPemohon,
-				EmailPemohon:           perlalin.EmailPemohon,
-				NomerPemohon:           perlalin.NomerPemohon,
-				LokasiPengambilan:      perlalin.LokasiPengambilan,
-				WaktuAndalalin:         perlalin.WaktuAndalalin,
-				TanggalAndalalin:       perlalin.TanggalAndalalin,
-				StatusAndalalin:        perlalin.StatusAndalalin,
+				//Data Permohonan
+				IdAndalalin:      perlalin.IdAndalalin,
+				JenisAndalalin:   perlalin.JenisAndalalin,
+				Kategori:         perlalin.Kategori,
+				Jenis:            perlalin.Jenis,
+				Kode:             perlalin.Kode,
+				WaktuAndalalin:   perlalin.WaktuAndalalin,
+				TanggalAndalalin: perlalin.TanggalAndalalin,
+				StatusAndalalin:  perlalin.StatusAndalalin,
+
+				//Data Pemohon
+				NamaPemohon:       perlalin.NamaPemohon,
+				NikPemohon:        perlalin.NikPemohon,
+				EmailPemohon:      perlalin.EmailPemohon,
+				NomerPemohon:      perlalin.NomerPemohon,
+				LokasiPengambilan: perlalin.LokasiPengambilan,
+
+				//Data Kegiatan
 				Alasan:                 perlalin.Alasan,
 				Peruntukan:             perlalin.Peruntukan,
 				LokasiPemasangan:       perlalin.LokasiPemasangan,
 				LatitudePemasangan:     perlalin.LatitudePemasangan,
 				LongitudePemasangan:    perlalin.LongitudePemasangan,
 				PersyaratanTidakSesuai: perlalin.PersyaratanTidakSesuai,
-				Catatan:                perlalin.Catatan,
+
+				//Catatan
+				Catatan: perlalin.Catatan,
+
+				Tindakan:              perlalin.Tindakan,
+				PertimbanganTindakan:  perlalin.PertimbanganTindakan,
+				PertimbanganPenolakan: perlalin.PertimbanganPenolakan,
+				PertimbanganPenundaan: perlalin.PertimbanganPenundaan,
 			}
 
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
 		} else {
 			data := models.PerlalinResponse{
-				IdAndalalin:                 perlalin.IdAndalalin,
-				JenisAndalalin:              perlalin.JenisAndalalin,
-				Kategori:                    perlalin.Kategori,
-				Jenis:                       perlalin.Jenis,
-				Kode:                        perlalin.Kode,
+				//Data Permohonan
+				IdAndalalin:      perlalin.IdAndalalin,
+				JenisAndalalin:   perlalin.JenisAndalalin,
+				Kategori:         perlalin.Kategori,
+				Jenis:            perlalin.Jenis,
+				Kode:             perlalin.Kode,
+				WaktuAndalalin:   perlalin.WaktuAndalalin,
+				TanggalAndalalin: perlalin.TanggalAndalalin,
+				StatusAndalalin:  perlalin.StatusAndalalin,
+
+				//Data Pemohon
 				NikPemohon:                  perlalin.NikPemohon,
 				NamaPemohon:                 perlalin.NamaPemohon,
 				EmailPemohon:                perlalin.EmailPemohon,
@@ -991,23 +1049,27 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				JenisKelaminPemohon:         perlalin.JenisKelaminPemohon,
 				NomerPemohon:                perlalin.NomerPemohon,
 				LokasiPengambilan:           perlalin.LokasiPengambilan,
-				WaktuAndalalin:              perlalin.WaktuAndalalin,
-				TanggalAndalalin:            perlalin.TanggalAndalalin,
-				StatusAndalalin:             perlalin.StatusAndalalin,
-				Alasan:                      perlalin.Alasan,
-				Peruntukan:                  perlalin.Peruntukan,
-				LokasiPemasangan:            perlalin.LokasiPemasangan,
-				LatitudePemasangan:          perlalin.LatitudePemasangan,
-				LongitudePemasangan:         perlalin.LongitudePemasangan,
-				PersyaratanTidakSesuai:      perlalin.PersyaratanTidakSesuai,
-				IdPetugas:                   perlalin.IdPetugas,
-				NamaPetugas:                 perlalin.NamaPetugas,
-				EmailPetugas:                perlalin.EmailPetugas,
-				StatusTiketLevel2:           status,
-				Persyaratan:                 persyaratan_perlalin,
-				Tindakan:                    perlalin.Tindakan,
-				PertimbanganTindakan:        perlalin.PertimbanganTindakan,
-				Catatan:                     perlalin.Catatan,
+
+				//Data Kegiatan
+				Alasan:                 perlalin.Alasan,
+				Peruntukan:             perlalin.Peruntukan,
+				LokasiPemasangan:       perlalin.LokasiPemasangan,
+				LatitudePemasangan:     perlalin.LatitudePemasangan,
+				LongitudePemasangan:    perlalin.LongitudePemasangan,
+				PersyaratanTidakSesuai: perlalin.PersyaratanTidakSesuai,
+				IdPetugas:              perlalin.IdPetugas,
+				NamaPetugas:            perlalin.NamaPetugas,
+				EmailPetugas:           perlalin.EmailPetugas,
+				StatusTiketLevel2:      status,
+
+				Persyaratan: persyaratan_perlalin,
+
+				Catatan: perlalin.Catatan,
+
+				Tindakan:              perlalin.Tindakan,
+				PertimbanganTindakan:  perlalin.PertimbanganTindakan,
+				PertimbanganPenolakan: perlalin.PertimbanganPenolakan,
+				PertimbanganPenundaan: perlalin.PertimbanganPenundaan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 		}
