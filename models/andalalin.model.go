@@ -36,6 +36,16 @@ type Andalalin struct {
 	JenisProyek                string `gorm:"type:varchar(255);not null"`
 	WilayahAdministratifProyek string `gorm:"type:varchar(255);not null"`
 	AlamatProyek               string `gorm:"type:varchar(255);not null"`
+	KodeJalan                  string `gorm:"type:varchar(255);not null"`
+	NamaJalan                  string `gorm:"type:varchar(255);not null"`
+	Kelurahan                  string `gorm:"type:varchar(255);not null"`
+	Kecamatan                  string `gorm:"type:varchar(255);not null"`
+	PangkalJalan               string `gorm:"type:varchar(255);not null"`
+	UjungJalan                 string `gorm:"type:varchar(255);not null"`
+	PanjangJalan               string `gorm:"type:varchar(255);not null"`
+	LebarJalan                 string `gorm:"type:varchar(255);not null"`
+	PermukaanJalan             string `gorm:"type:varchar(255);not null"`
+	FungsiJalan                string `gorm:"type:varchar(255);not null"`
 
 	//Data Perusahaan
 	NamaPerusahaan                 *string `gorm:"type:varchar(255);"`
