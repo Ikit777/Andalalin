@@ -14,6 +14,7 @@ import (
 	"github.com/Ikit777/E-Andalalin/initializers"
 	"github.com/Ikit777/E-Andalalin/models"
 	"github.com/Ikit777/E-Andalalin/utils"
+	"github.com/tealeg/xlsx"
 
 	_ "time/tzdata"
 )
@@ -383,6 +384,117 @@ func main() {
 		kelurahan = append(kelurahan, models.Kelurahan{Id: record[0], IdKecamatan: record[1], Name: record[2]})
 	}
 
+	jalan := []models.Jalan{}
+
+	xlFile, err := xlsx.OpenFile("assets/Jalan/jalan.xlsx")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sheetName := "Lembar1"
+	sheet, ok := xlFile.Sheet[sheetName]
+	if !ok {
+		log.Fatalf("Sheet not found: %s", sheetName)
+	}
+
+	rowIndex1 := 1
+	row1 := sheet.Rows[rowIndex1]
+
+	for _, cell := range row1.Cells {
+		jalan = append(jalan, models.Jalan{KodeProvinsi: cell.String()})
+	}
+
+	rowIndex2 := 2
+	row2 := sheet.Rows[rowIndex2]
+
+	for _, cell := range row2.Cells {
+		jalan = append(jalan, models.Jalan{KodeKabupaten: cell.String()})
+	}
+
+	rowIndex3 := 3
+	row3 := sheet.Rows[rowIndex3]
+
+	for _, cell := range row3.Cells {
+		jalan = append(jalan, models.Jalan{KodeKecamatan: cell.String()})
+	}
+
+	rowIndex4 := 4
+	row4 := sheet.Rows[rowIndex4]
+
+	for _, cell := range row4.Cells {
+		jalan = append(jalan, models.Jalan{KodeKelurahan: cell.String()})
+	}
+
+	rowIndex5 := 5
+	row5 := sheet.Rows[rowIndex5]
+
+	for _, cell := range row5.Cells {
+		jalan = append(jalan, models.Jalan{KodeJalan: cell.String()})
+	}
+
+	rowIndex6 := 6
+	row6 := sheet.Rows[rowIndex6]
+
+	for _, cell := range row6.Cells {
+		jalan = append(jalan, models.Jalan{Nama: cell.String()})
+	}
+
+	rowIndex7 := 7
+	row7 := sheet.Rows[rowIndex7]
+
+	for _, cell := range row7.Cells {
+		jalan = append(jalan, models.Jalan{Pangkal: cell.String()})
+	}
+
+	rowIndex8 := 8
+	row8 := sheet.Rows[rowIndex8]
+
+	for _, cell := range row8.Cells {
+		jalan = append(jalan, models.Jalan{Ujung: cell.String()})
+	}
+
+	rowIndex9 := 9
+	row9 := sheet.Rows[rowIndex9]
+
+	for _, cell := range row9.Cells {
+		jalan = append(jalan, models.Jalan{Kelurahan: cell.String()})
+	}
+
+	rowIndex10 := 10
+	row10 := sheet.Rows[rowIndex10]
+
+	for _, cell := range row10.Cells {
+		jalan = append(jalan, models.Jalan{Kecamatan: cell.String()})
+	}
+
+	rowIndex11 := 11
+	row11 := sheet.Rows[rowIndex11]
+
+	for _, cell := range row11.Cells {
+		jalan = append(jalan, models.Jalan{Panjang: cell.String()})
+	}
+
+	rowIndex12 := 12
+	row12 := sheet.Rows[rowIndex12]
+
+	for _, cell := range row12.Cells {
+		jalan = append(jalan, models.Jalan{Lebar: cell.String()})
+	}
+
+	rowIndex13 := 13
+	row13 := sheet.Rows[rowIndex13]
+
+	for _, cell := range row13.Cells {
+		jalan = append(jalan, models.Jalan{Permukaan: cell.String()})
+	}
+
+	rowIndex14 := 14
+	row14 := sheet.Rows[rowIndex14]
+
+	for _, cell := range row14.Cells {
+		jalan = append(jalan, models.Jalan{Fungsi: cell.String()})
+	}
+
 	initializers.DB.Create(&models.DataMaster{
 		JenisProyek:             jenis_proyek,
 		LokasiPengambilan:       lokasi,
@@ -395,6 +507,7 @@ func main() {
 		Kabupaten:               Kabupaten,
 		Kecamatan:               kecamatan,
 		Kelurahan:               kelurahan,
+		Jalan:                   jalan,
 		UpdatedAt:               now + " " + time.Now().In(loc).Format("15:04:05"),
 	})
 

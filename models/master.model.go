@@ -15,6 +15,7 @@ type DataMaster struct {
 	Kabupaten               []Kabupaten         `gorm:"serializer:json"`
 	Kecamatan               []Kecamatan         `gorm:"serializer:json"`
 	Kelurahan               []Kelurahan         `gorm:"serializer:json"`
+	Jalan                   []Jalan             `gorm:"serializer:json"`
 	UpdatedAt               string              `gorm:"not null"`
 }
 
@@ -68,6 +69,23 @@ type JenisRencana struct {
 	Jenis    string
 	Kriteria string
 	Satuan   string
+}
+
+type Jalan struct {
+	KodeProvinsi  string
+	KodeKabupaten string
+	KodeKecamatan string
+	KodeKelurahan string
+	KodeJalan     string
+	Nama          string
+	Pangkal       string
+	Ujung         string
+	Kelurahan     string
+	Kecamatan     string
+	Panjang       string
+	Lebar         string
+	Permukaan     string
+	Fungsi        string
 }
 
 type Persyaratan struct {
