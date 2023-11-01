@@ -637,7 +637,7 @@ func (ac *AndalalinController) TolakPermohonan(ctx *gin.Context) {
 	if andalalin.IdAndalalin != uuid.Nil {
 		ac.CloseTiketLevel1(ctx, andalalin.IdAndalalin)
 		andalalin.StatusAndalalin = "Permohonan ditolak"
-		andalalin.PertimbanganPenolakan = pertimbangan
+		andalalin.Pertimbangan = pertimbangan
 		ac.DB.Save(&andalalin)
 
 		data := utils.PermohonanDitolak{
@@ -855,7 +855,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 
 				//Data Persyaratan dan Pertimbangan
 				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
-				PertimbanganPenolakan:  andalalin.PertimbanganPenolakan,
+				Pertimbangan:           andalalin.Pertimbangan,
 			}
 
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
@@ -942,7 +942,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				TanggalBAP:          andalalin.TanggalBAP,
 
 				//Data Pertimbangan
-				PertimbanganPenolakan: andalalin.PertimbanganPenolakan,
+				Pertimbangan: andalalin.Pertimbangan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 		}
