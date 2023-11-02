@@ -14,10 +14,7 @@ require (
 	gorm.io/gorm v1.25.2
 )
 
-require (
-	github.com/tealeg/xlsx v1.0.5 // indirect
-	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
-)
+require gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 
 require (
 	github.com/SebastiaanKlippert/go-wkhtmltopdf v1.9.0

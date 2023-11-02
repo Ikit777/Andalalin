@@ -54,6 +54,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		Kabupaten              []models.Kabupaten         `json:"kabupaten,omitempty"`
 		Kecamatan              []models.Kecamatan         `json:"kecamatan,omitempty"`
 		Kelurahan              []models.Kelurahan         `json:"kelurahan,omitempty"`
+		Jalan                  []models.Jalan             `json:"jalan,omitempty"`
 		UpdatedAt              string                     `json:"update,omitempty"`
 	}{
 		IdDataMaster:           master.IdDataMaster,
@@ -68,6 +69,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		Kabupaten:              master.Kabupaten,
 		Kecamatan:              master.Kecamatan,
 		Kelurahan:              master.Kelurahan,
+		Jalan:                  master.Jalan,
 		UpdatedAt:              master.UpdatedAt,
 	}
 
