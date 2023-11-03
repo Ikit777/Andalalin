@@ -88,6 +88,21 @@ type Jalan struct {
 	Fungsi        string
 }
 
+type JalanInput struct {
+	KodeKecamatan string `json:"kode_kecamatan" binding:"required"`
+	KodeKelurahan string `json:"kode_kelurahan" binding:"required"`
+	KodeJalan     string `json:"kode_jalan" binding:"required"`
+	Nama          string `json:"nama" binding:"required"`
+	Pangkal       string `json:"pangkal" binding:"required"`
+	Ujung         string `json:"ujung" binding:"required"`
+	Kelurahan     string `json:"kelurahan" binding:"required"`
+	Kecamatan     string `json:"kecamatan" binding:"required"`
+	Panjang       string `json:"panjang" binding:"required"`
+	Lebar         string `json:"lebar" binding:"required"`
+	Permukaan     string `json:"permukaan" binding:"required"`
+	Fungsi        string `json:"fungsi" binding:"required"`
+}
+
 type Persyaratan struct {
 	PersyaratanAndalalin []PersyaratanAndalalinInput
 	PersyaratanPerlalin  []PersyaratanPerlalinInput

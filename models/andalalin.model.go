@@ -185,6 +185,16 @@ type InputAndalalin struct {
 	JenisProyek                string `json:"jenis_proyek" binding:"required"`
 	WilayahAdministratifProyek string `json:"wilayah_administratif_proyek" binding:"required"`
 	AlamatProyek               string `json:"alamat_proyek" binding:"required"`
+	KodeJalan                  string `json:"kode_jalan" binding:"required"`
+	NamaJalan                  string `json:"nama_jalan" binding:"required"`
+	Kelurahan                  string `json:"kelurahan" binding:"required"`
+	Kecamatan                  string `json:"kecamatan" binding:"required"`
+	PangkalJalan               string `json:"pangkal_jalan" binding:"required"`
+	UjungJalan                 string `json:"ujung_jalan" binding:"required"`
+	PanjangJalan               string `json:"panjang_jalan" binding:"required"`
+	LebarJalan                 string `json:"lebar_jalan" binding:"required"`
+	PermukaanJalan             string `json:"permukaan_jalan" binding:"required"`
+	FungsiJalan                string `json:"fungsi_jalan" binding:"required"`
 
 	//Data Pemohon
 	NikPemohon                  string  `json:"nik_pemohon" binding:"required"`

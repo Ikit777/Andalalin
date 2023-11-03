@@ -2990,3 +2990,157 @@ func (dm *DataMasterControler) EditJenisProyek(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
+
+func (dm *DataMasterControler) TambahJalan(ctx *gin.Context) {
+	var payload *models.JalanInput
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	jalanExist := false
+
+	for _, item := range master.Jalan {
+		if item.KodeJalan == payload.KodeJalan && item.Nama == payload.Nama {
+			jalanExist = true
+			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
+			return
+		}
+	}
+
+	if !jalanExist {
+		jalan := models.Jalan{
+			KodeProvinsi:  "63",
+			KodeKabupaten: "71",
+			KodeKecamatan: payload.KodeKecamatan,
+			KodeKelurahan: payload.KodeKelurahan,
+			KodeJalan:     payload.KodeJalan,
+			Nama:          payload.Nama,
+			Pangkal:       payload.Pangkal,
+			Ujung:         payload.Ujung,
+			Kelurahan:     payload.Kelurahan,
+			Kecamatan:     payload.Kecamatan,
+			Panjang:       payload.Panjang,
+			Lebar:         payload.Lebar,
+			Permukaan:     payload.Permukaan,
+			Fungsi:        payload.Fungsi,
+		}
+		master.Jalan = append(master.Jalan, jalan)
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Jalan     []models.Jalan `json:"jalan,omitempty"`
+		UpdatedAt string         `json:"update,omitempty"`
+	}{
+		Jalan:     master.Jalan,
+		UpdatedAt: master.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) HapusJalan(ctx *gin.Context) {
+	jalan := ctx.Param("jalan")
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductDeleteCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	for i, item := range master.Jalan {
+		if item.KodeJalan == jalan {
+			master.Jalan = append(master.Jalan[:i], master.Jalan[i+1:]...)
+			break
+		}
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Jalan     []models.Jalan `json:"jalan,omitempty"`
+		UpdatedAt string         `json:"update,omitempty"`
+	}{
+		Jalan:     master.Jalan,
+		UpdatedAt: master.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
