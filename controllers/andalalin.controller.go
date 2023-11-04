@@ -203,7 +203,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	}
 
-	dokumen := []models.PersyaratanPermohonan{}
+	persyaratan := []models.PersyaratanPermohonan{}
 
 	for key, files := range form.File {
 		for _, file := range files {
@@ -223,10 +223,14 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 			}
 
 			// Store the blob data in the map
-			dokumen = append(dokumen, models.PersyaratanPermohonan{Persyaratan: key, Berkas: data})
+			persyaratan = append(persyaratan, models.PersyaratanPermohonan{Persyaratan: key, Berkas: data})
 
 		}
 	}
+
+	dokumen := []models.DokumenPermohonan{}
+
+	dokumen = append(dokumen, models.DokumenPermohonan{Dokumen: "Tanda terima pendaftaran", Berkas: pdfg.Bytes()})
 
 	permohonan := models.Andalalin{
 		//Data Permohonan
@@ -296,11 +300,11 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		TanggalSKRK:       payload.Andalalin.TanggalSKRK,
 		Catatan:           payload.Andalalin.Catatan,
 
-		//Tanda Terima Pendaftaran
-		TandaTerimaPendaftaran: pdfg.Bytes(),
+		//Dokumen Permohonan
+		Dokumen: dokumen,
 
 		//Data Persyaratan
-		Persyaratan: dokumen,
+		Persyaratan: persyaratan,
 	}
 
 	result := ac.DB.Create(&permohonan)
@@ -919,16 +923,11 @@ func (ac *AndalalinController) GetDokumen(ctx *gin.Context) {
 
 	if andalalin.IdAndalalin != uuid.Nil {
 
-		if dokumen == "Tanda terima pendaftaran" {
-			docs = andalalin.TandaTerimaPendaftaran
-		}
-
-		if dokumen == "Berita acara pemeriksaan" {
-			docs = andalalin.FileBAP
-		}
-
-		if dokumen == "Surat keputusan" {
-			docs = andalalin.FileSK
+		for _, item := range andalalin.Dokumen {
+			if item.Dokumen == dokumen {
+				docs = item.Berkas
+				break
+			}
 		}
 
 		for _, item := range andalalin.Persyaratan {

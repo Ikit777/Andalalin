@@ -83,11 +83,11 @@ type Andalalin struct {
 	TanggalSKRK       string `gorm:"type:varchar(255);not null"`
 	Catatan           *string
 
-	//Tanda terima pendaftaran
-	TandaTerimaPendaftaran []byte
-
 	//Data Persyaratan
 	Persyaratan []PersyaratanPermohonan `gorm:"serializer:json"`
+
+	//Dokumen Permohonan
+	Dokumen []DokumenPermohonan `gorm:"serializer:json"`
 
 	//Petimbangan
 	Pertimbangan string
@@ -170,6 +170,11 @@ type Perlalin struct {
 type PersyaratanPermohonan struct {
 	Persyaratan string
 	Berkas      []byte
+}
+
+type DokumenPermohonan struct {
+	Dokumen string
+	Berkas  []byte
 }
 
 type InputAndalalin struct {
