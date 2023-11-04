@@ -3144,3 +3144,89 @@ func (dm *DataMasterControler) HapusJalan(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
+
+func (dm *DataMasterControler) EditJalan(ctx *gin.Context) {
+	var payload *models.Jalan
+	id := ctx.Param("id")
+	jalan := ctx.Param("jalan")
+	kode := ctx.Param("kode")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductUpdateCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	itemIndex := -1
+
+	for i, item := range master.Jalan {
+		if item.Nama == jalan && item.KodeJalan == kode {
+			itemIndex = i
+			break
+		}
+	}
+
+	if itemIndex != -1 {
+		master.Jalan[itemIndex].KodeJalan = payload.KodeJalan
+		master.Jalan[itemIndex].KodeJalan = payload.KodeJalan
+		master.Jalan[itemIndex].Nama = payload.Nama
+		master.Jalan[itemIndex].Pangkal = payload.Pangkal
+		master.Jalan[itemIndex].Ujung = payload.Ujung
+		master.Jalan[itemIndex].Kelurahan = payload.Kelurahan
+		master.Jalan[itemIndex].Kecamatan = payload.Kecamatan
+		master.Jalan[itemIndex].Panjang = payload.Panjang
+		master.Jalan[itemIndex].Lebar = payload.Lebar
+		master.Jalan[itemIndex].Permukaan = payload.Permukaan
+		master.Jalan[itemIndex].Fungsi = payload.Fungsi
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Jalan     []models.Jalan `json:"jalan,omitempty"`
+		UpdatedAt string         `json:"update,omitempty"`
+	}{
+		Jalan:     master.Jalan,
+		UpdatedAt: master.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
