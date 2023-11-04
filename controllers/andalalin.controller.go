@@ -251,6 +251,16 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		JenisProyek:                payload.Andalalin.JenisProyek,
 		WilayahAdministratifProyek: payload.Andalalin.WilayahAdministratifProyek,
 		AlamatProyek:               payload.Andalalin.AlamatProyek,
+		KodeJalan:                  payload.Andalalin.KodeJalan,
+		NamaJalan:                  payload.Andalalin.NamaJalan,
+		Kelurahan:                  payload.Andalalin.Kelurahan,
+		Kecamatan:                  payload.Andalalin.Kecamatan,
+		PangkalJalan:               payload.Andalalin.PangkalJalan,
+		UjungJalan:                 payload.Andalalin.UjungJalan,
+		PanjangJalan:               payload.Andalalin.PanjangJalan,
+		LebarJalan:                 payload.Andalalin.LebarJalan,
+		PermukaanJalan:             payload.Andalalin.PermukaanJalan,
+		FungsiJalan:                payload.Andalalin.FungsiJalan,
 
 		//Data Pemohon
 		NikPemohon:                  payload.Andalalin.NikPemohon,
