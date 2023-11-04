@@ -3083,7 +3083,7 @@ func (dm *DataMasterControler) TambahJalan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapusJalan(ctx *gin.Context) {
-	jalan := ctx.Param("jalan")
+	kode := ctx.Param("kode")
 	id := ctx.Param("id")
 
 	config, _ := initializers.LoadConfig()
@@ -3117,7 +3117,7 @@ func (dm *DataMasterControler) HapusJalan(ctx *gin.Context) {
 	}
 
 	for i, item := range master.Jalan {
-		if item.KodeJalan == jalan {
+		if item.KodeJalan == kode {
 			master.Jalan = append(master.Jalan[:i], master.Jalan[i+1:]...)
 			break
 		}

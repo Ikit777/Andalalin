@@ -70,5 +70,5 @@ func (dm *DataMasterRouteController) DataMasterRoute(rg *gin.RouterGroup) {
 	router.POST("/editjenisproyek/:id/:proyek/:new_proyek", middleware.DeserializeUser(), dm.dataMasterController.EditJenisProyek)
 
 	router.POST("/tambahjalan/:id", middleware.DeserializeUser(), dm.dataMasterController.TambahJalan)
-	router.POST("/hapusjalan/:id/:jalan", middleware.DeserializeUser(), dm.dataMasterController.HapusJalan)
+	router.POST("/hapusjalan/:id/:kode", middleware.DeserializeUser(), dm.dataMasterController.HapusJalan)
 }
