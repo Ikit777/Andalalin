@@ -315,7 +315,7 @@ type AndalalinResponse struct {
 	PangkalJalan               string `json:"pangkal_jalan,omitempty"`
 	UjungJalan                 string `json:"ujung_jalan,omitempty"`
 	PanjangJalan               string `json:"panjang_jalan,omitempty"`
-	LebarJalan                 string `json:"lber_jalan,omitempty"`
+	LebarJalan                 string `json:"lebar_jalan,omitempty"`
 	PermukaanJalan             string `json:"permukaan_jalan,omitempty"`
 	FungsiJalan                string `json:"fungsi_jalan,omitempty"`
 
