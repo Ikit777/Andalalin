@@ -991,12 +991,18 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	var persyaratan_andalalin []string
 	var persyaratan_perlalin []string
 
+	var dokumen_andalalin []string
+
 	for _, persyaratan := range andalalin.Persyaratan {
 		persyaratan_andalalin = append(persyaratan_andalalin, persyaratan.Persyaratan)
 	}
 
 	for _, persyaratan := range perlalin.Persyaratan {
 		persyaratan_perlalin = append(persyaratan_perlalin, persyaratan.Persyaratan)
+	}
+
+	for _, dokumen := range andalalin.Dokumen {
+		dokumen_andalalin = append(dokumen_andalalin, dokumen.Dokumen)
 	}
 
 	if andalalin.IdAndalalin != uuid.Nil {
@@ -1016,8 +1022,11 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				StatusAndalalin:         andalalin.StatusAndalalin,
 
 				//Data Proyek
-				NamaProyek:  andalalin.NamaProyek,
-				JenisProyek: andalalin.JenisProyek,
+				NamaProyek:                 andalalin.NamaProyek,
+				JenisProyek:                andalalin.JenisProyek,
+				NamaJalan:                  andalalin.NamaJalan,
+				FungsiJalan:                andalalin.FungsiJalan,
+				WilayahAdministratifProyek: andalalin.WilayahAdministratifProyek,
 
 				//Data Pemohon
 				NikPemohon:     andalalin.NikPemohon,
@@ -1045,6 +1054,9 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				//Data Persyaratan dan Pertimbangan
 				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
 				Pertimbangan:           andalalin.Pertimbangan,
+
+				//Dokumen Permohonan
+				Dokumen: dokumen_andalalin,
 			}
 
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
@@ -1068,6 +1080,16 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				JenisProyek:                andalalin.JenisProyek,
 				WilayahAdministratifProyek: andalalin.WilayahAdministratifProyek,
 				AlamatProyek:               andalalin.AlamatProyek,
+				KodeJalan:                  andalalin.KodeJalan,
+				NamaJalan:                  andalalin.NamaJalan,
+				Kelurahan:                  andalalin.Kelurahan,
+				Kecamatan:                  andalalin.Kecamatan,
+				PangkalJalan:               andalalin.PangkalJalan,
+				UjungJalan:                 andalalin.UjungJalan,
+				PanjangJalan:               andalalin.PanjangJalan,
+				LebarJalan:                 andalalin.LebarJalan,
+				PermukaanJalan:             andalalin.PermukaanJalan,
+				FungsiJalan:                andalalin.FungsiJalan,
 
 				//Data Pemohon
 				NikPemohon:                  andalalin.NikPemohon,
@@ -1120,6 +1142,9 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				//Data Persyaratan
 				Persyaratan:            persyaratan_andalalin,
 				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
+
+				//Dokumen Permohonan
+				Dokumen: dokumen_andalalin,
 
 				//Data Persertujuan
 				PersetujuanDokumen:           andalalin.PersetujuanDokumen,

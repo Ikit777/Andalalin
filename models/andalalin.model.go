@@ -304,6 +304,16 @@ type AndalalinResponse struct {
 	JenisProyek                string `json:"jenis_proyek,omitempty"`
 	WilayahAdministratifProyek string `json:"wilayah_administratif_proyek,omitempty"`
 	AlamatProyek               string `json:"alamat_proyek,omitempty"`
+	KodeJalan                  string `json:"kode_jalan,omitempty"`
+	NamaJalan                  string `json:"nama_jalan,omitempty"`
+	Kelurahan                  string `json:"kelurahan_jalan,omitempty"`
+	Kecamatan                  string `json:"kecamatan_jalan,omitempty"`
+	PangkalJalan               string `json:"pangkal_jalan,omitempty"`
+	UjungJalan                 string `json:"ujung_jalan,omitempty"`
+	PanjangJalan               string `json:"panjang_jalan,omitempty"`
+	LebarJalan                 string `json:"lber_jalan,omitempty"`
+	PermukaanJalan             string `json:"permukaan_jalan,omitempty"`
+	FungsiJalan                string `json:"fungsi_jalan,omitempty"`
 
 	//Data Pemohon
 	NikPemohon                  string  `json:"nik_pemohon,omitempty"`
@@ -367,7 +377,11 @@ type AndalalinResponse struct {
 	NomerBAPPelaksanaan string `json:"nomer_bap_pelaksanaan,omitempty"`
 	TanggalBAP          string `json:"tanggal_bap,omitempty"`
 
+	//Persyaratan Permohonan
 	Persyaratan []string `json:"persyaratan,omitempty"`
+
+	//Dokumen Permohonan
+	Dokumen []string `json:"dokumen,omitempty"`
 }
 
 type PerlalinResponse struct {
@@ -444,8 +458,11 @@ type AndalalinResponseUser struct {
 	NomerPemohon   string  `json:"nomer_pemohon,omitempty"`
 
 	//Data Proyek
-	NamaProyek  string `json:"nama_proyek,omitempty"`
-	JenisProyek string `json:"jenis_proyek,omitempty"`
+	NamaProyek                 string `json:"nama_proyek,omitempty"`
+	JenisProyek                string `json:"jenis_proyek,omitempty"`
+	NamaJalan                  string `json:"nama_jalan,omitempty"`
+	FungsiJalan                string `json:"fungsi_jalan,omitempty"`
+	WilayahAdministratifProyek string `json:"wilayah_administratif_proyek,omitempty"`
 
 	//Data Perusahaan
 	NamaPerusahaan *string `json:"nama_perusahaan,omitempty"`
@@ -467,6 +484,9 @@ type AndalalinResponseUser struct {
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
 
 	Pertimbangan string `json:"pertimbangan,omitempty"`
+
+	//Dokumen Permohonan
+	Dokumen []string `json:"dokumen,omitempty"`
 }
 
 type PerlalinResponseUser struct {
