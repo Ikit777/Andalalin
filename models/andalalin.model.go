@@ -30,6 +30,8 @@ type Andalalin struct {
 	JenisKelaminPemohon         string  `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
 	NomerPemohon                string  `gorm:"type:varchar(255);not null"`
 	JabatanPemohon              *string `gorm:"type:varchar(255);"`
+	NomerSertifikatPemohon      string  `gorm:"type:varchar(255);not null"`
+	KlasifikasiPemohon          string  `gorm:"type:varchar(255);not null"`
 
 	//Data Proyek
 	NamaProyek                 string `gorm:"type:varchar(255);not null"`
@@ -210,6 +212,8 @@ type InputAndalalin struct {
 	JenisKelaminPemohon         string  `json:"jenis_kelamin_pemohon" binding:"required"`
 	NomerPemohon                string  `json:"nomer_pemohon" binding:"required"`
 	JabatanPemohon              *string `json:"jabatan_pemohon" binding:"required"`
+	NomerSertifikatPemohon      string  `json:"nomer_sertifikat_pemohon" binding:"required"`
+	KlasifikasiPemohon          string  `json:"klasifikasi_pemohon" binding:"required"`
 
 	//Data Perusahaan
 	NamaPerusahaan                 *string `json:"nama_perusahaan" binding:"required"`
@@ -326,6 +330,8 @@ type AndalalinResponse struct {
 	JenisKelaminPemohon         string  `json:"jenis_kelamin_pemohon,omitempty"`
 	NomerPemohon                string  `json:"nomer_pemohon,omitempty"`
 	JabatanPemohon              *string `json:"jabatan_pemohon,omitempty"`
+	NomerSertifikatPemohon      string  `json:"nomer_sertifikat_pemohon,omitempty"`
+	KlasifikasiPemohon          string  `json:"klasifikasi_pemohon,omitempty"`
 
 	//Data Perusahaan
 	NamaPerusahaan                 *string `json:"nama_perusahaan,omitempty"`
@@ -451,11 +457,13 @@ type AndalalinResponseUser struct {
 	LokasiPengambilan       string    `json:"lokasi_pengambilan,omitempty"`
 
 	//Data Pemohon
-	NikPemohon     string  `json:"nik_pemohon,omitempty"`
-	NamaPemohon    string  `json:"nama_pemohon,omitempty"`
-	JabatanPemohon *string `json:"jabatan_pemohon,omitempty"`
-	EmailPemohon   string  `json:"email_pemohon,omitempty"`
-	NomerPemohon   string  `json:"nomer_pemohon,omitempty"`
+	NikPemohon             string  `json:"nik_pemohon,omitempty"`
+	NamaPemohon            string  `json:"nama_pemohon,omitempty"`
+	JabatanPemohon         *string `json:"jabatan_pemohon,omitempty"`
+	EmailPemohon           string  `json:"email_pemohon,omitempty"`
+	NomerPemohon           string  `json:"nomer_pemohon,omitempty"`
+	NomerSertifikatPemohon string  `json:"nomer_sertifikat_pemohon,omitempty"`
+	KlasifikasiPemohon     string  `json:"klasifikasi_pemohon,omitempty"`
 
 	//Data Proyek
 	NamaProyek                 string `json:"nama_proyek,omitempty"`

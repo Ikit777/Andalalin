@@ -273,6 +273,8 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		JenisKelaminPemohon:         payload.Andalalin.JenisKelaminPemohon,
 		NomerPemohon:                payload.Andalalin.NomerPemohon,
 		JabatanPemohon:              payload.Andalalin.JabatanPemohon,
+		NomerSertifikatPemohon:      payload.Andalalin.NomerSertifikatPemohon,
+		KlasifikasiPemohon:          payload.Andalalin.KlasifikasiPemohon,
 
 		//Data Perusahaan
 		NamaPerusahaan:                 payload.Andalalin.NamaPerusahaan,
@@ -1029,11 +1031,13 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				WilayahAdministratifProyek: andalalin.WilayahAdministratifProyek,
 
 				//Data Pemohon
-				NikPemohon:     andalalin.NikPemohon,
-				EmailPemohon:   andalalin.EmailPemohon,
-				NomerPemohon:   andalalin.NomerPemohon,
-				NamaPemohon:    andalalin.NamaPemohon,
-				JabatanPemohon: andalalin.JabatanPemohon,
+				NikPemohon:             andalalin.NikPemohon,
+				EmailPemohon:           andalalin.EmailPemohon,
+				NomerPemohon:           andalalin.NomerPemohon,
+				NamaPemohon:            andalalin.NamaPemohon,
+				JabatanPemohon:         andalalin.JabatanPemohon,
+				NomerSertifikatPemohon: andalalin.NomerSertifikatPemohon,
+				KlasifikasiPemohon:     andalalin.KlasifikasiPemohon,
 
 				//Data perusahaan
 				NamaPerusahaan: andalalin.NamaPerusahaan,
@@ -1102,6 +1106,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				JenisKelaminPemohon:         andalalin.JenisKelaminPemohon,
 				NomerPemohon:                andalalin.NomerPemohon,
 				JabatanPemohon:              andalalin.JabatanPemohon,
+				NomerSertifikatPemohon:      andalalin.NomerSertifikatPemohon,
+				KlasifikasiPemohon:          andalalin.KlasifikasiPemohon,
 
 				//Data Perusahaan
 				NamaPerusahaan:                 andalalin.NamaPerusahaan,
