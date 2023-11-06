@@ -16,6 +16,7 @@ type User struct {
 	VerificationCode string `gorm:"type:varchar(255);not null"`
 	Verified         bool   `gorm:"not null"`
 	ResetToken       string
+	NIP              string
 	ResetAt          time.Time
 	PushToken        string
 	CreatedAt        string `gorm:"not null"`
@@ -45,6 +46,7 @@ type UserAdd struct {
 	Name     string `json:"name" binding:"required"`
 	Email    string `json:"email" binding:"required"`
 	Role     string `json:"role" binding:"required"`
+	NIP      string `json:"nip" binding:"required"`
 	Password string `json:"password" binding:"required,min=8"`
 }
 
@@ -59,6 +61,7 @@ type UserResponse struct {
 	Name      string    `json:"name,omitempty"`
 	Email     string    `json:"email,omitempty"`
 	Role      string    `json:"role,omitempty"`
+	NIP       string    `json:"nip,omitempty"`
 	Photo     []byte    `json:"photo,omitempty"`
 	CreatedAt string    `json:"created_at"`
 	UpdatedAt string    `json:"updated_at"`

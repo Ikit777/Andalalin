@@ -88,49 +88,74 @@ func main() {
 
 	lokasi := []string{"Banjarmasin"}
 
-	jenis_kegiatan := []string{"Pusat kegiatan", "Pemukiman", "Infrastruktur"}
+	jenis_kegiatan := []string{"Pusat kegiatan", "Pemukiman", "Infrastruktur", "Lainnya"}
 
 	pusat_kegiatan := []models.JenisRencana{}
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Pusat perbelanjaan atau retail", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Perkantoran", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Industri dan pergudangan", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
+	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Kegiatan perdagangan dan perbelanjaan", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
+	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Kegiatan perkantoran", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
+	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Kegiatan industri", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
+	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Kegiatan pergudangan", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
+	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Kawasan pariwisata", Kriteria: "", Satuan: ""})
+	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Tempat wisata", Kriteria: "Luas lahan", Satuan: "hektar"})
 	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Sekolah atau universitas", Kriteria: "Jumlah siswa", Satuan: "siswa"})
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Lembaga kursus", Kriteria: "Jumlah siswa dalam bangunan", Satuan: "siswa"})
 	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Rumah sakit", Kriteria: "Jumlah tempat tidur", Satuan: "tempat tidur"})
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Klinik bersama", Kriteria: "Jumlah ruang praktek dokter", Satuan: "ruang praktek dokter"})
 	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Bank", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Stasiun pengisin bahan bakar", Kriteria: "Jumlah dispenser", Satuan: "dispenser"})
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Hotel", Kriteria: "Jumlah kamar", Satuan: "kamar"})
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Gedung pertemuan", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Restoran", Kriteria: "Jumlah tempat duduk", Satuan: "tempat duduk"})
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Fasilitan olah raga", Kriteria: "Jumlah kapasitas penonton", Satuan: "orang"})
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Bengkel kendaraan bermotor", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
-	pusat_kegiatan = append(pusat_kegiatan, models.JenisRencana{Jenis: "Pencucian mobil", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
 
 	infrastruktur := []models.JenisRencana{}
 	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Akses ke dan dari jalan tol", Kriteria: "", Satuan: ""})
-	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Pelabuhan", Kriteria: "", Satuan: ""})
-	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Bandar udara", Kriteria: "", Satuan: ""})
-	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Terminal", Kriteria: "", Satuan: ""})
-	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Stasiun kereta api", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Pelabuhan utama", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Pelabuhan pengumpul", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Pelabuhan pengumpan regional", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Pelabuhan pengumpan lokal", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Pelabuhan pengumpan khusus", Kriteria: "Luas lahan", Satuan: "m²"})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Pelabuhan sungai, danau dan penyebrangan", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Bandar udara pengumpul skala pelayanan primer", Kriteria: "Jumlah pengguna pertahun", Satuan: "orang"})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Bandar udara pengumpul skala pelayanan sekunder", Kriteria: "Jumlah pengguna pertahun", Satuan: "orang"})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Bandar udara pengumpul skala pelayanan tersier", Kriteria: "Jumlah pengguna pertahun", Satuan: "orang"})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Bandar udara pengumpan (spoke)", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Terminal penumpang tipe A", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Terminal penumpang tipe B", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Terminal penumpang tipe C", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Terminal angkutan barang", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Terminal peti kemas", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Stasiun kereta api kelar besar", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Stasiun kereta api kelar sedang", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Stasiun kereta api kelar kecil", Kriteria: "", Satuan: ""})
 	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Pool kendaraan", Kriteria: "", Satuan: ""})
-	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Fasilitas parkir umum", Kriteria: "", Satuan: ""})
-	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Flyover", Kriteria: "", Satuan: ""})
-	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Underpass", Kriteria: "", Satuan: ""})
-	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Terowongan", Kriteria: "", Satuan: ""})
+	infrastruktur = append(infrastruktur, models.JenisRencana{Jenis: "Fasilitas parkir umum", Kriteria: "Besar satuan ruang parkir", Satuan: "SRP"})
 
 	pemukiman := []models.JenisRencana{}
 	pemukiman = append(pemukiman, models.JenisRencana{Jenis: "Perumahan sederhana", Kriteria: "Jumlah unit", Satuan: "unit"})
-	pemukiman = append(pemukiman, models.JenisRencana{Jenis: "Perumahan menengan-atas", Kriteria: "Jumlah unit", Satuan: "unit"})
+	pemukiman = append(pemukiman, models.JenisRencana{Jenis: "Perumahan menengan-atas atau townhouse atau cluster", Kriteria: "Jumlah unit", Satuan: "unit"})
 	pemukiman = append(pemukiman, models.JenisRencana{Jenis: "Rumah susun sederhana", Kriteria: "Jumlah unit", Satuan: "unit"})
 	pemukiman = append(pemukiman, models.JenisRencana{Jenis: "Apartemen", Kriteria: "Jumlah unit", Satuan: "unit"})
-	pemukiman = append(pemukiman, models.JenisRencana{Jenis: "Asrama", Kriteria: "Jumlah unit", Satuan: "unit"})
-	pemukiman = append(pemukiman, models.JenisRencana{Jenis: "Ruko", Kriteria: "Luas lahan keseluruhan", Satuan: "m²"})
+
+	lainnya := []models.JenisRencana{}
+
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Stasiun pengisin bahan bakar", Kriteria: "Jumlah dispenser", Satuan: "dispenser"})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Hotel", Kriteria: "Jumlah kamar", Satuan: "kamar"})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Gedung pertemuan", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Restaurant", Kriteria: "Jumlah tempat duduk", Satuan: "tempat duduk"})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Fasilitan olah raga", Kriteria: "Jumlah kapasitas penonton", Satuan: "orang"})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Kawasan TOD (indoor atau outdoor)", Kriteria: "Luas lantai bangunan", Satuan: "m²"})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Asrama", Kriteria: "Jumlah unit", Satuan: "unit"})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Ruko", Kriteria: "Luas lahan keseluruhan", Satuan: "m²"})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Jalan layang (flyover)", Kriteria: "", Satuan: ""})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Lintas bawas (underpass)", Kriteria: "", Satuan: ""})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Terowongan (tunnel)", Kriteria: "", Satuan: ""})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Jembatan", Kriteria: "", Satuan: ""})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Rest area tipe A", Kriteria: "", Satuan: ""})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Rest area tipe B", Kriteria: "", Satuan: ""})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Rest area tipe C", Kriteria: "", Satuan: ""})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Kegiatan yang menimbukan kepadatan 1500 kendaraan", Kriteria: "", Satuan: ""})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Kegiatan yang menimbukan kepadatan 500 kendaraan", Kriteria: "", Satuan: ""})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Kegiatan yang menimbukan kepadatan 100 kendaraan", Kriteria: "", Satuan: ""})
 
 	rencana := []models.Rencana{}
 	rencana = append(rencana, models.Rencana{Kategori: "Pusat kegiatan", JenisRencana: pusat_kegiatan})
 	rencana = append(rencana, models.Rencana{Kategori: "Pemukiman", JenisRencana: pemukiman})
 	rencana = append(rencana, models.Rencana{Kategori: "Infrastruktur", JenisRencana: infrastruktur})
+	rencana = append(rencana, models.Rencana{Kategori: "Lainnya", JenisRencana: lainnya})
 
 	ketegori_perlengkapan := []string{"Rambu peringatan", "Rambu larangan", "Rambu perintah", "Rambu petunjuk"}
 

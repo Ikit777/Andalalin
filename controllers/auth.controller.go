@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"strings"
@@ -43,6 +44,20 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
 		return
+	}
+
+	parts := strings.Split(payload.Email, "@")
+	if len(parts) != 2 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	domain := parts[1]
+
+	_, err = net.LookupMX(domain)
+
+	if err != nil {
+		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": err.Error()})
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")

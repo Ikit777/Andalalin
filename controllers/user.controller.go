@@ -6,6 +6,7 @@ import (
 	_ "image/jpeg"
 	"image/png"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"strings"
@@ -46,6 +47,7 @@ func (ac *UserController) GetMe(ctx *gin.Context) {
 		Name:      currentUser.Name,
 		Email:     currentUser.Email,
 		Role:      currentUser.Role,
+		NIP:       currentUser.NIP,
 		Photo:     currentUser.Photo,
 		CreatedAt: currentUser.CreatedAt,
 		UpdatedAt: currentUser.UpdatedAt,
@@ -92,6 +94,7 @@ func (ac *UserController) GetUserByEmail(ctx *gin.Context) {
 		Name:      user.Name,
 		Email:     user.Email,
 		Role:      user.Role,
+		NIP:       user.NIP,
 		Photo:     user.Photo,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
@@ -139,6 +142,7 @@ func (ac *UserController) GetUsers(ctx *gin.Context) {
 				Name:      s.Name,
 				Email:     s.Email,
 				Role:      s.Role,
+				NIP:       s.NIP,
 				Photo:     s.Photo,
 				CreatedAt: s.CreatedAt,
 				UpdatedAt: s.UpdatedAt,
@@ -220,6 +224,7 @@ func (ac *UserController) GetUsersSortRole(ctx *gin.Context) {
 				Name:      s.Name,
 				Email:     s.Email,
 				Role:      s.Role,
+				NIP:       s.NIP,
 				Photo:     s.Photo,
 				CreatedAt: s.CreatedAt,
 				UpdatedAt: s.UpdatedAt,
@@ -324,6 +329,20 @@ func (ac *UserController) Add(ctx *gin.Context) {
 		return
 	}
 
+	parts := strings.Split(payload.Email, "@")
+	if len(parts) != 2 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	domain := parts[1]
+
+	_, err = net.LookupMX(domain)
+
+	if err != nil {
+		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": err.Error()})
+	}
+
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
 	filePath := "assets/default.png"
@@ -337,6 +356,7 @@ func (ac *UserController) Add(ctx *gin.Context) {
 		Email:     strings.ToLower(payload.Email),
 		Password:  hashedPassword,
 		Role:      payload.Role,
+		NIP:       payload.NIP,
 		Photo:     fileData,
 		Verified:  true,
 		CreatedAt: now,
@@ -358,6 +378,7 @@ func (ac *UserController) Add(ctx *gin.Context) {
 		Name:      newUser.Name,
 		Email:     newUser.Email,
 		Role:      newUser.Role,
+		NIP:       newUser.NIP,
 		CreatedAt: newUser.CreatedAt,
 		UpdatedAt: newUser.UpdatedAt,
 	}
