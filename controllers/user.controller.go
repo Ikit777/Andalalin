@@ -350,74 +350,38 @@ func (ac *UserController) Add(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Eror saat membaca file"})
 		return
 	}
-
-	if payload.Role == "User" {
-		newUser := models.User{
-			Name:      payload.Name,
-			Email:     strings.ToLower(payload.Email),
-			Password:  hashedPassword,
-			Role:      payload.Role,
-			Photo:     fileData,
-			Verified:  true,
-			CreatedAt: now,
-			UpdatedAt: now,
-		}
-
-		result := ac.DB.Create(&newUser)
-
-		if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
-			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Email sudah digunakan"})
-			return
-		} else if result.Error != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
-			return
-		}
-
-		userResponse := &models.UserResponse{
-			ID:        newUser.ID,
-			Name:      newUser.Name,
-			Email:     newUser.Email,
-			Role:      newUser.Role,
-			NIP:       newUser.NIP,
-			CreatedAt: newUser.CreatedAt,
-			UpdatedAt: newUser.UpdatedAt,
-		}
-		ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": userResponse})
-	} else {
-		newUser := models.User{
-			Name:      payload.Name,
-			Email:     strings.ToLower(payload.Email),
-			Password:  hashedPassword,
-			Role:      payload.Role,
-			NIP:       payload.NIP,
-			Photo:     fileData,
-			Verified:  true,
-			CreatedAt: now,
-			UpdatedAt: now,
-		}
-
-		result := ac.DB.Create(&newUser)
-
-		if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
-			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Email sudah digunakan"})
-			return
-		} else if result.Error != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
-			return
-		}
-
-		userResponse := &models.UserResponse{
-			ID:        newUser.ID,
-			Name:      newUser.Name,
-			Email:     newUser.Email,
-			Role:      newUser.Role,
-			NIP:       newUser.NIP,
-			CreatedAt: newUser.CreatedAt,
-			UpdatedAt: newUser.UpdatedAt,
-		}
-		ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": userResponse})
+	newUser := models.User{
+		Name:      payload.Name,
+		Email:     strings.ToLower(payload.Email),
+		Password:  hashedPassword,
+		Role:      payload.Role,
+		NIP:       payload.NIP,
+		Photo:     fileData,
+		Verified:  true,
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
 
+	result := ac.DB.Create(&newUser)
+
+	if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
+		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Email sudah digunakan"})
+		return
+	} else if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	userResponse := &models.UserResponse{
+		ID:        newUser.ID,
+		Name:      newUser.Name,
+		Email:     newUser.Email,
+		Role:      newUser.Role,
+		NIP:       newUser.NIP,
+		CreatedAt: newUser.CreatedAt,
+		UpdatedAt: newUser.UpdatedAt,
+	}
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": userResponse})
 }
 
 // Delete User
