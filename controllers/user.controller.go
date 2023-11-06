@@ -340,6 +340,7 @@ func (ac *UserController) Add(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": err.Error()})
+		return
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -404,7 +405,7 @@ func (ac *UserController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.UserDeleteCredential]
+	credential := claim.Credentials[repository.UserAddCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
