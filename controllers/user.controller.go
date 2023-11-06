@@ -590,7 +590,7 @@ func (ac *UserController) EditAkun(ctx *gin.Context) {
 
 	var user models.User
 
-	result := ac.DB.First(&user, "id = ? AND name > ?", currentUser.ID, currentUser.Name)
+	result := ac.DB.First(&user, "id = ?", currentUser.ID)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Akun tidak ditemukan"})
 		return
