@@ -26,6 +26,7 @@ func (uc *UserRouteController) UserRoute(rg *gin.RouterGroup) {
 
 	router.POST("/add", middleware.DeserializeUser(), uc.userController.Add)
 	router.DELETE("/delete", middleware.DeserializeUser(), uc.userController.Delete)
+	router.DELETE("/edit", middleware.DeserializeUser(), uc.userController.EditAkun)
 
 	router.POST("/forgotpassword", uc.userController.ForgotPassword)
 	router.PATCH("/resetpassword/:resetToken", uc.userController.ResetPassword)

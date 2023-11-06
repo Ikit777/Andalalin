@@ -72,6 +72,12 @@ type Delete struct {
 	Role string    `json:"role" binding:"required"`
 }
 
+type Edit struct {
+	Name  string  `json:"name" binding:"required"`
+	Email string  `json:"email" binding:"required"`
+	NIP   *string `json:"nip" binding:"required"`
+}
+
 type ForgotPasswordInput struct {
 	Email string `json:"email" binding:"required"`
 }

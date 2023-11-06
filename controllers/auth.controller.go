@@ -48,16 +48,16 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 
 	parts := strings.Split(payload.Email, "@")
 	if len(parts) != 2 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
+		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
 
 	domain := parts[1]
 
-	_, err = net.LookupMX(domain)
+	_, errDom := net.LookupMX(domain)
 
-	if err != nil {
-		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": err.Error()})
+	if errDom != nil {
+		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": errDom.Error()})
 		return
 	}
 

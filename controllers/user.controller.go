@@ -330,16 +330,16 @@ func (ac *UserController) Add(ctx *gin.Context) {
 
 	parts := strings.Split(payload.Email, "@")
 	if len(parts) != 2 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
+		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
 
 	domain := parts[1]
 
-	_, err = net.LookupMX(domain)
+	_, errDom := net.LookupMX(domain)
 
-	if err != nil {
-		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": err.Error()})
+	if errDom != nil {
+		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": errDom.Error()})
 		return
 	}
 
@@ -547,11 +547,86 @@ func (ac *UserController) UpdatePhoto(ctx *gin.Context) {
 
 	var user models.User
 
-	result := ac.DB.Model(&user).Where("id = ?", currentUser.ID).Update("photo", buf.Bytes())
+	result := ac.DB.First(&user, "id = ?", currentUser.ID)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Akun tidak ditemukan"})
 		return
 	}
 
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	user.UpdatedAt = now
+	user.Photo = buf.Bytes()
+
+	ac.DB.Save(&user)
+
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "photo": buf.Bytes()})
+}
+
+func (ac *UserController) EditAkun(ctx *gin.Context) {
+	var payload *models.Edit
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	parts := strings.Split(payload.Email, "@")
+	if len(parts) != 2 {
+		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": "Email tidak tersedia"})
+		return
+	}
+
+	domain := parts[1]
+
+	_, errDom := net.LookupMX(domain)
+
+	if errDom != nil {
+		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": errDom.Error()})
+		return
+	}
+
+	var users []models.User
+
+	ac.DB.Find(&users)
+
+	for _, user := range users {
+		if user.Email == payload.Email {
+			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Email sudah digunakan"})
+			return
+		}
+	}
+
+	var user models.User
+
+	result := ac.DB.First(&user, "id = ? AND name > ?", currentUser.ID, currentUser.Name)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": "Reset token kada luarsa"})
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	user.Name = payload.Name
+	user.Email = payload.Email
+	user.NIP = payload.NIP
+	user.UpdatedAt = now
+
+	ac.DB.Save(&user)
+
+	userResponse := &models.UserResponse{
+		ID:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		Role:      user.Role,
+		NIP:       user.NIP,
+		Photo:     user.Photo,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": userResponse})
 }
