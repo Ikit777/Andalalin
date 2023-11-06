@@ -588,23 +588,23 @@ func (ac *UserController) EditAkun(ctx *gin.Context) {
 		return
 	}
 
-	var users []models.User
-
-	ac.DB.Find(&users)
-
-	for _, user := range users {
-		if user.Email == payload.Email {
-			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Email sudah digunakan"})
-			return
-		}
-	}
-
 	var user models.User
 
 	result := ac.DB.First(&user, "id = ? AND name > ?", currentUser.ID, currentUser.Name)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": "Reset token kada luarsa"})
 		return
+	}
+
+	var users []models.User
+
+	ac.DB.Find(&users)
+
+	for _, item := range users {
+		if item.Email == payload.Email && item.Email != user.Email {
+			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Email sudah digunakan"})
+			return
+		}
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
