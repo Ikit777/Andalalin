@@ -167,7 +167,6 @@ func (ac *UserController) GetNotifikasi(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(notif), "data": notif})
-
 }
 
 func (ac *UserController) ClearNotifikasi(ctx *gin.Context) {
