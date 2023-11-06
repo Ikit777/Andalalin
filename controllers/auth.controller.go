@@ -58,6 +58,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": err.Error()})
+		return
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
