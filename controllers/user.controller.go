@@ -396,7 +396,6 @@ func (ac *UserController) Delete(ctx *gin.Context) {
 	config, _ := initializers.LoadConfig()
 
 	currentUser := ctx.MustGet("currentUser").(models.User)
-
 	accessUser := ctx.MustGet("accessUser").(string)
 
 	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
