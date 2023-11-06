@@ -611,7 +611,7 @@ func (ac *UserController) EditAkun(ctx *gin.Context) {
 	now := time.Now().In(loc).Format("02-01-2006")
 
 	user.Name = payload.Name
-	user.Email = payload.Email
+	user.Email = strings.ToLower(payload.Email)
 	user.NIP = payload.NIP
 	user.UpdatedAt = now
 
