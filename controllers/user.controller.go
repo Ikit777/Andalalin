@@ -405,7 +405,7 @@ func (ac *UserController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.UserAddCredential]
+	credential := claim.Credentials[repository.UserDeleteCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
