@@ -1,35 +1,31 @@
 package repository
 
 const (
+	//User
+	AndalalinPengajuanCredential string = "andalalin:pengajuan"
+
+	AndalalinPersyaratanredential string = "andalalin:persyaratan"
+
+	//Non User
 	AndalalinGetCredential string = "andalalin:get"
 
 	AndalalinUpdateCredential string = "andalalin:update"
 
-	AndalalinPersyaratanredential string = "andalalin:persyaratan"
-
-	AndalalinStatusCredential string = "andalalin:status"
-
-	AndalalinAddOfficerCredential string = "andalalin:tambahpetugas"
-
-	AndalalinOfficerCredential string = "andalalin:petugas"
-
-	AndalalinSurveyCredential string = "andalalin:survey"
-
-	AndalalinTicket1Credential string = "andalalin:ticket1"
-
-	AndalalinTicket2Credential string = "andalalin:ticket2"
+	AndalalinTindakLanjut string = "andalalin:tindaklanjut"
 
 	AndalalinPersetujuanCredential string = "andalalin:persetujuan"
 
-	AndalalinBAPCredential string = "andalalin:bap"
+	AndalalinSurveyCredential string = "andalalin:survey"
 
-	AndalalinSKCredential string = "andalalin:sk"
+	AndalalinPemasanganCredential string = "andalalin:pemasangan"
 
-	AndalalinPengajuanCredential string = "andalalin:pengajuan"
+	AndalalinAddOfficerCredential string = "andalalin:tambahpetugas"
+
+	AndalalinSurveiKepuasan string = "andalalin:kepuasan"
 
 	AndalalinKelolaTiket string = "andalalin:kelola"
 
 	AndalalinKeputusanHasil string = "andalalin:keputusan"
 
-	AndalalinSurveiKepuasan string = "andalalin:kepuasan"
+	AndalalinTicket2Credential string = "andalalin:ticket2"
 )

@@ -633,7 +633,7 @@ func (ac *AndalalinController) TundaPermohonan(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinStatusCredential]
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -708,7 +708,7 @@ func (ac *AndalalinController) LanjutkanPermohonan(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinStatusCredential]
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -773,7 +773,7 @@ func (ac *AndalalinController) TolakPermohonan(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinStatusCredential]
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -1384,82 +1384,6 @@ func (ac *AndalalinController) GetPermohonan(ctx *gin.Context) {
 	}
 }
 
-func (ac *AndalalinController) GetAndalalinTicketLevel1(ctx *gin.Context) {
-	status := ctx.Param("status")
-
-	config, _ := initializers.LoadConfig()
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinTicket1Credential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
-
-	var ticket []models.TiketLevel1
-
-	results := ac.DB.Find(&ticket, "status = ?", status)
-
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
-		return
-	} else {
-		var respone []models.DaftarAndalalinResponse
-		for _, s := range ticket {
-			var andalalin models.Andalalin
-			var perlalin models.Perlalin
-			ac.DB.First(&andalalin, "id_andalalin = ?", s.IdAndalalin)
-			ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin)
-
-			resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", s.IdAndalalin)
-			resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin)
-
-			if resultsAndalalin.Error != nil && resultsPerlalin.Error != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
-				return
-			}
-
-			if andalalin.IdAndalalin != uuid.Nil {
-				respone = append(respone, models.DaftarAndalalinResponse{
-					IdAndalalin:      andalalin.IdAndalalin,
-					Kode:             andalalin.Kode,
-					TanggalAndalalin: andalalin.TanggalAndalalin,
-					Nama:             andalalin.NamaPemohon,
-					Alamat:           andalalin.AlamatPemohon,
-					JenisAndalalin:   andalalin.JenisAndalalin,
-					StatusAndalalin:  andalalin.StatusAndalalin,
-				})
-			}
-
-			if perlalin.IdAndalalin != uuid.Nil {
-				respone = append(respone, models.DaftarAndalalinResponse{
-					IdAndalalin:      perlalin.IdAndalalin,
-					Kode:             perlalin.Kode,
-					TanggalAndalalin: perlalin.TanggalAndalalin,
-					Nama:             perlalin.NamaPemohon,
-					Alamat:           perlalin.AlamatPemohon,
-					JenisAndalalin:   perlalin.JenisAndalalin,
-					StatusAndalalin:  perlalin.StatusAndalalin,
-				})
-			}
-
-		}
-		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
-	}
-}
-
 func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 	config, _ := initializers.LoadConfig()
 
@@ -1471,7 +1395,7 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinUpdateCredential]
+	credential := claim.Credentials[repository.AndalalinPersyaratanredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -1571,7 +1495,46 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "msg": "persyaratan berhasil diupdate"})
 }
 
-func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {}
+func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
+	var payload *models.Administrasi
+	id := ctx.Param("id_andalalin")
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var andalalin models.Andalalin
+
+	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
 
 func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
@@ -1586,7 +1549,7 @@ func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinStatusCredential]
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -1631,7 +1594,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinStatusCredential]
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -1766,7 +1729,7 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinStatusCredential]
+	credential := claim.Credentials[repository.AndalalinUpdateCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -1980,7 +1943,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinOfficerCredential]
+	credential := claim.Credentials[repository.AndalalinSurveyCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -2191,7 +2154,7 @@ func (ac *AndalalinController) LaporanBAP(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinBAPCredential]
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -2315,7 +2278,7 @@ func (ac *AndalalinController) LaporanSK(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinSKCredential]
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -2988,7 +2951,7 @@ func (ac *AndalalinController) IsiSurveyMandiri(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinOfficerCredential]
+	credential := claim.Credentials[repository.AndalalinSurveyCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -3670,7 +3633,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinOfficerCredential]
+	credential := claim.Credentials[repository.AndalalinPemasanganCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -3825,7 +3788,7 @@ func (ac *AndalalinController) GetAllPemasangan(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinOfficerCredential]
+	credential := claim.Credentials[repository.AndalalinPemasanganCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.

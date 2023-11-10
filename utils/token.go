@@ -41,22 +41,20 @@ func CreateToken(ttl time.Duration, id uuid.UUID, privateKey string, credentials
 	claims["user:delete"] = false
 	claims["user:get"] = false
 
-	claims["andalalin:get"] = false
 	claims["andalalin:persyaratan"] = false
-	claims["andalalin:status"] = false
-	claims["andalalin:update"] = false
-	claims["andalalin:tambahpetugas"] = false
-	claims["andalalin:petugas"] = false
-	claims["andalalin:survey"] = false
-	claims["andalalin:ticket1"] = false
-	claims["andalalin:ticket2"] = false
-	claims["andalalin:persetujuan"] = false
-	claims["andalalin:bap"] = false
-	claims["andalalin:sk"] = false
 	claims["andalalin:pengajuan"] = false
+
+	claims["andalalin:get"] = false
+	claims["andalalin:update"] = false
+	claims["andalalin:tindaklanjut"] = false
+	claims["andalalin:persetujuan"] = false
+	claims["andalalin:survey"] = false
+	claims["andalalin:pemasangan"] = false
+	claims["andalalin:tambahpetugas"] = false
+	claims["andalalin:kepuasan"] = false
 	claims["andalalin:kelola"] = false
 	claims["andalalin:keputusan"] = false
-	claims["andalalin:kepuasan"] = false
+	claims["andalalin:ticket2"] = false
 
 	claims["product:add"] = false
 	claims["product:delete"] = false
@@ -114,22 +112,20 @@ func ValidateToken(token string, publicKey string) (*TokenMetadata, error) {
 			"user:delete": claims["user:delete"].(bool),
 			"user:get":    claims["user:get"].(bool),
 
+			"andalalin:pengajuan":   claims["andalalin:pengajuan"].(bool),
+			"andalalin:persyaratan": claims["andalalin:persyaratan"].(bool),
+
 			"andalalin:get":           claims["andalalin:get"].(bool),
-			"andalalin:persyaratan":   claims["andalalin:persyaratan"].(bool),
-			"andalalin:status":        claims["andalalin:status"].(bool),
 			"andalalin:update":        claims["andalalin:update"].(bool),
-			"andalalin:tambahpetugas": claims["andalalin:tambahpetugas"].(bool),
-			"andalalin:petugas":       claims["andalalin:petugas"].(bool),
-			"andalalin:survey":        claims["andalalin:survey"].(bool),
-			"andalalin:ticket1":       claims["andalalin:ticket1"].(bool),
-			"andalalin:ticket2":       claims["andalalin:ticket2"].(bool),
+			"andalalin:tindaklanjut":  claims["andalalin:tindaklanjut"].(bool),
 			"andalalin:persetujuan":   claims["andalalin:persetujuan"].(bool),
-			"andalalin:bap":           claims["andalalin:bap"].(bool),
-			"andalalin:sk":            claims["andalalin:sk"].(bool),
-			"andalalin:pengajuan":     claims["andalalin:pengajuan"].(bool),
+			"andalalin:survey":        claims["andalalin:survey"].(bool),
+			"andalalin:pemasangan":    claims["andalalin:pemasangan"].(bool),
+			"andalalin:tambahpetugas": claims["andalalin:tambahpetugas"].(bool),
+			"andalalin:kepuasan":      claims["andalalin:kepuasan"].(bool),
 			"andalalin:kelola":        claims["andalalin:kelola"].(bool),
 			"andalalin:keputusan":     claims["andalalin:keputusan"].(bool),
-			"andalalin:kepuasan":      claims["andalalin:kepuasan"].(bool),
+			"andalalin:ticket2":       claims["andalalin:ticket2"].(bool),
 
 			"product:add":    claims["product:add"].(bool),
 			"product:delete": claims["product:delete"].(bool),

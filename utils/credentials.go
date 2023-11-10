@@ -22,16 +22,12 @@ func GetCredentialsByRole(role string) ([]string, error) {
 
 			repository.AndalalinGetCredential,
 			repository.AndalalinUpdateCredential,
-			repository.AndalalinPersyaratanredential,
-			repository.AndalalinStatusCredential,
-			repository.AndalalinAddOfficerCredential,
-			repository.AndalalinOfficerCredential,
+			repository.AndalalinTindakLanjut,
 			repository.AndalalinSurveyCredential,
-			repository.AndalalinTicket1Credential,
+			repository.AndalalinPemasanganCredential,
+			repository.AndalalinAddOfficerCredential,
 			repository.AndalalinTicket2Credential,
 			repository.AndalalinPersetujuanCredential,
-			repository.AndalalinBAPCredential,
-			repository.AndalalinSKCredential,
 			repository.AndalalinKelolaTiket,
 			repository.AndalalinKeputusanHasil,
 			repository.AndalalinSurveiKepuasan,
@@ -43,18 +39,20 @@ func GetCredentialsByRole(role string) ([]string, error) {
 	case repository.DinasPerhubunganRoleName:
 		// Admin credentials.
 		credentials = []string{
-			repository.AndalalinTicket1Credential,
 			repository.AndalalinGetCredential,
+
 			repository.AndalalinSurveyCredential,
 			repository.AndalalinSurveiKepuasan,
 		}
 	case repository.AdminRoleName:
 		// Admin credentials.
 		credentials = []string{
+			repository.AndalalinGetCredential,
+			repository.AndalalinUpdateCredential,
+
 			repository.AndalalinPersetujuanCredential,
 			repository.AndalalinKelolaTiket,
 			repository.AndalalinTicket2Credential,
-			repository.AndalalinGetCredential,
 			repository.AndalalinSurveyCredential,
 			repository.AndalalinKeputusanHasil,
 			repository.AndalalinSurveiKepuasan,
@@ -66,31 +64,28 @@ func GetCredentialsByRole(role string) ([]string, error) {
 	case repository.OperatorRoleName:
 		// Operator credentials.
 		credentials = []string{
-			repository.AndalalinTicket1Credential,
-			repository.AndalalinPersyaratanredential,
-			repository.AndalalinStatusCredential,
-			repository.AndalalinAddOfficerCredential,
-			repository.AndalalinBAPCredential,
-			repository.AndalalinSKCredential,
-			repository.AndalalinSurveyCredential,
 			repository.AndalalinGetCredential,
+			repository.AndalalinUpdateCredential,
+			repository.AndalalinTindakLanjut,
+			repository.AndalalinAddOfficerCredential,
+			repository.AndalalinSurveyCredential,
 			repository.AndalalinKelolaTiket,
 			repository.AndalalinSurveiKepuasan,
 		}
 	case repository.OfficerRoleName:
 		// Officer credentials.
 		credentials = []string{
-			repository.AndalalinSurveyCredential,
-			repository.AndalalinTicket2Credential,
-			repository.AndalalinOfficerCredential,
-			repository.AndalalinSurveiKepuasan,
 			repository.AndalalinGetCredential,
+			repository.AndalalinSurveyCredential,
+			repository.AndalalinPemasanganCredential,
+			repository.AndalalinTicket2Credential,
+			repository.AndalalinSurveiKepuasan,
 		}
 	case repository.UserRoleName:
 		// User credentials.
 		credentials = []string{
 			repository.AndalalinPengajuanCredential,
-			repository.AndalalinUpdateCredential,
+			repository.AndalalinPersyaratanredential,
 		}
 	default:
 		// Return error message.
