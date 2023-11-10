@@ -230,7 +230,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 
 	dokumen := []models.DokumenPermohonan{}
 
-	dokumen = append(dokumen, models.DokumenPermohonan{Status: "Selesai", Dokumen: "Tanda terima pendaftaran", Berkas: pdfg.Bytes()})
+	dokumen = append(dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Tanda terima pendaftaran", Berkas: pdfg.Bytes()})
 
 	permohonan := models.Andalalin{
 		//Data Permohonan
@@ -1010,7 +1010,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	var dokumen_andalalin_user []string
 
 	for _, dokumen := range andalalin.Dokumen {
-		if dokumen.Status != "Belum selesai" {
+		if dokumen.Role != "User" {
 			dokumen_andalalin_user = append(dokumen_andalalin_user, dokumen.Dokumen)
 		}
 	}
