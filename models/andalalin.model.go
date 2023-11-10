@@ -684,9 +684,9 @@ type Pemasangan struct {
 }
 
 type Administrasi struct {
-	NomorSurat   string             `json:"nomor" binding:"required"`
-	TanggalSurat string             `json:"tanggal" binding:"required"`
-	Data         []DataAdministrasi `json:"data" binding:"required"`
+	NomorSurat   string   `json:"nomor" binding:"required"`
+	TanggalSurat string   `json:"tanggal" binding:"required"`
+	Data         []string `json:"data" binding:"required"`
 }
 
 type DataAdministrasi struct {
