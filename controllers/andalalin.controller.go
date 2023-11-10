@@ -1522,13 +1522,10 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		return
 	}
 
-	decoder := json.NewDecoder(ctx.Request.Body)
-
 	var data models.Administrasi
-
-	// Decode the JSON data directly into the struct
+	decoder := json.NewDecoder(ctx.Request.Body)
 	if err := decoder.Decode(&data); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Error membaca body"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Error decode body"})
 		return
 	}
 
@@ -1624,7 +1621,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dinas", Dokumen: "Checklist Administrasi", Berkas: pdfg.Bytes()})
 
 	for _, item := range data.Data {
-		if item.Tidak != "" && item.Persyaratan != "MOU Kerjsa sama" {
+		if *item.Tidak != "" && item.Persyaratan != "MOU Kerjsa sama" {
 			andalalin.PersyaratanTidakSesuai = append(andalalin.PersyaratanTidakSesuai, item.Persyaratan)
 		}
 	}

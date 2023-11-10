@@ -690,8 +690,8 @@ type Administrasi struct {
 }
 
 type DataAdministrasi struct {
-	Persyaratan string
-	Ada         string
-	Tidak       string
-	Keterangan  string
+	Persyaratan string  `json:"Persyaratan"`
+	Ada         *string `json:"Ada"`
+	Tidak       *string `json:"Tidak"`
+	Keterangan  *string `json:"Keterangan"`
 }
