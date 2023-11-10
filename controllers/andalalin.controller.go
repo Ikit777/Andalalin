@@ -1533,6 +1533,80 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		return
 	}
 
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
+
+	t, err := template.ParseFiles("templates/checklistAdministrasi.html")
+	if err != nil {
+		log.Fatal("Error reading the email template:", err)
+		return
+	}
+
+	administrasi := struct {
+		Objek       string
+		Lokasi      string
+		Pengembang  string
+		Sertifikat  string
+		Klasifikasi string
+		Nomor       string
+		Diterima    string
+		Pemeriksaan string
+		Status      string
+		Data        []models.DataAdministrasi
+	}{
+		Objek:       andalalin.Jenis,
+		Lokasi:      andalalin.LokasiBangunan,
+		Pengembang:  andalalin.NamaPengembang,
+		Sertifikat:  andalalin.NomerSertifikatPemohon,
+		Klasifikasi: andalalin.KlasifikasiPemohon,
+		Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat,
+		Diterima:    andalalin.TanggalAndalalin,
+		Pemeriksaan: tanggal,
+		Status:      "Baru",
+		Data:        payload.Data,
+	}
+
+	buffer := new(bytes.Buffer)
+	if err = t.Execute(buffer, administrasi); err != nil {
+		log.Fatal("Eror saat membaca template:", err)
+		return
+	}
+
+	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	if err != nil {
+		log.Fatal("Eror generate pdf", err)
+		return
+	}
+
+	// read the HTML page as a PDF page
+	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
+
+	pdfg.AddPage(page)
+
+	pdfg.Dpi.Set(300)
+	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
+	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
+	pdfg.MarginBottom.Set(20)
+	pdfg.MarginLeft.Set(30)
+	pdfg.MarginRight.Set(30)
+	pdfg.MarginTop.Set(20)
+
+	err = pdfg.Create()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dinas", Dokumen: "Checklist Administrasi", Berkas: pdfg.Bytes()})
+
+	for _, item := range payload.Data {
+		if *item.Tidak != "" && item.Persyaratan != "MOU Kerjsa sama" {
+			andalalin.PersyaratanTidakSesuai = append(andalalin.PersyaratanTidakSesuai, item.Persyaratan)
+		}
+	}
+
+	ac.DB.Save(&andalalin)
+
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 

@@ -36,6 +36,7 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 
 	router.POST("/persyaratantidaksesuai/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.PersyaratanTidakSesuai)
 	router.POST("/persyaratanterpenuhi/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.PersyaratanTerpenuhi)
+	router.POST("/checkadministrasi/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.CheckAdministrasi)
 
 	router.POST("/updatepersyaratan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.UpdatePersyaratan)
 
