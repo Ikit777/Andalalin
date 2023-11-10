@@ -1010,7 +1010,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	var dokumen_andalalin_user []string
 
 	for _, dokumen := range andalalin.Dokumen {
-		if dokumen.Role != "User" {
+		if dokumen.Role == "User" {
 			dokumen_andalalin_user = append(dokumen_andalalin_user, dokumen.Dokumen)
 		}
 	}
@@ -1570,6 +1570,8 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "msg": "persyaratan berhasil diupdate"})
 }
+
+func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {}
 
 func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")

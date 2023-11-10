@@ -682,3 +682,16 @@ type Pemasangan struct {
 	WaktuPemasangan   string `gorm:"not null"`
 	TanggalPemasangan string `gorm:"not null"`
 }
+
+type Administrasi struct {
+	NomorSurat   string             `gorm:"type:varchar(255);not null"`
+	TanggalSurat string             `gorm:"type:varchar(255);not null"`
+	Data         []DataAdministrasi `gorm:"serializer:json"`
+}
+
+type DataAdministrasi struct {
+	Persyaratan string
+	Ada         string
+	Tidak       string
+	Keterangan  string
+}
