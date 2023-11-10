@@ -691,7 +691,7 @@ type Administrasi struct {
 
 type DataAdministrasi struct {
 	Persyaratan string
-	Ada         *string
-	Tidak       *string
-	Keterangan  *string
+	Ada         string
+	Tidak       string
+	Keterangan  string
 }

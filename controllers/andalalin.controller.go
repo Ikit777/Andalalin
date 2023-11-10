@@ -1624,7 +1624,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dinas", Dokumen: "Checklist Administrasi", Berkas: pdfg.Bytes()})
 
 	for _, item := range data.Data {
-		if *item.Tidak != "" && item.Persyaratan != "MOU Kerjsa sama" {
+		if item.Tidak != "" && item.Persyaratan != "MOU Kerjsa sama" {
 			andalalin.PersyaratanTidakSesuai = append(andalalin.PersyaratanTidakSesuai, item.Persyaratan)
 		}
 	}
