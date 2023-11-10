@@ -2,9 +2,11 @@ package controllers
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -1496,13 +1498,7 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
-	var payload *models.Administrasi
 	id := ctx.Param("id_andalalin")
-
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
-		return
-	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -1524,6 +1520,18 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			"error": true,
 			"msg":   "Permission denied",
 		})
+		return
+	}
+
+	body, errRead := ioutil.ReadAll(ctx.Request.Body)
+	if errRead != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Error membaca body"})
+		return
+	}
+
+	var data models.Administrasi
+	if err := json.Unmarshal(body, &data); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Error membaca body"})
 		return
 	}
 
@@ -1577,11 +1585,11 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		Pengembang:  andalalin.NamaPengembang,
 		Sertifikat:  andalalin.NomerSertifikatPemohon,
 		Klasifikasi: andalalin.KlasifikasiPemohon,
-		Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat,
+		Nomor:       data.NomorSurat + ", " + data.TanggalSurat,
 		Diterima:    andalalin.TanggalAndalalin,
 		Pemeriksaan: tanggal,
 		Status:      "Baru",
-		Data:        payload.Data,
+		Data:        data.Data,
 		Opretator:   currentUser.Name,
 		Nip:         currentUser.NIP,
 	}
@@ -1618,7 +1626,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 
 	andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dinas", Dokumen: "Checklist Administrasi", Berkas: pdfg.Bytes()})
 
-	for _, item := range payload.Data {
+	for _, item := range data.Data {
 		if *item.Tidak != "" && item.Persyaratan != "MOU Kerjsa sama" {
 			andalalin.PersyaratanTidakSesuai = append(andalalin.PersyaratanTidakSesuai, item.Persyaratan)
 		}
