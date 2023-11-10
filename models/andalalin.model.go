@@ -684,9 +684,9 @@ type Pemasangan struct {
 }
 
 type Administrasi struct {
-	NomorSurat   string             `gorm:"type:varchar(255);not null"`
-	TanggalSurat string             `gorm:"type:varchar(255);not null"`
-	Data         []DataAdministrasi `gorm:"serializer:json"`
+	NomorSurat   string             `json:"nomor,omitempty"`
+	TanggalSurat string             `json:"tanggal,omitempty"`
+	Data         []DataAdministrasi `json:"data,omitempty"`
 }
 
 type DataAdministrasi struct {
