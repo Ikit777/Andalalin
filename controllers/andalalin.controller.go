@@ -1543,7 +1543,22 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		return
 	}
 
+	var bangkitan string
+
+	switch andalalin.Bangkitan {
+	case "Bangkitan rendah":
+		bangkitan = "RENDAH"
+		break
+	case "Bangkitan sedang":
+		bangkitan = "SEDANG"
+		break
+	case "Bangkitan tinggi":
+		bangkitan = "TINGGI"
+		break
+	}
+
 	administrasi := struct {
+		Bangkitan   string
 		Objek       string
 		Lokasi      string
 		Pengembang  string
@@ -1555,6 +1570,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		Status      string
 		Data        []models.DataAdministrasi
 	}{
+		Bangkitan:   bangkitan,
 		Objek:       andalalin.Jenis,
 		Lokasi:      andalalin.LokasiBangunan,
 		Pengembang:  andalalin.NamaPengembang,
