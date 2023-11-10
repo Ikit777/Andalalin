@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -1523,14 +1522,12 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		return
 	}
 
-	body, errRead := ioutil.ReadAll(ctx.Request.Body)
-	if errRead != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Error membaca body"})
-		return
-	}
+	decoder := json.NewDecoder(ctx.Request.Body)
 
 	var data models.Administrasi
-	if err := json.Unmarshal(body, &data); err != nil {
+
+	// Decode the JSON data directly into the struct
+	if err := decoder.Decode(&data); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Error membaca body"})
 		return
 	}
