@@ -1548,13 +1548,10 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	switch andalalin.Bangkitan {
 	case "Bangkitan rendah":
 		bangkitan = "RENDAH"
-		break
 	case "Bangkitan sedang":
 		bangkitan = "SEDANG"
-		break
 	case "Bangkitan tinggi":
 		bangkitan = "TINGGI"
-		break
 	}
 
 	administrasi := struct {
