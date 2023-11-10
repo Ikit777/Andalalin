@@ -1506,6 +1506,8 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 
 	config, _ := initializers.LoadConfig()
 
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
 	accessUser := ctx.MustGet("accessUser").(string)
 
 	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
@@ -1566,6 +1568,8 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		Pemeriksaan string
 		Status      string
 		Data        []models.DataAdministrasi
+		Opretator   string
+		Nip         *string
 	}{
 		Bangkitan:   bangkitan,
 		Objek:       andalalin.Jenis,
@@ -1578,6 +1582,8 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		Pemeriksaan: tanggal,
 		Status:      "Baru",
 		Data:        payload.Data,
+		Opretator:   currentUser.Name,
+		Nip:         currentUser.NIP,
 	}
 
 	buffer := new(bytes.Buffer)
