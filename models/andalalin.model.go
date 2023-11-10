@@ -175,6 +175,7 @@ type PersyaratanPermohonan struct {
 }
 
 type DokumenPermohonan struct {
+	Status  string
 	Dokumen string
 	Berkas  []byte
 }

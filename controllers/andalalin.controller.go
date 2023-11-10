@@ -230,7 +230,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 
 	dokumen := []models.DokumenPermohonan{}
 
-	dokumen = append(dokumen, models.DokumenPermohonan{Dokumen: "Tanda terima pendaftaran", Berkas: pdfg.Bytes()})
+	dokumen = append(dokumen, models.DokumenPermohonan{Status: "Selesai", Dokumen: "Tanda terima pendaftaran", Berkas: pdfg.Bytes()})
 
 	permohonan := models.Andalalin{
 		//Data Permohonan
@@ -993,8 +993,6 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	var persyaratan_andalalin []string
 	var persyaratan_perlalin []string
 
-	var dokumen_andalalin []string
-
 	for _, persyaratan := range andalalin.Persyaratan {
 		persyaratan_andalalin = append(persyaratan_andalalin, persyaratan.Persyaratan)
 	}
@@ -1003,8 +1001,18 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		persyaratan_perlalin = append(persyaratan_perlalin, persyaratan.Persyaratan)
 	}
 
+	var dokumen_andalalin_dinas []string
+
 	for _, dokumen := range andalalin.Dokumen {
-		dokumen_andalalin = append(dokumen_andalalin, dokumen.Dokumen)
+		dokumen_andalalin_dinas = append(dokumen_andalalin_dinas, dokumen.Dokumen)
+	}
+
+	var dokumen_andalalin_user []string
+
+	for _, dokumen := range andalalin.Dokumen {
+		if dokumen.Status != "Belum selesai" {
+			dokumen_andalalin_user = append(dokumen_andalalin_user, dokumen.Dokumen)
+		}
 	}
 
 	if andalalin.IdAndalalin != uuid.Nil {
@@ -1060,7 +1068,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				Pertimbangan:           andalalin.Pertimbangan,
 
 				//Dokumen Permohonan
-				Dokumen: dokumen_andalalin,
+				Dokumen: dokumen_andalalin_user,
 			}
 
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
@@ -1150,7 +1158,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
 
 				//Dokumen Permohonan
-				Dokumen: dokumen_andalalin,
+				Dokumen: dokumen_andalalin_dinas,
 
 				//Data Persertujuan
 				PersetujuanDokumen:           andalalin.PersetujuanDokumen,
