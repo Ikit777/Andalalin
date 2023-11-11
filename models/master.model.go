@@ -109,12 +109,14 @@ type Persyaratan struct {
 }
 
 type PersyaratanAndalalinInput struct {
+	Kebutuhan             string `json:"kebutuhan" binding:"required"`
 	Bangkitan             string `json:"bangkitan" binding:"required"`
 	Persyaratan           string `json:"persyaratan" binding:"required"`
 	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
 }
 
 type PersyaratanPerlalinInput struct {
+	Kebutuhan             string `json:"kebutuhan" binding:"required"`
 	Persyaratan           string `json:"persyaratan" binding:"required"`
 	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
 }
