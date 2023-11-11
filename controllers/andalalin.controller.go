@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
@@ -1523,9 +1522,9 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	}
 
 	var data models.Administrasi
-	decoder := json.NewDecoder(ctx.Request.Body)
-	if err := decoder.Decode(&data); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Error decode body"})
+
+	if err := ctx.BindJSON(&data); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Error decoding JSON data"})
 		return
 	}
 
