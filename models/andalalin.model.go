@@ -684,14 +684,14 @@ type Pemasangan struct {
 }
 
 type Administrasi struct {
-	NomorSurat   string             `json:"nomor"`
-	TanggalSurat string             `json:"tanggal"`
-	Data         []DataAdministrasi `json:"data"`
+	NomorSurat   string             `json:"nomor" binding:"required"`
+	TanggalSurat string             `json:"tanggal" binding:"required"`
+	Data         []DataAdministrasi `json:"data" binding:"required"`
 }
 
 type DataAdministrasi struct {
-	Persyaratan string `json:"persyaratan"`
-	Ada         string `json:"ada"`
-	Tidak       string `json:"tidak"`
-	Keterangan  string `json:"keterangan"`
+	Persyaratan string `json:"persyaratan" binding:"required"`
+	Ada         string `json:"ada" binding:"required"`
+	Tidak       string `json:"tidak" binding:"required"`
+	Keterangan  string `json:"keterangan" binding:"required"`
 }

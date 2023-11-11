@@ -1496,6 +1496,7 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
+	var payload *models.Administrasi
 	id := ctx.Param("id_andalalin")
 
 	config, _ := initializers.LoadConfig()
@@ -1521,10 +1522,8 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		return
 	}
 
-	var data models.Administrasi
-
-	if err := ctx.BindJSON(&data); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Error decoding JSON data"})
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
@@ -1578,11 +1577,11 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		Pengembang:  andalalin.NamaPengembang,
 		Sertifikat:  andalalin.NomerSertifikatPemohon,
 		Klasifikasi: andalalin.KlasifikasiPemohon,
-		Nomor:       data.NomorSurat + ", " + data.TanggalSurat,
+		Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat,
 		Diterima:    andalalin.TanggalAndalalin,
 		Pemeriksaan: tanggal,
 		Status:      "Baru",
-		Data:        data.Data,
+		Data:        payload.Data,
 		Opretator:   currentUser.Name,
 		Nip:         currentUser.NIP,
 	}
@@ -1619,7 +1618,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 
 	andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dinas", Dokumen: "Checklist Administrasi", Berkas: pdfg.Bytes()})
 
-	for _, item := range data.Data {
+	for _, item := range payload.Data {
 		if item.Tidak != "" && item.Persyaratan != "MOU Kerjsa sama" {
 			andalalin.PersyaratanTidakSesuai = append(andalalin.PersyaratanTidakSesuai, item.Persyaratan)
 		}
