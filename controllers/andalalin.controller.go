@@ -1568,8 +1568,8 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		Pemeriksaan string
 		Status      string
 		Data        []models.DataAdministrasi
-		Opretator   string
-		Nip         *string
+		Operator    string
+		Nip         string
 	}{
 		Bangkitan:   bangkitan,
 		Objek:       andalalin.Jenis,
@@ -1582,8 +1582,8 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		Pemeriksaan: tanggal,
 		Status:      "Baru",
 		Data:        payload.Data,
-		Opretator:   currentUser.Name,
-		Nip:         currentUser.NIP,
+		Operator:    currentUser.Name,
+		Nip:         *currentUser.NIP,
 	}
 
 	buffer := new(bytes.Buffer)
