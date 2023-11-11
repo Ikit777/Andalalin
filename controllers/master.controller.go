@@ -1360,6 +1360,7 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 
 	if !persyaratanExist {
 		persyaratan := models.PersyaratanAndalalinInput{
+			Kebutuhan:             payload.Kebutuhan,
 			Bangkitan:             payload.Bangkitan,
 			Persyaratan:           payload.Persyaratan,
 			KeteranganPersyaratan: payload.KeteranganPersyaratan,
@@ -1545,6 +1546,10 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
+		if master.Persyaratan.PersyaratanAndalalin[itemIndex].Kebutuhan != payload.Kebutuhan {
+			master.Persyaratan.PersyaratanAndalalin[itemIndex].Kebutuhan = payload.Kebutuhan
+		}
+
 		if master.Persyaratan.PersyaratanAndalalin[itemIndex].Persyaratan != payload.Persyaratan {
 			master.Persyaratan.PersyaratanAndalalin[itemIndex].Persyaratan = payload.Persyaratan
 		}
@@ -1628,6 +1633,7 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 
 	if !persyaratanExist {
 		persyaratan := models.PersyaratanPerlalinInput{
+			Kebutuhan:             payload.Kebutuhan,
 			Persyaratan:           payload.Persyaratan,
 			KeteranganPersyaratan: payload.KeteranganPersyaratan,
 		}
@@ -1812,6 +1818,10 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
+		if master.Persyaratan.PersyaratanPerlalin[itemIndex].Kebutuhan != payload.Kebutuhan {
+			master.Persyaratan.PersyaratanPerlalin[itemIndex].Kebutuhan = payload.Kebutuhan
+		}
+
 		if master.Persyaratan.PersyaratanPerlalin[itemIndex].Persyaratan != payload.Persyaratan {
 			master.Persyaratan.PersyaratanPerlalin[itemIndex].Persyaratan = payload.Persyaratan
 		}
