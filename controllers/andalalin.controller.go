@@ -1626,9 +1626,10 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
+		andalalin.Dokumen[itemIndex].Dokumen = "Checklist administrasi"
 		andalalin.Dokumen[itemIndex].Berkas = pdfg.Bytes()
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dinas", Dokumen: "Checklist Administrasi", Berkas: pdfg.Bytes()})
+		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dinas", Dokumen: "Checklist administrasi", Berkas: pdfg.Bytes()})
 	}
 
 	for _, item := range payload.Data {
