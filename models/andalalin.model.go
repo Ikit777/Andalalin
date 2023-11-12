@@ -20,58 +20,81 @@ type Andalalin struct {
 	LokasiPengambilan string    `gorm:"type:varchar(255);not null"`
 
 	//Data pemohon
-	NikPemohon                  string  `gorm:"type:varchar(255);not null"`
-	NamaPemohon                 string  `gorm:"type:varchar(255);not null"`
-	EmailPemohon                string  `gorm:"type:varchar(255);not null"`
-	TempatLahirPemohon          string  `gorm:"type:varchar(255);not null"`
-	TanggalLahirPemohon         string  `gorm:"type:varchar(255);not null"`
-	WilayahAdministratifPemohon string  `gorm:"type:varchar(255);not null"`
-	AlamatPemohon               string  `gorm:"type:varchar(255);not null"`
-	JenisKelaminPemohon         string  `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
-	NomerPemohon                string  `gorm:"type:varchar(255);not null"`
-	JabatanPemohon              *string `gorm:"type:varchar(255);"`
-	NomerSertifikatPemohon      string  `gorm:"type:varchar(255);not null"`
-	KlasifikasiPemohon          string  `gorm:"type:varchar(255);not null"`
+	NikPemohon             string  `gorm:"type:varchar(255);not null"`
+	NamaPemohon            string  `gorm:"type:varchar(255);not null"`
+	EmailPemohon           string  `gorm:"type:varchar(255);not null"`
+	TempatLahirPemohon     string  `gorm:"type:varchar(255);not null"`
+	TanggalLahirPemohon    string  `gorm:"type:varchar(255);not null"`
+	NegaraPemohon          string  `gorm:"type:varchar(255);not null"`
+	ProvinsiPemohon        string  `gorm:"type:varchar(255);not null"`
+	KabupatenPemohon       string  `gorm:"type:varchar(255);not null"`
+	KecamatanPemohon       string  `gorm:"type:varchar(255);not null"`
+	KelurahanPemohon       string  `gorm:"type:varchar(255);not null"`
+	AlamatPemohon          string  `gorm:"type:varchar(255);not null"`
+	JenisKelaminPemohon    string  `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
+	NomerPemohon           string  `gorm:"type:varchar(255);not null"`
+	JabatanPemohon         *string `gorm:"type:varchar(255);"`
+	NomerSertifikatPemohon string  `gorm:"type:varchar(255);not null"`
+	KlasifikasiPemohon     string  `gorm:"type:varchar(255);not null"`
 
 	//Data Proyek
-	NamaProyek                 string `gorm:"type:varchar(255);not null"`
-	JenisProyek                string `gorm:"type:varchar(255);not null"`
-	WilayahAdministratifProyek string `gorm:"type:varchar(255);not null"`
-	AlamatProyek               string `gorm:"type:varchar(255);not null"`
-	KodeJalan                  string `gorm:"type:varchar(255);not null"`
-	NamaJalan                  string `gorm:"type:varchar(255);not null"`
-	Kelurahan                  string `gorm:"type:varchar(255);not null"`
-	Kecamatan                  string `gorm:"type:varchar(255);not null"`
-	PangkalJalan               string `gorm:"type:varchar(255);not null"`
-	UjungJalan                 string `gorm:"type:varchar(255);not null"`
-	PanjangJalan               string `gorm:"type:varchar(255);not null"`
-	LebarJalan                 string `gorm:"type:varchar(255);not null"`
-	PermukaanJalan             string `gorm:"type:varchar(255);not null"`
-	FungsiJalan                string `gorm:"type:varchar(255);not null"`
+	NamaProyek      string `gorm:"type:varchar(255);not null"`
+	JenisProyek     string `gorm:"type:varchar(255);not null"`
+	NegaraProyek    string `gorm:"type:varchar(255);not null"`
+	ProvinsiProyek  string `gorm:"type:varchar(255);not null"`
+	KabupatenProyek string `gorm:"type:varchar(255);not null"`
+	KecamatanProyek string `gorm:"type:varchar(255);not null"`
+	KelurahanProyek string `gorm:"type:varchar(255);not null"`
+	AlamatProyek    string `gorm:"type:varchar(255);not null"`
+	KodeJalan       string `gorm:"type:varchar(255);not null"`
+	KodeJalanMerge  string `gorm:"type:varchar(255);not null"`
+	NamaJalan       string `gorm:"type:varchar(255);not null"`
+	PangkalJalan    string `gorm:"type:varchar(255);not null"`
+	UjungJalan      string `gorm:"type:varchar(255);not null"`
+	PanjangJalan    string `gorm:"type:varchar(255);not null"`
+	LebarJalan      string `gorm:"type:varchar(255);not null"`
+	PermukaanJalan  string `gorm:"type:varchar(255);not null"`
+	FungsiJalan     string `gorm:"type:varchar(255);not null"`
 
 	//Data Perusahaan
-	NamaPerusahaan                 *string `gorm:"type:varchar(255);"`
-	WilayahAdministratifPerusahaan *string `gorm:"type:varchar(255);"`
-	AlamatPerusahaan               *string `gorm:"type:varchar(255);"`
-	NomerPerusahaan                *string `gorm:"type:varchar(255);"`
-	EmailPerusahaan                *string `gorm:"type:varchar(255);"`
-	NamaPimpinan                   *string `gorm:"type:varchar(255);"`
-	JabatanPimpinan                *string `gorm:"type:varchar(255);"`
-	JenisKelaminPimpinan           *string `sql:"type:enum('Laki-laki', 'Perempuan');"`
-	WilayahAdministratifPimpinan   *string `gorm:"type:varchar(255);"`
-	AlamatPimpinan                 *string `gorm:"type:varchar(255);"`
+	NamaPerusahaan              *string `gorm:"type:varchar(255);"`
+	NegaraPerusahaan            string  `gorm:"type:varchar(255);"`
+	ProvinsiPerusahaan          *string `gorm:"type:varchar(255);"`
+	KabupatenPerusahaan         *string `gorm:"type:varchar(255);"`
+	KecamatanPerusahaan         *string `gorm:"type:varchar(255);"`
+	KelurahanPerusahaan         *string `gorm:"type:varchar(255);"`
+	AlamatPerusahaan            *string `gorm:"type:varchar(255);"`
+	NomerPerusahaan             *string `gorm:"type:varchar(255);"`
+	EmailPerusahaan             *string `gorm:"type:varchar(255);"`
+	NamaPimpinan                *string `gorm:"type:varchar(255);"`
+	JabatanPimpinan             *string `gorm:"type:varchar(255);"`
+	JenisKelaminPimpinan        *string `sql:"type:enum('Laki-laki', 'Perempuan');"`
+	NegaraPimpinanPerusahaan    string  `gorm:"type:varchar(255);"`
+	ProvinsiPimpinanPerusahaan  *string `gorm:"type:varchar(255);"`
+	KabupatenPimpinanPerusahaan *string `gorm:"type:varchar(255);"`
+	KecamatanPimpinanPerusahaan *string `gorm:"type:varchar(255);"`
+	KelurahanPimpinanPerusahaan *string `gorm:"type:varchar(255);"`
+	AlamatPimpinan              *string `gorm:"type:varchar(255);"`
 
 	//Data Pengembang
-	NamaPengembang                         string `gorm:"type:varchar(255);not null"`
-	WilayahAdministratifPengembang         string `gorm:"type:varchar(255);not null"`
-	AlamatPengembang                       string `gorm:"type:varchar(255);not null"`
-	NomerPengembang                        string `gorm:"type:varchar(255);not null"`
-	EmailPengembang                        string `gorm:"type:varchar(255);not null"`
-	NamaPimpinanPengembang                 string `gorm:"type:varchar(255);not null"`
-	JabatanPimpinanPengembang              string `gorm:"type:varchar(255);not null"`
-	JenisKelaminPimpinanPengembang         string `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
-	WilayahAdministratifPimpinanPengembang string `gorm:"type:varchar(255);not null"`
-	AlamatPimpinanPengembang               string `gorm:"type:varchar(255);not null"`
+	NamaPengembang                 string `gorm:"type:varchar(255);not null"`
+	NegaraPengembang               string `gorm:"type:varchar(255);not null"`
+	ProvinsiPengembang             string `gorm:"type:varchar(255);not null"`
+	KabupatenPengembang            string `gorm:"type:varchar(255);not null"`
+	KecamatanPengembang            string `gorm:"type:varchar(255);not null"`
+	KelurahanPengembang            string `gorm:"type:varchar(255);not null"`
+	AlamatPengembang               string `gorm:"type:varchar(255);not null"`
+	NomerPengembang                string `gorm:"type:varchar(255);not null"`
+	EmailPengembang                string `gorm:"type:varchar(255);not null"`
+	NamaPimpinanPengembang         string `gorm:"type:varchar(255);not null"`
+	JabatanPimpinanPengembang      string `gorm:"type:varchar(255);not null"`
+	JenisKelaminPimpinanPengembang string `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
+	NegaraPimpinanPengembang       string `gorm:"type:varchar(255);not null"`
+	ProvinsiPimpinanPengembang     string `gorm:"type:varchar(255);not null"`
+	KabupatenPimpinanPengembang    string `gorm:"type:varchar(255);not null"`
+	KecamatanPimpinanPengembang    string `gorm:"type:varchar(255);not null"`
+	KelurahanPimpinanPengembang    string `gorm:"type:varchar(255);not null"`
+	AlamatPimpinanPengembang       string `gorm:"type:varchar(255);not null"`
 
 	//Data Kegiatan
 	Aktivitas         string  `gorm:"type:varchar(255);not null"`
@@ -100,15 +123,6 @@ type Andalalin struct {
 	//Data Persetujuan Dokumen
 	PersetujuanDokumen           string `gorm:"type:varchar(255);"`
 	KeteranganPersetujuanDokumen *string
-
-	//Data BAP
-	NomerBAPDasar       string `gorm:"type:varchar(255);"`
-	NomerBAPPelaksanaan string `gorm:"type:varchar(255);"`
-	TanggalBAP          string `gorm:"type:varchar(255);"`
-	FileBAP             []byte
-
-	//Data SK
-	FileSK []byte
 }
 
 type Perlalin struct {
@@ -177,6 +191,7 @@ type PersyaratanPermohonan struct {
 type DokumenPermohonan struct {
 	Role    string
 	Dokumen string
+	Tipe    string
 	Berkas  []byte
 }
 
@@ -189,56 +204,73 @@ type InputAndalalin struct {
 	LokasiPengambilan               string `json:"lokasi_pengambilan" binding:"required"`
 
 	//Data Proyek
-	NamaProyek                 string `json:"nama_proyek" binding:"required"`
-	JenisProyek                string `json:"jenis_proyek" binding:"required"`
-	WilayahAdministratifProyek string `json:"wilayah_administratif_proyek" binding:"required"`
-	AlamatProyek               string `json:"alamat_proyek" binding:"required"`
-	KodeJalan                  string `json:"kode_jalan" binding:"required"`
-	NamaJalan                  string `json:"nama_jalan" binding:"required"`
-	Kelurahan                  string `json:"kelurahan" binding:"required"`
-	Kecamatan                  string `json:"kecamatan" binding:"required"`
-	PangkalJalan               string `json:"pangkal_jalan" binding:"required"`
-	UjungJalan                 string `json:"ujung_jalan" binding:"required"`
-	PanjangJalan               string `json:"panjang_jalan" binding:"required"`
-	LebarJalan                 string `json:"lebar_jalan" binding:"required"`
-	PermukaanJalan             string `json:"permukaan_jalan" binding:"required"`
-	FungsiJalan                string `json:"fungsi_jalan" binding:"required"`
+	NamaProyek      string `json:"nama_proyek" binding:"required"`
+	ProvinsiProyek  string `json:"provinsi_proyek" binding:"required"`
+	KabupatenProyek string `json:"kabupaten_proyek" binding:"required"`
+	KecamatanProyek string `json:"kecamatan_proyek" binding:"required"`
+	KelurahanProyek string `json:"kelurahan_proyek" binding:"required"`
+	JenisProyek     string `json:"jenis_proyek" binding:"required"`
+	AlamatProyek    string `json:"alamat_proyek" binding:"required"`
+	KodeJalan       string `json:"kode_jalan" binding:"required"`
+	KodeJalanMerge  string `json:"kode_jalan_merge" binding:"required"`
+	NamaJalan       string `json:"nama_jalan" binding:"required"`
+	PangkalJalan    string `json:"pangkal_jalan" binding:"required"`
+	UjungJalan      string `json:"ujung_jalan" binding:"required"`
+	PanjangJalan    string `json:"panjang_jalan" binding:"required"`
+	LebarJalan      string `json:"lebar_jalan" binding:"required"`
+	PermukaanJalan  string `json:"permukaan_jalan" binding:"required"`
+	FungsiJalan     string `json:"fungsi_jalan" binding:"required"`
 
 	//Data Pemohon
-	NikPemohon                  string  `json:"nik_pemohon" binding:"required"`
-	TempatLahirPemohon          string  `json:"tempat_lahir_pemohon" binding:"required"`
-	TanggalLahirPemohon         string  `json:"tanggal_lahir_pemohon" binding:"required"`
-	AlamatPemohon               string  `json:"alamat_pemohon" binding:"required"`
-	WilayahAdministratifPemohon string  `json:"wilayah_administratif_pemohon" binding:"required"`
-	JenisKelaminPemohon         string  `json:"jenis_kelamin_pemohon" binding:"required"`
-	NomerPemohon                string  `json:"nomer_pemohon" binding:"required"`
-	JabatanPemohon              *string `json:"jabatan_pemohon" binding:"required"`
-	NomerSertifikatPemohon      string  `json:"nomer_sertifikat_pemohon" binding:"required"`
-	KlasifikasiPemohon          string  `json:"klasifikasi_pemohon" binding:"required"`
+	NikPemohon             string  `json:"nik_pemohon" binding:"required"`
+	TempatLahirPemohon     string  `json:"tempat_lahir_pemohon" binding:"required"`
+	TanggalLahirPemohon    string  `json:"tanggal_lahir_pemohon" binding:"required"`
+	AlamatPemohon          string  `json:"alamat_pemohon" binding:"required"`
+	ProvinsiPemohon        string  `json:"provinsi_pemohon" binding:"required"`
+	KabupatenPemohon       string  `json:"kabupaten_pemohon" binding:"required"`
+	KecamatanPemohon       string  `json:"kecamatan_pemohon" binding:"required"`
+	KelurahanPemohon       string  `json:"kelurahan_pemohon" binding:"required"`
+	JenisKelaminPemohon    string  `json:"jenis_kelamin_pemohon" binding:"required"`
+	NomerPemohon           string  `json:"nomer_pemohon" binding:"required"`
+	JabatanPemohon         *string `json:"jabatan_pemohon" binding:"required"`
+	NomerSertifikatPemohon string  `json:"nomer_sertifikat_pemohon" binding:"required"`
+	KlasifikasiPemohon     string  `json:"klasifikasi_pemohon" binding:"required"`
 
 	//Data Perusahaan
-	NamaPerusahaan                 *string `json:"nama_perusahaan" binding:"required"`
-	AlamatPerusahaan               *string `json:"alamat_perusahaan" binding:"required"`
-	WilayahAdministratifPerusahaan *string `json:"wilayah_administratif_perusahaan" binding:"required"`
-	NomerPerusahaan                *string `json:"nomer_perusahaan" binding:"required"`
-	EmailPerusahaan                *string `json:"email_perusahaan" binding:"required"`
-	NamaPimpinan                   *string `json:"nama_pimpinan" binding:"required"`
-	JabatanPimpinan                *string `json:"jabatan_pimpinan" binding:"required"`
-	JenisKelaminPimpinan           *string `json:"jenis_kelamin_pimpinan" binding:"required"`
-	WilayahAdministratifPimpinan   *string `json:"wilayah_administratif_pimpinan" binding:"required"`
-	AlamatPimpinan                 *string `json:"alamat_pimpinan" binding:"required"`
+	NamaPerusahaan              *string `json:"nama_perusahaan" binding:"required"`
+	AlamatPerusahaan            *string `json:"alamat_perusahaan" binding:"required"`
+	ProvinsiPerusahaan          *string `json:"provinsi_perusahaan" binding:"required"`
+	KabupatenPerusahaan         *string `json:"kabupaten_perusahaan" binding:"required"`
+	KecamatanPerusahaan         *string `json:"kecamatan_perusahaan" binding:"required"`
+	KelurahanPerusahaan         *string `json:"kelurahan_perusahaan" binding:"required"`
+	NomerPerusahaan             *string `json:"nomer_perusahaan" binding:"required"`
+	EmailPerusahaan             *string `json:"email_perusahaan" binding:"required"`
+	NamaPimpinan                *string `json:"nama_pimpinan" binding:"required"`
+	JabatanPimpinan             *string `json:"jabatan_pimpinan" binding:"required"`
+	JenisKelaminPimpinan        *string `json:"jenis_kelamin_pimpinan" binding:"required"`
+	ProvinsiPimpinanPerusahaan  *string `json:"provinsi_pimpinan_perusahaan" binding:"required"`
+	KabupatenPimpinanPerusahaan *string `json:"kabupaten_pimpinan_perusahaan" binding:"required"`
+	KecamatanPimpinanPerusahaan *string `json:"kecamatan_pimpinan_perusahaan" binding:"required"`
+	KelurahanPimpinanPerusahaan *string `json:"kelurahan_pimpinan_perusahaan" binding:"required"`
+	AlamatPimpinan              *string `json:"alamat_pimpinan_perusahaan" binding:"required"`
 
 	//Data Pengembang
-	NamaPengembang                         string `json:"nama_pengembang" binding:"required"`
-	WilayahAdministratifPengembang         string `json:"wilayah_administratif_pengembang" binding:"required"`
-	AlamatPengembang                       string `json:"alamat_pengembang" binding:"required"`
-	NomerPengembang                        string `json:"nomer_pengembang" binding:"required"`
-	EmailPengembang                        string `json:"email_pengembang" binding:"required"`
-	NamaPimpinanPengembang                 string `json:"nama_pimpinan_pengembang" binding:"required"`
-	JabatanPimpinanPengembang              string `json:"jabatan_pimpinan_pengembang" binding:"required"`
-	JenisKelaminPimpinanPengembang         string `json:"jenis_kelamin_pimpinan_pengembang" binding:"required"`
-	WilayahAdministratifPimpinanPengembang string `json:"wilayah_administratif_pimpinan_pengembang" binding:"required"`
-	AlamatPimpinanPengembang               string `json:"alamat_pimpinan_pengembang" binding:"required"`
+	NamaPengembang                 string `json:"nama_pengembang" binding:"required"`
+	ProvinsiPengembang             string `json:"provinsi_pengembang" binding:"required"`
+	KabupatenPengembang            string `json:"kabupaten_pengembang" binding:"required"`
+	KecamatanPengembang            string `json:"kecamatan_pengembang" binding:"required"`
+	KelurahanPengembang            string `json:"kelurahan_pengembang" binding:"required"`
+	AlamatPengembang               string `json:"alamat_pengembang" binding:"required"`
+	NomerPengembang                string `json:"nomer_pengembang" binding:"required"`
+	EmailPengembang                string `json:"email_pengembang" binding:"required"`
+	NamaPimpinanPengembang         string `json:"nama_pimpinan_pengembang" binding:"required"`
+	JabatanPimpinanPengembang      string `json:"jabatan_pimpinan_pengembang" binding:"required"`
+	JenisKelaminPimpinanPengembang string `json:"jenis_kelamin_pimpinan_pengembang" binding:"required"`
+	ProvinsiPimpinanPengembang     string `json:"provinsi_pimpinan_pengembang" binding:"required"`
+	KabupatenPimpinanPengembang    string `json:"kabupaten_pimpinan_pengembang" binding:"required"`
+	KecamatanPimpinanPengembang    string `json:"kecamatan_pimpinan_pengembang" binding:"required"`
+	KelurahanPimpinanPengembang    string `json:"kelurahan_pimpinan_pengembang" binding:"required"`
+	AlamatPimpinanPengembang       string `json:"alamat_pimpinan_pengembang" binding:"required"`
 
 	//Data Kegiatan
 	Aktivitas         string  `json:"aktivitas" binding:"required"`
@@ -305,58 +337,81 @@ type AndalalinResponse struct {
 	LokasiPengambilan string    `json:"lokasi_pengambilan,omitempty"`
 
 	//Data Proyek
-	NamaProyek                 string `json:"nama_proyek,omitempty"`
-	JenisProyek                string `json:"jenis_proyek,omitempty"`
-	WilayahAdministratifProyek string `json:"wilayah_administratif_proyek,omitempty"`
-	AlamatProyek               string `json:"alamat_proyek,omitempty"`
-	KodeJalan                  string `json:"kode_jalan,omitempty"`
-	NamaJalan                  string `json:"nama_jalan,omitempty"`
-	Kelurahan                  string `json:"kelurahan_jalan,omitempty"`
-	Kecamatan                  string `json:"kecamatan_jalan,omitempty"`
-	PangkalJalan               string `json:"pangkal_jalan,omitempty"`
-	UjungJalan                 string `json:"ujung_jalan,omitempty"`
-	PanjangJalan               string `json:"panjang_jalan,omitempty"`
-	LebarJalan                 string `json:"lebar_jalan,omitempty"`
-	PermukaanJalan             string `json:"permukaan_jalan,omitempty"`
-	FungsiJalan                string `json:"fungsi_jalan,omitempty"`
+	NamaProyek      string `json:"nama_proyek,omitempty"`
+	JenisProyek     string `json:"jenis_proyek,omitempty"`
+	NegaraProyek    string `json:"negara_proyek,omitempty"`
+	ProvinsiProyek  string `json:"provinsi_proyek,omitempty"`
+	KabupatenProyek string `json:"kabupaten_proyek,omitempty"`
+	KecamatanProyek string `json:"kecamatan_proyek,omitempty"`
+	KelurahanProyek string `json:"kelurahan_proyek,omitempty"`
+	AlamatProyek    string `json:"alamat_proyek,omitempty"`
+	KodeJalan       string `json:"kode_jalan,omitempty"`
+	KodeJalanMerge  string `json:"kode_jalan_merge,omitempty"`
+	NamaJalan       string `json:"nama_jalan,omitempty"`
+	PangkalJalan    string `json:"pangkal_jalan,omitempty"`
+	UjungJalan      string `json:"ujung_jalan,omitempty"`
+	PanjangJalan    string `json:"panjang_jalan,omitempty"`
+	LebarJalan      string `json:"lebar_jalan,omitempty"`
+	PermukaanJalan  string `json:"permukaan_jalan,omitempty"`
+	FungsiJalan     string `json:"fungsi_jalan,omitempty"`
 
 	//Data Pemohon
-	NikPemohon                  string  `json:"nik_pemohon,omitempty"`
-	NamaPemohon                 string  `json:"nama_pemohon,omitempty"`
-	EmailPemohon                string  `json:"email_pemohon,omitempty"`
-	TempatLahirPemohon          string  `json:"tempat_lahir_pemohon,omitempty"`
-	TanggalLahirPemohon         string  `json:"tanggal_lahir_pemohon,omitempty"`
-	WilayahAdministratifPemohon string  `json:"wilayah_administratif_pemohon,omitempty"`
-	AlamatPemohon               string  `json:"alamat_pemohon,omitempty"`
-	JenisKelaminPemohon         string  `json:"jenis_kelamin_pemohon,omitempty"`
-	NomerPemohon                string  `json:"nomer_pemohon,omitempty"`
-	JabatanPemohon              *string `json:"jabatan_pemohon,omitempty"`
-	NomerSertifikatPemohon      string  `json:"nomer_sertifikat_pemohon,omitempty"`
-	KlasifikasiPemohon          string  `json:"klasifikasi_pemohon,omitempty"`
+	NikPemohon             string  `json:"nik_pemohon,omitempty"`
+	NamaPemohon            string  `json:"nama_pemohon,omitempty"`
+	EmailPemohon           string  `json:"email_pemohon,omitempty"`
+	TempatLahirPemohon     string  `json:"tempat_lahir_pemohon,omitempty"`
+	TanggalLahirPemohon    string  `json:"tanggal_lahir_pemohon,omitempty"`
+	NegaraPemohon          string  `json:"negara_pemohon,omitempty"`
+	ProvinsiPemohon        string  `json:"provinsi_pemohon,omitempty"`
+	KabupatenPemohon       string  `json:"kabupaten_pemohon,omitempty"`
+	KecamatanPemohon       string  `json:"kecamatan_pemohon,omitempty"`
+	KelurahanPemohon       string  `json:"kelurahan_pemohon,omitempty"`
+	AlamatPemohon          string  `json:"alamat_pemohon,omitempty"`
+	JenisKelaminPemohon    string  `json:"jenis_kelamin_pemohon,omitempty"`
+	NomerPemohon           string  `json:"nomer_pemohon,omitempty"`
+	JabatanPemohon         *string `json:"jabatan_pemohon,omitempty"`
+	NomerSertifikatPemohon string  `json:"nomer_sertifikat_pemohon,omitempty"`
+	KlasifikasiPemohon     string  `json:"klasifikasi_pemohon,omitempty"`
 
 	//Data Perusahaan
-	NamaPerusahaan                 *string `json:"nama_perusahaan,omitempty"`
-	WilayahAdministratifPerusahaan *string `json:"wilayah_administratif_perusahaan,omitempty"`
-	AlamatPerusahaan               *string `json:"alamat_perusahaan,omitempty"`
-	NomerPerusahaan                *string `json:"nomer_perusahaan,omitempty"`
-	EmailPerusahaan                *string `json:"email_perusahaan,omitempty"`
-	NamaPimpinan                   *string `json:"nama_pimpinan,omitempty"`
-	JabatanPimpinan                *string `json:"jabatan_pimpinan,omitempty"`
-	JenisKelaminPimpinan           *string `json:"jenis_kelamin,omitempty"`
-	WilayahAdministratifPimpinan   *string `json:"wilayah_administratif_pimpinan,omitempty"`
-	AlamatPimpinan                 *string `json:"alamat_pimpinan,omitempty"`
+	NamaPerusahaan              *string `json:"nama_perusahaan,omitempty"`
+	NegaraPerusahaan            string  `json:"negara_perusahaan,omitempty"`
+	ProvinsiPerusahaan          *string `json:"provinsi_perusahaan,omitempty"`
+	KabupatenPerusahaan         *string `json:"kabupaten_perusahaan,omitempty"`
+	KecamatanPerusahaan         *string `json:"kecamatan_perusahaan,omitempty"`
+	KelurahanPerusahaan         *string `json:"kelurahan_perusahaan,omitempty"`
+	AlamatPerusahaan            *string `json:"alamat_perusahaan,omitempty"`
+	NomerPerusahaan             *string `json:"nomer_perusahaan,omitempty"`
+	EmailPerusahaan             *string `json:"email_perusahaan,omitempty"`
+	NamaPimpinan                *string `json:"nama_pimpinan,omitempty"`
+	JabatanPimpinan             *string `json:"jabatan_pimpinan,omitempty"`
+	JenisKelaminPimpinan        *string `json:"jenis_kelamin,omitempty"`
+	NegaraPimpinanPerusahaan    string  `json:"negara_pimpinan_perusahaan,omitempty"`
+	ProvinsiPimpinanPerusahaan  *string `json:"provinsi_pimpinan_perusahaan,omitempty"`
+	KabupatenPimpinanPerusahaan *string `json:"kabupaten_pimpinan_perusahaan,omitempty"`
+	KecamatanPimpinanPerusahaan *string `json:"kecamatan_pimpinan_perusahaan,omitempty"`
+	KelurahanPimpinanPerusahaan *string `json:"kelurahan_pimpinan_perusahaan,omitempty"`
+	AlamatPimpinan              *string `json:"alamat_pimpinan_perusahaan,omitempty"`
 
 	//Data Pengembang
-	NamaPengembang                         string `json:"nama_pengembang,omitempty"`
-	WilayahAdministratifPengembang         string `json:"wilayah_administratif_pengembang,omitempty"`
-	AlamatPengembang                       string `json:"alamat_pengembang,omitempty"`
-	NomerPengembang                        string `json:"nomer_pengembang,omitempty"`
-	EmailPengembang                        string `json:"email_pengembang,omitempty"`
-	NamaPimpinanPengembang                 string `json:"nama_pimpinan_pengembang,omitempty"`
-	JabatanPimpinanPengembang              string `json:"jabatan_pimpinan_pengembang,omitempty"`
-	JenisKelaminPimpinanPengembang         string `json:"jenis_kelamin_pimpinan_pengembang,omitempty"`
-	WilayahAdministratifPimpinanPengembang string `json:"wilayah_administratif_pimpinan_pengembang,omitempty"`
-	AlamatPimpinanPengembang               string `json:"alamat_pimpinan_pengembang,omitempty"`
+	NamaPengembang                 string `json:"nama_pengembang,omitempty"`
+	NegaraPengembang               string `json:"negara_pengembang,omitempty"`
+	ProvinsiPengembang             string `json:"provinsi_pengembang,omitempty"`
+	KabupatenPengembang            string `json:"kabupaten_pengembang,omitempty"`
+	KecamatanPengembang            string `json:"kecamatan_pengembang,omitempty"`
+	KelurahanPengembang            string `json:"kelurahan_pengembang,omitempty"`
+	AlamatPengembang               string `json:"alamat_pengembang,omitempty"`
+	NomerPengembang                string `json:"nomer_pengembang,omitempty"`
+	EmailPengembang                string `json:"email_pengembang,omitempty"`
+	NamaPimpinanPengembang         string `json:"nama_pimpinan_pengembang,omitempty"`
+	JabatanPimpinanPengembang      string `json:"jabatan_pimpinan_pengembang,omitempty"`
+	JenisKelaminPimpinanPengembang string `json:"jenis_kelamin_pimpinan_pengembang,omitempty"`
+	NegaraPimpinanPengembang       string `json:"negara_pimpinan_pengembang,omitempty"`
+	ProvinsiPimpinanPengembang     string `json:"provinsi_pimpinan_pengembang,omitempty"`
+	KabupatenPimpinanPengembang    string `json:"kabupaten_pimpinan_pengembang,omitempty"`
+	KecamatanPimpinanPengembang    string `json:"kecamatan_pimpinan_pengembang,omitempty"`
+	KelurahanPimpinanPengembang    string `json:"kelurahan_pimpinan_pengembang,omitempty"`
+	AlamatPimpinanPengembang       string `json:"alamat_pimpinan_pengembang,omitempty"`
 
 	//Data Kegiatan
 	Aktivitas         string  `json:"aktivitas,omitempty"`
@@ -378,11 +433,6 @@ type AndalalinResponse struct {
 	//Data Persetujuan
 	PersetujuanDokumen           string  `json:"persetujuan,omitempty"`
 	KeteranganPersetujuanDokumen *string `json:"keterangan_persetujuan,omitempty"`
-
-	//Data BAP
-	NomerBAPDasar       string `json:"nomer_bap_dasar,omitempty"`
-	NomerBAPPelaksanaan string `json:"nomer_bap_pelaksanaan,omitempty"`
-	TanggalBAP          string `json:"tanggal_bap,omitempty"`
 
 	//Persyaratan Permohonan
 	Persyaratan []string `json:"persyaratan,omitempty"`
@@ -467,11 +517,16 @@ type AndalalinResponseUser struct {
 	KlasifikasiPemohon     string  `json:"klasifikasi_pemohon,omitempty"`
 
 	//Data Proyek
-	NamaProyek                 string `json:"nama_proyek,omitempty"`
-	JenisProyek                string `json:"jenis_proyek,omitempty"`
-	NamaJalan                  string `json:"nama_jalan,omitempty"`
-	FungsiJalan                string `json:"fungsi_jalan,omitempty"`
-	WilayahAdministratifProyek string `json:"wilayah_administratif_proyek,omitempty"`
+	NamaProyek      string `json:"nama_proyek,omitempty"`
+	JenisProyek     string `json:"jenis_proyek,omitempty"`
+	NamaJalan       string `json:"nama_jalan,omitempty"`
+	FungsiJalan     string `json:"fungsi_jalan,omitempty"`
+	NegaraProyek    string `json:"negara_proyek,omitempty"`
+	ProvinsiProyek  string `json:"provinsi_proyek,omitempty"`
+	KabupatenProyek string `json:"kabupaten_proyek,omitempty"`
+	KecamatanProyek string `json:"kecamatan_proyek,omitempty"`
+	KelurahanProyek string `json:"kelurahan_proyek,omitempty"`
+	AlamatProyek    string `json:"alamat_proyek,omitempty"`
 
 	//Data Perusahaan
 	NamaPerusahaan *string `json:"nama_perusahaan,omitempty"`
