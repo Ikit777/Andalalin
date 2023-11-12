@@ -1452,7 +1452,6 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 			}
 		}
 
-		andalalin.PersyaratanTidakSesuai = nil
 		andalalin.StatusAndalalin = "Cek persyaratan"
 
 		ac.DB.Save(&andalalin)
@@ -1495,6 +1494,87 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "msg": "persyaratan berhasil diupdate"})
 }
 
+func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
+	id := ctx.Param("id_andalalin")
+	dokumen := ctx.Param("dokumen")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinDokumenCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var andalalin models.Andalalin
+	var perlalin models.Perlalin
+
+	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
+
+	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		return
+	}
+
+	file, err := ctx.FormFile("dokumen")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	uploadedFile, err := file.Open()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer uploadedFile.Close()
+
+	data, err := io.ReadAll(uploadedFile)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if andalalin.IdAndalalin != uuid.Nil {
+		if dokumen == "Checklist administrasi" {
+			itemIndex := -1
+
+			for i, item := range andalalin.Dokumen {
+				if item.Dokumen == "Checklist administrasi" {
+					itemIndex = i
+					break
+				}
+			}
+
+			andalalin.Dokumen[itemIndex].Berkas = data
+			if andalalin.PersyaratanTidakSesuai != nil {
+				andalalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
+			} else {
+				andalalin.StatusAndalalin = "Persyaratan terpenuhi"
+				andalalin.PersyaratanTidakSesuai = nil
+			}
+
+		}
+
+		ac.DB.Save(&andalalin)
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "msg": "Dokumen berhasil diupload"})
+}
 func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	var payload *models.Administrasi
 	id := ctx.Param("id_andalalin")

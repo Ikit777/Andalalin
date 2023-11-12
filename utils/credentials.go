@@ -31,6 +31,7 @@ func GetCredentialsByRole(role string) ([]string, error) {
 			repository.AndalalinKelolaTiket,
 			repository.AndalalinKeputusanHasil,
 			repository.AndalalinSurveiKepuasan,
+			repository.AndalalinDokumenCredential,
 
 			repository.ProductAddCredential,
 			repository.ProductDeleteCredential,
@@ -56,6 +57,7 @@ func GetCredentialsByRole(role string) ([]string, error) {
 			repository.AndalalinSurveyCredential,
 			repository.AndalalinKeputusanHasil,
 			repository.AndalalinSurveiKepuasan,
+			repository.AndalalinDokumenCredential,
 
 			repository.ProductAddCredential,
 			repository.ProductDeleteCredential,
@@ -71,6 +73,7 @@ func GetCredentialsByRole(role string) ([]string, error) {
 			repository.AndalalinSurveyCredential,
 			repository.AndalalinKelolaTiket,
 			repository.AndalalinSurveiKepuasan,
+			repository.AndalalinDokumenCredential,
 		}
 	case repository.OfficerRoleName:
 		// Officer credentials.
@@ -86,6 +89,7 @@ func GetCredentialsByRole(role string) ([]string, error) {
 		credentials = []string{
 			repository.AndalalinPengajuanCredential,
 			repository.AndalalinPersyaratanredential,
+			repository.AndalalinDokumenCredential,
 		}
 	default:
 		// Return error message.
