@@ -1692,7 +1692,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	}
 
 	for _, item := range payload.Data {
-		if item.Tidak != "" && item.Persyaratan != "MOU Kerjsa sama" {
+		if item.Tidak != "" && item.Kebutuhan == "Wajib" {
 			andalalin.PersyaratanTidakSesuai = append(andalalin.PersyaratanTidakSesuai, item.Persyaratan)
 		}
 	}

@@ -691,6 +691,7 @@ type Administrasi struct {
 
 type DataAdministrasi struct {
 	Persyaratan string `json:"persyaratan" binding:"required"`
+	Kebutuhan   string `json:"kebutuhan" binding:"required"`
 	Ada         string `json:"ada" binding:"required"`
 	Tidak       string `json:"tidak" binding:"required"`
 	Keterangan  string `json:"keterangan" binding:"required"`
