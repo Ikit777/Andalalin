@@ -317,7 +317,7 @@ type DaftarAndalalinResponse struct {
 	Kode             string    `json:"kode_andalalin,omitempty"`
 	TanggalAndalalin string    `json:"tanggal_andalalin,omitempty"`
 	Nama             string    `json:"nama_pemohon,omitempty"`
-	Email            string    `json:"email_pemohona,omitempty"`
+	Email            string    `json:"email_pemohon,omitempty"`
 	Pengembang       string    `json:"pengembang,omitempty"`
 	Petugas          string    `json:"petugas,omitempty"`
 	JenisAndalalin   string    `json:"jenis_andalalin,omitempty"`
