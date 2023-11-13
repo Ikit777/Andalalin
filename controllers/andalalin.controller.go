@@ -349,7 +349,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		Kode:             permohonan.Kode,
 		TanggalAndalalin: permohonan.TanggalAndalalin,
 		Nama:             permohonan.NamaPemohon,
-		Alamat:           permohonan.AlamatPemohon,
+		Pengembang:       permohonan.NamaPengembang,
 		JenisAndalalin:   permohonan.JenisAndalalin,
 		StatusAndalalin:  permohonan.StatusAndalalin,
 	}
@@ -543,7 +543,8 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		Kode:             permohonan.Kode,
 		TanggalAndalalin: permohonan.TanggalAndalalin,
 		Nama:             permohonan.NamaPemohon,
-		Alamat:           permohonan.AlamatPemohon,
+		Email:            permohonan.EmailPemohon,
+		Petugas:          permohonan.NamaPetugas,
 		JenisAndalalin:   permohonan.JenisAndalalin,
 		StatusAndalalin:  permohonan.StatusAndalalin,
 	}
@@ -924,7 +925,7 @@ func (ac *AndalalinController) GetPermohonanByIdUser(ctx *gin.Context) {
 				Kode:             s.Kode,
 				TanggalAndalalin: s.TanggalAndalalin,
 				Nama:             s.NamaPemohon,
-				Alamat:           s.AlamatPemohon,
+				Pengembang:       s.NamaPengembang,
 				JenisAndalalin:   s.JenisAndalalin,
 				StatusAndalalin:  s.StatusAndalalin,
 			})
@@ -935,7 +936,8 @@ func (ac *AndalalinController) GetPermohonanByIdUser(ctx *gin.Context) {
 				Kode:             s.Kode,
 				TanggalAndalalin: s.TanggalAndalalin,
 				Nama:             s.NamaPemohon,
-				Alamat:           s.AlamatPemohon,
+				Email:            s.EmailPemohon,
+				Petugas:          s.NamaPetugas,
 				JenisAndalalin:   s.JenisAndalalin,
 				StatusAndalalin:  s.StatusAndalalin,
 			})
@@ -1302,7 +1304,7 @@ func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
 				Kode:             s.Kode,
 				TanggalAndalalin: s.TanggalAndalalin,
 				Nama:             s.NamaPemohon,
-				Alamat:           s.AlamatPemohon,
+				Pengembang:       s.NamaPengembang,
 				JenisAndalalin:   s.JenisAndalalin,
 				StatusAndalalin:  s.StatusAndalalin,
 			})
@@ -1313,7 +1315,8 @@ func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
 				Kode:             s.Kode,
 				TanggalAndalalin: s.TanggalAndalalin,
 				Nama:             s.NamaPemohon,
-				Alamat:           s.AlamatPemohon,
+				Email:            s.EmailPemohon,
+				Petugas:          s.NamaPetugas,
 				JenisAndalalin:   s.JenisAndalalin,
 				StatusAndalalin:  s.StatusAndalalin,
 			})
@@ -1361,7 +1364,7 @@ func (ac *AndalalinController) GetPermohonan(ctx *gin.Context) {
 				Kode:             s.Kode,
 				TanggalAndalalin: s.TanggalAndalalin,
 				Nama:             s.NamaPemohon,
-				Alamat:           s.AlamatPemohon,
+				Pengembang:       s.NamaPengembang,
 				JenisAndalalin:   s.JenisAndalalin,
 				StatusAndalalin:  s.StatusAndalalin,
 			})
@@ -1372,7 +1375,8 @@ func (ac *AndalalinController) GetPermohonan(ctx *gin.Context) {
 				Kode:             s.Kode,
 				TanggalAndalalin: s.TanggalAndalalin,
 				Nama:             s.NamaPemohon,
-				Alamat:           s.AlamatPemohon,
+				Email:            s.EmailPemohon,
+				Petugas:          s.NamaPetugas,
 				JenisAndalalin:   s.JenisAndalalin,
 				StatusAndalalin:  s.StatusAndalalin,
 			})
@@ -1610,6 +1614,45 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			andalalin.Dokumen[itemIndex].Role = "User"
 			if andalalin.PersyaratanTidakSesuai != nil {
 				andalalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
+				justString := strings.Join(andalalin.PersyaratanTidakSesuai, "\n")
+
+				data := utils.PersyaratanTidakSesuai{
+					Kode:        andalalin.Kode,
+					Nama:        andalalin.NamaPemohon,
+					Tlp:         andalalin.NomerPemohon,
+					Jenis:       andalalin.JenisAndalalin,
+					Status:      andalalin.StatusAndalalin,
+					Persyaratan: justString,
+					Subject:     "Persyaratan tidak terpenuhi",
+				}
+
+				utils.SendEmailPersyaratan(andalalin.EmailPemohon, &data)
+
+				var user models.User
+				resultUser := ac.DB.First(&user, "id = ?", andalalin.IdUser)
+				if resultUser.Error != nil {
+					ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+					return
+				}
+
+				simpanNotif := models.Notifikasi{
+					IdUser: user.ID,
+					Title:  "Persyaratan tidak terpenuhi",
+					Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email atau permohonan untuk lebih lanjut",
+				}
+
+				ac.DB.Create(&simpanNotif)
+
+				if user.PushToken != "" {
+					notif := utils.Notification{
+						IdUser: user.ID,
+						Title:  "Persyaratan tidak terpenuhi",
+						Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek atau permohonan email untuk lebih lanjut",
+						Token:  user.PushToken,
+					}
+
+					utils.SendPushNotifications(&notif)
+				}
 			} else {
 				andalalin.StatusAndalalin = "Persyaratan terpenuhi"
 				andalalin.PersyaratanTidakSesuai = nil
@@ -1933,7 +1976,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		simpanNotif := models.Notifikasi{
 			IdUser: user.ID,
 			Title:  "Persyaratan tidak terpenuhi",
-			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email untuk lebih jelas",
+			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email atau permohonan untuk lebih lanjut",
 		}
 
 		ac.DB.Create(&simpanNotif)
@@ -1942,7 +1985,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 			notif := utils.Notification{
 				IdUser: user.ID,
 				Title:  "Persyaratan tidak terpenuhi",
-				Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email untuk lebih jelas",
+				Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email atau permohonan untuk lebih lanjut",
 				Token:  user.PushToken,
 			}
 
@@ -1981,7 +2024,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		simpanNotif := models.Notifikasi{
 			IdUser: user.ID,
 			Title:  "Persyaratan tidak terpenuhi",
-			Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email untuk lebih jelas",
+			Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email atau permohonan untuk lebih lanjut",
 		}
 
 		ac.DB.Create(&simpanNotif)
@@ -1990,7 +2033,7 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 			notif := utils.Notification{
 				IdUser: user.ID,
 				Title:  "Persyaratan tidak terpenuhi",
-				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email untuk lebih jelas",
+				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak terpenuhi, silahkan cek email atau permohonan untuk lebih lanjut",
 				Token:  user.PushToken,
 			}
 
@@ -2045,6 +2088,53 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
+	var payload *models.Kesanggupan
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var andalalin models.Andalalin
+
+	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+		return
+	}
+
+	// var path string
+
+	// if andalalin.Pemohon == "Perorangan" {
+	// 	path = "templates/tandaterimaTemplatePerorangan.html"
+	// } else {
+	// 	path = "templates/tandaterimaTemplate.html"
+	// }
 }
 
 func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
@@ -2204,7 +2294,8 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 					Kode:             perlalin.Kode,
 					TanggalAndalalin: perlalin.TanggalAndalalin,
 					Nama:             perlalin.NamaPemohon,
-					Alamat:           perlalin.AlamatPemohon,
+					Email:            perlalin.EmailPemohon,
+					Petugas:          perlalin.NamaPetugas,
 					JenisAndalalin:   perlalin.JenisAndalalin,
 					StatusAndalalin:  perlalin.StatusAndalalin,
 				})
@@ -2381,7 +2472,8 @@ func (ac *AndalalinController) GetAllSurvey(ctx *gin.Context) {
 					Kode:             perlalin.Kode,
 					TanggalAndalalin: perlalin.TanggalAndalalin,
 					Nama:             perlalin.NamaPemohon,
-					Alamat:           perlalin.AlamatPemohon,
+					Email:            perlalin.EmailPemohon,
+					Petugas:          perlalin.NamaPetugas,
 					JenisAndalalin:   perlalin.JenisAndalalin,
 					StatusAndalalin:  perlalin.StatusAndalalin,
 				})
@@ -2798,7 +2890,8 @@ func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
 						Kode:             perlalin.Kode,
 						TanggalAndalalin: perlalin.TanggalAndalalin,
 						Nama:             perlalin.NamaPemohon,
-						Alamat:           perlalin.AlamatPemohon,
+						Email:            perlalin.EmailPemohon,
+						Petugas:          perlalin.NamaPetugas,
 						JenisAndalalin:   perlalin.JenisAndalalin,
 						StatusAndalalin:  perlalin.StatusAndalalin,
 					})
@@ -3149,7 +3242,8 @@ func (ac *AndalalinController) GetAllAndalalinByTiketLevel2(ctx *gin.Context) {
 					Kode:             perlalin.Kode,
 					TanggalAndalalin: perlalin.TanggalAndalalin,
 					Nama:             perlalin.NamaPemohon,
-					Alamat:           perlalin.AlamatPemohon,
+					Email:            perlalin.EmailPemohon,
+					Petugas:          perlalin.NamaPetugas,
 					JenisAndalalin:   perlalin.JenisAndalalin,
 					StatusAndalalin:  perlalin.StatusAndalalin,
 				})
@@ -3896,7 +3990,8 @@ func (ac *AndalalinController) GetPermohonanPemasanganLalin(ctx *gin.Context) {
 				Kode:             s.Kode,
 				TanggalAndalalin: s.TanggalAndalalin,
 				Nama:             s.NamaPemohon,
-				Alamat:           s.AlamatPemohon,
+				Email:            s.EmailPemohon,
+				Petugas:          s.NamaPetugas,
 				JenisAndalalin:   s.JenisAndalalin,
 				StatusAndalalin:  s.StatusAndalalin,
 			})
@@ -4106,7 +4201,8 @@ func (ac *AndalalinController) GetAllPemasangan(ctx *gin.Context) {
 					Kode:             perlalin.Kode,
 					TanggalAndalalin: perlalin.TanggalAndalalin,
 					Nama:             perlalin.NamaPemohon,
-					Alamat:           perlalin.AlamatPemohon,
+					Email:            perlalin.EmailPemohon,
+					Petugas:          perlalin.NamaPetugas,
 					JenisAndalalin:   perlalin.JenisAndalalin,
 					StatusAndalalin:  perlalin.StatusAndalalin,
 				})

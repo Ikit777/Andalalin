@@ -317,7 +317,9 @@ type DaftarAndalalinResponse struct {
 	Kode             string    `json:"kode_andalalin,omitempty"`
 	TanggalAndalalin string    `json:"tanggal_andalalin,omitempty"`
 	Nama             string    `json:"nama_pemohon,omitempty"`
-	Alamat           string    `json:"alamat_pemohon,omitempty"`
+	Email            string    `json:"email_pemohona,omitempty"`
+	Pengembang       string    `json:"pengembang,omitempty"`
+	Petugas          string    `json:"petugas,omitempty"`
 	JenisAndalalin   string    `json:"jenis_andalalin,omitempty"`
 	StatusAndalalin  string    `json:"status_andalalin,omitempty"`
 }
@@ -750,4 +752,11 @@ type DataAdministrasi struct {
 	Ada         string `json:"ada" binding:"required"`
 	Tidak       string `json:"tidak" binding:"required"`
 	Keterangan  string `json:"keterangan" binding:"required"`
+}
+
+type Kesanggupan struct {
+	NomorSurat string `json:"nomor" binding:"required"`
+	Tanggal    string `json:"tangal" binding:"required"`
+	Bulan      string `json:"bulan" binding:"required"`
+	Tahun      string `json:"tahun" binding:"required"`
 }
