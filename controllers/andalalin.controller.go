@@ -235,7 +235,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	permohonan := models.Andalalin{
 		//Data Permohonan
 		IdUser:            currentUser.ID,
-		JenisAndalalin:    "Dokumen analisa dampak lalu lintas",
+		JenisAndalalin:    "Dokumen analisis dampak lalu lintas",
 		Bangkitan:         payload.Andalalin.Bangkitan,
 		Pemohon:           payload.Andalalin.Pemohon,
 		Kategori:          payload.Andalalin.KategoriJenisRencanaPembangunan,
