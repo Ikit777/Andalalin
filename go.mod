@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/oliveroneill/exponent-server-sdk-golang v0.0.0-20210823140141-d050598be512
 	github.com/spf13/viper v1.16.0
+	github.com/unidoc/unioffice v1.28.0
 	golang.org/x/crypto v0.9.0
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.25.2
@@ -16,7 +17,6 @@ require (
 
 require (
 	github.com/richardlehane/msoleps v1.0.1 // indirect
-	github.com/unidoc/unioffice v1.28.0 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 )
 
