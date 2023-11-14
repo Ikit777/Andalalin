@@ -123,6 +123,10 @@ type Andalalin struct {
 	//Data Persetujuan Dokumen
 	PersetujuanDokumen           string `gorm:"type:varchar(255);"`
 	KeteranganPersetujuanDokumen *string
+
+	//Data Surat Permohonan
+	Nomor   string `gorm:"type:varchar(255);"`
+	Tanggal string
 }
 
 type Perlalin struct {
@@ -185,6 +189,7 @@ type Perlalin struct {
 
 type PersyaratanPermohonan struct {
 	Persyaratan string
+	Tipe        string
 	Berkas      []byte
 }
 

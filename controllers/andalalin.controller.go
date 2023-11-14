@@ -18,6 +18,7 @@ import (
 	"github.com/Ikit777/E-Andalalin/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/unidoc/unioffice/document"
 	"gorm.io/gorm"
 
 	_ "time/tzdata"
@@ -97,6 +98,32 @@ func getEndOfMonth(year int, month time.Month) time.Time {
 
 func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
+}
+
+func htmlToWord(htmlContent string) ([]byte, error) {
+	doc := document.New()
+
+	err := parseHTML(doc, htmlContent)
+	if err != nil {
+		return nil, err
+	}
+
+	var wordBuffer bytes.Buffer
+
+	err = doc.Save(&wordBuffer)
+	if err != nil {
+		return nil, err
+	}
+
+	return wordBuffer.Bytes(), nil
+}
+
+func parseHTML(doc *document.Document, htmlContent string) error {
+	paragraph := doc.AddParagraph()
+	run := paragraph.AddRun()
+	run.AddText(htmlContent)
+
+	return nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -208,22 +235,22 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	for key, files := range form.File {
 		for _, file := range files {
 			// Save the uploaded file with key as prefix
-			file, err := file.Open()
+			filed, err := file.Open()
 
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			defer file.Close()
+			defer filed.Close()
 
-			data, err := io.ReadAll(file)
+			data, err := io.ReadAll(filed)
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
 
 			// Store the blob data in the map
-			persyaratan = append(persyaratan, models.PersyaratanPermohonan{Persyaratan: key, Berkas: data})
+			persyaratan = append(persyaratan, models.PersyaratanPermohonan{Persyaratan: key, Tipe: "Pdf", Berkas: data})
 
 		}
 	}
@@ -1396,12 +1423,14 @@ func (ac *AndalalinController) GetDokumen(ctx *gin.Context) {
 	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	var docs []byte
+	var tipe string
 
 	if andalalin.IdAndalalin != uuid.Nil {
 
 		for _, item := range andalalin.Dokumen {
 			if item.Dokumen == dokumen {
 				docs = item.Berkas
+				tipe = item.Tipe
 				break
 			}
 		}
@@ -1409,6 +1438,7 @@ func (ac *AndalalinController) GetDokumen(ctx *gin.Context) {
 		for _, item := range andalalin.Persyaratan {
 			if item.Persyaratan == dokumen {
 				docs = item.Berkas
+				tipe = item.Tipe
 				break
 			}
 		}
@@ -1431,7 +1461,7 @@ func (ac *AndalalinController) GetDokumen(ctx *gin.Context) {
 		}
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": docs})
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "tipe": tipe, "data": docs})
 }
 
 func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
@@ -1754,7 +1784,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		}{
 			Bangkitan:   bangkitan,
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.LokasiBangunan,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  andalalin.NamaPengembang,
 			Sertifikat:  andalalin.NomerSertifikatPemohon,
 			Klasifikasi: andalalin.KlasifikasiPemohon,
@@ -1868,6 +1898,9 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			andalalin.PersyaratanTidakSesuai = append(andalalin.PersyaratanTidakSesuai, item.Persyaratan)
 		}
 	}
+
+	andalalin.Nomor = payload.NomorSurat
+	andalalin.Tanggal = payload.TanggalSurat
 
 	ac.DB.Save(&andalalin)
 
@@ -2128,13 +2161,71 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
-	// var path string
+	var path string
 
-	// if andalalin.Pemohon == "Perorangan" {
-	// 	path = "templates/tandaterimaTemplatePerorangan.html"
-	// } else {
-	// 	path = "templates/tandaterimaTemplate.html"
-	// }
+	if andalalin.Pemohon == "Perorangan" {
+		path = "templates/suratPernyataanKesanggupanPerorangan.html"
+	} else {
+		path = "templates/suratPernyataanKesanggupanNonPerorangan.html"
+	}
+
+	t, err := template.ParseFiles(path)
+	if err != nil {
+		log.Fatal("Error reading the email template:", err)
+		return
+	}
+
+	var bangkitan string
+
+	switch andalalin.Bangkitan {
+	case "Bangkitan rendah":
+		bangkitan = "Rendah"
+	case "Bangkitan sedang":
+		bangkitan = "Sedang"
+	case "Bangkitan tinggi":
+		bangkitan = "Tinggi"
+	}
+
+	data := struct {
+		Nama       string
+		Jabatan    string
+		Alamat     string
+		Pengembang string
+		Bangkitan  string
+		Nomor      string
+		Tanggal    string
+		Bulan      string
+		Tahun      string
+		Kegiatan   string
+	}{
+		Nama:       andalalin.NamaPemohon,
+		Jabatan:    *andalalin.JabatanPemohon,
+		Alamat:     andalalin.AlamatPemohon + ", " + andalalin.KelurahanPemohon + ", " + andalalin.KecamatanPemohon + ", " + andalalin.KabupatenPemohon + ", " + andalalin.ProvinsiPemohon + ", " + andalalin.NegaraPemohon,
+		Pengembang: andalalin.NamaPengembang,
+		Bangkitan:  bangkitan,
+		Nomor:      andalalin.Nomor,
+		Tanggal:    andalalin.Tanggal[0:2],
+		Bulan:      utils.Month(andalalin.Tanggal[3:5]),
+		Tahun:      andalalin.Tanggal[6:10],
+		Kegiatan:   andalalin.JenisProyek,
+	}
+
+	buffer := new(bytes.Buffer)
+	if err = t.Execute(buffer, data); err != nil {
+		log.Fatal("Eror saat membaca template:", err)
+		return
+	}
+
+	wordBytes, err := htmlToWord(buffer.String())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan", Tipe: "Word", Berkas: wordBytes})
+
+	ac.DB.Save(&andalalin)
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Surat berhasil dibuat"})
 }
 
 func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
