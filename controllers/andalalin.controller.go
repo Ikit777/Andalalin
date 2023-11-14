@@ -2207,7 +2207,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		Tanggal:    andalalin.Tanggal[0:2],
 		Bulan:      utils.Month(andalalin.Tanggal[3:5]),
 		Tahun:      andalalin.Tanggal[6:10],
-		Kegiatan:   andalalin.JenisProyek,
+		Kegiatan:   andalalin.JenisProyek + " " + andalalin.Jenis,
 	}
 
 	buffer := new(bytes.Buffer)
