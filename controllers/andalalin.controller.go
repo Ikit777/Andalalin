@@ -1847,7 +1847,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		}{
 			Bangkitan:   bangkitan,
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.LokasiBangunan,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  andalalin.NamaPengembang,
 			Sertifikat:  andalalin.NomerSertifikatPemohon,
 			Klasifikasi: andalalin.KlasifikasiPemohon,

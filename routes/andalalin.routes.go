@@ -39,7 +39,7 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.POST("/checkadministrasi/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.CheckAdministrasi)
 	router.POST("/uploaddokumen/:id_andalalin/:dokumen", middleware.DeserializeUser(), uc.andalalinController.UploadDokumen)
 
-	router.POST("/pembuatankesanggupan/:id_andalalin/:dokumen", middleware.DeserializeUser(), uc.andalalinController.UploadDokumen)
+	router.POST("/pembuatansuratpernyataan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.PembuatanSuratPernyataan)
 
 	router.POST("/updatepersyaratan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.UpdatePersyaratan)
 
