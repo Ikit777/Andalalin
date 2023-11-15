@@ -2221,7 +2221,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		log.Fatal(err)
 	}
 
-	andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan", Tipe: "Word", Berkas: wordBytes})
+	andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: wordBytes})
 
 	ac.DB.Save(&andalalin)
 
