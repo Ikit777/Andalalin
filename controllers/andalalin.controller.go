@@ -2124,7 +2124,6 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
-	var payload *models.Kesanggupan
 	id := ctx.Param("id_andalalin")
 
 	config, _ := initializers.LoadConfig()
@@ -2145,11 +2144,6 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 			"error": true,
 			"msg":   "Permission denied",
 		})
-		return
-	}
-
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 

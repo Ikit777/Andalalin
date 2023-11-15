@@ -758,10 +758,3 @@ type DataAdministrasi struct {
 	Tidak       string `json:"tidak" binding:"required"`
 	Keterangan  string `json:"keterangan" binding:"required"`
 }
-
-type Kesanggupan struct {
-	NomorSurat string `json:"nomor" binding:"required"`
-	Tanggal    string `json:"tangal" binding:"required"`
-	Bulan      string `json:"bulan" binding:"required"`
-	Tahun      string `json:"tahun" binding:"required"`
-}
