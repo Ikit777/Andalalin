@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"io"
@@ -2211,6 +2212,8 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 
 	docBytes := buffer.Bytes()
 
+	base64Content := base64.StdEncoding.EncodeToString(docBytes)
+
 	andalalin.StatusAndalalin = "Memberikan pernyataan"
 
 	itemIndex := -1
@@ -2223,9 +2226,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.Dokumen[itemIndex].Berkas = docBytes
+		andalalin.Dokumen[itemIndex].Berkas = []byte(base64Content)
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docBytes})
+		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: []byte(base64Content)})
 	}
 
 	ac.DB.Save(&andalalin)
