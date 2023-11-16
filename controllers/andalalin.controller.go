@@ -2124,6 +2124,7 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
+	var payload *models.Kewajiban
 	id := ctx.Param("id_andalalin")
 
 	config, _ := initializers.LoadConfig()
@@ -2144,6 +2145,11 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 			"error": true,
 			"msg":   "Permission denied",
 		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
@@ -2191,6 +2197,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		Bulan      string
 		Tahun      string
 		Kegiatan   string
+		Data       []string
 	}{
 		Nama:       andalalin.NamaPemohon,
 		Jabatan:    *andalalin.JabatanPemohon,
@@ -2202,6 +2209,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		Bulan:      utils.Month(andalalin.Tanggal[3:5]),
 		Tahun:      andalalin.Tanggal[6:10],
 		Kegiatan:   andalalin.JenisProyek + " " + andalalin.Jenis,
+		Data:       payload.Kewajiban,
 	}
 
 	buffer := new(bytes.Buffer)

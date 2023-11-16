@@ -758,3 +758,7 @@ type DataAdministrasi struct {
 	Tidak       string `json:"tidak" binding:"required"`
 	Keterangan  string `json:"keterangan" binding:"required"`
 }
+
+type Kewajiban struct {
+	Kewajiban []string `json:"kewajiban" binding:"required"`
+}
