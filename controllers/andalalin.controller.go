@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"bytes"
-	"encoding/base64"
 	"fmt"
 	"html/template"
 	"io"
@@ -115,22 +114,25 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
 
-func replaceAll(input, old, new string) string {
-	return string(bytes.Replace([]byte(input), []byte(old), []byte(new), -1))
-}
+func generateXML(xmlTemplate []byte, data Kesanggupan) string {
+	// Create a template and parse the XML content
+	tmpl, err := template.New("docxTemplate").Parse(string(xmlTemplate))
+	if err != nil {
+		fmt.Println("Error parsing template:", err)
+		return ""
+	}
 
-func replaceSuratPernyataanKesanggupan(template string, data Kesanggupan) string {
-	template = replaceAll(template, "{{.Nama}}", data.Nama)
-	template = replaceAll(template, "{{.Jabatan}}", data.Jabatan)
-	template = replaceAll(template, "{{.Alamat}}", data.Alamat)
-	template = replaceAll(template, "{{.Pengembang}}", data.Pengembang)
-	template = replaceAll(template, "{{.Bangkitan}}", data.Bangkitan)
-	template = replaceAll(template, "{{.Nomor}}", data.Nomor)
-	template = replaceAll(template, "{{.Tanggal}}", data.Tanggal)
-	template = replaceAll(template, "{{.Bulan}}", data.Bulan)
-	template = replaceAll(template, "{{.Tahun}}", data.Tahun)
-	template = replaceAll(template, "{{.Kegiatan}}", data.Kegiatan)
-	return template
+	// Create a buffer to store the generated content
+	var buffer bytes.Buffer
+
+	// Execute the template with the data and write to the buffer
+	err = tmpl.Execute(&buffer, data)
+	if err != nil {
+		fmt.Println("Error executing template:", err)
+		return ""
+	}
+
+	return buffer.String()
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -2200,19 +2202,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
-	xmlContent := replaceSuratPernyataanKesanggupan(string(xmlTemplate), data)
-
-	buffer := new(bytes.Buffer)
-
-	_, kesalahan := buffer.WriteString(xmlContent)
-	if kesalahan != nil {
-		fmt.Println("Error writing to buffer:", err)
-		return
-	}
-
-	docBytes := buffer.Bytes()
-
-	base64Content := base64.StdEncoding.EncodeToString(docBytes)
+	xmlContent := generateXML(xmlTemplate, data)
 
 	andalalin.StatusAndalalin = "Memberikan pernyataan"
 
@@ -2226,9 +2216,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.Dokumen[itemIndex].Berkas = []byte(base64Content)
+		andalalin.Dokumen[itemIndex].Berkas = []byte(xmlContent)
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: []byte(base64Content)})
+		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: []byte(xmlContent)})
 	}
 
 	ac.DB.Save(&andalalin)
