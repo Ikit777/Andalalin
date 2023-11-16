@@ -2199,9 +2199,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		Kegiatan   string
 		Data       []string
 	}{
-		Nama:       andalalin.NamaPemohon,
-		Jabatan:    *andalalin.JabatanPemohon,
-		Alamat:     andalalin.AlamatPemohon + ", " + andalalin.KelurahanPemohon + ", " + andalalin.KecamatanPemohon + ", " + andalalin.KabupatenPemohon + ", " + andalalin.ProvinsiPemohon + ", " + andalalin.NegaraPemohon,
+		Nama:       andalalin.NamaPimpinanPengembang,
+		Jabatan:    andalalin.JabatanPimpinanPengembang,
+		Alamat:     andalalin.AlamatPimpinanPengembang + ", " + andalalin.KelurahanPimpinanPengembang + ", " + andalalin.KecamatanPimpinanPengembang + ", " + andalalin.KabupatenPimpinanPengembang + ", " + andalalin.ProvinsiPimpinanPengembang + ", " + andalalin.NegaraPimpinanPengembang,
 		Pengembang: andalalin.NamaPengembang,
 		Bangkitan:  bangkitan,
 		Nomor:      andalalin.Nomor,
