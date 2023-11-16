@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"sync"
@@ -39,20 +38,6 @@ type data struct {
 type komentar struct {
 	Nama     string
 	Komentar string
-}
-
-type Kesanggupan struct {
-	Nama       string
-	Jabatan    string
-	Alamat     string
-	Pengembang string
-	Bangkitan  string
-	Nomor      string
-	Tanggal    string
-	Bulan      string
-	Tahun      string
-	Kegiatan   string
-	Data       []string
 }
 
 func interval(hasil float64) string {
@@ -112,27 +97,6 @@ func getEndOfMonth(year int, month time.Month) time.Time {
 
 func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
-}
-
-func generateXML(xmlTemplate []byte, data Kesanggupan) string {
-	// Create a template and parse the XML content
-	tmpl, err := template.New("docxTemplate").Parse(string(xmlTemplate))
-	if err != nil {
-		fmt.Println("Error parsing template:", err)
-		return ""
-	}
-
-	// Create a buffer to store the generated content
-	var buffer bytes.Buffer
-
-	// Execute the template with the data and write to the buffer
-	err = tmpl.Execute(&buffer, data)
-	if err != nil {
-		fmt.Println("Error executing template:", err)
-		return ""
-	}
-
-	return buffer.String()
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -2170,6 +2134,14 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
+	path := "templates/suratPernyataanKesanggupan.html"
+
+	t, err := template.ParseFiles(path)
+	if err != nil {
+		log.Fatal("Error reading the email template:", err)
+		return
+	}
+
 	var bangkitan string
 
 	switch andalalin.Bangkitan {
@@ -2181,7 +2153,19 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		bangkitan = "Tinggi"
 	}
 
-	data := Kesanggupan{
+	data := struct {
+		Nama       string
+		Jabatan    string
+		Alamat     string
+		Pengembang string
+		Bangkitan  string
+		Nomor      string
+		Tanggal    string
+		Bulan      string
+		Tahun      string
+		Kegiatan   string
+		Data       []string
+	}{
 		Nama:       andalalin.NamaPimpinanPengembang,
 		Jabatan:    andalalin.JabatanPimpinanPengembang,
 		Alamat:     andalalin.AlamatPimpinanPengembang + ", " + andalalin.KelurahanPimpinanPengembang + ", " + andalalin.KecamatanPimpinanPengembang + ", " + andalalin.KabupatenPimpinanPengembang + ", " + andalalin.ProvinsiPimpinanPengembang + ", " + andalalin.NegaraPimpinanPengembang,
@@ -2195,14 +2179,16 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		Data:       payload.Kewajiban,
 	}
 
-	templateFile := "templates/suratPernyataanKesanggupan.xml"
-	xmlTemplate, err := os.ReadFile(templateFile)
-	if err != nil {
-		fmt.Println("Error reading template:", err)
+	buffer := new(bytes.Buffer)
+	if err = t.Execute(buffer, data); err != nil {
+		log.Fatal("Eror saat membaca template:", err)
 		return
 	}
 
-	xmlContent := generateXML(xmlTemplate, data)
+	docxContent := strings.ReplaceAll(buffer.String(), "<h1>", "# ")
+	docxContent = strings.ReplaceAll(docxContent, "</h1>", "\n")
+	docxContent = strings.ReplaceAll(docxContent, "<p>", "")
+	docxContent = strings.ReplaceAll(docxContent, "</p>", "\n\n")
 
 	andalalin.StatusAndalalin = "Memberikan pernyataan"
 
@@ -2216,9 +2202,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.Dokumen[itemIndex].Berkas = []byte(xmlContent)
+		andalalin.Dokumen[itemIndex].Berkas = []byte(docxContent)
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: []byte(xmlContent)})
+		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: []byte(docxContent)})
 	}
 
 	ac.DB.Save(&andalalin)
