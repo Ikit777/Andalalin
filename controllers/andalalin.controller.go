@@ -108,10 +108,6 @@ func createDocxFromHTML(buff *bytes.Buffer) ([]byte, error) {
 	finalXML := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
         <w:wordDocument xmlns:w="urn:schemas-microsoft-com:office:word">
             <w:body>
-			<w:sectPr>
-				<w:pgSz w:w="11952" w:h="16848"/> <!-- Page size: 8.3 x 11.7 inches -->
-				<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/> <!-- Margins: 1 inch each -->
-			</w:sectPr>
                 %s
             </w:body>
         </w:wordDocument>`, wordXML)
