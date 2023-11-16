@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 	"sync"
@@ -40,6 +39,20 @@ type data struct {
 type komentar struct {
 	Nama     string
 	Komentar string
+}
+
+type Kesanggupan struct {
+	Nama       string
+	Jabatan    string
+	Alamat     string
+	Pengembang string
+	Bangkitan  string
+	Nomor      string
+	Tanggal    string
+	Bulan      string
+	Tahun      string
+	Kegiatan   string
+	Data       []string
 }
 
 func interval(hasil float64) string {
@@ -101,21 +114,22 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
 
-func convertHTMLToDOCX(htmlContent *bytes.Buffer) ([]byte, error) {
-	cmd := exec.Command("pandoc", "--from=html", "--to=docx")
+func replaceAll(input, old, new string) string {
+	return string(bytes.Replace([]byte(input), []byte(old), []byte(new), -1))
+}
 
-	cmd.Stdin = strings.NewReader(htmlContent.String())
-
-	var docxOutput bytes.Buffer
-	cmd.Stdout = &docxOutput
-	cmd.Stderr = os.Stderr
-
-	err := cmd.Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return docxOutput.Bytes(), nil
+func replaceSuratPernyataanKesanggupan(template string, data Kesanggupan) string {
+	template = replaceAll(template, "{{.Nama}}", data.Nama)
+	template = replaceAll(template, "{{.Jabatan}}", data.Jabatan)
+	template = replaceAll(template, "{{.Alamat}}", data.Alamat)
+	template = replaceAll(template, "{{.Pengembang}}", data.Pengembang)
+	template = replaceAll(template, "{{.Bangkitan}}", data.Bangkitan)
+	template = replaceAll(template, "{{.Nomor}}", data.Nomor)
+	template = replaceAll(template, "{{.Tanggal}}", data.Tanggal)
+	template = replaceAll(template, "{{.Bulan}}", data.Bulan)
+	template = replaceAll(template, "{{.Tahun}}", data.Tahun)
+	template = replaceAll(template, "{{.Kegiatan}}", data.Kegiatan)
+	return template
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -2153,14 +2167,6 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
-	path := "templates/suratPernyataanKesanggupan.html"
-
-	t, err := template.ParseFiles(path)
-	if err != nil {
-		log.Fatal("Error reading the email template:", err)
-		return
-	}
-
 	var bangkitan string
 
 	switch andalalin.Bangkitan {
@@ -2172,19 +2178,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		bangkitan = "Tinggi"
 	}
 
-	data := struct {
-		Nama       string
-		Jabatan    string
-		Alamat     string
-		Pengembang string
-		Bangkitan  string
-		Nomor      string
-		Tanggal    string
-		Bulan      string
-		Tahun      string
-		Kegiatan   string
-		Data       []string
-	}{
+	data := Kesanggupan{
 		Nama:       andalalin.NamaPimpinanPengembang,
 		Jabatan:    andalalin.JabatanPimpinanPengembang,
 		Alamat:     andalalin.AlamatPimpinanPengembang + ", " + andalalin.KelurahanPimpinanPengembang + ", " + andalalin.KecamatanPimpinanPengembang + ", " + andalalin.KabupatenPimpinanPengembang + ", " + andalalin.ProvinsiPimpinanPengembang + ", " + andalalin.NegaraPimpinanPengembang,
@@ -2198,16 +2192,24 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		Data:       payload.Kewajiban,
 	}
 
-	buffer := new(bytes.Buffer)
-	if err = t.Execute(buffer, data); err != nil {
-		log.Fatal("Eror saat membaca template:", err)
+	templateFile := "templates/suratPernyataanKesanggupan.xml"
+	xmlTemplate, err := os.ReadFile(templateFile)
+	if err != nil {
+		fmt.Println("Error reading template:", err)
 		return
 	}
 
-	docxFile, err := convertHTMLToDOCX(buffer)
-	if err != nil {
-		log.Fatalf("Error generating HTML template: %v", err)
+	xmlContent := replaceSuratPernyataanKesanggupan(string(xmlTemplate), data)
+
+	buffer := new(bytes.Buffer)
+
+	_, kesalahan := buffer.WriteString(xmlContent)
+	if kesalahan != nil {
+		fmt.Println("Error writing to buffer:", err)
+		return
 	}
+
+	docBytes := buffer.Bytes()
 
 	andalalin.StatusAndalalin = "Memberikan pernyataan"
 
@@ -2221,9 +2223,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.Dokumen[itemIndex].Berkas = docxFile
+		andalalin.Dokumen[itemIndex].Berkas = docBytes
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docxFile})
+		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docBytes})
 	}
 
 	ac.DB.Save(&andalalin)

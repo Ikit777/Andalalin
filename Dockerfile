@@ -12,11 +12,6 @@ RUN apt-get update && apt-get install -y \
     wkhtmltopdf \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Pandoc
-RUN apt-get update \
-    && apt-get install -y pandoc \
-    && rm -rf /var/lib/apt/lists/*
-
 # Build the Go app
 RUN go build -o main .
 
