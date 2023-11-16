@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"bytes"
-	"encoding/base64"
 	"fmt"
 	"html/template"
 	"io"
@@ -100,25 +99,25 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
 
-func createDocxFromHTML(buff *bytes.Buffer) ([]byte, error) {
-	wordXML := strings.ReplaceAll(buff.String(), "<h1>", `<w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>`)
-	wordXML = strings.ReplaceAll(wordXML, "</h1>", `</w:t></w:r></w:p>`)
-	wordXML = strings.ReplaceAll(wordXML, "<p>", `<w:p><w:r><w:t>`)
-	wordXML = strings.ReplaceAll(wordXML, "</p>", `</w:t></w:r></w:p>`)
+// func createDocxFromHTML(buff *bytes.Buffer) ([]byte, error) {
+// 	wordXML := strings.ReplaceAll(buff.String(), "<h1>", `<w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>`)
+// 	wordXML = strings.ReplaceAll(wordXML, "</h1>", `</w:t></w:r></w:p>`)
+// 	wordXML = strings.ReplaceAll(wordXML, "<p>", `<w:p><w:r><w:t>`)
+// 	wordXML = strings.ReplaceAll(wordXML, "</p>", `</w:t></w:r></w:p>`)
 
-	finalXML := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
-        <w:wordDocument xmlns:w="urn:schemas-microsoft-com:office:word">
-            <w:body>
-			<w:sectPr>
-				<w:pgSz w:w="11952" w:h="16848"/> <!-- Page size: 8.3 x 11.7 inches -->
-				<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/> <!-- Margins: 1 inch each -->
-			</w:sectPr>
-                %s
-            </w:body>
-        </w:wordDocument>`, wordXML)
+// 	finalXML := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
+//         <w:wordDocument xmlns:w="urn:schemas-microsoft-com:office:word">
+//             <w:body>
+// 			<w:sectPr>
+// 				<w:pgSz w:w="11952" w:h="16848"/> <!-- Page size: 8.3 x 11.7 inches -->
+// 				<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/> <!-- Margins: 1 inch each -->
+// 			</w:sectPr>
+//                 %s
+//             </w:body>
+//         </w:wordDocument>`, wordXML)
 
-	return []byte(finalXML), nil
-}
+// 	return []byte(finalXML), nil
+// }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	var payload *models.DataAndalalin
@@ -2206,13 +2205,10 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
-	docxContent, err := createDocxFromHTML(buffer)
-	if err != nil {
-		fmt.Println("Error creating Word document:", err)
-		return
-	}
-
-	base64Content := base64.StdEncoding.EncodeToString(docxContent)
+	docxContent := strings.ReplaceAll(buffer.String(), "<h1>", "# ")
+	docxContent = strings.ReplaceAll(docxContent, "</h1>", "\n")
+	docxContent = strings.ReplaceAll(docxContent, "<p>", "")
+	docxContent = strings.ReplaceAll(docxContent, "</p>", "\n\n")
 
 	andalalin.StatusAndalalin = "Memberikan pernyataan"
 
@@ -2226,9 +2222,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.Dokumen[itemIndex].Berkas = []byte(base64Content)
+		andalalin.Dokumen[itemIndex].Berkas = []byte(docxContent)
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: []byte(base64Content)})
+		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: []byte(docxContent)})
 	}
 
 	ac.DB.Save(&andalalin)
