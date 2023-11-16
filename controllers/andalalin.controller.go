@@ -7,6 +7,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"sync"
@@ -99,25 +101,22 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
 
-// func createDocxFromHTML(buff *bytes.Buffer) ([]byte, error) {
-// 	wordXML := strings.ReplaceAll(buff.String(), "<h1>", `<w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>`)
-// 	wordXML = strings.ReplaceAll(wordXML, "</h1>", `</w:t></w:r></w:p>`)
-// 	wordXML = strings.ReplaceAll(wordXML, "<p>", `<w:p><w:r><w:t>`)
-// 	wordXML = strings.ReplaceAll(wordXML, "</p>", `</w:t></w:r></w:p>`)
+func convertHTMLToDOCX(htmlContent *bytes.Buffer) ([]byte, error) {
+	cmd := exec.Command("pandoc", "--from=html", "--to=docx")
 
-// 	finalXML := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
-//         <w:wordDocument xmlns:w="urn:schemas-microsoft-com:office:word">
-//             <w:body>
-// 			<w:sectPr>
-// 				<w:pgSz w:w="11952" w:h="16848"/> <!-- Page size: 8.3 x 11.7 inches -->
-// 				<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/> <!-- Margins: 1 inch each -->
-// 			</w:sectPr>
-//                 %s
-//             </w:body>
-//         </w:wordDocument>`, wordXML)
+	cmd.Stdin = strings.NewReader(htmlContent.String())
 
-// 	return []byte(finalXML), nil
-// }
+	var docxOutput bytes.Buffer
+	cmd.Stdout = &docxOutput
+	cmd.Stderr = os.Stderr
+
+	err := cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return docxOutput.Bytes(), nil
+}
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	var payload *models.DataAndalalin
@@ -2205,10 +2204,10 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
-	docxContent := strings.ReplaceAll(buffer.String(), "<h1>", "# ")
-	docxContent = strings.ReplaceAll(docxContent, "</h1>", "\n")
-	docxContent = strings.ReplaceAll(docxContent, "<p>", "")
-	docxContent = strings.ReplaceAll(docxContent, "</p>", "\n\n")
+	docxFile, err := convertHTMLToDOCX(buffer)
+	if err != nil {
+		log.Fatalf("Error generating HTML template: %v", err)
+	}
 
 	andalalin.StatusAndalalin = "Memberikan pernyataan"
 
@@ -2222,9 +2221,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.Dokumen[itemIndex].Berkas = []byte(docxContent)
+		andalalin.Dokumen[itemIndex].Berkas = docxFile
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: []byte(docxContent)})
+		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docxFile})
 	}
 
 	ac.DB.Save(&andalalin)
