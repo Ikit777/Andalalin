@@ -18,9 +18,6 @@ import (
 	"github.com/Ikit777/E-Andalalin/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/unidoc/unioffice/document"
-	"github.com/unidoc/unioffice/measurement"
-	"github.com/unidoc/unioffice/schema/soo/wml"
 	"gorm.io/gorm"
 
 	_ "time/tzdata"
@@ -102,36 +99,33 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
 
-func htmlToWord(htmlContent string) ([]byte, error) {
-	doc := document.New()
+func createDocxFromHTML(buff *bytes.Buffer) ([]byte, error) {
+	docContent := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
+	<w:wordDocument xmlns:w="urn:schemas-microsoft-com:office:word">
+		<w:body>
+			<w:sectPr>
+				<w:pgSz w:w="11952" w:h="16848"/> <!-- Page size: 8.3 x 11.7 inches -->
+				<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/> <!-- Margins: 1 inch each -->
+			</w:sectPr>
+			%s
+		</w:body>
+	</w:wordDocument>`, buff.String())
 
-	section := doc.BodySection()
+	wordContent := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
+        <pkg:package xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage">
+            <pkg:part pkg:name="/_rels/.rels" pkg:contentType="application/vnd.openxmlformats-package.relationships+xml" pkg:padding="512">
+                <pkg:xmlData>
+                    <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+                        <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+                    </Relationships>
+                </pkg:xmlData>
+            </pkg:part>
+            <pkg:part pkg:name="/word/document.xml" pkg:contentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml">
+                <pkg:xmlData>%s</pkg:xmlData>
+            </pkg:part>
+        </pkg:package>`, docContent)
 
-	section.SetPageSizeAndOrientation(measurement.Centimeter*21, measurement.Centimeter*29.7, wml.ST_PageOrientationPortrait)
-
-	section.SetPageMargins(measurement.Centimeter*2.54, measurement.Centimeter*2.54, measurement.Centimeter*2.54, measurement.Centimeter*2.54, measurement.Centimeter*1.25, measurement.Centimeter*1.25, measurement.Centimeter*1.25)
-
-	err := parseHTML(doc, htmlContent)
-	if err != nil {
-		return nil, err
-	}
-
-	var wordBuffer bytes.Buffer
-
-	err = doc.Save(&wordBuffer)
-	if err != nil {
-		return nil, err
-	}
-
-	return wordBuffer.Bytes(), nil
-}
-
-func parseHTML(doc *document.Document, htmlContent string) error {
-	paragraph := doc.AddParagraph()
-	run := paragraph.AddRun()
-	run.AddText(htmlContent)
-
-	return nil
+	return []byte(wordContent), nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -2220,14 +2214,15 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
-	wordBytes, err := htmlToWord(buffer.String())
+	docxContent, err := createDocxFromHTML(buffer)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Error creating Word document:", err)
+		return
 	}
 
 	andalalin.StatusAndalalin = "Memberikan pernyataan kesanggupan"
 
-	andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: wordBytes})
+	andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docxContent})
 
 	ac.DB.Save(&andalalin)
 
