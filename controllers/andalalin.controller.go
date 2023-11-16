@@ -19,6 +19,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/unidoc/unioffice/document"
+	"github.com/unidoc/unioffice/measurement"
+	"github.com/unidoc/unioffice/schema/soo/wml"
 	"gorm.io/gorm"
 
 	_ "time/tzdata"
@@ -102,6 +104,12 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 
 func htmlToWord(htmlContent string) ([]byte, error) {
 	doc := document.New()
+
+	section := doc.BodySection()
+
+	section.SetPageSizeAndOrientation(measurement.Centimeter*21, measurement.Centimeter*29.7, wml.ST_PageOrientationPortrait)
+
+	section.SetPageMargins(measurement.Centimeter*2.54, measurement.Centimeter*2.54, measurement.Centimeter*2.54, measurement.Centimeter*2.54, measurement.Centimeter*1.25, measurement.Centimeter*1.25, measurement.Centimeter*1.25)
 
 	err := parseHTML(doc, htmlContent)
 	if err != nil {
@@ -2161,13 +2169,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
-	var path string
-
-	if andalalin.Pemohon == "Perorangan" {
-		path = "templates/suratPernyataanKesanggupanPerorangan.html"
-	} else {
-		path = "templates/suratPernyataanKesanggupanNonPerorangan.html"
-	}
+	path := "templates/suratPernyataanKesanggupan.html"
 
 	t, err := template.ParseFiles(path)
 	if err != nil {
