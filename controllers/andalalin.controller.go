@@ -2211,7 +2211,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
-	andalalin.StatusAndalalin = "Memberikan pernyataan kesanggupan"
+	andalalin.StatusAndalalin = "Memberikan pernyataan"
 
 	itemIndex := -1
 
