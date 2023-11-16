@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"io"
@@ -108,6 +109,10 @@ func createDocxFromHTML(buff *bytes.Buffer) ([]byte, error) {
 	finalXML := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
         <w:wordDocument xmlns:w="urn:schemas-microsoft-com:office:word">
             <w:body>
+			<w:sectPr>
+				<w:pgSz w:w="11952" w:h="16848"/> <!-- Page size: 8.3 x 11.7 inches -->
+				<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/> <!-- Margins: 1 inch each -->
+			</w:sectPr>
                 %s
             </w:body>
         </w:wordDocument>`, wordXML)
@@ -2207,6 +2212,8 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
+	base64Content := base64.StdEncoding.EncodeToString(docxContent)
+
 	andalalin.StatusAndalalin = "Memberikan pernyataan"
 
 	itemIndex := -1
@@ -2219,9 +2226,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.Dokumen[itemIndex].Berkas = docxContent
+		andalalin.Dokumen[itemIndex].Berkas = []byte(base64Content)
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docxContent})
+		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: []byte(base64Content)})
 	}
 
 	ac.DB.Save(&andalalin)
