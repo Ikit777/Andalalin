@@ -125,21 +125,21 @@ func replacePlaceholder(text, placeholder, value string) string {
 }
 
 func fillPernyataan(docContent string, data Pernyataan) string {
-	docContent = replacePlaceholder(docContent, "{{.Nama}}", data.Nama)
-	docContent = replacePlaceholder(docContent, "{{.Jabatan}}", data.Jabatan)
-	docContent = replacePlaceholder(docContent, "{{.Alamat}}", data.Alamat)
-	docContent = replacePlaceholder(docContent, "{{.Pengembang}}", data.Pengembang)
-	docContent = replacePlaceholder(docContent, "{{.Bangkitan}}", data.Bangkitan)
-	docContent = replacePlaceholder(docContent, "{{.Nomor}}", data.Nomor)
-	docContent = replacePlaceholder(docContent, "{{.Tanggal}}", data.Tanggal)
-	docContent = replacePlaceholder(docContent, "{{.Bulan}}", data.Bulan)
-	docContent = replacePlaceholder(docContent, "{{.Tahun}}", data.Tahun)
-	docContent = replacePlaceholder(docContent, "{{.Kegiatan}}", data.Kegiatan)
+	docContent = replacePlaceholder(docContent, "{{Nama}}", data.Nama)
+	docContent = replacePlaceholder(docContent, "{{Jabatan}}", data.Jabatan)
+	docContent = replacePlaceholder(docContent, "{{Alamat}}", data.Alamat)
+	docContent = replacePlaceholder(docContent, "{{Pengembang}}", data.Pengembang)
+	docContent = replacePlaceholder(docContent, "{{Bangkitan}}", data.Bangkitan)
+	docContent = replacePlaceholder(docContent, "{{Nomor}}", data.Nomor)
+	docContent = replacePlaceholder(docContent, "{{Tanggal}}", data.Tanggal)
+	docContent = replacePlaceholder(docContent, "{{Bulan}}", data.Bulan)
+	docContent = replacePlaceholder(docContent, "{{Tahun}}", data.Tahun)
+	docContent = replacePlaceholder(docContent, "{{Kegiatan}}", data.Kegiatan)
 	listContent := ""
 	for i, item := range data.Kewajiban {
 		listContent += fmt.Sprintf("%d. %s\n", i+1, item)
 	}
-	docContent = replacePlaceholder(docContent, "{{.Kewajiban}}", listContent)
+	docContent = replacePlaceholder(docContent, "{{Kewajiban}}", listContent)
 
 	return docContent
 }
