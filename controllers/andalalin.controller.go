@@ -24,6 +24,8 @@ import (
 	_ "time/tzdata"
 
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
+
+	docx "github.com/lukasjarosch/go-docx"
 )
 
 type AndalalinController struct {
@@ -108,40 +110,6 @@ func getStartOfMonth(year int, month time.Month) time.Time {
 func getEndOfMonth(year int, month time.Month) time.Time {
 	nextMonth := getStartOfMonth(year, month).AddDate(0, 1, 0)
 	return nextMonth.Add(-time.Second)
-}
-
-func readFromFile(filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	return io.ReadAll(file)
-}
-
-func replacePlaceholder(text, placeholder, value string) string {
-	return strings.Replace(text, placeholder, value, -1)
-}
-
-func fillPernyataan(docContent string, data Pernyataan) string {
-	docContent = replacePlaceholder(docContent, "{{Nama}}", data.Nama)
-	docContent = replacePlaceholder(docContent, "{{Jabatan}}", data.Jabatan)
-	docContent = replacePlaceholder(docContent, "{{Alamat}}", data.Alamat)
-	docContent = replacePlaceholder(docContent, "{{Pengembang}}", data.Pengembang)
-	docContent = replacePlaceholder(docContent, "{{Bangkitan}}", data.Bangkitan)
-	docContent = replacePlaceholder(docContent, "{{Nomor}}", data.Nomor)
-	docContent = replacePlaceholder(docContent, "{{Tanggal}}", data.Tanggal)
-	docContent = replacePlaceholder(docContent, "{{Bulan}}", data.Bulan)
-	docContent = replacePlaceholder(docContent, "{{Tahun}}", data.Tahun)
-	docContent = replacePlaceholder(docContent, "{{Kegiatan}}", data.Kegiatan)
-	listContent := ""
-	for i, item := range data.Kewajiban {
-		listContent += fmt.Sprintf("%d. %s\n", i+1, item)
-	}
-	docContent = replacePlaceholder(docContent, "{{Kewajiban}}", listContent)
-
-	return docContent
 }
 
 func NewAndalalinController(DB *gorm.DB) AndalalinController {
@@ -2183,12 +2151,6 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
-	templatePath := "templates/suratPernyataanKesanggupan.docx"
-	templateBytes, err := readFromFile(templatePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	var bangkitan string
 
 	switch andalalin.Bangkitan {
@@ -2200,24 +2162,48 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		bangkitan = "Tinggi"
 	}
 
-	data := Pernyataan{
-		Nama:       andalalin.NamaPimpinanPengembang,
-		Jabatan:    andalalin.JabatanPimpinanPengembang,
-		Alamat:     andalalin.AlamatPimpinanPengembang + ", " + andalalin.KelurahanPimpinanPengembang + ", " + andalalin.KecamatanPimpinanPengembang + ", " + andalalin.KabupatenPimpinanPengembang + ", " + andalalin.ProvinsiPimpinanPengembang + ", " + andalalin.NegaraPimpinanPengembang,
-		Pengembang: andalalin.NamaPengembang,
-		Bangkitan:  bangkitan,
-		Nomor:      andalalin.Nomor,
-		Tanggal:    andalalin.Tanggal[0:2],
-		Bulan:      utils.Month(andalalin.Tanggal[3:5]),
-		Tahun:      andalalin.Tanggal[6:10],
-		Kegiatan:   andalalin.JenisProyek + " " + andalalin.Jenis,
-		Kewajiban:  payload.Kewajiban,
+	listContent := ""
+	for i, item := range payload.Kewajiban {
+		listContent += fmt.Sprintf("%d. %s\n", i+1, item)
 	}
 
-	modifiedDoc := fillPernyataan(string(templateBytes), data)
+	replaceMap := docx.PlaceholderMap{
+		"_nama_":       andalalin.NamaPimpinanPengembang,
+		"_jabatan_":    andalalin.JabatanPimpinanPengembang,
+		"_alamat_":     andalalin.AlamatPimpinanPengembang + ", " + andalalin.KelurahanPimpinanPengembang + ", " + andalalin.KecamatanPimpinanPengembang + ", " + andalalin.KabupatenPimpinanPengembang + ", " + andalalin.ProvinsiPimpinanPengembang + ", " + andalalin.NegaraPimpinanPengembang,
+		"_pengembang_": andalalin.NamaPengembang,
+		"_bangkitan_":  bangkitan,
+		"_nomor_":      andalalin.Nomor,
+		"_tanggal_":    andalalin.Tanggal[0:2],
+		"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
+		"_tahun_":      andalalin.Tanggal[6:10],
+		"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.Jenis,
+		"_kewajiban_":  listContent,
+	}
 
-	// Save the modified document to a byte slice
-	docBytes := []byte(modifiedDoc)
+	doc, err := docx.Open("templates/suratPernyataanKesanggupan.docx")
+	if err != nil {
+		panic(err)
+	}
+
+	// replace the keys with values from replaceMap
+	err = doc.ReplaceAll(replaceMap)
+	if err != nil {
+		panic(err)
+	}
+
+	tempFilePath := "temp.docx"
+	err = doc.WriteToFile(tempFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	docBytes, err := os.ReadFile(tempFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_ = os.Remove(tempFilePath)
 
 	andalalin.StatusAndalalin = "Memberikan pernyataan"
 
