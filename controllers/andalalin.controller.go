@@ -2165,9 +2165,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	listContent := ""
 	for i, item := range payload.Kewajiban {
 		if i == len(payload.Kewajiban)-1 {
-			listContent += fmt.Sprintf("%d.\t%s", i+1, item)
+			listContent += fmt.Sprint(i+1, ". ", item)
 		} else {
-			listContent += fmt.Sprintf("%d.\t%s\n", i+1, item)
+			listContent += fmt.Sprint(i+1, ". ", item, "\n")
 		}
 	}
 
