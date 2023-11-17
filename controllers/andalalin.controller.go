@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
@@ -38,6 +39,20 @@ type data struct {
 type komentar struct {
 	Nama     string
 	Komentar string
+}
+
+type Pernyataan struct {
+	Nama       string
+	Jabatan    string
+	Alamat     string
+	Pengembang string
+	Bangkitan  string
+	Nomor      string
+	Tanggal    string
+	Bulan      string
+	Tahun      string
+	Kegiatan   string
+	Kewajiban  []string
 }
 
 func interval(hasil float64) string {
@@ -93,6 +108,40 @@ func getStartOfMonth(year int, month time.Month) time.Time {
 func getEndOfMonth(year int, month time.Month) time.Time {
 	nextMonth := getStartOfMonth(year, month).AddDate(0, 1, 0)
 	return nextMonth.Add(-time.Second)
+}
+
+func readFromFile(filePath string) ([]byte, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	return io.ReadAll(file)
+}
+
+func replacePlaceholder(text, placeholder, value string) string {
+	return strings.Replace(text, placeholder, value, -1)
+}
+
+func fillPernyataan(docContent string, data Pernyataan) string {
+	docContent = replacePlaceholder(docContent, "{{.Nama}}", data.Nama)
+	docContent = replacePlaceholder(docContent, "{{.Jabatan}}", data.Jabatan)
+	docContent = replacePlaceholder(docContent, "{{.Alamat}}", data.Alamat)
+	docContent = replacePlaceholder(docContent, "{{.Pengembang}}", data.Pengembang)
+	docContent = replacePlaceholder(docContent, "{{.Bangkitan}}", data.Bangkitan)
+	docContent = replacePlaceholder(docContent, "{{.Nomor}}", data.Nomor)
+	docContent = replacePlaceholder(docContent, "{{.Tanggal}}", data.Tanggal)
+	docContent = replacePlaceholder(docContent, "{{.Bulan}}", data.Bulan)
+	docContent = replacePlaceholder(docContent, "{{.Tahun}}", data.Tahun)
+	docContent = replacePlaceholder(docContent, "{{.Kegiatan}}", data.Kegiatan)
+	listContent := ""
+	for i, item := range data.Kewajiban {
+		listContent += fmt.Sprintf("%d. %s\n", i+1, item)
+	}
+	docContent = replacePlaceholder(docContent, "{{.Kewajiban}}", listContent)
+
+	return docContent
 }
 
 func NewAndalalinController(DB *gorm.DB) AndalalinController {
@@ -2134,12 +2183,10 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		return
 	}
 
-	path := "templates/suratPernyataanKesanggupan.html"
-
-	t, err := template.ParseFiles(path)
+	templatePath := "templates/suratPernyataanKesanggupan.docx"
+	templateBytes, err := readFromFile(templatePath)
 	if err != nil {
-		log.Fatal("Error reading the email template:", err)
-		return
+		log.Fatal(err)
 	}
 
 	var bangkitan string
@@ -2153,19 +2200,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		bangkitan = "Tinggi"
 	}
 
-	data := struct {
-		Nama       string
-		Jabatan    string
-		Alamat     string
-		Pengembang string
-		Bangkitan  string
-		Nomor      string
-		Tanggal    string
-		Bulan      string
-		Tahun      string
-		Kegiatan   string
-		Data       []string
-	}{
+	data := Pernyataan{
 		Nama:       andalalin.NamaPimpinanPengembang,
 		Jabatan:    andalalin.JabatanPimpinanPengembang,
 		Alamat:     andalalin.AlamatPimpinanPengembang + ", " + andalalin.KelurahanPimpinanPengembang + ", " + andalalin.KecamatanPimpinanPengembang + ", " + andalalin.KabupatenPimpinanPengembang + ", " + andalalin.ProvinsiPimpinanPengembang + ", " + andalalin.NegaraPimpinanPengembang,
@@ -2176,19 +2211,13 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		Bulan:      utils.Month(andalalin.Tanggal[3:5]),
 		Tahun:      andalalin.Tanggal[6:10],
 		Kegiatan:   andalalin.JenisProyek + " " + andalalin.Jenis,
-		Data:       payload.Kewajiban,
+		Kewajiban:  payload.Kewajiban,
 	}
 
-	buffer := new(bytes.Buffer)
-	if err = t.Execute(buffer, data); err != nil {
-		log.Fatal("Eror saat membaca template:", err)
-		return
-	}
+	modifiedDoc := fillPernyataan(string(templateBytes), data)
 
-	docxContent := strings.ReplaceAll(buffer.String(), "<h1>", "# ")
-	docxContent = strings.ReplaceAll(docxContent, "</h1>", "\n")
-	docxContent = strings.ReplaceAll(docxContent, "<p>", "")
-	docxContent = strings.ReplaceAll(docxContent, "</p>", "\n\n")
+	// Save the modified document to a byte slice
+	docBytes := []byte(modifiedDoc)
 
 	andalalin.StatusAndalalin = "Memberikan pernyataan"
 
@@ -2202,9 +2231,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.Dokumen[itemIndex].Berkas = []byte(docxContent)
+		andalalin.Dokumen[itemIndex].Berkas = docBytes
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: []byte(docxContent)})
+		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docBytes})
 	}
 
 	ac.DB.Save(&andalalin)
