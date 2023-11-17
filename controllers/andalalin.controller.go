@@ -25,7 +25,7 @@ import (
 
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 
-	docx "github.com/lukasjarosch/go-docx"
+	"github.com/lukasjarosch/go-docx"
 )
 
 type AndalalinController struct {
