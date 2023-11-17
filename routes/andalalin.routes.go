@@ -81,6 +81,4 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.POST("/surveikepuasan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.SurveiKepuasan)
 	router.GET("/ceksurveikepuasan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.CekSurveiKepuasan)
 	router.GET("/hasilsurveikepuasan", middleware.DeserializeUser(), uc.andalalinController.HasilSurveiKepuasan)
-
-	router.POST("/convert/:base", uc.andalalinController.ConvertDocxToPdf)
 }

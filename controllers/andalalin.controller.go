@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 	"sync"
@@ -4320,36 +4319,4 @@ func (ac *AndalalinController) GetPemasangan(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": pemasangan})
-}
-
-func (ac *AndalalinController) ConvertDocxToPdf(ctx *gin.Context) {
-	base := ctx.Param("base")
-
-	// Create a temporary DOCX file.
-	tempDocxFile := "temp.docx"
-	errDocx := os.WriteFile(tempDocxFile, []byte(base), 0644)
-	if errDocx != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Gagal convert"})
-		return
-	}
-	defer os.Remove(tempDocxFile)
-
-	tempPdfFile := "temp.pdf"
-	cmd := exec.Command("wkhtmltopdf", tempDocxFile, tempPdfFile)
-	errPdf := cmd.Run()
-	if errPdf != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Gagal convert"})
-		return
-	}
-
-	// Read the resulting PDF file
-	pdfContent, err := os.ReadFile(tempPdfFile)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Gagal convert"})
-		return
-	}
-
-	defer os.Remove(tempPdfFile)
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": pdfContent})
 }
