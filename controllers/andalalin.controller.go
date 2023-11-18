@@ -1602,22 +1602,28 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 		return
 	}
 
-	file, err := ctx.FormFile("dokumen")
+	// file, err := ctx.FormFile("dokumen")
+	// if err != nil {
+	// 	ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
+
+	// uploadedFile, err := file.Open()
+	// if err != nil {
+	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 	return
+	// }
+	// defer uploadedFile.Close()
+
+	// data, err := io.ReadAll(uploadedFile)
+	// if err != nil {
+	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 	return
+	// }
+
+	form, err := ctx.MultipartForm()
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	uploadedFile, err := file.Open()
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	defer uploadedFile.Close()
-
-	data, err := io.ReadAll(uploadedFile)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -1632,7 +1638,26 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 				}
 			}
 
-			andalalin.Dokumen[itemIndex].Berkas = data
+			for _, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					andalalin.Dokumen[itemIndex].Berkas = data
+				}
+			}
+
 			andalalin.Dokumen[itemIndex].Role = "User"
 			if andalalin.PersyaratanTidakSesuai != nil {
 				andalalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
@@ -1677,9 +1702,43 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 				}
 			} else {
 				andalalin.StatusAndalalin = "Persyaratan terpenuhi"
+			}
+		}
 
+		if dokumen == "Surat pernyataan kesanggupan" {
+			itemPernyataan := -1
+
+			for i, item := range andalalin.Dokumen {
+				if item.Dokumen == "Surat pernyataan kesanggupan (word)" {
+					itemPernyataan = i
+					break
+				}
 			}
 
+			for key, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					if key == "Surat pernyataan kesanggupan (word)" {
+						andalalin.Dokumen[itemPernyataan].Berkas = data
+					} else {
+						andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (pdf)", Tipe: "Pdf", Berkas: data})
+					}
+
+				}
+			}
 		}
 
 		ac.DB.Save(&andalalin)
