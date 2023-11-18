@@ -1677,7 +1677,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 				}
 			} else {
 				andalalin.StatusAndalalin = "Persyaratan terpenuhi"
-				andalalin.PersyaratanTidakSesuai = nil
+
 			}
 
 		}
@@ -1883,6 +1883,10 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		}
 
 		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dishub", Dokumen: "Checklist administrasi", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+	}
+
+	if andalalin.PersyaratanTidakSesuai != nil {
+		andalalin.PersyaratanTidakSesuai = nil
 	}
 
 	for _, item := range payload.Data {
