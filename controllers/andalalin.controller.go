@@ -1065,6 +1065,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
 				Pertimbangan:           andalalin.Pertimbangan,
 
+				Persyaratan: persyaratan_andalalin,
+
 				//Dokumen Permohonan
 				Dokumen: dokumen_andalalin_user,
 			}

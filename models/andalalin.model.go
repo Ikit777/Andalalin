@@ -556,6 +556,8 @@ type AndalalinResponseUser struct {
 
 	Pertimbangan string `json:"pertimbangan,omitempty"`
 
+	Persyaratan []string `json:"persyaratan,omitempty"`
+
 	//Dokumen Permohonan
 	Dokumen []string `json:"dokumen,omitempty"`
 }
