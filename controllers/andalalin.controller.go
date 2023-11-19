@@ -1739,6 +1739,8 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 
 				}
 			}
+
+			andalalin.StatusAndalalin = "Menunggu pembayaran"
 		}
 
 		ac.DB.Save(&andalalin)
