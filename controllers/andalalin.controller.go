@@ -1602,25 +1602,6 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 		return
 	}
 
-	// file, err := ctx.FormFile("dokumen")
-	// if err != nil {
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
-	// uploadedFile, err := file.Open()
-	// if err != nil {
-	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	// defer uploadedFile.Close()
-
-	// data, err := io.ReadAll(uploadedFile)
-	// if err != nil {
-	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
 	form, err := ctx.MultipartForm()
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -1743,6 +1724,29 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			andalalin.StatusAndalalin = "Menunggu pembayaran"
 		}
 
+		if dokumen == "Bukti pembayaran" {
+			for key, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: key, Tipe: "Pdf", Berkas: data})
+
+				}
+			}
+			andalalin.StatusAndalalin = "Pembuatan surat keputusan"
+		}
 		ac.DB.Save(&andalalin)
 	}
 
