@@ -576,6 +576,7 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 	rencana := ctx.Param("rencana")
 	kriteria := ctx.Param("kriteria")
 	satuan := ctx.Param("satuan")
+	terbilang := ctx.Param("terbilang")
 	id := ctx.Param("id")
 
 	config, _ := initializers.LoadConfig()
@@ -630,7 +631,7 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 		jenis_rencana := []models.JenisRencana{}
 		jenis_rencana = append(jenis_rencana, models.JenisRencana{Jenis: rencana,
 			Kriteria: kriteria,
-			Satuan:   satuan})
+			Satuan:   satuan, Terbilang: terbilang})
 
 		master.RencanaPembangunan = append(master.RencanaPembangunan, models.Rencana{Kategori: kategori, JenisRencana: jenis_rencana})
 	}
@@ -638,7 +639,7 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 	if !jenisExists && kategoriExists {
 		master.RencanaPembangunan[itemIndex].JenisRencana = append(master.RencanaPembangunan[itemIndex].JenisRencana, models.JenisRencana{Jenis: rencana,
 			Kriteria: kriteria,
-			Satuan:   satuan})
+			Satuan:   satuan, Terbilang: terbilang})
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -740,6 +741,7 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 	newRencana := ctx.Param("rencana_new")
 	kriteria := ctx.Param("kriteria")
 	satuan := ctx.Param("satuan")
+	terbilang := ctx.Param("terbilang")
 	id := ctx.Param("id")
 
 	config, _ := initializers.LoadConfig()
@@ -790,7 +792,7 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 	if itemIndexKategori != -1 && itemIndexRencana != -1 {
 		master.RencanaPembangunan[itemIndexKategori].JenisRencana[itemIndexRencana] = models.JenisRencana{Jenis: newRencana,
 			Kriteria: kriteria,
-			Satuan:   satuan}
+			Satuan:   satuan, Terbilang: terbilang}
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
