@@ -329,7 +329,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		//Data Kegiatan
 		Aktivitas:         payload.Andalalin.Aktivitas,
 		Peruntukan:        payload.Andalalin.Peruntukan,
-		TotalLuasLahan:    payload.Andalalin.TotalLuasLahan,
+		TotalLuasLahan:    payload.Andalalin.TotalLuasLahan + " m²",
 		KriteriaKhusus:    payload.Andalalin.KriteriaKhusus,
 		NilaiKriteria:     payload.Andalalin.NilaiKriteria,
 		Terbilang:         payload.Andalalin.Terbilang,
