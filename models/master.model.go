@@ -66,9 +66,10 @@ type Rencana struct {
 }
 
 type JenisRencana struct {
-	Jenis    string
-	Kriteria string
-	Satuan   string
+	Jenis     string
+	Kriteria  string
+	Satuan    string
+	Terbilang string
 }
 
 type Jalan struct {

@@ -99,8 +99,10 @@ type Andalalin struct {
 	//Data Kegiatan
 	Aktivitas         string  `gorm:"type:varchar(255);not null"`
 	Peruntukan        string  `gorm:"type:varchar(255);not null"`
+	TotalLuasLahan    string  `gorm:"type:varchar(255);not null"`
 	KriteriaKhusus    *string `gorm:"type:varchar(255);"`
 	NilaiKriteria     *string `gorm:"type:varchar(255);"`
+	Terbilang         *string `gorm:"type:varchar(255);"`
 	LokasiBangunan    string  `gorm:"type:varchar(255);not null"`
 	LatitudeBangunan  float64
 	LongitudeBangunan float64
@@ -280,8 +282,10 @@ type InputAndalalin struct {
 	//Data Kegiatan
 	Aktivitas         string  `json:"aktivitas" binding:"required"`
 	Peruntukan        string  `json:"peruntukan" binding:"required"`
+	TotalLuasLahan    string  `json:"total_luas" binding:"required"`
 	KriteriaKhusus    *string `json:"kriteria_khusus" binding:"required"`
 	NilaiKriteria     *string `json:"nilai_kriteria" binding:"required"`
+	Terbilang         *string `json:"terbilang" binding:"required"`
 	LokasiBangunan    string  `json:"lokasi_bangunan" binding:"required"`
 	LatitudeBangunan  float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
 	LongitudeBangunan float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
@@ -423,6 +427,7 @@ type AndalalinResponse struct {
 	//Data Kegiatan
 	Aktivitas         string  `json:"aktivitas,omitempty"`
 	Peruntukan        string  `json:"peruntukan,omitempty"`
+	TotalLuasLahan    string  `json:"total_luas,omitempty"`
 	KriteriaKhusus    *string `json:"kriteria_khusus,omitempty"`
 	NilaiKriteria     *string `json:"nilai_kriteria,omitempty"`
 	LatitudeBangunan  float64 `json:"latitude,omitempty"`
@@ -544,6 +549,7 @@ type AndalalinResponseUser struct {
 	//Data Kegiatan
 	Aktivitas         string  `json:"aktivitas,omitempty"`
 	Peruntukan        string  `json:"peruntukan,omitempty"`
+	TotalLuasLahan    string  `json:"total_luas,omitempty"`
 	KriteriaKhusus    *string `json:"kriteria_khusus,omitempty"`
 	NilaiKriteria     *string `json:"nilai_kriteria,omitempty"`
 	LatitudeBangunan  float64 `json:"latitude,omitempty"`

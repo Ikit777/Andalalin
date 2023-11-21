@@ -43,20 +43,6 @@ type komentar struct {
 	Komentar string
 }
 
-type Pernyataan struct {
-	Nama       string
-	Jabatan    string
-	Alamat     string
-	Pengembang string
-	Bangkitan  string
-	Nomor      string
-	Tanggal    string
-	Bulan      string
-	Tahun      string
-	Kegiatan   string
-	Kewajiban  []string
-}
-
 func interval(hasil float64) string {
 	intervalNilai := ""
 	if hasil < 26.00 {
@@ -343,8 +329,10 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		//Data Kegiatan
 		Aktivitas:         payload.Andalalin.Aktivitas,
 		Peruntukan:        payload.Andalalin.Peruntukan,
+		TotalLuasLahan:    payload.Andalalin.TotalLuasLahan,
 		KriteriaKhusus:    payload.Andalalin.KriteriaKhusus,
 		NilaiKriteria:     payload.Andalalin.NilaiKriteria,
+		Terbilang:         payload.Andalalin.Terbilang,
 		LokasiBangunan:    payload.Andalalin.LokasiBangunan,
 		LatitudeBangunan:  payload.Andalalin.LatitudeBangunan,
 		LongitudeBangunan: payload.Andalalin.LongitudeBangunan,
@@ -1051,9 +1039,10 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				//Data Pengembang
 				NamaPengembang: andalalin.NamaPengembang,
 
-				//Data KEgiatan
+				//Data Kegiatan
 				Aktivitas:         andalalin.Aktivitas,
 				Peruntukan:        andalalin.Peruntukan,
+				TotalLuasLahan:    andalalin.TotalLuasLahan,
 				LokasiBangunan:    andalalin.LokasiBangunan,
 				LatitudeBangunan:  andalalin.LatitudeBangunan,
 				LongitudeBangunan: andalalin.LongitudeBangunan,
@@ -1167,6 +1156,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				//Data Kegiatan
 				Aktivitas:         andalalin.Aktivitas,
 				Peruntukan:        andalalin.Peruntukan,
+				TotalLuasLahan:    andalalin.TotalLuasLahan,
 				LokasiBangunan:    andalalin.LokasiBangunan,
 				LatitudeBangunan:  andalalin.LatitudeBangunan,
 				LongitudeBangunan: andalalin.LongitudeBangunan,
@@ -2302,6 +2292,8 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Surat berhasil dibuat"})
 }
 
+func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {}
+
 func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 	var payload *models.TambahPetugas
 	id := ctx.Param("id_andalalin")
@@ -2684,79 +2676,6 @@ func (ac *AndalalinController) GetSurvey(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
 }
 
-// func (ac *AndalalinController) LaporanBAP(ctx *gin.Context) {
-// 	var payload *models.BAPData
-// 	id := ctx.Param("id_andalalin")
-
-// 	config, _ := initializers.LoadConfig()
-
-// 	accessUser := ctx.MustGet("accessUser").(string)
-
-// 	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-// 	if error != nil {
-// 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-// 		return
-// 	}
-
-// 	credential := claim.Credentials[repository.AndalalinTindakLanjut]
-
-// 	if !credential {
-// 		// Return status 403 and permission denied error message.
-// 		ctx.JSON(http.StatusForbidden, gin.H{
-// 			"error": true,
-// 			"msg":   "Permission denied",
-// 		})
-// 		return
-// 	}
-
-// 	if err := ctx.ShouldBind(&payload); err != nil {
-// 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
-// 		return
-// 	}
-
-// 	file, err := ctx.FormFile("bap")
-// 	if err != nil {
-// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	uploadedFile, err := file.Open()
-// 	if err != nil {
-// 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-// 	defer uploadedFile.Close()
-
-// 	data, err := io.ReadAll(uploadedFile)
-// 	if err != nil {
-// 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	var andalalin models.Andalalin
-
-// 	resultAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-// 	if resultAndalalin.Error != nil {
-// 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultAndalalin.Error})
-// 		return
-// 	}
-
-// 	andalalin.NomerBAPDasar = payload.Data.NomerBAPDasar
-// 	andalalin.NomerBAPPelaksanaan = payload.Data.NomerBAPPelaksanaan
-// 	andalalin.TanggalBAP = payload.Data.TanggalBAP
-// 	andalalin.FileBAP = data
-// 	andalalin.StatusAndalalin = "Persetujuan dokumen"
-
-// 	result := ac.DB.Save(&andalalin)
-
-// 	if result.Error != nil {
-// 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
-// 		return
-// 	}
-
-// 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
-// }
-
 func (ac *AndalalinController) PersetujuanDokumen(ctx *gin.Context) {
 	var payload *models.Persetujuan
 	id := ctx.Param("id_andalalin")
@@ -2808,76 +2727,6 @@ func (ac *AndalalinController) PersetujuanDokumen(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
-
-// func (ac *AndalalinController) LaporanSK(ctx *gin.Context) {
-// 	id := ctx.Param("id_andalalin")
-
-// 	config, _ := initializers.LoadConfig()
-
-// 	accessUser := ctx.MustGet("accessUser").(string)
-
-// 	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-// 	if error != nil {
-// 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-// 		return
-// 	}
-
-// 	credential := claim.Credentials[repository.AndalalinTindakLanjut]
-
-// 	if !credential {
-// 		// Return status 403 and permission denied error message.
-// 		ctx.JSON(http.StatusForbidden, gin.H{
-// 			"error": true,
-// 			"msg":   "Permission denied",
-// 		})
-// 		return
-// 	}
-
-// 	var andalalin models.Andalalin
-
-// 	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-// 	if result.Error != nil {
-// 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
-// 		return
-// 	}
-
-// 	file, err := ctx.FormFile("sk")
-// 	if err != nil {
-// 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	uploadedFile, err := file.Open()
-// 	if err != nil {
-// 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-// 	defer uploadedFile.Close()
-
-// 	data, err := io.ReadAll(uploadedFile)
-// 	if err != nil {
-// 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	andalalin.FileSK = data
-
-// 	resultSK := ac.DB.Save(&andalalin)
-
-// 	if resultSK.Error != nil && strings.Contains(resultSK.Error.Error(), "duplicate key value violates unique") {
-// 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data SK sudah tersedia"})
-// 		return
-// 	} else if resultSK.Error != nil {
-// 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
-// 		return
-// 	}
-
-// 	ac.CloseTiketLevel1(ctx, andalalin.IdAndalalin)
-
-// 	ac.PermohonanSelesai(ctx, andalalin.IdAndalalin)
-
-// 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
-// }
 
 func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID) {
 	var andalalin models.Andalalin
