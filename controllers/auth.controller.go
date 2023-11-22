@@ -225,6 +225,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		Email     string    `json:"email,omitempty"`
 		Role      string    `json:"role,omitempty"`
 		Photo     []byte    `json:"photo,omitempty"`
+		Nip       *string   `json:"nip,omitempty"`
 		PushToken string    `json:"push_token,omitempty"`
 	}{
 		Access:    access_token,
@@ -234,6 +235,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		Email:     user.Email,
 		Role:      user.Role,
 		Photo:     user.Photo,
+		Nip:       user.NIP,
 		PushToken: user.PushToken,
 	}
 

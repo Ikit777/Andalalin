@@ -2270,7 +2270,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 
 	_ = os.Remove(tempFilePath)
 
-	andalalin.StatusAndalalin = "Memberikan pernyataan"
+	andalalin.StatusAndalalin = "Menunggu pernyataan"
 
 	itemIndex := -1
 
