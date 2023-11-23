@@ -2458,7 +2458,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 		itemIndex := -1
 
 		for i, item := range andalalin.Dokumen {
-			if item.Dokumen == "Checklist administrasi" {
+			if item.Dokumen == "Surat keputusan persetujuan teknis andalalin" {
 				itemIndex = i
 				break
 			}
