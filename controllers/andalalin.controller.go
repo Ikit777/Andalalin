@@ -187,13 +187,15 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 
 	pdfg.AddPage(page)
 
+	marginInMillimeters := 2.54 * 10
+
 	pdfg.Dpi.Set(300)
 	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
 	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(20)
-	pdfg.MarginLeft.Set(30)
-	pdfg.MarginRight.Set(30)
-	pdfg.MarginTop.Set(20)
+	pdfg.MarginBottom.Set(uint(marginInMillimeters))
+	pdfg.MarginLeft.Set(uint(marginInMillimeters))
+	pdfg.MarginRight.Set(uint(marginInMillimeters))
+	pdfg.MarginTop.Set(uint(marginInMillimeters))
 
 	err = pdfg.Create()
 	if err != nil {
@@ -467,13 +469,15 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 
 	pdfg.AddPage(page)
 
+	marginInMillimeters := 2.54 * 10
+
 	pdfg.Dpi.Set(300)
 	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
 	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(20)
-	pdfg.MarginLeft.Set(30)
-	pdfg.MarginRight.Set(30)
-	pdfg.MarginTop.Set(20)
+	pdfg.MarginBottom.Set(uint(marginInMillimeters))
+	pdfg.MarginLeft.Set(uint(marginInMillimeters))
+	pdfg.MarginRight.Set(uint(marginInMillimeters))
+	pdfg.MarginTop.Set(uint(marginInMillimeters))
 
 	err = pdfg.Create()
 	if err != nil {
@@ -1861,13 +1865,15 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 
 		pdfg.AddPage(page)
 
+		marginInMillimeters := 2.54 * 10
+
 		pdfg.Dpi.Set(300)
 		pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
 		pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-		pdfg.MarginBottom.Set(20)
-		pdfg.MarginLeft.Set(30)
-		pdfg.MarginRight.Set(30)
-		pdfg.MarginTop.Set(20)
+		pdfg.MarginBottom.Set(uint(marginInMillimeters))
+		pdfg.MarginLeft.Set(uint(marginInMillimeters))
+		pdfg.MarginRight.Set(uint(marginInMillimeters))
+		pdfg.MarginTop.Set(uint(marginInMillimeters))
 
 		err = pdfg.Create()
 		if err != nil {
@@ -1924,13 +1930,15 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 
 		pdfg.AddPage(page)
 
+		marginInMillimeters := 2.54 * 10
+
 		pdfg.Dpi.Set(300)
 		pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
 		pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-		pdfg.MarginBottom.Set(20)
-		pdfg.MarginLeft.Set(30)
-		pdfg.MarginRight.Set(30)
-		pdfg.MarginTop.Set(20)
+		pdfg.MarginBottom.Set(uint(marginInMillimeters))
+		pdfg.MarginLeft.Set(uint(marginInMillimeters))
+		pdfg.MarginRight.Set(uint(marginInMillimeters))
+		pdfg.MarginTop.Set(uint(marginInMillimeters))
 
 		err = pdfg.Create()
 		if err != nil {
