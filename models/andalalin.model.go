@@ -770,3 +770,12 @@ type DataAdministrasi struct {
 type Kewajiban struct {
 	Kewajiban []string `json:"kewajiban" binding:"required"`
 }
+
+type Keputusan struct {
+	NomorKeputusan     string `json:"nomor_keputusan" binding:"required"`
+	NomorLampiran      string `json:"nomor_lampiran" binding:"required"`
+	NomorKesanggupan   string `json:"nomor_kesanggupan" binding:"required"`
+	TanggalKesanggupan string `json:"tanggal_kesanggupan" binding:"required"`
+	NamaKadis          string `json:"nama_kadis" binding:"required"`
+	NipKadis           string `json:"nip_kadis" binding:"required"`
+}

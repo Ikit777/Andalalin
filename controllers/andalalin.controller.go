@@ -102,6 +102,15 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
 
+func customTitleCase(input string) string {
+	words := strings.Fields(input)
+	for i, word := range words {
+		words[i] = strings.ToUpper(string(word[0])) + strings.ToLower(word[1:])
+	}
+
+	return strings.Join(words, " ")
+}
+
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	var payload *models.DataAndalalin
 	currentUser := ctx.MustGet("currentUser").(models.User)
@@ -1839,7 +1848,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			Pengembang:  andalalin.NamaPengembang,
 			Sertifikat:  andalalin.NomerSertifikatPemohon,
 			Klasifikasi: andalalin.KlasifikasiPemohon,
-			Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(andalalin.Tanggal[3:5]) + " " + payload.TanggalSurat[6:10],
+			Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(payload.TanggalSurat[3:5]) + " " + payload.TanggalSurat[6:10],
 			Diterima:    andalalin.TanggalAndalalin,
 			Pemeriksaan: tanggal,
 			Status:      "Revisi",
@@ -1904,7 +1913,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			Pengembang:  andalalin.NamaPengembang,
 			Sertifikat:  andalalin.NomerSertifikatPemohon,
 			Klasifikasi: andalalin.KlasifikasiPemohon,
-			Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(andalalin.Tanggal[3:5]) + " " + payload.TanggalSurat[6:10],
+			Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(payload.TanggalSurat[3:5]) + " " + payload.TanggalSurat[6:10],
 			Diterima:    andalalin.TanggalAndalalin,
 			Pemeriksaan: tanggal,
 			Status:      "Baru",
@@ -2250,7 +2259,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		"_tanggal_":    andalalin.Tanggal[0:2],
 		"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
 		"_tahun_":      andalalin.Tanggal[6:10],
-		"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.Jenis,
+		"_kegiatan_":   andalalin.JenisProyek + " " + customTitleCase(andalalin.Jenis),
 		"_kewajiban_":  listContent,
 	}
 
@@ -2300,7 +2309,175 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Surat berhasil dibuat"})
 }
 
-func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {}
+func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
+	var payload *models.Keputusan
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var andalalin models.Andalalin
+
+	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+
+	if andalalin.Bangkitan == "Bangkitan rendah" {
+		t, err := template.ParseFiles("templates/suratKeputusanBangkitanRendah.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
+		}
+
+		var kegiatan string
+
+		if *andalalin.NilaiKriteria == "" || andalalin.NilaiKriteria == nil {
+			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + "<i>(terbilang meter persegi)</i>."
+		} else {
+			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " m² <i>(terbilang meter persegi)</i> dan " + *andalalin.KriteriaKhusus + " sebesar ± " + *andalalin.NilaiKriteria + " <i>(" + *andalalin.Terbilang + ")</i>."
+		}
+
+		keputusan := struct {
+			NomorKeputusan     string
+			JenisProyek        string
+			NamaProyek         string
+			Pengembang         string
+			AlamatPengembang   string
+			NomorPengembang    string
+			NamaPimpinan       string
+			JabatanPimpinan    string
+			JalanJudul         string
+			KelurahanJudul     string
+			KabupatenJudul     string
+			StatusJudul        string
+			ProvinsiJudul      string
+			NomorSurat         string
+			TanggalSurat       string
+			NomorKesanggupan   string
+			TanggalKesanggupan string
+			Jalan              string
+			Kelurahan          string
+			Kabupaten          string
+			Status             string
+			Provinsi           string
+			Kegiatan           string
+			NamaKadis          string
+			NipKadis           string
+			NomorLampiran      string
+			TahunTerbit        string
+		}{
+			NomorKeputusan:     payload.NomorKeputusan,
+			JenisProyek:        andalalin.JenisProyek,
+			NamaProyek:         andalalin.NamaProyek,
+			Pengembang:         andalalin.NamaPengembang,
+			AlamatPengembang:   andalalin.AlamatPengembang + ", " + andalalin.KelurahanPengembang + ", " + andalalin.KecamatanPengembang + ", " + andalalin.KabupatenPengembang + ", " + andalalin.ProvinsiPengembang + ", " + andalalin.NegaraPengembang,
+			NomorPengembang:    andalalin.NomerPengembang,
+			NamaPimpinan:       andalalin.NamaPimpinanPengembang,
+			JabatanPimpinan:    andalalin.JabatanPimpinanPengembang,
+			JalanJudul:         strings.ToUpper(andalalin.NamaJalan + " " + andalalin.KodeJalan),
+			KelurahanJudul:     strings.ToUpper(andalalin.KelurahanProyek),
+			KabupatenJudul:     strings.ToUpper(andalalin.KabupatenProyek),
+			StatusJudul:        strings.ToUpper(andalalin.FungsiJalan),
+			ProvinsiJudul:      strings.ToUpper(andalalin.ProvinsiProyek),
+			NomorSurat:         andalalin.Nomor,
+			TanggalSurat:       andalalin.Tanggal[0:2] + " " + utils.Month(andalalin.Tanggal[3:5]) + " " + andalalin.Tanggal[6:10],
+			NomorKesanggupan:   payload.NomorKesanggupan,
+			TanggalKesanggupan: payload.TanggalKesanggupan[0:2] + " " + utils.Month(payload.TanggalKesanggupan[3:5]) + " " + payload.TanggalKesanggupan[6:10],
+			Jalan:              andalalin.NamaJalan + " " + andalalin.KodeJalan,
+			Kelurahan:          andalalin.KelurahanProyek,
+			Kabupaten:          andalalin.KabupatenProyek,
+			Status:             andalalin.FungsiJalan,
+			Provinsi:           andalalin.ProvinsiProyek,
+			Kegiatan:           kegiatan,
+			NamaKadis:          payload.NamaKadis,
+			NipKadis:           payload.NamaKadis,
+			NomorLampiran:      payload.NomorLampiran,
+			TahunTerbit:        nowTime.Format("2006"),
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, keputusan); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfg, err := wkhtmltopdf.NewPDFGenerator()
+		if err != nil {
+			log.Fatal("Eror generate pdf", err)
+			return
+		}
+
+		// read the HTML page as a PDF page
+		page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
+
+		pdfg.AddPage(page)
+
+		marginInMillimeters := 2.54 * 10
+
+		pdfg.Dpi.Set(300)
+		pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
+		pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
+		pdfg.MarginBottom.Set(uint(marginInMillimeters))
+		pdfg.MarginLeft.Set(uint(marginInMillimeters))
+		pdfg.MarginRight.Set(uint(marginInMillimeters))
+		pdfg.MarginTop.Set(uint(marginInMillimeters))
+
+		err = pdfg.Create()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.Dokumen {
+			if item.Dokumen == "Checklist administrasi" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.Dokumen[itemIndex].Berkas = pdfg.Bytes()
+			andalalin.Dokumen[itemIndex].Role = "Dishub"
+		} else {
+			andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dishub", Dokumen: "Surat keputusan persetujuan teknis andalalin", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+		}
+	}
+
+	// andalalin.StatusAndalalin = "Menunggu persetujuan dokumen"
+
+	ac.DB.Save(&andalalin)
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
 
 func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 	var payload *models.TambahPetugas
