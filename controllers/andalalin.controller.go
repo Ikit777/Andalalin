@@ -2360,9 +2360,9 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 		var kegiatan string
 
 		if *andalalin.NilaiKriteria == "" || andalalin.NilaiKriteria == nil {
-			kegiatan = "Dengan luas lahan total sebesar &#177; " + andalalin.TotalLuasLahan + " (terbilang meter persegi)."
+			kegiatan = "Dengan luas lahan total sebesar &plusmn; " + andalalin.TotalLuasLahan + " (terbilang meter persegi)"
 		} else {
-			kegiatan = "Dengan luas lahan total sebesar &#177; " + andalalin.TotalLuasLahan + " (terbilang meter persegi) dan " + strings.ToLower(*andalalin.KriteriaKhusus) + " sebesar &#177; " + *andalalin.NilaiKriteria + " (terbilang " + *andalalin.Terbilang + ")."
+			kegiatan = "Dengan luas lahan total sebesar &plusmn; " + andalalin.TotalLuasLahan + " (terbilang meter persegi) dan " + strings.ToLower(*andalalin.KriteriaKhusus) + " sebesar &plusmn; " + *andalalin.NilaiKriteria + " (terbilang " + *andalalin.Terbilang + ")"
 		}
 
 		keputusan := struct {
@@ -2422,7 +2422,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			Provinsi:           andalalin.ProvinsiProyek,
 			Kegiatan:           kegiatan,
 			NamaKadis:          payload.NamaKadis,
-			NipKadis:           payload.NamaKadis,
+			NipKadis:           payload.NipKadis,
 			NomorLampiran:      payload.NomorLampiran,
 			TahunTerbit:        nowTime.Format("2006"),
 		}
