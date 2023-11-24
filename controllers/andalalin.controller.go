@@ -2390,7 +2390,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			Kabupaten          string
 			Status             string
 			Provinsi           string
-			Kegiatan           string
+			Kegiatan           template.HTML
 			NamaKadis          string
 			NipKadis           string
 			NomorLampiran      string
@@ -2420,7 +2420,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			Kabupaten:          andalalin.KabupatenProyek,
 			Status:             andalalin.FungsiJalan,
 			Provinsi:           andalalin.ProvinsiProyek,
-			Kegiatan:           kegiatan,
+			Kegiatan:           template.HTML(kegiatan),
 			NamaKadis:          payload.NamaKadis,
 			NipKadis:           payload.NipKadis,
 			NomorLampiran:      payload.NomorLampiran,
