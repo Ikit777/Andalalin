@@ -2360,15 +2360,17 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 		var kegiatan string
 
 		if *andalalin.NilaiKriteria == "" || andalalin.NilaiKriteria == nil {
-			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " <i>(terbilang meter persegi)</i>."
+			kegiatan = "Dengan luas lahan total sebesar &#177; " + andalalin.TotalLuasLahan + " &lt;i&gt;(terbilang meter persegi)&lt;&#47;i&gt;."
 		} else {
-			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " <i>(terbilang meter persegi)</i> dan " + *andalalin.KriteriaKhusus + " sebesar ± " + *andalalin.NilaiKriteria + " <i>(" + *andalalin.Terbilang + ")</i>."
+			kegiatan = "Dengan luas lahan total sebesar &#177; " + andalalin.TotalLuasLahan + " &lt;i&gt;(terbilang meter persegi)&lt;&#47;i&gt; dan " + strings.ToLower(*andalalin.KriteriaKhusus) + " sebesar &#177; " + *andalalin.NilaiKriteria + " &lt;i&gt;(terbilang " + *andalalin.Terbilang + ")&lt;&#47;i&gt;."
 		}
 
 		keputusan := struct {
 			NomorKeputusan     string
 			JenisProyek        string
+			JenisProyekJudul   string
 			NamaProyek         string
+			NamaProyekJudul    string
 			Pengembang         string
 			AlamatPengembang   string
 			NomorPengembang    string
@@ -2396,7 +2398,9 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 		}{
 			NomorKeputusan:     payload.NomorKeputusan,
 			JenisProyek:        andalalin.JenisProyek,
+			JenisProyekJudul:   strings.ToUpper(andalalin.JenisProyek),
 			NamaProyek:         andalalin.NamaProyek,
+			NamaProyekJudul:    strings.ToUpper(andalalin.NamaProyek),
 			Pengembang:         andalalin.NamaPengembang,
 			AlamatPengembang:   andalalin.AlamatPengembang + ", " + andalalin.KelurahanPengembang + ", " + andalalin.KecamatanPengembang + ", " + andalalin.KabupatenPengembang + ", " + andalalin.ProvinsiPengembang + ", " + andalalin.NegaraPengembang,
 			NomorPengembang:    andalalin.NomerPengembang,
