@@ -2360,9 +2360,9 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 		var kegiatan string
 
 		if *andalalin.NilaiKriteria == "" || andalalin.NilaiKriteria == nil {
-			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " (terbilang meter persegi)"
+			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " <i>(terbilang meter persegi)</i>"
 		} else {
-			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " (terbilang meter persegi) dan " + strings.ToLower(*andalalin.KriteriaKhusus) + " sebesar ± " + *andalalin.NilaiKriteria + " (terbilang " + *andalalin.Terbilang + ")"
+			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " <i>(terbilang meter persegi)</i> dan " + strings.ToLower(*andalalin.KriteriaKhusus) + " sebesar ± " + *andalalin.NilaiKriteria + " <i>(terbilang " + *andalalin.Terbilang + ")</i>"
 		}
 
 		keputusan := struct {
@@ -2390,7 +2390,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			Kabupaten          string
 			Status             string
 			Provinsi           string
-			Kegiatan           string
+			Kegiatan           template.HTML
 			NamaKadis          string
 			NipKadis           string
 			NomorLampiran      string
@@ -2420,7 +2420,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			Kabupaten:          andalalin.KabupatenProyek,
 			Status:             andalalin.FungsiJalan,
 			Provinsi:           andalalin.ProvinsiProyek,
-			Kegiatan:           kegiatan,
+			Kegiatan:           template.HTML(kegiatan),
 			NamaKadis:          payload.NamaKadis,
 			NipKadis:           payload.NipKadis,
 			NomorLampiran:      payload.NomorLampiran,
