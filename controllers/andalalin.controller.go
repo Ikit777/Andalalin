@@ -2360,9 +2360,9 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 		var kegiatan string
 
 		if *andalalin.NilaiKriteria == "" || andalalin.NilaiKriteria == nil {
-			kegiatan = "Dengan luas lahan total sebesar &plusmn; " + andalalin.TotalLuasLahan + " (terbilang meter persegi)"
+			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " <i>(terbilang meter persegi)</i>"
 		} else {
-			kegiatan = "Dengan luas lahan total sebesar &plusmn; " + andalalin.TotalLuasLahan + " (terbilang meter persegi) dan " + strings.ToLower(*andalalin.KriteriaKhusus) + " sebesar &plusmn; " + *andalalin.NilaiKriteria + " (terbilang " + *andalalin.Terbilang + ")"
+			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " <i>(terbilang meter persegi)</i> dan " + strings.ToLower(*andalalin.KriteriaKhusus) + " sebesar ± " + *andalalin.NilaiKriteria + " <i>(terbilang " + *andalalin.Terbilang + ")</i>"
 		}
 
 		keputusan := struct {
