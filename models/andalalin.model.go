@@ -612,7 +612,7 @@ type PersayaratanTidakSesuaiInput struct {
 
 type Pemeriksaan struct {
 	Hasil   string  `json:"hasil" binding:"required"`
-	Catatan *string `json:"catatn" binding:"required"`
+	Catatan *string `json:"catatan" binding:"required"`
 }
 
 type KeputusanHasil struct {
