@@ -1750,6 +1750,41 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			}
 			andalalin.StatusAndalalin = "Pembuatan surat keputusan"
 		}
+
+		if dokumen == "Surat keputusan persetujuan teknis andalalin" {
+			itenKeputusan := -1
+
+			for i, item := range andalalin.Dokumen {
+				if item.Dokumen == "Surat keputusan persetujuan teknis andalalin" {
+					itenKeputusan = i
+					break
+				}
+			}
+
+			for _, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					andalalin.Dokumen[itenKeputusan].Berkas = data
+				}
+			}
+
+			andalalin.Dokumen[itenKeputusan].Role = "User"
+			andalalin.StatusAndalalin = "Cek kelengkapan akhir"
+		}
+
 		ac.DB.Save(&andalalin)
 	}
 
@@ -2476,7 +2511,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 		}
 	}
 
-	andalalin.StatusAndalalin = "Pemeriksaan surat persetujuan"
+	andalalin.StatusAndalalin = "Pemeriksaan surat keputusan"
 
 	ac.DB.Save(&andalalin)
 
