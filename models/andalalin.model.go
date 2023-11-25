@@ -122,9 +122,9 @@ type Andalalin struct {
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `gorm:"serializer:json"`
 
-	//Data Persetujuan Dokumen
-	PersetujuanDokumen           string `gorm:"type:varchar(255);"`
-	KeteranganPersetujuanDokumen *string
+	//Pemeriksaan surat persetujuan
+	HasilPemeriksaan   string `gorm:"type:varchar(255);"`
+	CatatanPemeriksaan *string
 
 	//Data Surat Permohonan
 	Nomor   string `gorm:"type:varchar(255);"`
@@ -442,9 +442,9 @@ type AndalalinResponse struct {
 
 	Pertimbangan string `json:"pertimbangan,omitempty"`
 
-	//Data Persetujuan
-	PersetujuanDokumen           string  `json:"persetujuan,omitempty"`
-	KeteranganPersetujuanDokumen *string `json:"keterangan_persetujuan,omitempty"`
+	//Data Pemeriksaan Suat Persetujuan
+	HasilPemeriksaan   string  `json:"hasil_pemeriksaan,omitempty"`
+	CatatanPemeriksaan *string `json:"catatan_pemeriksaan,omitempty"`
 
 	//Persyaratan Permohonan
 	Persyaratan []string `json:"persyaratan,omitempty"`
@@ -610,9 +610,9 @@ type PersayaratanTidakSesuaiInput struct {
 	Persyaratan []string `json:"persyaratan" binding:"required"`
 }
 
-type Persetujuan struct {
-	Persetujuan string  `json:"persetujuan" binding:"required"`
-	Keterangan  *string `json:"keterangan" binding:"required"`
+type Pemeriksaan struct {
+	Hasil   string  `json:"hasil" binding:"required"`
+	Catatan *string `json:"catatn" binding:"required"`
 }
 
 type KeputusanHasil struct {

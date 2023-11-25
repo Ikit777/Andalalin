@@ -1186,9 +1186,9 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				//Dokumen Permohonan
 				Dokumen: dokumen_andalalin_dinas,
 
-				//Data Persertujuan
-				PersetujuanDokumen:           andalalin.PersetujuanDokumen,
-				KeteranganPersetujuanDokumen: andalalin.KeteranganPersetujuanDokumen,
+				//Data Pemeriksaan Surat Persetujuan
+				HasilPemeriksaan:   andalalin.HasilPemeriksaan,
+				CatatanPemeriksaan: andalalin.CatatanPemeriksaan,
 
 				//Data Pertimbangan
 				Pertimbangan: andalalin.Pertimbangan,
@@ -2865,8 +2865,8 @@ func (ac *AndalalinController) GetSurvey(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
 }
 
-func (ac *AndalalinController) PersetujuanDokumen(ctx *gin.Context) {
-	var payload *models.Persetujuan
+func (ac *AndalalinController) PemeriksaanSuratPersetujuan(ctx *gin.Context) {
+	var payload *models.Pemeriksaan
 	id := ctx.Param("id_andalalin")
 
 	config, _ := initializers.LoadConfig()
@@ -2903,13 +2903,12 @@ func (ac *AndalalinController) PersetujuanDokumen(ctx *gin.Context) {
 		return
 	}
 
-	andalalin.PersetujuanDokumen = payload.Persetujuan
-	andalalin.KeteranganPersetujuanDokumen = payload.Keterangan
-	if payload.Persetujuan == "Dokumen disetujui" {
-		andalalin.StatusAndalalin = "Pembuatan surat keputusan"
-		ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
+	andalalin.HasilPemeriksaan = payload.Hasil
+	andalalin.CatatanPemeriksaan = payload.Catatan
+	if payload.Hasil == "Surat persetujuan sesuai" {
+		andalalin.StatusAndalalin = "Menunggu persetujuan"
 	} else {
-		andalalin.StatusAndalalin = "Berita acara pemeriksaan"
+		andalalin.StatusAndalalin = "Pembuatan surat persetujuan"
 	}
 
 	ac.DB.Save(&andalalin)
