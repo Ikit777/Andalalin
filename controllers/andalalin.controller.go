@@ -2476,7 +2476,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 		}
 	}
 
-	// andalalin.StatusAndalalin = "Menunggu persetujuan dokumen"
+	andalalin.StatusAndalalin = "Pemeriksaan surat persetujuan"
 
 	ac.DB.Save(&andalalin)
 
