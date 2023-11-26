@@ -779,3 +779,14 @@ type Keputusan struct {
 	NamaKadis          string `json:"nama_kadis" binding:"required"`
 	NipKadis           string `json:"nip_kadis" binding:"required"`
 }
+
+type KelengkapanAkhir struct {
+	Kelengkapan []DataKelengkapanAkhir `json:"kelengkapan" binding:"required"`
+}
+
+type DataKelengkapanAkhir struct {
+	Dokumen    string `json:"dokumen" binding:"required"`
+	Ada        string `json:"ada" binding:"required"`
+	Tidak      string `json:"tidak" binding:"required"`
+	Keterangan string `json:"keterangan" binding:"required"`
+}

@@ -1867,6 +1867,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			Objek       string
 			Lokasi      string
 			Pengembang  string
+			Pemohon     string
 			Sertifikat  string
 			Klasifikasi string
 			Nomor       string
@@ -1881,6 +1882,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			Objek:       andalalin.Jenis,
 			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  andalalin.NamaPengembang,
+			Pemohon:     andalalin.NamaPemohon,
 			Sertifikat:  andalalin.NomerSertifikatPemohon,
 			Klasifikasi: andalalin.KlasifikasiPemohon,
 			Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(payload.TanggalSurat[3:5]) + " " + payload.TanggalSurat[6:10],
@@ -1932,6 +1934,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			Objek       string
 			Lokasi      string
 			Pengembang  string
+			Pemohon     string
 			Sertifikat  string
 			Klasifikasi string
 			Nomor       string
@@ -1946,6 +1949,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			Objek:       andalalin.Jenis,
 			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  andalalin.NamaPengembang,
+			Pemohon:     andalalin.NamaPemohon,
 			Sertifikat:  andalalin.NomerSertifikatPemohon,
 			Klasifikasi: andalalin.KlasifikasiPemohon,
 			Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(payload.TanggalSurat[3:5]) + " " + payload.TanggalSurat[6:10],
@@ -2512,6 +2516,148 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 	}
 
 	andalalin.StatusAndalalin = "Pemeriksaan surat keputusan"
+
+	ac.DB.Save(&andalalin)
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
+	var payload *models.KelengkapanAkhir
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig()
+
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var andalalin models.Andalalin
+
+	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
+
+	t, err := template.ParseFiles("templates/checklistKelengkapanAkhir.html")
+	if err != nil {
+		log.Fatal("Error reading the email template:", err)
+		return
+	}
+
+	var bangkitan string
+
+	switch andalalin.Bangkitan {
+	case "Bangkitan rendah":
+		bangkitan = "RENDAH"
+	case "Bangkitan sedang":
+		bangkitan = "SEDANG"
+	case "Bangkitan tinggi":
+		bangkitan = "TINGGI"
+	}
+
+	administrasi := struct {
+		Bangkitan   string
+		Objek       string
+		Lokasi      string
+		Pengembang  string
+		Pemohon     string
+		Sertifikat  string
+		Klasifikasi string
+		Diterima    string
+		Pemeriksaan string
+		Data        []models.DataKelengkapanAkhir
+		Operator    string
+		Nip         string
+	}{
+		Bangkitan:   bangkitan,
+		Objek:       andalalin.Jenis,
+		Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+		Pengembang:  andalalin.NamaPengembang,
+		Pemohon:     andalalin.NamaPemohon,
+		Sertifikat:  andalalin.NomerSertifikatPemohon,
+		Klasifikasi: andalalin.KlasifikasiPemohon,
+		Diterima:    andalalin.TanggalAndalalin,
+		Pemeriksaan: tanggal,
+		Data:        payload.Kelengkapan,
+		Operator:    currentUser.Name,
+		Nip:         *currentUser.NIP,
+	}
+
+	buffer := new(bytes.Buffer)
+	if err = t.Execute(buffer, administrasi); err != nil {
+		log.Fatal("Eror saat membaca template:", err)
+		return
+	}
+
+	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	if err != nil {
+		log.Fatal("Eror generate pdf", err)
+		return
+	}
+
+	// read the HTML page as a PDF page
+	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
+
+	pdfg.AddPage(page)
+
+	marginInMillimeters := 2.54 * 10
+
+	pdfg.Dpi.Set(300)
+	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
+	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
+	pdfg.MarginBottom.Set(uint(marginInMillimeters))
+	pdfg.MarginLeft.Set(uint(marginInMillimeters))
+	pdfg.MarginRight.Set(uint(marginInMillimeters))
+	pdfg.MarginTop.Set(uint(marginInMillimeters))
+
+	err = pdfg.Create()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	itemIndex := -1
+
+	for i, item := range andalalin.Dokumen {
+		if item.Dokumen == "Checklist kelengkapan akhir" {
+			itemIndex = i
+			break
+		}
+	}
+
+	if itemIndex != -1 {
+		andalalin.Dokumen[itemIndex].Berkas = pdfg.Bytes()
+		andalalin.Dokumen[itemIndex].Role = "Dishub"
+	} else {
+		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dishub", Dokumen: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+	}
 
 	ac.DB.Save(&andalalin)
 
