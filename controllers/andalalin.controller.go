@@ -1686,6 +1686,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 				}
 			} else {
 				andalalin.StatusAndalalin = "Persyaratan terpenuhi"
+				ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, andalalin.IdAndalalin)
 			}
 		}
 
@@ -1783,6 +1784,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 
 			andalalin.Dokumen[itenKeputusan].Role = "User"
 			andalalin.StatusAndalalin = "Cek kelengkapan akhir"
+			ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
 		}
 
 		ac.DB.Save(&andalalin)
@@ -2445,7 +2447,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			NomorPengembang:    andalalin.NomerPengembang,
 			NamaPimpinan:       andalalin.NamaPimpinanPengembang,
 			JabatanPimpinan:    andalalin.JabatanPimpinanPengembang,
-			JalanJudul:         strings.ToUpper(andalalin.NamaJalan + " " + andalalin.KodeJalan),
+			JalanJudul:         strings.ToUpper("JALAN " + andalalin.NamaJalan + " " + "DENGAN NOMOR RUAS JALAN " + andalalin.KodeJalan),
 			KelurahanJudul:     strings.ToUpper(andalalin.KelurahanProyek),
 			KabupatenJudul:     strings.ToUpper(andalalin.KabupatenProyek),
 			StatusJudul:        strings.ToUpper(andalalin.FungsiJalan),
@@ -2454,7 +2456,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			TanggalSurat:       andalalin.Tanggal[0:2] + " " + utils.Month(andalalin.Tanggal[3:5]) + " " + andalalin.Tanggal[6:10],
 			NomorKesanggupan:   payload.NomorKesanggupan,
 			TanggalKesanggupan: payload.TanggalKesanggupan[0:2] + " " + utils.Month(payload.TanggalKesanggupan[3:5]) + " " + payload.TanggalKesanggupan[6:10],
-			Jalan:              andalalin.NamaJalan + " " + andalalin.KodeJalan,
+			Jalan:              "Jalan " + andalalin.NamaJalan + " " + "dengan Nomor Ruas Jalan " + andalalin.KodeJalan,
 			Kelurahan:          andalalin.KelurahanProyek,
 			Kabupaten:          andalalin.KabupatenProyek,
 			Status:             andalalin.FungsiJalan,
