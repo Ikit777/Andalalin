@@ -1009,6 +1009,20 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		}
 	}
 
+	var kelengkapan_user []string
+	for _, dokumen := range andalalin.KelengkapanTidakSesuai {
+		if dokumen.Role == "User" {
+			kelengkapan_user = append(kelengkapan_user, dokumen.Dokumen)
+		}
+	}
+
+	var kelengkapan_dinas []string
+	for _, dokumen := range andalalin.KelengkapanTidakSesuai {
+		if dokumen.Role == "Dinas" {
+			kelengkapan_dinas = append(kelengkapan_dinas, dokumen.Dokumen)
+		}
+	}
+
 	if andalalin.IdAndalalin != uuid.Nil {
 		if currentUser.Role == "User" {
 			dataUser := models.AndalalinResponseUser{
@@ -1071,6 +1085,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 
 				//Dokumen Permohonan
 				Dokumen: dokumen_andalalin_user,
+
+				KelengkapanTidakSesuai: kelengkapan_user,
 			}
 
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
@@ -1192,6 +1208,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 
 				//Data Pertimbangan
 				Pertimbangan: andalalin.Pertimbangan,
+
+				KelengkapanTidakSesuai: kelengkapan_dinas,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 		}
