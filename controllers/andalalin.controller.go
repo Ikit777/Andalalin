@@ -2717,6 +2717,10 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dishub", Dokumen: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfg.Bytes()})
 	}
 
+	if andalalin.KelengkapanTidakSesuai != nil {
+		andalalin.KelengkapanTidakSesuai = nil
+	}
+
 	for _, data := range payload.Kelengkapan {
 		if data.Tidak != "" {
 			for _, kelengkapan := range data.Dokumen {
