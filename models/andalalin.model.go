@@ -116,6 +116,9 @@ type Andalalin struct {
 	//Dokumen Permohonan
 	Dokumen []DokumenPermohonan `gorm:"serializer:json"`
 
+	//Kelengkapan Tidak Sesuai
+	KelengkapanTidakSesuai []KelengkapanTidakSesuai `gorm:"serializer:json"`
+
 	//Petimbangan
 	Pertimbangan string
 
@@ -200,6 +203,11 @@ type DokumenPermohonan struct {
 	Dokumen string
 	Tipe    string
 	Berkas  []byte
+}
+
+type KelengkapanTidakSesuai struct {
+	Dokumen string
+	Role    string
 }
 
 type InputAndalalin struct {
@@ -451,6 +459,9 @@ type AndalalinResponse struct {
 
 	//Dokumen Permohonan
 	Dokumen []string `json:"dokumen,omitempty"`
+
+	//Perlengkapan Tidak Sesuai
+	KelengkapanTidakSesuai []string `json:"kelengkapan,omitempty"`
 }
 
 type PerlalinResponse struct {
@@ -566,6 +577,9 @@ type AndalalinResponseUser struct {
 
 	//Dokumen Permohonan
 	Dokumen []string `json:"dokumen,omitempty"`
+
+	//Perlengkapan Tidak Sesuai
+	KelengkapanTidakSesuai []string `json:"kelengkapan,omitempty"`
 }
 
 type PerlalinResponseUser struct {
@@ -785,8 +799,10 @@ type KelengkapanAkhir struct {
 }
 
 type DataKelengkapanAkhir struct {
-	Dokumen    string `json:"dokumen" binding:"required"`
-	Ada        string `json:"ada" binding:"required"`
-	Tidak      string `json:"tidak" binding:"required"`
-	Keterangan string `json:"keterangan" binding:"required"`
+	Uraian     string   `json:"uraian" binding:"required"`
+	Dokumen    []string `json:"dokumen" binding:"required"`
+	Role       string   `json:"role" binding:"required"`
+	Ada        string   `json:"ada" binding:"required"`
+	Tidak      string   `json:"tidak" binding:"required"`
+	Keterangan string   `json:"keterangan" binding:"required"`
 }

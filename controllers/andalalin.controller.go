@@ -1787,6 +1787,44 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
 		}
 
+		if dokumen == "Checklist kelengkapan akhir" {
+			itemKelengkapan := -1
+
+			for i, item := range andalalin.Dokumen {
+				if item.Dokumen == "Checklist kelengkapan akhir" {
+					itemKelengkapan = i
+					break
+				}
+			}
+
+			for _, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					andalalin.Dokumen[itemKelengkapan].Berkas = data
+				}
+			}
+
+			andalalin.Dokumen[itemKelengkapan].Role = "User"
+
+			if andalalin.PersyaratanTidakSesuai != nil {
+				andalalin.StatusAndalalin = "Kelengkapan tidak terpenuhi"
+			} else {
+				ac.PermohonanSelesai(ctx, andalalin.IdAndalalin)
+			}
+		}
 		ac.DB.Save(&andalalin)
 	}
 
@@ -2659,6 +2697,14 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		andalalin.Dokumen[itemIndex].Role = "Dishub"
 	} else {
 		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dishub", Dokumen: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+	}
+
+	for _, data := range payload.Kelengkapan {
+		if data.Tidak != "" {
+			for _, kelengkapan := range data.Dokumen {
+				andalalin.KelengkapanTidakSesuai = append(andalalin.KelengkapanTidakSesuai, models.KelengkapanTidakSesuai{Dokumen: kelengkapan, Role: data.Role})
+			}
+		}
 	}
 
 	ac.DB.Save(&andalalin)
