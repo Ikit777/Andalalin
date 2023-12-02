@@ -10,8 +10,9 @@ type User struct {
 	ID               uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
 	Name             string    `gorm:"type:varchar(255);not null"`
 	Email            string    `gorm:"uniqueIndex;not null"`
-	Password         string    `gorm:"not null"`
-	Role             string    `sql:"type:enum('Super Admin', 'Dinas Perhubungan', 'Admin', 'Operator', 'Petugas', 'User');default:'User';not null"`
+	Nomor            string
+	Password         string `gorm:"not null"`
+	Role             string `sql:"type:enum('Super Admin', 'Dinas Perhubungan', 'Admin', 'Operator', 'Petugas', 'User');default:'User';not null"`
 	Photo            []byte
 	VerificationCode string `gorm:"type:varchar(255);not null"`
 	Verified         bool   `gorm:"not null"`
@@ -26,6 +27,7 @@ type User struct {
 type UserSignUp struct {
 	Name            string `json:"name" binding:"required"`
 	Email           string `json:"email" binding:"required"`
+	Nomor           string `json:"nomor" binding:"required"`
 	Password        string `json:"password" binding:"required,min=8"`
 	PasswordConfirm string `json:"passwordConfirm" binding:"required"`
 }
@@ -45,6 +47,7 @@ type NotifikasiRespone struct {
 type UserAdd struct {
 	Name     string  `json:"name" binding:"required"`
 	Email    string  `json:"email" binding:"required"`
+	Nomor    string  `json:"nomor" binding:"required"`
 	Role     string  `json:"role" binding:"required"`
 	NIP      *string `json:"nip" binding:"required"`
 	Password string  `json:"password" binding:"required,min=8"`
@@ -60,6 +63,7 @@ type UserResponse struct {
 	ID        uuid.UUID `json:"id,omitempty"`
 	Name      string    `json:"name,omitempty"`
 	Email     string    `json:"email,omitempty"`
+	Nomor     string    `json:"nomor,omitempty"`
 	Role      string    `json:"role,omitempty"`
 	NIP       *string   `json:"nip,omitempty"`
 	Photo     []byte    `json:"photo,omitempty"`
@@ -75,6 +79,7 @@ type Delete struct {
 type Edit struct {
 	Name  string  `json:"name" binding:"required"`
 	Email string  `json:"email" binding:"required"`
+	Nomor string  `json:"nomor" binding:"required"`
 	NIP   *string `json:"nip" binding:"required"`
 }
 

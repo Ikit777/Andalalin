@@ -75,6 +75,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	newUser := models.User{
 		Name:             payload.Name,
 		Email:            strings.ToLower(payload.Email),
+		Nomor:            payload.Nomor,
 		Password:         hashedPassword,
 		Role:             "User",
 		Photo:            fileData,
@@ -106,6 +107,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 		ID:        newUser.ID,
 		Name:      newUser.Name,
 		Email:     newUser.Email,
+		Nomor:     newUser.Nomor,
 		Photo:     newUser.Photo,
 		Role:      newUser.Role,
 		CreatedAt: newUser.CreatedAt,
@@ -223,6 +225,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		Id        uuid.UUID `json:"id,omitempty"`
 		Name      string    `json:"name,omitempty"`
 		Email     string    `json:"email,omitempty"`
+		Nomor     string    `json:"nomor,omitempty"`
 		Role      string    `json:"role,omitempty"`
 		Photo     []byte    `json:"photo,omitempty"`
 		Nip       *string   `json:"nip,omitempty"`
@@ -233,6 +236,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		Id:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
+		Nomor:     user.Nomor,
 		Role:      user.Role,
 		Photo:     user.Photo,
 		Nip:       user.NIP,
