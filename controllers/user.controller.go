@@ -618,6 +618,7 @@ func (ac *UserController) EditAkun(ctx *gin.Context) {
 
 	user.Name = payload.Name
 	user.Email = strings.ToLower(payload.Email)
+	user.Nomor = payload.Nomor
 	user.NIP = payload.NIP
 	user.UpdatedAt = now
 
