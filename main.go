@@ -57,7 +57,7 @@ func main() {
 
 	corsConfig := cors.DefaultConfig()
 
-	corsConfig.AllowOrigins = []string{"https://andalalin.me"}
+	corsConfig.AllowOrigins = []string{"*"}
 	corsConfig.AllowCredentials = true
 
 	corsConfig.AllowHeaders = []string{"*"}
