@@ -2384,7 +2384,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 
 	_ = os.Remove(tempFilePath)
 
-	andalalin.StatusAndalalin = "Menunggu pernyataan"
+	andalalin.StatusAndalalin = "Menunggu surat pernyataan"
 
 	itemIndex := -1
 
@@ -3157,7 +3157,7 @@ func (ac *AndalalinController) PemeriksaanSuratPersetujuan(ctx *gin.Context) {
 	andalalin.HasilPemeriksaan = payload.Hasil
 	andalalin.CatatanPemeriksaan = payload.Catatan
 	if payload.Hasil == "Surat keputusan telah terpenuhi" {
-		andalalin.StatusAndalalin = "Menunggu persetujuan"
+		andalalin.StatusAndalalin = "Persetujuan surat keputusan"
 	} else {
 		andalalin.StatusAndalalin = "Pembuatan surat persetujuan"
 	}
