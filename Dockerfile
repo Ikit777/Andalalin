@@ -13,14 +13,7 @@ RUN apt-get update && apt-get install -y \
     fontconfig \
     libxrender1 \
     xfonts-75dpi \
-    xfonts-base \
-    libjpeg62-turbo \
-    libx11-6 \
-    libxcb1 \
-    libxext6 \
-    libxrender1 \
-    libssl1.1 \
-    libx11-xcb1
+    xfonts-base
 
 # Download and install wkhtmltopdf
 RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
