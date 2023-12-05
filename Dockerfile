@@ -10,11 +10,6 @@ COPY . /app
 # Install wkhtmltopdf dependencies
 RUN apt-get update && apt-get install -y \
     wkhtmltopdf \
-    wget \
-    fontconfig \
-    libxrender1 \
-    xfonts-75dpi \
-    xfonts-base \
     && rm -rf /var/lib/apt/lists/*
 
 # Build the Go app
