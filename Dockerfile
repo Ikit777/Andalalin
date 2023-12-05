@@ -16,9 +16,10 @@ FROM debian:bullseye-slim
 # Set the working directory to /app
 WORKDIR /app
 
-# Install wkhtmltopdf dependencies
+# Install wkhtmltopdf dependencies and any other necessary dependencies
 RUN apt-get update && apt-get install -y \
     wkhtmltopdf \
+    libc6 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the built Go binary from the builder stage
