@@ -9,15 +9,8 @@ COPY . /app
 
 # Install wkhtmltopdf dependencies
 RUN apt-get update && apt-get install -y \
-    wget \
-    fontconfig \
-    libxrender1 \
-    xfonts-75dpi \
-    xfonts-base
-
-# Download and install wkhtmltopdf
-RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
-RUN dpkg -i wkhtmltox_LATEST_VERSION.bionic_amd64.deb
+    wkhtmltopdf \
+    && rm -rf /var/lib/apt/lists/*
 
 # Build the Go app
 RUN go build -o main .
