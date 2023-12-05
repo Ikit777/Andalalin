@@ -12,6 +12,11 @@ RUN apt-get update && apt-get install -y \
     wkhtmltopdf \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y xvfb
+ENV DISPLAY=:1
+
+RUN apt-get update && apt-get install -y fontconfig
+
 # Build the Go app
 RUN go build -o main .
 
