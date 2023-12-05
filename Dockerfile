@@ -1,34 +1,21 @@
-# Use the official Golang image as the base image
-FROM golang:1.17-alpine
+# Use an official Golang runtime as a parent image
+FROM golang:latest
 
-# Set the working directory inside the container
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy only the necessary files to the container
-COPY go.mod go.sum ./
-
-# Download and install Go module dependencies
-RUN go mod download
+# Copy the current directory contents into the container at /app
+COPY . /app
 
 # Install wkhtmltopdf dependencies
-RUN apk --no-cache add \
-    fontconfig \
-    libfontconfig \
-    libxrender \
-    libxext \
-    libintl \
-    icu-libs \
-    ttf-dejavu \
-    && rm -rf /var/cache/apk/*
+RUN apt-get update && apt-get install -y \
+    wkhtmltopdf \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy the rest of the application code to the container
-COPY . .
-
-# Build the Golang application
+# Build the Go app
 RUN go build -o main .
 
-# Expose the port the app runs on
 EXPOSE 8080
 
-# Command to run the application
+# Command to run the executable
 CMD ["./main"]
