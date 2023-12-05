@@ -6,18 +6,13 @@ WORKDIR /app
 
 # Install wkhtmltopdf dependencies
 RUN apt-get update && apt-get install -y \
+    wkhtmltopdf \
     wget \
     fontconfig \
     libxrender1 \
     xfonts-75dpi \
-    xfonts-base
-
-# Download and install wkhtmltopdf
-RUN wget https://github.com/wkhtmltopdf/packaging/releases/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
-RUN dpkg -i wkhtmltox_0.12.6-1.bionic_amd64.deb
-
-# Clean up
-RUN rm wkhtmltox_0.12.6-1.bionic_amd64.deb
+    xfonts-base \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy the Go source code into the container
 COPY . .
