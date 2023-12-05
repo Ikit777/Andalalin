@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     libx11-xcb1
 
 # Download and install wkhtmltopdf
-RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/LATEST_VERSION/wkhtmltox_LATEST_VERSION.bionic_amd64.deb
+RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
 RUN dpkg -i wkhtmltox_LATEST_VERSION.bionic_amd64.deb
 
 # Build the Go app
