@@ -1,5 +1,5 @@
 # Use an official Golang runtime as a parent image
-FROM golang:latest AS builder
+FROM frolvlad/alpine-glibc:alpine-3.14 AS builder
 
 # Set the working directory to /app
 WORKDIR /app
@@ -11,16 +11,14 @@ COPY . .
 RUN go build -o main .
 
 # Stage 2: Create a lightweight image
-FROM debian:bullseye-slim
+FROM alpine:latest
 
 # Set the working directory to /app
 WORKDIR /app
 
 # Install wkhtmltopdf dependencies and any other necessary dependencies
-RUN apt-get update && apt-get install -y \
-    wkhtmltopdf \
-    libc6 \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk --no-cache add \
+    wkhtmltopdf
 
 # Copy the built Go binary from the builder stage
 COPY --from=builder /app/main .
