@@ -2682,9 +2682,12 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 	}
 
 	// read the HTML page as a PDF page
-	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
+	// page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
 
-	pdfg.AddPage(page)
+	// pdfg.AddPage(page)
+
+	htmlContent := "<html><body><h1>Hello, PDF!</h1></body></html>"
+	pdfg.AddPage(wkhtmltopdf.NewPageReader(bytes.NewReader([]byte(htmlContent))))
 
 	marginInMillimeters := 2.54 * 10
 
