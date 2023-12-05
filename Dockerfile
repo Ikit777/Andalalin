@@ -1,21 +1,34 @@
-# Use an official Golang runtime as a parent image
-FROM golang:latest
+# Use a smaller base image for production
+FROM golang:alpine AS build
 
-# Set the working directory to /app
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Copy the local code to the container
+COPY . .
 
 # Install wkhtmltopdf dependencies
-RUN apt-get update && apt-get install -y \
-    wkhtmltopdf \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk --no-cache add \
+    fontconfig \
+    libfontconfig \
+    libxrender \
+    libxext \
+    libintl \
+    icu-libs \
+    ttf-dejavu \
+    && rm -rf /var/cache/apk/*
 
-# Build the Go app
+# Build the Golang application
 RUN go build -o main .
 
+# Use a minimal base image for the final image
+FROM alpine:latest
+
+# Copy only necessary files from the build image
+COPY --from=build /app/main /app/main
+
+# Expose the port the app runs on
 EXPOSE 8080
 
-# Command to run the executable
-CMD ["./main"]
+# Run the application
+CMD ["/app/main"]
