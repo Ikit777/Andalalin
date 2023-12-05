@@ -2641,7 +2641,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		bangkitan = "TINGGI"
 	}
 
-	administrasi := struct {
+	kelengkapan := struct {
 		Bangkitan   string
 		Objek       string
 		Lokasi      string
@@ -2670,7 +2670,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 	}
 
 	buffer := new(bytes.Buffer)
-	if err = t.Execute(buffer, administrasi); err != nil {
+	if err = t.Execute(buffer, kelengkapan); err != nil {
 		log.Fatal("Eror saat membaca template:", err)
 		return
 	}
