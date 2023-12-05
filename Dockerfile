@@ -1,23 +1,21 @@
-# Use the official golang image as the base image
+# Use an official Golang runtime as a parent image
 FROM golang:latest
 
-# Set the working directory inside the container
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy the local code to the container
-COPY . .
+# Copy the current directory contents into the container at /app
+COPY . /app
 
 # Install wkhtmltopdf dependencies
-RUN apt-get update && \ apt-get install -y \ fontconfig \ libfontconfig1 \ libfreetype6 \ libx11-6 \ libxext6 \ libxrender1 \ xfonts-base \ xfonts-75dpi \ wget \ && apt-get clean \ && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    wkhtmltopdf \
+    && rm -rf /var/lib/apt/lists/*
 
-# Download and install wkhtmltopdf
-RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.6/wkhtmltox_0.12.6-1.bionic_amd64.deb && \ dpkg -i wkhtmltox_0.12.6-1.bionic_amd64.deb && \ apt-get install -f
-
-# Build the Golang application
+# Build the Go app
 RUN go build -o main .
 
-# Expose the port the app runs on
 EXPOSE 8080
 
-# Run the application
+# Command to run the executable
 CMD ["./main"]
