@@ -8,7 +8,9 @@ WORKDIR /app
 COPY . /app
 
 # Install wkhtmltopdf dependencies
-RUN apt-get update && apt-get install -y wkhtmltopdf
+RUN apt-get update && apt-get install -y \
+    wkhtmltopdf \
+    && rm -rf /var/lib/apt/lists/*
 
 # Build the Go app
 RUN go build -o main .
