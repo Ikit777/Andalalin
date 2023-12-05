@@ -7,14 +7,6 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . /app
 
-# Install wkhtmltopdf dependencies and any other necessary dependencies
-RUN apt-get update && apt-get install -y \
-    wkhtmltopdf \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set the working directory to /app
-WORKDIR /app
-
 # Copy the built Go binary from the builder stage
 COPY --from=builder /app/main .
 
