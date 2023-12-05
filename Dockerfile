@@ -13,14 +13,18 @@ RUN apt-get update && apt-get install -y \
     fontconfig \
     libxrender1 \
     xfonts-75dpi \
-    xfonts-base
+    xfonts-base \
+    libjpeg62-turbo \
+    libx11-6 \
+    libxcb1 \
+    libxext6 \
+    libxrender1 \
+    libssl1.1 \
+    libx11-xcb1
 
 # Download and install wkhtmltopdf
-RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
-RUN dpkg -i wkhtmltox_0.12.6-1.bionic_amd64.deb
-
-# Clean up
-RUN rm wkhtmltox_0.12.6-1.bionic_amd64.deb
+RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/LATEST_VERSION/wkhtmltox_LATEST_VERSION.bionic_amd64.deb
+RUN dpkg -i wkhtmltox_LATEST_VERSION.bionic_amd64.deb
 
 # Build the Go app
 RUN go build -o main .
