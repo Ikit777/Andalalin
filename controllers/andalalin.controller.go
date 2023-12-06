@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 	"sync"
@@ -2676,36 +2675,31 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		return
 	}
 
-	pdfBytes, err := exec.Command("wkhtmltopdf", "-", "-").CombinedOutput()
+	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	if err != nil {
+		log.Fatal("Eror generate pdf", err)
+		return
+	}
+
+	// read the HTML page as a PDF page
+	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
+
+	pdfg.AddPage(page)
+
+	marginInMillimeters := 2.54 * 10
+
+	pdfg.Dpi.Set(300)
+	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
+	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
+	pdfg.MarginBottom.Set(uint(marginInMillimeters))
+	pdfg.MarginLeft.Set(uint(marginInMillimeters))
+	pdfg.MarginRight.Set(uint(marginInMillimeters))
+	pdfg.MarginTop.Set(uint(marginInMillimeters))
+
+	err = pdfg.Create()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// pdfg, err := wkhtmltopdf.NewPDFGenerator()
-	// if err != nil {
-	// 	log.Fatal("Eror generate pdf", err)
-	// 	return
-	// }
-
-	// // read the HTML page as a PDF page
-	// page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
-
-	// pdfg.AddPage(page)
-
-	// marginInMillimeters := 2.54 * 10
-
-	// pdfg.Dpi.Set(300)
-	// pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-	// pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	// pdfg.MarginBottom.Set(uint(marginInMillimeters))
-	// pdfg.MarginLeft.Set(uint(marginInMillimeters))
-	// pdfg.MarginRight.Set(uint(marginInMillimeters))
-	// pdfg.MarginTop.Set(uint(marginInMillimeters))
-
-	// err = pdfg.Create()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 
 	itemIndex := -1
 
@@ -2717,10 +2711,10 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.Dokumen[itemIndex].Berkas = pdfBytes
+		andalalin.Dokumen[itemIndex].Berkas = pdfg.Bytes()
 		andalalin.Dokumen[itemIndex].Role = "Dishub"
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dishub", Dokumen: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfBytes})
+		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dishub", Dokumen: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfg.Bytes()})
 	}
 
 	if andalalin.KelengkapanTidakSesuai != nil {
