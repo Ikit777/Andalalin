@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y \
     wkhtmltopdf \
     && rm -rf /var/lib/apt/lists/*
 
+# Set permissions on the templates folder
+RUN chmod -R 755 /app/templates
+
 # Build the Go app
 RUN go build -o main .
 
