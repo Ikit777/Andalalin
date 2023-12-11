@@ -207,6 +207,7 @@ type DokumenPermohonan struct {
 
 type KelengkapanTidakSesuai struct {
 	Dokumen string
+	Tipe    string
 	Role    string
 }
 
@@ -799,10 +800,15 @@ type KelengkapanAkhir struct {
 }
 
 type DataKelengkapanAkhir struct {
-	Uraian     string   `json:"uraian" binding:"required"`
-	Dokumen    []string `json:"dokumen" binding:"required"`
-	Role       string   `json:"role" binding:"required"`
-	Ada        string   `json:"ada" binding:"required"`
-	Tidak      string   `json:"tidak" binding:"required"`
-	Keterangan string   `json:"keterangan" binding:"required"`
+	Uraian     string        `json:"uraian" binding:"required"`
+	Dokumen    []DataDokumen `json:"dokumen" binding:"required"`
+	Role       string        `json:"role" binding:"required"`
+	Ada        string        `json:"ada" binding:"required"`
+	Tidak      string        `json:"tidak" binding:"required"`
+	Keterangan string        `json:"keterangan" binding:"required"`
+}
+
+type DataDokumen struct {
+	Dokumen string `json:"dokumen" binding:"required"`
+	Tipe    string `json:"tipe" binding:"required"`
 }

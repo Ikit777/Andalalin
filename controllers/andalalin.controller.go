@@ -2724,7 +2724,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 	for _, data := range payload.Kelengkapan {
 		if data.Tidak != "" {
 			for _, kelengkapan := range data.Dokumen {
-				andalalin.KelengkapanTidakSesuai = append(andalalin.KelengkapanTidakSesuai, models.KelengkapanTidakSesuai{Dokumen: kelengkapan, Role: data.Role})
+				andalalin.KelengkapanTidakSesuai = append(andalalin.KelengkapanTidakSesuai, models.KelengkapanTidakSesuai{Dokumen: kelengkapan.Dokumen, Tipe: kelengkapan.Tipe, Role: data.Role})
 			}
 		}
 	}
