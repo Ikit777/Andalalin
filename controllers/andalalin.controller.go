@@ -1837,7 +1837,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 
 			andalalin.Dokumen[itemKelengkapan].Role = "User"
 
-			if andalalin.PersyaratanTidakSesuai != nil {
+			if andalalin.KelengkapanTidakSesuai != nil {
 				andalalin.StatusAndalalin = "Kelengkapan tidak terpenuhi"
 			} else {
 				ac.PermohonanSelesai(ctx, andalalin.IdAndalalin)
