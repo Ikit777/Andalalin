@@ -1018,7 +1018,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 
 	var kelengkapan_dinas []string
 	for _, dokumen := range andalalin.KelengkapanTidakSesuai {
-		if dokumen.Role == "Dinas" {
+		if dokumen.Role == "Dishub" {
 			kelengkapan_dinas = append(kelengkapan_dinas, dokumen.Dokumen)
 		}
 	}
