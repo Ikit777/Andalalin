@@ -1009,17 +1009,17 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		}
 	}
 
-	var kelengkapan_user []string
+	var kelengkapan_user []models.KelengkapanTidakSesuaiResponse
 	for _, dokumen := range andalalin.KelengkapanTidakSesuai {
 		if dokumen.Role == "User" {
-			kelengkapan_user = append(kelengkapan_user, dokumen.Dokumen)
+			kelengkapan_user = append(kelengkapan_user, models.KelengkapanTidakSesuaiResponse{Dokumen: dokumen.Dokumen, Tipe: dokumen.Tipe})
 		}
 	}
 
-	var kelengkapan_dinas []string
+	var kelengkapan_dinas []models.KelengkapanTidakSesuaiResponse
 	for _, dokumen := range andalalin.KelengkapanTidakSesuai {
 		if dokumen.Role == "Dishub" {
-			kelengkapan_dinas = append(kelengkapan_dinas, dokumen.Dokumen)
+			kelengkapan_dinas = append(kelengkapan_dinas, models.KelengkapanTidakSesuaiResponse{Dokumen: dokumen.Dokumen, Tipe: dokumen.Tipe})
 		}
 	}
 

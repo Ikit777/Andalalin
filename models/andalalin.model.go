@@ -211,6 +211,11 @@ type KelengkapanTidakSesuai struct {
 	Role    string
 }
 
+type KelengkapanTidakSesuaiResponse struct {
+	Dokumen string `json:"dokumen,omitempty"`
+	Tipe    string `json:"tipe,omitempty"`
+}
+
 type InputAndalalin struct {
 	//Data Permohonan
 	Bangkitan                       string `json:"kategori_bangkitan" binding:"required"`
@@ -462,7 +467,7 @@ type AndalalinResponse struct {
 	Dokumen []string `json:"dokumen,omitempty"`
 
 	//Perlengkapan Tidak Sesuai
-	KelengkapanTidakSesuai []string `json:"kelengkapan,omitempty"`
+	KelengkapanTidakSesuai []KelengkapanTidakSesuaiResponse `json:"kelengkapan,omitempty"`
 }
 
 type PerlalinResponse struct {
@@ -580,7 +585,7 @@ type AndalalinResponseUser struct {
 	Dokumen []string `json:"dokumen,omitempty"`
 
 	//Perlengkapan Tidak Sesuai
-	KelengkapanTidakSesuai []string `json:"kelengkapan,omitempty"`
+	KelengkapanTidakSesuai []KelengkapanTidakSesuaiResponse `json:"kelengkapan,omitempty"`
 }
 
 type PerlalinResponseUser struct {
