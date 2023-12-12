@@ -217,7 +217,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	}
 
-	persyaratan := []models.PersyaratanPermohonan{}
+	berkas := []models.BerkasPermohonan{}
 
 	for key, files := range form.File {
 		for _, file := range files {
@@ -237,14 +237,12 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 			}
 
 			// Store the blob data in the map
-			persyaratan = append(persyaratan, models.PersyaratanPermohonan{Persyaratan: key, Tipe: "Pdf", Berkas: data})
+			berkas = append(berkas, models.BerkasPermohonan{Nama: key, Jenis: "Administrasi", Tipe: "Pdf", Status: "Selesai", Berkas: data})
 
 		}
 	}
 
-	dokumen := []models.DokumenPermohonan{}
-
-	dokumen = append(dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Tanda terima pendaftaran", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+	berkas = append(berkas, models.BerkasPermohonan{Nama: "Tanda terima pendaftaran", Jenis: "Kelengkapan", Tipe: "Pdf", Status: "Selesai", Berkas: pdfg.Bytes()})
 
 	permohonan := models.Andalalin{
 		//Data Permohonan
@@ -351,11 +349,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		TanggalSKRK:       payload.Andalalin.TanggalSKRK,
 		Catatan:           payload.Andalalin.Catatan,
 
-		//Dokumen Permohonan
-		Dokumen: dokumen,
-
-		//Data Persyaratan
-		Persyaratan: persyaratan,
+		BerkasPermohonan: berkas,
 	}
 
 	result := ac.DB.Create(&permohonan)
@@ -984,28 +978,15 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		status = ticket2.Status
 	}
 
-	var persyaratan_andalalin []string
-	var persyaratan_perlalin []string
-
-	for _, persyaratan := range andalalin.Persyaratan {
-		persyaratan_andalalin = append(persyaratan_andalalin, persyaratan.Persyaratan)
+	var berkas_dinas []models.BerkasPermohonanResponse
+	for _, dokumen := range andalalin.BerkasPermohonan {
+		berkas_dinas = append(berkas_dinas, models.BerkasPermohonanResponse{Nama: dokumen.Nama, Jenis: dokumen.Jenis})
 	}
 
-	for _, persyaratan := range perlalin.Persyaratan {
-		persyaratan_perlalin = append(persyaratan_perlalin, persyaratan.Persyaratan)
-	}
-
-	var dokumen_andalalin_dinas []string
-
-	for _, dokumen := range andalalin.Dokumen {
-		dokumen_andalalin_dinas = append(dokumen_andalalin_dinas, dokumen.Dokumen)
-	}
-
-	var dokumen_andalalin_user []string
-
-	for _, dokumen := range andalalin.Dokumen {
-		if dokumen.Role == "User" {
-			dokumen_andalalin_user = append(dokumen_andalalin_user, dokumen.Dokumen)
+	var berkas_user []models.BerkasPermohonanResponse
+	for _, dokumen := range andalalin.BerkasPermohonan {
+		if dokumen.Status == "Selesai" {
+			berkas_user = append(berkas_user, models.BerkasPermohonanResponse{Nama: dokumen.Nama, Jenis: dokumen.Jenis})
 		}
 	}
 
@@ -1081,10 +1062,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
 				Pertimbangan:           andalalin.Pertimbangan,
 
-				Persyaratan: persyaratan_andalalin,
-
-				//Dokumen Permohonan
-				Dokumen: dokumen_andalalin_user,
+				BerkasPermohonan: berkas_user,
 
 				KelengkapanTidakSesuai: kelengkapan_user,
 			}
@@ -1195,12 +1173,9 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				TanggalSKRK:       andalalin.TanggalSKRK,
 				Catatan:           andalalin.Catatan,
 
-				//Data Persyaratan
-				Persyaratan:            persyaratan_andalalin,
-				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
+				BerkasPermohonan: berkas_dinas,
 
-				//Dokumen Permohonan
-				Dokumen: dokumen_andalalin_dinas,
+				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
 
 				//Data Pemeriksaan Surat Persetujuan
 				HasilPemeriksaan:   andalalin.HasilPemeriksaan,
@@ -1288,8 +1263,6 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				NamaPetugas:            perlalin.NamaPetugas,
 				EmailPetugas:           perlalin.EmailPetugas,
 				StatusTiketLevel2:      status,
-
-				Persyaratan: persyaratan_perlalin,
 
 				Catatan: perlalin.Catatan,
 
@@ -1440,16 +1413,8 @@ func (ac *AndalalinController) GetDokumen(ctx *gin.Context) {
 
 	if andalalin.IdAndalalin != uuid.Nil {
 
-		for _, item := range andalalin.Dokumen {
-			if item.Dokumen == dokumen {
-				docs = item.Berkas
-				tipe = item.Tipe
-				break
-			}
-		}
-
-		for _, item := range andalalin.Persyaratan {
-			if item.Persyaratan == dokumen {
+		for _, item := range andalalin.BerkasPermohonan {
+			if item.Nama == dokumen {
 				docs = item.Berkas
 				tipe = item.Tipe
 				break
@@ -1535,9 +1500,9 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 					return
 				}
 
-				for i := range andalalin.Persyaratan {
-					if andalalin.Persyaratan[i].Persyaratan == key {
-						andalalin.Persyaratan[i].Berkas = data
+				for i := range andalalin.BerkasPermohonan {
+					if andalalin.BerkasPermohonan[i].Nama == key {
+						andalalin.BerkasPermohonan[i].Berkas = data
 						break
 					}
 				}
@@ -1568,9 +1533,9 @@ func (ac *AndalalinController) UpdatePersyaratan(ctx *gin.Context) {
 					return
 				}
 
-				for i := range andalalin.Persyaratan {
-					if andalalin.Persyaratan[i].Persyaratan == key {
-						andalalin.Persyaratan[i].Berkas = data
+				for i := range perlalin.Persyaratan {
+					if perlalin.Persyaratan[i].Persyaratan == key {
+						perlalin.Persyaratan[i].Berkas = data
 						break
 					}
 				}
@@ -1633,8 +1598,8 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 		if dokumen == "Checklist administrasi" {
 			itemIndex := -1
 
-			for i, item := range andalalin.Dokumen {
-				if item.Dokumen == "Checklist administrasi" {
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Checklist administrasi" {
 					itemIndex = i
 					break
 				}
@@ -1656,11 +1621,11 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 						return
 					}
-					andalalin.Dokumen[itemIndex].Berkas = data
+					andalalin.BerkasPermohonan[itemIndex].Berkas = data
 				}
 			}
 
-			andalalin.Dokumen[itemIndex].Role = "User"
+			andalalin.BerkasPermohonan[itemIndex].Status = "Selesai"
 			if andalalin.PersyaratanTidakSesuai != nil {
 				andalalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
 				justString := strings.Join(andalalin.PersyaratanTidakSesuai, "\n")
@@ -1711,8 +1676,8 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 		if dokumen == "Surat pernyataan kesanggupan" {
 			itemPernyataan := -1
 
-			for i, item := range andalalin.Dokumen {
-				if item.Dokumen == "Surat pernyataan kesanggupan (word)" {
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Surat pernyataan kesanggupan (word)" {
 					itemPernyataan = i
 					break
 				}
@@ -1735,9 +1700,9 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 						return
 					}
 					if key == "Surat pernyataan kesanggupan (word)" {
-						andalalin.Dokumen[itemPernyataan].Berkas = data
+						andalalin.BerkasPermohonan[itemPernyataan].Berkas = data
 					} else {
-						andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (pdf)", Tipe: "Pdf", Berkas: data})
+						andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "User", Jenis: "Kelengkapan", Nama: "Surat pernyataan kesanggupan (pdf)", Tipe: "Pdf", Berkas: data})
 					}
 
 				}
@@ -1763,7 +1728,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 						return
 					}
-					andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: key, Tipe: "Pdf", Berkas: data})
+					andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Jenis: "Kelengkapan", Nama: key, Tipe: "Pdf", Berkas: data})
 
 				}
 			}
@@ -1773,8 +1738,8 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 		if dokumen == "Surat keputusan persetujuan teknis andalalin" {
 			itenKeputusan := -1
 
-			for i, item := range andalalin.Dokumen {
-				if item.Dokumen == "Surat keputusan persetujuan teknis andalalin" {
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Surat keputusan persetujuan teknis andalalin" {
 					itenKeputusan = i
 					break
 				}
@@ -1796,11 +1761,11 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 						return
 					}
-					andalalin.Dokumen[itenKeputusan].Berkas = data
+					andalalin.BerkasPermohonan[itenKeputusan].Berkas = data
 				}
 			}
 
-			andalalin.Dokumen[itenKeputusan].Role = "User"
+			andalalin.BerkasPermohonan[itenKeputusan].Status = "Selesai"
 			andalalin.StatusAndalalin = "Cek kelengkapan akhir"
 			ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
 		}
@@ -1808,8 +1773,8 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 		if dokumen == "Checklist kelengkapan akhir" {
 			itemKelengkapan := -1
 
-			for i, item := range andalalin.Dokumen {
-				if item.Dokumen == "Checklist kelengkapan akhir" {
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Checklist kelengkapan akhir" {
 					itemKelengkapan = i
 					break
 				}
@@ -1831,11 +1796,11 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 						return
 					}
-					andalalin.Dokumen[itemKelengkapan].Berkas = data
+					andalalin.BerkasPermohonan[itemKelengkapan].Berkas = data
 				}
 			}
 
-			andalalin.Dokumen[itemKelengkapan].Role = "User"
+			andalalin.BerkasPermohonan[itemKelengkapan].Status = "Selesai"
 
 			if andalalin.KelengkapanTidakSesuai != nil {
 				andalalin.StatusAndalalin = "Kelengkapan tidak terpenuhi"
@@ -1912,8 +1877,8 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 
 	itemIndex := -1
 
-	for i, item := range andalalin.Dokumen {
-		if item.Dokumen == "Checklist administrasi" {
+	for i, item := range andalalin.BerkasPermohonan {
+		if item.Nama == "Checklist administrasi" {
 			itemIndex = i
 			break
 		}
@@ -1984,8 +1949,8 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			log.Fatal(err)
 		}
 
-		andalalin.Dokumen[itemIndex].Berkas = pdfg.Bytes()
-		andalalin.Dokumen[itemIndex].Role = "Dishub"
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
+		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
 		administrasi := struct {
 			Bangkitan   string
@@ -2051,7 +2016,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			log.Fatal(err)
 		}
 
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dishub", Dokumen: "Checklist administrasi", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Jenis: "Kelengkapan", Nama: "Checklist administrasi", Tipe: "Pdf", Berkas: pdfg.Bytes()})
 	}
 
 	if andalalin.PersyaratanTidakSesuai != nil {
@@ -2388,17 +2353,17 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 
 	itemIndex := -1
 
-	for i, item := range andalalin.Dokumen {
-		if item.Dokumen == "Surat pernyataan kesanggupan (word)" {
+	for i, item := range andalalin.BerkasPermohonan {
+		if item.Nama == "Surat pernyataan kesanggupan (word)" {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		andalalin.Dokumen[itemIndex].Berkas = docBytes
+		andalalin.BerkasPermohonan[itemIndex].Berkas = docBytes
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "User", Dokumen: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docBytes})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Jenis: "Kelengkapan", Nama: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docBytes})
 	}
 
 	ac.DB.Save(&andalalin)
@@ -2558,18 +2523,18 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 
 		itemIndex := -1
 
-		for i, item := range andalalin.Dokumen {
-			if item.Dokumen == "Surat keputusan persetujuan teknis andalalin" {
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Surat keputusan persetujuan teknis andalalin" {
 				itemIndex = i
 				break
 			}
 		}
 
 		if itemIndex != -1 {
-			andalalin.Dokumen[itemIndex].Berkas = pdfg.Bytes()
-			andalalin.Dokumen[itemIndex].Role = "Dishub"
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 		} else {
-			andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dishub", Dokumen: "Surat keputusan persetujuan teknis andalalin", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Jenis: "Kelengkapan", Nama: "Surat keputusan persetujuan teknis andalalin", Tipe: "Pdf", Berkas: pdfg.Bytes()})
 		}
 	}
 
@@ -2703,18 +2668,18 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 
 	itemIndex := -1
 
-	for i, item := range andalalin.Dokumen {
-		if item.Dokumen == "Checklist kelengkapan akhir" {
+	for i, item := range andalalin.BerkasPermohonan {
+		if item.Nama == "Checklist kelengkapan akhir" {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		andalalin.Dokumen[itemIndex].Berkas = pdfg.Bytes()
-		andalalin.Dokumen[itemIndex].Role = "Dishub"
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
+		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
-		andalalin.Dokumen = append(andalalin.Dokumen, models.DokumenPermohonan{Role: "Dishub", Dokumen: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Jenis: "Kelengkapan", Nama: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfg.Bytes()})
 	}
 
 	if andalalin.KelengkapanTidakSesuai != nil {

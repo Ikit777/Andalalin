@@ -110,11 +110,8 @@ type Andalalin struct {
 	TanggalSKRK       string `gorm:"type:varchar(255);not null"`
 	Catatan           *string
 
-	//Data Persyaratan
-	Persyaratan []PersyaratanPermohonan `gorm:"serializer:json"`
-
-	//Dokumen Permohonan
-	Dokumen []DokumenPermohonan `gorm:"serializer:json"`
+	//Berkas Permohonan
+	BerkasPermohonan []BerkasPermohonan `gorm:"serializer:json"`
 
 	//Kelengkapan Tidak Sesuai
 	KelengkapanTidakSesuai []KelengkapanTidakSesuai `gorm:"serializer:json"`
@@ -192,17 +189,17 @@ type Perlalin struct {
 	PertimbanganPenundaan string
 }
 
-type PersyaratanPermohonan struct {
-	Persyaratan string
-	Tipe        string
-	Berkas      []byte
+type BerkasPermohonan struct {
+	Nama   string
+	Jenis  string
+	Tipe   string
+	Status string
+	Berkas []byte
 }
 
-type DokumenPermohonan struct {
-	Role    string
-	Dokumen string
-	Tipe    string
-	Berkas  []byte
+type BerkasPermohonanResponse struct {
+	Nama  string `json:"dokumen,omitempty"`
+	Jenis string `json:"jenis,omitempty"`
 }
 
 type KelengkapanTidakSesuai struct {
@@ -214,6 +211,12 @@ type KelengkapanTidakSesuai struct {
 type KelengkapanTidakSesuaiResponse struct {
 	Dokumen string `json:"dokumen,omitempty"`
 	Tipe    string `json:"tipe,omitempty"`
+}
+
+type PersyaratanPermohonan struct {
+	Persyaratan string
+	Tipe        string
+	Berkas      []byte
 }
 
 type InputAndalalin struct {
@@ -460,11 +463,8 @@ type AndalalinResponse struct {
 	HasilPemeriksaan   string  `json:"hasil_pemeriksaan,omitempty"`
 	CatatanPemeriksaan *string `json:"catatan_pemeriksaan,omitempty"`
 
-	//Persyaratan Permohonan
-	Persyaratan []string `json:"persyaratan,omitempty"`
-
-	//Dokumen Permohonan
-	Dokumen []string `json:"dokumen,omitempty"`
+	//Berkas Permohonan
+	BerkasPermohonan []BerkasPermohonanResponse `json:"berkas,omitempty"`
 
 	//Perlengkapan Tidak Sesuai
 	KelengkapanTidakSesuai []KelengkapanTidakSesuaiResponse `json:"kelengkapan,omitempty"`
@@ -579,10 +579,8 @@ type AndalalinResponseUser struct {
 
 	Pertimbangan string `json:"pertimbangan,omitempty"`
 
-	Persyaratan []string `json:"persyaratan,omitempty"`
-
-	//Dokumen Permohonan
-	Dokumen []string `json:"dokumen,omitempty"`
+	//Berkas Permohonan
+	BerkasPermohonan []BerkasPermohonanResponse `json:"berkas,omitempty"`
 
 	//Perlengkapan Tidak Sesuai
 	KelengkapanTidakSesuai []KelengkapanTidakSesuaiResponse `json:"kelengkapan,omitempty"`
