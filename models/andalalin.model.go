@@ -191,21 +191,15 @@ type Perlalin struct {
 
 type BerkasPermohonan struct {
 	Nama   string
-	Jenis  string
 	Tipe   string
 	Status string
 	Berkas []byte
 }
 
-type BerkasPermohonanResponse struct {
-	Nama  string `json:"dokumen,omitempty"`
-	Jenis string `json:"jenis,omitempty"`
-}
-
 type KelengkapanTidakSesuai struct {
 	Dokumen string
 	Tipe    string
-	Role    string
+	Jenis   string
 }
 
 type KelengkapanTidakSesuaiResponse struct {
@@ -464,7 +458,7 @@ type AndalalinResponse struct {
 	CatatanPemeriksaan *string `json:"catatan_pemeriksaan,omitempty"`
 
 	//Berkas Permohonan
-	BerkasPermohonan []BerkasPermohonanResponse `json:"berkas,omitempty"`
+	BerkasPermohonan []string `json:"berkas,omitempty"`
 
 	//Perlengkapan Tidak Sesuai
 	KelengkapanTidakSesuai []KelengkapanTidakSesuaiResponse `json:"kelengkapan,omitempty"`
@@ -580,7 +574,7 @@ type AndalalinResponseUser struct {
 	Pertimbangan string `json:"pertimbangan,omitempty"`
 
 	//Berkas Permohonan
-	BerkasPermohonan []BerkasPermohonanResponse `json:"berkas,omitempty"`
+	BerkasPermohonan []string `json:"berkas,omitempty"`
 
 	//Perlengkapan Tidak Sesuai
 	KelengkapanTidakSesuai []KelengkapanTidakSesuaiResponse `json:"kelengkapan,omitempty"`
@@ -805,7 +799,7 @@ type KelengkapanAkhir struct {
 type DataKelengkapanAkhir struct {
 	Uraian     string        `json:"uraian" binding:"required"`
 	Dokumen    []DataDokumen `json:"dokumen" binding:"required"`
-	Role       string        `json:"role" binding:"required"`
+	Jenis      string        `json:"jenis" binding:"required"`
 	Ada        string        `json:"ada" binding:"required"`
 	Tidak      string        `json:"tidak" binding:"required"`
 	Keterangan string        `json:"keterangan" binding:"required"`
