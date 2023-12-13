@@ -1917,9 +1917,9 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			Nip:         *currentUser.NIP,
 		}
 
-		var buf bytes.Buffer
-		if err := t.Execute(&buf, administrasi); err != nil {
-			fmt.Println("Error rendering HTML template:", err)
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, administrasi); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
 			return
 		}
 
@@ -1929,7 +1929,10 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			return
 		}
 
-		pdfg.AddPage(wkhtmltopdf.NewPageReader(&buf))
+		// read the HTML page as a PDF page
+		page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
+
+		pdfg.AddPage(page)
 
 		marginInMillimeters := 2.54 * 10
 
