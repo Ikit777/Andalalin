@@ -237,12 +237,12 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 			}
 
 			// Store the blob data in the map
-			berkas = append(berkas, models.BerkasPermohonan{Nama: key, Tipe: "Pdf", Status: "Selesai", Berkas: data})
+			berkas = append(berkas, models.BerkasPermohonan{Nama: key, Jenis: "Administrasi", Tipe: "Pdf", Status: "Selesai", Berkas: data})
 
 		}
 	}
 
-	berkas = append(berkas, models.BerkasPermohonan{Nama: "Tanda terima pendaftaran", Tipe: "Pdf", Status: "Selesai", Berkas: pdfg.Bytes()})
+	berkas = append(berkas, models.BerkasPermohonan{Nama: "Tanda terima pendaftaran", Jenis: "Kelengkapan", Tipe: "Pdf", Status: "Selesai", Berkas: pdfg.Bytes()})
 
 	permohonan := models.Andalalin{
 		//Data Permohonan
