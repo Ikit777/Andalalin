@@ -978,28 +978,28 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		status = ticket2.Status
 	}
 
-	var berkas_dinas []string
+	var berkas_dinas []models.BerkasPermohonanResponse
 	for _, dokumen := range andalalin.BerkasPermohonan {
-		berkas_dinas = append(berkas_dinas, dokumen.Nama)
+		berkas_dinas = append(berkas_dinas, models.BerkasPermohonanResponse{Nama: dokumen.Nama, Jenis: dokumen.Jenis})
 	}
 
-	var berkas_user []string
+	var berkas_user []models.BerkasPermohonanResponse
 	for _, dokumen := range andalalin.BerkasPermohonan {
 		if dokumen.Status == "Selesai" {
-			berkas_user = append(berkas_user, dokumen.Nama)
+			berkas_user = append(berkas_user, models.BerkasPermohonanResponse{Nama: dokumen.Nama, Jenis: dokumen.Jenis})
 		}
 	}
 
 	var kelengkapan_user []models.KelengkapanTidakSesuaiResponse
 	for _, dokumen := range andalalin.KelengkapanTidakSesuai {
-		if dokumen.Jenis == "User" {
+		if dokumen.Role == "User" {
 			kelengkapan_user = append(kelengkapan_user, models.KelengkapanTidakSesuaiResponse{Dokumen: dokumen.Dokumen, Tipe: dokumen.Tipe})
 		}
 	}
 
 	var kelengkapan_dinas []models.KelengkapanTidakSesuaiResponse
 	for _, dokumen := range andalalin.KelengkapanTidakSesuai {
-		if dokumen.Jenis == "Dishub" {
+		if dokumen.Role == "Dishub" {
 			kelengkapan_dinas = append(kelengkapan_dinas, models.KelengkapanTidakSesuaiResponse{Dokumen: dokumen.Dokumen, Tipe: dokumen.Tipe})
 		}
 	}
@@ -1702,7 +1702,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 					if key == "Surat pernyataan kesanggupan (word)" {
 						andalalin.BerkasPermohonan[itemPernyataan].Berkas = data
 					} else {
-						andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Nama: "Surat pernyataan kesanggupan (pdf)", Tipe: "Pdf", Berkas: data})
+						andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Jenis: "Kelengkapan", Nama: "Surat pernyataan kesanggupan (pdf)", Tipe: "Pdf", Berkas: data})
 					}
 
 				}
@@ -1728,7 +1728,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 						return
 					}
-					andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Nama: key, Tipe: "Pdf", Berkas: data})
+					andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Jenis: "Kelengkapan", Nama: key, Tipe: "Pdf", Berkas: data})
 
 				}
 			}
@@ -2016,7 +2016,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			log.Fatal(err)
 		}
 
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist administrasi", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Jenis: "Kelengkapan", Nama: "Checklist administrasi", Tipe: "Pdf", Berkas: pdfg.Bytes()})
 	}
 
 	if andalalin.PersyaratanTidakSesuai != nil {
@@ -2363,7 +2363,7 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	if itemIndex != -1 {
 		andalalin.BerkasPermohonan[itemIndex].Berkas = docBytes
 	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Nama: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docBytes})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Jenis: "Kelengkapan", Nama: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docBytes})
 	}
 
 	ac.DB.Save(&andalalin)
@@ -2534,7 +2534,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
 			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 		} else {
-			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Surat keputusan persetujuan teknis andalalin", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Jenis: "Kelengkapan", Nama: "Surat keputusan persetujuan teknis andalalin", Tipe: "Pdf", Berkas: pdfg.Bytes()})
 		}
 	}
 
@@ -2679,7 +2679,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
 		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Jenis: "Kelengkapan", Nama: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfg.Bytes()})
 	}
 
 	if andalalin.KelengkapanTidakSesuai != nil {
@@ -2689,7 +2689,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 	for _, data := range payload.Kelengkapan {
 		if data.Tidak != "" {
 			for _, kelengkapan := range data.Dokumen {
-				andalalin.KelengkapanTidakSesuai = append(andalalin.KelengkapanTidakSesuai, models.KelengkapanTidakSesuai{Dokumen: kelengkapan.Dokumen, Tipe: kelengkapan.Tipe, Jenis: data.Jenis})
+				andalalin.KelengkapanTidakSesuai = append(andalalin.KelengkapanTidakSesuai, models.KelengkapanTidakSesuai{Dokumen: kelengkapan.Dokumen, Tipe: kelengkapan.Tipe, Role: data.Role})
 			}
 		}
 	}
