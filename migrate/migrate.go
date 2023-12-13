@@ -34,6 +34,7 @@ func removeExtension(fileName string) string {
 func main() {
 	initializers.DB.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
 
+	initializers.DB.Migrator().DropTable(&models.User{})
 	initializers.DB.Migrator().DropTable(&models.Andalalin{})
 	initializers.DB.Migrator().DropTable(&models.Perlalin{})
 	initializers.DB.Migrator().DropTable(&models.Survei{})
@@ -41,11 +42,12 @@ func main() {
 	initializers.DB.Migrator().DropTable(&models.TiketLevel1{})
 	initializers.DB.Migrator().DropTable(&models.TiketLevel2{})
 	initializers.DB.Migrator().DropTable(&models.Notifikasi{})
-
+	initializers.DB.Migrator().DropTable(&models.DataMaster{})
 	initializers.DB.Migrator().DropTable(&models.UsulanPengelolaan{})
 	initializers.DB.Migrator().DropTable(&models.SurveiKepuasan{})
 	initializers.DB.Migrator().DropTable(&models.Pemasangan{})
 
+	initializers.DB.AutoMigrate(&models.User{})
 	initializers.DB.AutoMigrate(&models.Andalalin{})
 	initializers.DB.AutoMigrate(&models.Perlalin{})
 	initializers.DB.AutoMigrate(&models.Survei{})
@@ -53,7 +55,7 @@ func main() {
 	initializers.DB.AutoMigrate(&models.TiketLevel1{})
 	initializers.DB.AutoMigrate(&models.TiketLevel2{})
 	initializers.DB.AutoMigrate(&models.Notifikasi{})
-
+	initializers.DB.AutoMigrate(&models.DataMaster{})
 	initializers.DB.AutoMigrate(&models.UsulanPengelolaan{})
 	initializers.DB.AutoMigrate(&models.SurveiKepuasan{})
 	initializers.DB.AutoMigrate(&models.Pemasangan{})
