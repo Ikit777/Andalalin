@@ -205,12 +205,14 @@ type BerkasPermohonanResponse struct {
 type KelengkapanTidakSesuai struct {
 	Dokumen string
 	Tipe    string
+	Jenis   string
 	Role    string
 }
 
 type KelengkapanTidakSesuaiResponse struct {
 	Dokumen string `json:"dokumen,omitempty"`
 	Tipe    string `json:"tipe,omitempty"`
+	Jenis   string `json:"jenis,omitempty"`
 }
 
 type PersyaratanPermohonan struct {
