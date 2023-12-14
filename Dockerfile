@@ -21,7 +21,7 @@ RUN go build -o main .
 
 # Add permissions for files
 RUN chmod +x main
-RUN chmod -R +r 644 /app/templates
+RUN chmod -R +r /app/templates
 
 EXPOSE 8080
 
