@@ -12,7 +12,7 @@ COPY go.sum .
 RUN go mod download
 
 # Copy the source code into the container
-COPY . .
+COPY . /app
 
 # Build the Go app
 RUN go build -o main .
@@ -34,4 +34,4 @@ RUN apt-get update && apt-get install -y \
 EXPOSE 8080
 
 # Command to run the executable
-CMD ["./main"]
+CMD ["/app/main"]
