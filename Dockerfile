@@ -1,35 +1,40 @@
-# Use an official Golang image as a base image
-FROM golang:1.16 as build
+FROM golang:1.17-buster as deps
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy go.mod and go.sum to download dependencies
 COPY go.mod .
 COPY go.sum .
-
-# Download dependencies
 RUN go mod download
 
-# Copy the source code into the container
-COPY . .
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+#-----------------BUILD-----------------
+FROM deps AS build
 
 # Build the Go app
 RUN go build -o main .
 
-# Use a lightweight base image
-FROM gcr.io/distroless/base
+CMD ["./main"]
 
-# Set the working directory inside the container
-WORKDIR /
+FROM debian:buster-slim as prod
+RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    ca-certificates \
+    # start deps needed for wkhtmltopdf
+    curl \
+    libxrender1 \
+    libjpeg62-turbo \
+    fontconfig \
+    libxtst6 \
+    xfonts-75dpi \
+    xfonts-base \
+    xz-utils && \
+    # stop deps needed for wkhtmltopdf
+    rm -rf /var/lib/apt/lists/*
 
-# Copy the binary from the build stage
-COPY --from=build /app/golangapp /golangapp
+RUN curl "https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb" -L -o "wkhtmltopdf.deb"
+RUN dpkg -i wkhtmltopdf.deb
 
-# Install wkhtmltopdf
-RUN apt-get update && apt-get install -y wkhtmltopdf
+COPY --from=build /app /app
 
-EXPOSE 8080
-
-# Command to run the executable
-CMD ["/golangapp"]
+CMD ["./main"]
