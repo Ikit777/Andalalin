@@ -9,28 +9,20 @@ COPY . /app
 
 # Install wkhtmltopdf dependencies
 RUN apt-get update && apt-get install -y \
+    curl \
     libxrender1 \
-    libfontconfig1 \
-    libx11-dev \
-    libjpeg62-turbo-dev \
-    libpng-dev \
-    libxext6 \
+    libjpeg62-turbo \
     fontconfig \
-    wkhtmltopdf \
-    wget \
-    unzip \
-    net-tools \
-    vim \
-    libssl1.0-dev \
+    libxtst6 \
+    xfonts-75dpi \
+    xfonts-base \
+    xz-utils \
     && rm -rf /var/lib/apt/lists/*
-
-# Download and install wkhtmltopdf separately
-RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb && \
-    dpkg -i wkhtmltox_0.12.6-1.bionic_amd64.deb && \
-    apt install -f
+    
+RUN curl "https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb" -L -o "wkhtmltopdf.deb"
+RUN dpkg -i wkhtmltopdf.deb
 
 # Build the Go app
-RUN go mod download
 RUN go build -o main .
 
 EXPOSE 8080
