@@ -24,7 +24,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ikit777/andalalin:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
 
     - name: SSH into Droplet and redeploy
       uses: appleboy/ssh-action@master
@@ -34,6 +34,6 @@ jobs:
         key: ${{ secrets.DROPLET_SSH_KEY }}
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
-          docker stop andalalin || true
-          docker rm andalalin || true
+          docker stop ${{ secrets.DOCKER_USERNAME }}/andalalin:latest || true
+          docker rm ${{ secrets.DOCKER_USERNAME }}/andalalin:latest || true
           docker run -d -p 8080:8080 --name andalalin ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
