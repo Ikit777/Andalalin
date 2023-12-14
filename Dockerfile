@@ -4,6 +4,10 @@ FROM golang:latest
 # Set the working directory to /app
 WORKDIR /app
 
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
 # Copy the current directory contents into the container at /app
 COPY . /app
 
