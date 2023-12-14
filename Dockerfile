@@ -1,49 +1,44 @@
-# builder image
-FROM surnet/alpine-wkhtmltopdf:3.8-0.12.5-full as builder
+# syntax=docker/dockerfile:1
 
-# Image
-FROM golang:1.11-alpine3.8
+#-----------------DEPS-----------------
+FROM golang:1.17-buster as deps
 
-# Install needed packages
-RUN  echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/main" > /etc/apk/repositories \
-     && echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/community" >> /etc/apk/repositories \
-     && apk update && apk add --no-cache \
-      libstdc++ \
-      libx11 \
-      libxrender \
-      libxext \
-      libssl1.0 \
-      ca-certificates \
-      fontconfig \
-      freetype \
-      ttf-dejavu \
-      ttf-droid \
-      ttf-freefont \
-      ttf-liberation \
-      ttf-ubuntu-font-family \
-    && apk add --no-cache --virtual .build-deps \
-      msttcorefonts-installer \
-    \
-    # Install microsoft fonts
-    && update-ms-fonts \
-    && fc-cache -f \
-    \
-    # Clean up when done
-    && rm -rf /var/cache/apk/* \
-    && rm -rf /tmp/* \
-    && apk del .build-deps
+WORKDIR /app
 
-COPY --from=builder /bin/wkhtmltopdf /bin/wkhtmltopdf
-COPY --from=builder /bin/wkhtmltoimage /bin/wkhtmltoimage
+COPY go.* ./
+RUN go mod download
 
-WORKDIR /go/src/app
+COPY . ./
 
-COPY src/ .
+#-----------------BUILD-----------------
+FROM deps AS build
 
-COPY fonts/ /usr/share/fonts
+RUN go build -v -o /app main.go
 
-RUN go get -d -v ./... && go install -v ./...
+CMD ["/app"]
 
-EXPOSE 8080
+#-----------------PROD-----------------
+# Use the official Debian slim image for a lean production container.
+# https://hub.docker.com/_/debian
+# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
+FROM debian:buster-slim as prod
+RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    ca-certificates \
+    # start deps needed for wkhtmltopdf
+    curl \
+    libxrender1 \
+    libjpeg62-turbo \
+    fontconfig \
+    libxtst6 \
+    xfonts-75dpi \
+    xfonts-base \
+    xz-utils && \
+    # stop deps needed for wkhtmltopdf
+    rm -rf /var/lib/apt/lists/*
 
-CMD [ "app" ]
+RUN curl "https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb" -L -o "wkhtmltopdf.deb"
+RUN dpkg -i wkhtmltopdf.deb
+
+COPY --from=build /app /app
+
+CMD ["/app"]
