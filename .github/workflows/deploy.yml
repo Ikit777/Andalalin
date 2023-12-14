@@ -28,7 +28,7 @@ jobs:
       with:
         host: ${{ secrets.DROPLET_IP }}
         username: ${{ secrets.DROPLET_USERNAME }}
-        key: ${{ secrets.DROPLET_SSH_KEY }}
+        password: ${{ secrets.DROPLET_PASSWORD }}
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
           docker stop andalalin || true
