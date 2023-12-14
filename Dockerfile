@@ -1,29 +1,35 @@
-# Use an official Golang runtime as a parent image
-FROM golang:latest
+# Use a minimal Golang image to build the binary
+FROM golang:1.16 AS builder
 
-# Set the working directory to /app
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Copy the go.mod and go.sum files to download dependencies
+COPY go.mod .
+COPY go.sum .
 
-# Install wkhtmltopdf dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    libxrender1 \
-    libjpeg62-turbo \
-    fontconfig \
-    libxtst6 \
-    xfonts-75dpi \
-    xfonts-base \
-    xz-utils && \
-    && rm -rf /var/lib/apt/lists/*
+# Download dependencies
+RUN go mod download
 
-RUN curl "https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb" -L -o "wkhtmltopdf.deb"
-RUN dpkg -i wkhtmltopdf.deb
+# Copy the source code into the container
+COPY . .
 
 # Build the Go app
 RUN go build -o main .
+
+# Use a smaller base image for the final stage
+FROM debian:bullseye-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy only the binary from the builder stage
+COPY --from=builder /app/main /app/main
+
+# Install wkhtmltopdf dependencies
+RUN apt-get update && apt-get install -y \
+    wkhtmltopdf \
+    && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8080
 
