@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     net-tools \
     vim \
+    libssl1.0-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and install wkhtmltopdf separately
