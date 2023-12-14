@@ -1,0 +1,36 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      uses: actions/setup-docker@v2
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t andalalin .
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker tag andalalin ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
+
+    - name: SSH into Droplet and redeploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DROPLET_IP }}
+        username: ${{ secrets.DROPLET_USERNAME }}
+        key: ${{ secrets.DROPLET_SSH_KEY }}
+        script: |
+          docker pull ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
+          docker stop andalalin || true
+          docker rm andalalin || true
+          docker run -d -p 8080:8080 --name andalalin ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
