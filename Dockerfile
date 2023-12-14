@@ -1,23 +1,49 @@
-# Use an official Golang runtime as a parent image
-FROM golang:latest
+# builder image
+FROM surnet/alpine-wkhtmltopdf:3.8-0.12.5-full as builder
 
-# Set the working directory to /app
-WORKDIR /app
+# Image
+FROM golang:1.11-alpine3.8
 
-# Install wkhtmltopdf dependencies
-RUN apt-get update && \
-    apt-get install -y libxrender1 libfontconfig1 libx11-dev libxext-dev libfreetype6 libjpeg62-turbo libpng16-16
+# Install needed packages
+RUN  echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/main" > /etc/apk/repositories \
+     && echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/community" >> /etc/apk/repositories \
+     && apk update && apk add --no-cache \
+      libstdc++ \
+      libx11 \
+      libxrender \
+      libxext \
+      libssl1.0 \
+      ca-certificates \
+      fontconfig \
+      freetype \
+      ttf-dejavu \
+      ttf-droid \
+      ttf-freefont \
+      ttf-liberation \
+      ttf-ubuntu-font-family \
+    && apk add --no-cache --virtual .build-deps \
+      msttcorefonts-installer \
+    \
+    # Install microsoft fonts
+    && update-ms-fonts \
+    && fc-cache -f \
+    \
+    # Clean up when done
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/* \
+    && apk del .build-deps
 
-# Install go-wkhtmltopdf
-RUN go get -u github.com/SebastiaanKlippert/go-wkhtmltopdf
+COPY --from=builder /bin/wkhtmltopdf /bin/wkhtmltopdf
+COPY --from=builder /bin/wkhtmltoimage /bin/wkhtmltoimage
 
-# Copy the local package files to the container's workspace
-COPY . /app
+WORKDIR /go/src/app
 
-# Build the Go app
-RUN go build -o main .
+COPY src/ .
+
+COPY fonts/ /usr/share/fonts
+
+RUN go get -d -v ./... && go install -v ./...
 
 EXPOSE 8080
 
-# Command to run the executable
-CMD ["./main"]
+CMD [ "app" ]
