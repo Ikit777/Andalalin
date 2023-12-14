@@ -30,7 +30,7 @@ jobs:
         username: ${{ secrets.DROPLET_USERNAME }}
         key: |
       -----BEGIN OPENSSH PRIVATE KEY-----
-      ... ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCKQ/vhI+IdZMrLE7iPsmPPcARq09deCmn4bMYacmmKnId46PJVkDRI170dmhS/NQSQ9O3viRgZddxIV37VdTCZqycCHuXBAHmSoWShcH1hQaahMAfiXWOYfDbsZvR5nvdUkUzaAHeQO9IeQAl1aak4HQ4qpQpLew5TkM+2gEKpnOkHTgbqxKWBEVe+1Weqh9IaqyA91O9FnO/B5G7ewZnViYyBzdIM+fSZgaM1o1lCVYn4jZRO12EbM6Z7Bj3USAIZ+Ezkj32WZWmMFRIMiGDcPgivtwhhjfZpro+xugoC9yecGa3w3FbE9HXorcSKaiGST2dhDNjYZ/jlWUf98KmL rsa-key-20231214 ...
+      ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCKQ/vhI+IdZMrLE7iPsmPPcARq09deCmn4bMYacmmKnId46PJVkDRI170dmhS/NQSQ9O3viRgZddxIV37VdTCZqycCHuXBAHmSoWShcH1hQaahMAfiXWOYfDbsZvR5nvdUkUzaAHeQO9IeQAl1aak4HQ4qpQpLew5TkM+2gEKpnOkHTgbqxKWBEVe+1Weqh9IaqyA91O9FnO/B5G7ewZnViYyBzdIM+fSZgaM1o1lCVYn4jZRO12EbM6Z7Bj3USAIZ+Ezkj32WZWmMFRIMiGDcPgivtwhhjfZpro+xugoC9yecGa3w3FbE9HXorcSKaiGST2dhDNjYZ/jlWUf98KmL rsa-key-20231214
       -----END OPENSSH PRIVATE KEY-----
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
