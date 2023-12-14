@@ -1,44 +1,22 @@
-# syntax=docker/dockerfile:1
+# Use the official Golang image as the base image
+FROM golang:latest
 
-#-----------------DEPS-----------------
-FROM golang:1.17-buster as deps
+# Install wkhtmltopdf dependencies
+RUN apt-get update && apt-get install -y \
+    wkhtmltopdf \
+    && rm -rf /var/lib/apt/lists/*
 
+# Set the working directory inside the container
 WORKDIR /app
 
-COPY go.* ./
-RUN go mod download
+# Copy the local code to the container
+COPY . .
 
-COPY . ./
+# Build the Go application
+RUN go build -o main .
 
-#-----------------BUILD-----------------
-FROM deps AS build
+# Expose the port the application runs on
+EXPOSE 8080
 
-RUN go build -v -o /app main.go
-
-CMD ["/app"]
-
-#-----------------PROD-----------------
-# Use the official Debian slim image for a lean production container.
-# https://hub.docker.com/_/debian
-# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM debian:buster-slim as prod
-RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    ca-certificates \
-    # start deps needed for wkhtmltopdf
-    curl \
-    libxrender1 \
-    libjpeg62-turbo \
-    fontconfig \
-    libxtst6 \
-    xfonts-75dpi \
-    xfonts-base \
-    xz-utils && \
-    # stop deps needed for wkhtmltopdf
-    rm -rf /var/lib/apt/lists/*
-
-RUN curl "https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb" -L -o "wkhtmltopdf.deb"
-RUN dpkg -i wkhtmltopdf.deb
-
-COPY --from=build /app /app
-
-CMD ["/app"]
+# Command to run the executable
+CMD ["./main"]
