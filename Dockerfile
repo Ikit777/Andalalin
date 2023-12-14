@@ -1,21 +1,20 @@
-# Use the official Golang image as the base image
+# Use an official Golang runtime as a parent image
 FROM golang:latest
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
 
 # Install wkhtmltopdf dependencies
 RUN apt-get update && apt-get install -y \
     wkhtmltopdf \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory inside the container
-WORKDIR /app
-
-# Copy the local code to the container
-COPY . .
-
-# Build the Go application
+# Build the Go app
 RUN go build -o main .
 
-# Expose the port the application runs on
 EXPOSE 8080
 
 # Command to run the executable
