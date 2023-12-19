@@ -3081,7 +3081,7 @@ func (ac *AndalalinController) GetSurvey(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
 }
 
-func (ac *AndalalinController) PemeriksaanSuratPersetujuan(ctx *gin.Context) {
+func (ac *AndalalinController) PemeriksaanSuratKeputusan(ctx *gin.Context) {
 	var payload *models.Pemeriksaan
 	id := ctx.Param("id_andalalin")
 
