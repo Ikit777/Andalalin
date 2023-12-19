@@ -3082,7 +3082,7 @@ func (ac *AndalalinController) GetSurvey(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) PemeriksaanSuratPersetujuan(ctx *gin.Context) {
-	var payload models.Pemeriksaan
+	var payload *models.Pemeriksaan
 	id := ctx.Param("id_andalalin")
 
 	config, _ := initializers.LoadConfig()
