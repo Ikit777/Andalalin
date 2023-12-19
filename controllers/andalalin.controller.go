@@ -3082,7 +3082,7 @@ func (ac *AndalalinController) GetSurvey(ctx *gin.Context) {
 }
 
 func (ac *AndalalinController) PemeriksaanSuratPersetujuan(ctx *gin.Context) {
-	var payload *models.Pemeriksaan
+	var payload models.Pemeriksaan
 	id := ctx.Param("id_andalalin")
 
 	config, _ := initializers.LoadConfig()
@@ -3106,7 +3106,7 @@ func (ac *AndalalinController) PemeriksaanSuratPersetujuan(ctx *gin.Context) {
 		return
 	}
 
-	if err := ctx.ShouldBind(&payload); err != nil {
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
