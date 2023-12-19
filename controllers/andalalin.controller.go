@@ -3124,7 +3124,7 @@ func (ac *AndalalinController) PemeriksaanSuratPersetujuan(ctx *gin.Context) {
 	if payload.Hasil == "Surat keputusan telah terpenuhi" {
 		andalalin.StatusAndalalin = "Persetujuan surat keputusan"
 	} else {
-		andalalin.StatusAndalalin = "Pembuatan surat persetujuan"
+		andalalin.StatusAndalalin = "Pembuatan surat keputusan"
 	}
 
 	ac.DB.Save(&andalalin)
