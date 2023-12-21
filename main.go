@@ -22,6 +22,9 @@ var (
 	AndalalinController      controllers.AndalalinController
 	AndalalinRouteController routes.AndalalinRouteController
 
+	SurveyController      controllers.SurveyController
+	SurveyRouteController routes.SurveyRouteController
+
 	DataMasterController      controllers.DataMasterControler
 	DataMasterRouteController routes.DataMasterRouteController
 )
@@ -42,6 +45,9 @@ func init() {
 
 	AndalalinController = controllers.NewAndalalinController(initializers.DB)
 	AndalalinRouteController = routes.NewRouteAndalalinController(AndalalinController)
+
+	SurveyController = controllers.NewSurveyController(initializers.DB)
+	SurveyRouteController = routes.NewSurveyRouteController(SurveyController)
 
 	DataMasterController = controllers.NewDataMasterControler(initializers.DB)
 	DataMasterRouteController = routes.NewDataMasterRouteController(DataMasterController)
