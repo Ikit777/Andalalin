@@ -7,20 +7,10 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . /app
 
-# Set proxy environment variables if needed
-ARG http_proxy
-ARG https_proxy
-ENV http_proxy=$http_proxy
-ENV https_proxy=$https_proxy
-
-# Update the package list
-RUN apt-get update
-
-# Install required dependencies
-RUN apt-get install -y wkhtmltopdf
-
-# Clean up unnecessary files
-RUN rm -rf /var/lib/apt/lists/*
+# Install wkhtmltopdf dependencies
+RUN apt-get update && apt-get install -y \
+    wkhtmltopdf \
+    && rm -rf /var/lib/apt/lists/*
 
 # Build the Go app
 RUN go build -o main .
