@@ -15,6 +15,7 @@ func NewSurveyRouteController(surveyController controllers.SurveyController) Sur
 }
 
 func (sc *SurveyRouteController) SurveyRoute(rg *gin.RouterGroup) {
+
 	router := rg.Group("/survey")
 
 	//Survei kepuasan
