@@ -17,14 +17,19 @@ func NewAuthRouteController(authController controllers.AuthController) AuthRoute
 func (rc *AuthRouteController) AuthRoute(rg *gin.RouterGroup) {
 	router := rg.Group("/auth")
 
+	//Pendaftaran akun
 	router.POST("/register", rc.authController.SignUp)
 
+	//Login aplikasi
 	router.POST("/login", rc.authController.SignIn)
 
+	//Refresh token
 	router.GET("/refresh", rc.authController.RefreshAccessToken)
 
+	//Verifikasi akun
 	router.GET("/verification/:verificationCode", rc.authController.VerifyEmail)
-	router.POST("/resend", rc.authController.ResendVerification)
+	router.POST("/verification/resend", rc.authController.ResendVerification)
 
+	//Logout
 	router.GET("/logout", middleware.DeserializeUser(), rc.authController.LogoutUser)
 }

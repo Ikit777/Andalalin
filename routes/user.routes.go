@@ -18,23 +18,38 @@ func (uc *UserRouteController) UserRoute(rg *gin.RouterGroup) {
 
 	router := rg.Group("users")
 
+	//Get detail user
 	router.GET("/me", middleware.DeserializeUser(), uc.userController.GetMe)
 
+	//Get semua user
 	router.GET("/all", middleware.DeserializeUser(), uc.userController.GetUsers)
+
+	//Get user berdasarkan email
 	router.GET("/email/:emailUser", middleware.DeserializeUser(), uc.userController.GetUserByEmail)
+
+	//GEt user berdasarkan role
 	router.GET("role/:role", middleware.DeserializeUser(), uc.userController.GetUsersSortRole)
 
+	//Menindaklanjuti user
 	router.POST("/add", middleware.DeserializeUser(), uc.userController.Add)
 	router.DELETE("/delete", middleware.DeserializeUser(), uc.userController.Delete)
-	router.POST("/edit", middleware.DeserializeUser(), uc.userController.EditAkun)
 
-	router.POST("/forgotpassword", uc.userController.ForgotPassword)
-	router.PATCH("/resetpassword/:resetToken", uc.userController.ResetPassword)
+	//Merubah akun
+	router.POST("/edit/account", middleware.DeserializeUser(), uc.userController.EditAkun)
 
-	router.POST("/updatephoto", middleware.DeserializeUser(), uc.userController.UpdatePhoto)
+	//Merubah foto profil
+	router.POST("/edit/photo", middleware.DeserializeUser(), uc.userController.UpdatePhoto)
 
-	router.GET("/notifikasi", middleware.DeserializeUser(), uc.userController.GetNotifikasi)
-	router.DELETE("/clearnotifikasi", middleware.DeserializeUser(), uc.userController.ClearNotifikasi)
+	//Reset password
+	router.POST("/password/forgot", uc.userController.ForgotPassword)
+	router.PATCH("/password/reset/:resetToken", uc.userController.ResetPassword)
 
+	//Get notifikasi
+	router.GET("/notification", middleware.DeserializeUser(), uc.userController.GetNotifikasi)
+
+	//Bersihkan notifikasi
+	router.DELETE("/notification/delete", middleware.DeserializeUser(), uc.userController.ClearNotifikasi)
+
+	//Get semua petugas untuk pilih petugas
 	router.GET("/petugas", middleware.DeserializeUser(), uc.userController.GetPetugas)
 }

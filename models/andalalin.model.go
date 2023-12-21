@@ -664,7 +664,7 @@ type Survei struct {
 	IdPetugas     uuid.UUID `gorm:"type:varchar(255);not null"`
 	Petugas       string    `gorm:"type:varchar(255);not null"`
 	EmailPetugas  string    `gorm:"type:varchar(255);not null"`
-	Keterangan    *string
+	Catatan       *string
 	Foto1         []byte
 	Foto2         []byte
 	Foto3         []byte
@@ -675,29 +675,11 @@ type Survei struct {
 	TanggalSurvei string `gorm:"not null"`
 }
 
-type SurveiMandiri struct {
-	IdSurvey           uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	IdPetugas          uuid.UUID `gorm:"type:varchar(255);not null"`
-	Petugas            string    `gorm:"type:varchar(255);not null"`
-	EmailPetugas       string    `gorm:"type:varchar(255);not null"`
-	Keterangan         *string
-	Foto1              []byte
-	Foto2              []byte
-	Foto3              []byte
-	Lokasi             string
-	Latitude           float64
-	Longitude          float64
-	WaktuSurvei        string `gorm:"not null"`
-	TanggalSurvei      string `gorm:"not null"`
-	StatusSurvei       string
-	KeteranganTindakan string
-}
-
 type InputSurvey struct {
-	Lokasi     string  `json:"lokasi" binding:"required"`
-	Keterangan *string `json:"keterangan" binding:"required"`
-	Latitude   float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
-	Longitude  float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
+	Lokasi    string  `json:"lokasi" binding:"required"`
+	Catatan   *string `json:"catatan" binding:"required"`
+	Latitude  float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
+	Longitude float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
 }
 
 type DataSurvey struct {
@@ -734,27 +716,6 @@ type InputUsulanPengelolaan struct {
 	KeteranganUsulanTindakan   *string `json:"keterangan" binding:"required"`
 }
 
-type SurveiKepuasan struct {
-	IdSurvey           uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	IdAndalalin        uuid.UUID `gorm:"type:varchar(255);not null"`
-	IdUser             uuid.UUID `gorm:"type:varchar(255);not null"`
-	Nama               string    `gorm:"type:varchar(255);not null"`
-	Email              string    `gorm:"type:varchar(255);not null"`
-	KritikSaran        *string
-	TanggalPelaksanaan string
-	DataSurvei         []Kepuasan `gorm:"serializer:json"`
-}
-
-type SurveiKepuasanInput struct {
-	KritikSaran *string    `json:"saran" binding:"required"`
-	DataSurvei  []Kepuasan `json:"data" binding:"required"`
-}
-
-type Kepuasan struct {
-	Jenis string
-	Nilai string
-}
-
 type Pemasangan struct {
 	IdPemasangan      uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
 	IdAndalalin       uuid.UUID `gorm:"type:varchar(255);uniqueIndex;not null"`
@@ -762,7 +723,7 @@ type Pemasangan struct {
 	IdPetugas         uuid.UUID `gorm:"type:varchar(255);not null"`
 	Petugas           string    `gorm:"type:varchar(255);not null"`
 	EmailPetugas      string    `gorm:"type:varchar(255);not null"`
-	Keterangan        *string
+	Catatan           *string
 	Foto1             []byte
 	Foto2             []byte
 	Foto3             []byte
