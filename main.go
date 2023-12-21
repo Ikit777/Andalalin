@@ -80,6 +80,7 @@ func main() {
 	AuthRouteController.AuthRoute(router)
 	UserRouteController.UserRoute(router)
 	AndalalinRouteController.AndalalainRoute(router)
+	SurveyRouteController.SurveyRoute(router)
 	DataMasterRouteController.DataMasterRoute(router)
 	log.Fatal(server.Run(":" + config.ServerPort))
 }
