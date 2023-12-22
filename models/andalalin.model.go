@@ -191,15 +191,13 @@ type Perlalin struct {
 
 type BerkasPermohonan struct {
 	Nama   string
-	Jenis  string
 	Tipe   string
 	Status string
 	Berkas []byte
 }
 
 type BerkasPermohonanResponse struct {
-	Nama  string `json:"dokumen,omitempty"`
-	Jenis string `json:"jenis,omitempty"`
+	Nama string `json:"dokumen,omitempty"`
 }
 
 type KelengkapanTidakSesuai struct {
