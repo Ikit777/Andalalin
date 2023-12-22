@@ -916,40 +916,25 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	ac.DB.First(&master)
 
 	var persyaratan_dishub []string
+	var berkas_dishub []string
 	for _, dokumen := range andalalin.BerkasPermohonan {
 		for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
 			if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan == dokumen.Nama {
 				persyaratan_dishub = append(persyaratan_dishub, dokumen.Nama)
-			}
-		}
-	}
-
-	var berkas_dishub []string
-	for _, dokumen := range andalalin.BerkasPermohonan {
-		for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
-			if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan != dokumen.Nama {
+			} else {
 				berkas_dishub = append(berkas_dishub, dokumen.Nama)
 			}
 		}
 	}
 
 	var persyaratan_user []string
+	var berkas_user []string
 	for _, dokumen := range andalalin.BerkasPermohonan {
 		if dokumen.Status == "Selesai" {
 			for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
 				if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan == dokumen.Nama {
 					persyaratan_user = append(persyaratan_user, dokumen.Nama)
-				}
-			}
-
-		}
-	}
-
-	var berkas_user []string
-	for _, dokumen := range andalalin.BerkasPermohonan {
-		if dokumen.Status == "Selesai" {
-			for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
-				if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan != dokumen.Nama {
+				} else {
 					berkas_user = append(berkas_user, dokumen.Nama)
 				}
 			}
