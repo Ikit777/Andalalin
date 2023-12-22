@@ -44,6 +44,15 @@ func customTitleCase(input string) string {
 	return strings.Join(words, " ")
 }
 
+func findItem(array []string, target string) int {
+	for i, value := range array {
+		if value == target {
+			return i
+		}
+	}
+	return -1
+}
+
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	var payload *models.DataAndalalin
 	currentUser := ctx.MustGet("currentUser").(models.User)
@@ -925,13 +934,12 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	var persyaratan_dishub []string
 	var berkas_dishub []string
 	for _, dokumen := range andalalin.BerkasPermohonan {
-		for _, persyaratan := range persyaratan_andalalin {
-			if persyaratan == dokumen.Nama {
-				persyaratan_dishub = append(persyaratan_dishub, dokumen.Nama)
-			} else if persyaratan != dokumen.Nama {
-				berkas_dishub = append(berkas_dishub, dokumen.Nama)
-				break
-			}
+		index := findItem(persyaratan_andalalin, dokumen.Nama)
+
+		if index != -1 {
+			persyaratan_dishub = append(persyaratan_dishub, dokumen.Nama)
+		} else {
+			berkas_dishub = append(berkas_dishub, dokumen.Nama)
 		}
 	}
 
@@ -939,13 +947,12 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	var berkas_user []string
 	for _, dokumen := range andalalin.BerkasPermohonan {
 		if dokumen.Status == "Selesai" {
-			for _, persyaratan := range persyaratan_andalalin {
-				if persyaratan == dokumen.Nama {
-					persyaratan_user = append(persyaratan_user, dokumen.Nama)
-				} else if persyaratan != dokumen.Nama {
-					berkas_user = append(berkas_user, dokumen.Nama)
-					break
-				}
+			index := findItem(persyaratan_andalalin, dokumen.Nama)
+
+			if index != -1 {
+				persyaratan_user = append(persyaratan_user, dokumen.Nama)
+			} else {
+				berkas_user = append(berkas_user, dokumen.Nama)
 			}
 		}
 	}
