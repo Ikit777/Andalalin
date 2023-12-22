@@ -924,7 +924,6 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 			} else {
 				berkas_dishub = append(berkas_dishub, dokumen.Nama)
 			}
-			break
 		}
 	}
 
@@ -938,7 +937,6 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				} else {
 					berkas_user = append(berkas_user, dokumen.Nama)
 				}
-				break
 			}
 
 		}
