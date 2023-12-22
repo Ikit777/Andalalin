@@ -1698,7 +1698,6 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 				}
 			}
 
-			andalalin.BerkasPermohonan[itenKeputusan].Status = "Selesai"
 			andalalin.StatusAndalalin = "Cek kelengkapan akhir"
 			ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
 		}
@@ -3075,6 +3074,17 @@ func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID)
 	}
 
 	andalalin.StatusAndalalin = "Permohonan selesai"
+
+	itenKeputusan := -1
+
+	for i, item := range andalalin.BerkasPermohonan {
+		if item.Nama == "Surat keputusan persetujuan teknis andalalin" {
+			itenKeputusan = i
+			break
+		}
+	}
+
+	andalalin.BerkasPermohonan[itenKeputusan].Status = "Selesai"
 
 	ac.DB.Save(&andalalin)
 
