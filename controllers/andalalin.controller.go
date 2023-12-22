@@ -919,10 +919,13 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	var berkas_dishub []string
 	for _, dokumen := range andalalin.BerkasPermohonan {
 		for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
-			if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan == dokumen.Nama {
-				persyaratan_dishub = append(persyaratan_dishub, dokumen.Nama)
-			} else {
-				berkas_dishub = append(berkas_dishub, dokumen.Nama)
+			if persyaratan.Bangkitan == andalalin.Bangkitan {
+				if persyaratan.Persyaratan == dokumen.Nama {
+					persyaratan_dishub = append(persyaratan_dishub, dokumen.Nama)
+				} else {
+					berkas_dishub = append(berkas_dishub, dokumen.Nama)
+				}
+				break
 			}
 		}
 	}
@@ -932,13 +935,15 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	for _, dokumen := range andalalin.BerkasPermohonan {
 		if dokumen.Status == "Selesai" {
 			for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
-				if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan == dokumen.Nama {
-					persyaratan_user = append(persyaratan_user, dokumen.Nama)
-				} else {
-					berkas_user = append(berkas_user, dokumen.Nama)
+				if persyaratan.Bangkitan == andalalin.Bangkitan {
+					if persyaratan.Persyaratan == dokumen.Nama {
+						persyaratan_user = append(persyaratan_user, dokumen.Nama)
+					} else {
+						berkas_user = append(berkas_user, dokumen.Nama)
+					}
+					break
 				}
 			}
-
 		}
 	}
 
