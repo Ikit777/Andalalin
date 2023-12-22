@@ -911,15 +911,49 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		status = ticket2.Status
 	}
 
-	var berkas_dinas []models.BerkasPermohonanResponse
+	var master models.DataMaster
+
+	ac.DB.First(&master)
+
+	var persyaratan_dishub []string
 	for _, dokumen := range andalalin.BerkasPermohonan {
-		berkas_dinas = append(berkas_dinas, models.BerkasPermohonanResponse{Nama: dokumen.Nama})
+		for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
+			if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan == dokumen.Nama {
+				persyaratan_dishub = append(persyaratan_dishub, dokumen.Nama)
+			}
+		}
 	}
 
-	var berkas_user []models.BerkasPermohonanResponse
+	var berkas_dishub []string
+	for _, dokumen := range andalalin.BerkasPermohonan {
+		for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
+			if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan != dokumen.Nama {
+				berkas_dishub = append(berkas_dishub, dokumen.Nama)
+			}
+		}
+	}
+
+	var persyaratan_user []string
 	for _, dokumen := range andalalin.BerkasPermohonan {
 		if dokumen.Status == "Selesai" {
-			berkas_user = append(berkas_user, models.BerkasPermohonanResponse{Nama: dokumen.Nama})
+			for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
+				if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan == dokumen.Nama {
+					persyaratan_user = append(persyaratan_user, dokumen.Nama)
+				}
+			}
+
+		}
+	}
+
+	var berkas_user []string
+	for _, dokumen := range andalalin.BerkasPermohonan {
+		if dokumen.Status == "Selesai" {
+			for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
+				if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan != dokumen.Nama {
+					berkas_user = append(berkas_user, dokumen.Nama)
+				}
+			}
+
 		}
 	}
 
@@ -995,7 +1029,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
 				Pertimbangan:           andalalin.Pertimbangan,
 
-				BerkasPermohonan: berkas_user,
+				BerkasPermohonan:      berkas_user,
+				PersyaratanPermohonan: persyaratan_user,
 
 				KelengkapanTidakSesuai: kelengkapan_user,
 			}
@@ -1106,7 +1141,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				TanggalSKRK:       andalalin.TanggalSKRK,
 				Catatan:           andalalin.Catatan,
 
-				BerkasPermohonan: berkas_dinas,
+				BerkasPermohonan:      berkas_dishub,
+				PersyaratanPermohonan: persyaratan_dishub,
 
 				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
 

@@ -196,10 +196,6 @@ type BerkasPermohonan struct {
 	Berkas []byte
 }
 
-type BerkasPermohonanResponse struct {
-	Nama string `json:"dokumen,omitempty"`
-}
-
 type KelengkapanTidakSesuai struct {
 	Dokumen string
 	Tipe    string
@@ -462,7 +458,8 @@ type AndalalinResponse struct {
 	CatatanPemeriksaan *string `json:"catatan_pemeriksaan,omitempty"`
 
 	//Berkas Permohonan
-	BerkasPermohonan []BerkasPermohonanResponse `json:"berkas,omitempty"`
+	PersyaratanPermohonan []string `json:"persyaratan,omitempty"`
+	BerkasPermohonan      []string `json:"berkas,omitempty"`
 
 	//Perlengkapan Tidak Sesuai
 	KelengkapanTidakSesuai []KelengkapanTidakSesuaiResponse `json:"kelengkapan,omitempty"`
@@ -578,7 +575,8 @@ type AndalalinResponseUser struct {
 	Pertimbangan string `json:"pertimbangan,omitempty"`
 
 	//Berkas Permohonan
-	BerkasPermohonan []BerkasPermohonanResponse `json:"berkas,omitempty"`
+	PersyaratanPermohonan []string `json:"persyaratan,omitempty"`
+	BerkasPermohonan      []string `json:"berkas,omitempty"`
 
 	//Perlengkapan Tidak Sesuai
 	KelengkapanTidakSesuai []KelengkapanTidakSesuaiResponse `json:"kelengkapan,omitempty"`
