@@ -913,7 +913,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	ac.DB.First(&master)
+	ac.DB.Select("persyaratan").First(&master)
 
 	var persyaratan_dishub []string
 	var berkas_dishub []string
@@ -921,8 +921,10 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
 			if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan == dokumen.Nama {
 				persyaratan_dishub = append(persyaratan_dishub, dokumen.Nama)
+				break
 			} else {
 				berkas_dishub = append(berkas_dishub, dokumen.Nama)
+				break
 			}
 		}
 	}
@@ -934,8 +936,10 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 			for _, persyaratan := range master.Persyaratan.PersyaratanAndalalin {
 				if persyaratan.Bangkitan == andalalin.Bangkitan && persyaratan.Persyaratan == dokumen.Nama {
 					persyaratan_user = append(persyaratan_user, dokumen.Nama)
+					break
 				} else {
 					berkas_user = append(berkas_user, dokumen.Nama)
+					break
 				}
 			}
 
