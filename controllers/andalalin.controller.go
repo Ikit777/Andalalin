@@ -930,6 +930,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				persyaratan_dishub = append(persyaratan_dishub, dokumen.Nama)
 			} else if persyaratan != dokumen.Nama {
 				berkas_dishub = append(berkas_dishub, dokumen.Nama)
+				break
 			}
 		}
 	}
@@ -943,6 +944,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 					persyaratan_user = append(persyaratan_user, dokumen.Nama)
 				} else if persyaratan != dokumen.Nama {
 					berkas_user = append(berkas_user, dokumen.Nama)
+					break
 				}
 			}
 		}
