@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"strings"
@@ -51,6 +52,23 @@ func findItem(array []string, target string) int {
 		}
 	}
 	return -1
+}
+
+func detectFileType(file multipart.File) (string, error) {
+	// Read the first 512 bytes to determine the file type
+	buffer := make([]byte, 512)
+	_, err := file.Read(buffer)
+	if err != nil {
+		return "", err
+	}
+
+	// Reset the file position to the beginning
+	file.Seek(0, 0)
+
+	// Determine the file type based on content
+	fileType := http.DetectContentType(buffer)
+
+	return fileType, nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -1469,10 +1487,22 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 					return
 				}
 
+				fileType, err := detectFileType(file)
+				if err != nil {
+					ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": error.Error()})
+					return
+				}
+
 				for i := range andalalin.BerkasPermohonan {
 					if andalalin.BerkasPermohonan[i].Nama == key {
 						andalalin.BerkasPermohonan[i].Berkas = data
 						break
+					} else {
+						if fileType == "application/pdf" {
+							andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Nama: key, Tipe: "Pdf", Status: "Selesai", Berkas: data})
+						} else {
+							andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Nama: key, Tipe: "Word", Status: "Selesai", Berkas: data})
+						}
 					}
 				}
 
