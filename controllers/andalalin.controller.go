@@ -957,18 +957,9 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		}
 	}
 
-	var kelengkapan_user []models.KelengkapanTidakSesuaiResponse
+	var kelengkapan []models.KelengkapanTidakSesuaiResponse
 	for _, dokumen := range andalalin.KelengkapanTidakSesuai {
-		if dokumen.Role == "User" {
-			kelengkapan_user = append(kelengkapan_user, models.KelengkapanTidakSesuaiResponse{Dokumen: dokumen.Dokumen, Tipe: dokumen.Tipe})
-		}
-	}
-
-	var kelengkapan_dinas []models.KelengkapanTidakSesuaiResponse
-	for _, dokumen := range andalalin.KelengkapanTidakSesuai {
-		if dokumen.Role == "Dishub" {
-			kelengkapan_dinas = append(kelengkapan_dinas, models.KelengkapanTidakSesuaiResponse{Dokumen: dokumen.Dokumen, Tipe: dokumen.Tipe})
-		}
+		kelengkapan = append(kelengkapan, models.KelengkapanTidakSesuaiResponse(dokumen))
 	}
 
 	if andalalin.IdAndalalin != uuid.Nil {
@@ -1032,7 +1023,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				BerkasPermohonan:      berkas_user,
 				PersyaratanPermohonan: persyaratan_user,
 
-				KelengkapanTidakSesuai: kelengkapan_user,
+				KelengkapanTidakSesuai: kelengkapan,
 			}
 
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": dataUser})
@@ -1153,7 +1144,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				//Data Pertimbangan
 				Pertimbangan: andalalin.Pertimbangan,
 
-				KelengkapanTidakSesuai: kelengkapan_dinas,
+				KelengkapanTidakSesuai: kelengkapan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 		}
