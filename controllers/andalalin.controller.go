@@ -1489,7 +1489,7 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 
 				fileType, err := detectFileType(file)
 				if err != nil {
-					ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": error.Error()})
+					ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 					return
 				}
 
