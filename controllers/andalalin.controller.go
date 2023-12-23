@@ -1490,6 +1490,7 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 						} else {
 							andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Nama: key, Tipe: "Word", Status: "Selesai", Berkas: data})
 						}
+						break
 					}
 				}
 
