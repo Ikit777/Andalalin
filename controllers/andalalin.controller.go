@@ -1805,7 +1805,55 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			if andalalin.KelengkapanTidakSesuai != nil {
 				andalalin.StatusAndalalin = "Kelengkapan tidak terpenuhi"
 			} else {
-				ac.PermohonanSelesai(ctx, andalalin.IdAndalalin)
+				andalalin.StatusAndalalin = "Permohonan selesai"
+
+				itenKeputusan := -1
+
+				for i, item := range andalalin.BerkasPermohonan {
+					if item.Nama == "Surat keputusan persetujuan teknis andalalin" {
+						itenKeputusan = i
+						break
+					}
+				}
+
+				andalalin.BerkasPermohonan[itenKeputusan].Status = "Selesai"
+
+				data := utils.PermohonanSelesai{
+					Kode:    andalalin.Kode,
+					Nama:    andalalin.NamaPemohon,
+					Tlp:     andalalin.NomerPemohon,
+					Jenis:   andalalin.JenisAndalalin,
+					Status:  andalalin.StatusAndalalin,
+					Subject: "Permohonan telah selesai",
+				}
+
+				utils.SendEmailPermohonanSelesai(andalalin.EmailPemohon, &data)
+
+				var user models.User
+				resultUser := ac.DB.First(&user, "id = ?", andalalin.IdUser)
+				if resultUser.Error != nil {
+					ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+					return
+				}
+
+				simpanNotif := models.Notifikasi{
+					IdUser: user.ID,
+					Title:  "Permohonan selesai",
+					Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+				}
+
+				ac.DB.Create(&simpanNotif)
+
+				if user.PushToken != "" {
+					notif := utils.Notification{
+						IdUser: user.ID,
+						Title:  "Permohonan selesai",
+						Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+						Token:  user.PushToken,
+					}
+
+					utils.SendPushNotifications(&notif)
+				}
 			}
 		}
 		ac.DB.Save(&andalalin)
@@ -3135,67 +3183,67 @@ func (ac *AndalalinController) PemeriksaanSuratKeputusan(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
-func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID) {
-	var andalalin models.Andalalin
+// func (ac *AndalalinController) PermohonanSelesai(ctx *gin.Context, id uuid.UUID) {
+// 	var andalalin models.Andalalin
 
-	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
-		return
-	}
+// 	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+// 	if result.Error != nil {
+// 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+// 		return
+// 	}
 
-	andalalin.StatusAndalalin = "Permohonan selesai"
+// 	andalalin.StatusAndalalin = "Permohonan selesai"
 
-	itenKeputusan := -1
+// 	itenKeputusan := -1
 
-	for i, item := range andalalin.BerkasPermohonan {
-		if item.Nama == "Surat keputusan persetujuan teknis andalalin" {
-			itenKeputusan = i
-			break
-		}
-	}
+// 	for i, item := range andalalin.BerkasPermohonan {
+// 		if item.Nama == "Surat keputusan persetujuan teknis andalalin" {
+// 			itenKeputusan = i
+// 			break
+// 		}
+// 	}
 
-	andalalin.BerkasPermohonan[itenKeputusan].Status = "Selesai"
+// 	andalalin.BerkasPermohonan[itenKeputusan].Status = "Selesai"
 
-	ac.DB.Save(&andalalin)
+// 	ac.DB.Save(&andalalin)
 
-	data := utils.PermohonanSelesai{
-		Kode:    andalalin.Kode,
-		Nama:    andalalin.NamaPemohon,
-		Tlp:     andalalin.NomerPemohon,
-		Jenis:   andalalin.JenisAndalalin,
-		Status:  andalalin.StatusAndalalin,
-		Subject: "Permohonan telah selesai",
-	}
+// 	data := utils.PermohonanSelesai{
+// 		Kode:    andalalin.Kode,
+// 		Nama:    andalalin.NamaPemohon,
+// 		Tlp:     andalalin.NomerPemohon,
+// 		Jenis:   andalalin.JenisAndalalin,
+// 		Status:  andalalin.StatusAndalalin,
+// 		Subject: "Permohonan telah selesai",
+// 	}
 
-	utils.SendEmailPermohonanSelesai(andalalin.EmailPemohon, &data)
+// 	utils.SendEmailPermohonanSelesai(andalalin.EmailPemohon, &data)
 
-	var user models.User
-	resultUser := ac.DB.First(&user, "id = ?", andalalin.IdUser)
-	if resultUser.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
-		return
-	}
+// 	var user models.User
+// 	resultUser := ac.DB.First(&user, "id = ?", andalalin.IdUser)
+// 	if resultUser.Error != nil {
+// 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+// 		return
+// 	}
 
-	simpanNotif := models.Notifikasi{
-		IdUser: user.ID,
-		Title:  "Permohonan selesai",
-		Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, silahkan cek permohonan pada aplikasi untuk lebih jelas",
-	}
+// 	simpanNotif := models.Notifikasi{
+// 		IdUser: user.ID,
+// 		Title:  "Permohonan selesai",
+// 		Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+// 	}
 
-	ac.DB.Create(&simpanNotif)
+// 	ac.DB.Create(&simpanNotif)
 
-	if user.PushToken != "" {
-		notif := utils.Notification{
-			IdUser: user.ID,
-			Title:  "Permohonan selesai",
-			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, silahkan cek permohonan pada aplikasi untuk lebih jelas",
-			Token:  user.PushToken,
-		}
+// 	if user.PushToken != "" {
+// 		notif := utils.Notification{
+// 			IdUser: user.ID,
+// 			Title:  "Permohonan selesai",
+// 			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai, silahkan cek permohonan pada aplikasi untuk lebih jelas",
+// 			Token:  user.PushToken,
+// 		}
 
-		utils.SendPushNotifications(&notif)
-	}
-}
+// 		utils.SendPushNotifications(&notif)
+// 	}
+// }
 
 func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 	var payload *models.InputUsulanPengelolaan
