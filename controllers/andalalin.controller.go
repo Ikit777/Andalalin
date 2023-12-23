@@ -1493,6 +1493,16 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 					return
 				}
 
+				if andalalin.StatusAndalalin == "Kelengkapan tidak terpenuhi" {
+					if andalalin.KelengkapanTidakSesuai != nil {
+						for i := range andalalin.KelengkapanTidakSesuai {
+							if andalalin.KelengkapanTidakSesuai[i].Dokumen == key {
+								andalalin.KelengkapanTidakSesuai = append(andalalin.KelengkapanTidakSesuai[:i], andalalin.KelengkapanTidakSesuai[i+1:]...)
+							}
+						}
+					}
+				}
+
 				for i := range andalalin.BerkasPermohonan {
 					if andalalin.BerkasPermohonan[i].Nama == key {
 						andalalin.BerkasPermohonan[i].Berkas = data
@@ -1509,7 +1519,13 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 			}
 		}
 
-		andalalin.StatusAndalalin = "Cek persyaratan"
+		if andalalin.StatusAndalalin == "Kelengkapan tidak terpenuhi" {
+			if andalalin.KelengkapanTidakSesuai == nil {
+				andalalin.StatusAndalalin = "Cek kelengkapan akhir"
+			}
+		} else {
+			andalalin.StatusAndalalin = "Cek persyaratan"
+		}
 
 		ac.DB.Save(&andalalin)
 	}
