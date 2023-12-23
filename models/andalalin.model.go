@@ -205,7 +205,6 @@ type KelengkapanTidakSesuai struct {
 type KelengkapanTidakSesuaiResponse struct {
 	Dokumen string `json:"dokumen,omitempty"`
 	Tipe    string `json:"tipe,omitempty"`
-	Role    string `json:"role,omitempty"`
 }
 
 type PersyaratanPermohonan struct {
