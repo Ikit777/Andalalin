@@ -2686,6 +2686,8 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		}
 	}
 
+	andalalin.StatusAndalalin = "Persetujuan kelengkapan akhir"
+
 	ac.DB.Save(&andalalin)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
