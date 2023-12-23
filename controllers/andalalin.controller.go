@@ -1480,18 +1480,26 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 					}
 				}
 
-				for i, berkas := range andalalin.BerkasPermohonan {
-					if berkas.Nama == key {
-						andalalin.BerkasPermohonan[i].Berkas = data
-						break
-					} else {
-						if http.DetectContentType(data) == "application/pdf" {
-							andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Nama: key, Tipe: "Pdf", Status: "Selesai", Berkas: data})
-							break
-						} else {
-							andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Nama: key, Tipe: "Word", Status: "Selesai", Berkas: data})
+				var berkas_permohonan []string
+
+				for _, berkas := range andalalin.BerkasPermohonan {
+					berkas_permohonan = append(berkas_permohonan, berkas.Nama)
+				}
+
+				index := findItem(berkas_permohonan, key)
+
+				if index != -1 {
+					for i := range andalalin.BerkasPermohonan {
+						if andalalin.BerkasPermohonan[i].Nama == key {
+							andalalin.BerkasPermohonan[i].Berkas = data
 							break
 						}
+					}
+				} else {
+					if http.DetectContentType(data) == "application/pdf" {
+						andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Nama: key, Tipe: "Pdf", Status: "Selesai", Berkas: data})
+					} else {
+						andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Nama: key, Tipe: "Word", Status: "Selesai", Berkas: data})
 					}
 				}
 			}
