@@ -41,7 +41,6 @@ func CreateToken(ttl time.Duration, id uuid.UUID, privateKey string, credentials
 	claims["user:delete"] = false
 	claims["user:get"] = false
 
-	claims["andalalin:persyaratan"] = false
 	claims["andalalin:pengajuan"] = false
 
 	claims["andalalin:get"] = false
@@ -55,7 +54,7 @@ func CreateToken(ttl time.Duration, id uuid.UUID, privateKey string, credentials
 	claims["andalalin:kelola"] = false
 	claims["andalalin:keputusan"] = false
 	claims["andalalin:ticket2"] = false
-	claims["andalalin:dokumen"] = false
+	claims["andalalin:berkas"] = false
 
 	claims["product:add"] = false
 	claims["product:delete"] = false
@@ -113,8 +112,7 @@ func ValidateToken(token string, publicKey string) (*TokenMetadata, error) {
 			"user:delete": claims["user:delete"].(bool),
 			"user:get":    claims["user:get"].(bool),
 
-			"andalalin:pengajuan":   claims["andalalin:pengajuan"].(bool),
-			"andalalin:persyaratan": claims["andalalin:persyaratan"].(bool),
+			"andalalin:pengajuan": claims["andalalin:pengajuan"].(bool),
 
 			"andalalin:get":           claims["andalalin:get"].(bool),
 			"andalalin:update":        claims["andalalin:update"].(bool),
@@ -127,7 +125,7 @@ func ValidateToken(token string, publicKey string) (*TokenMetadata, error) {
 			"andalalin:kelola":        claims["andalalin:kelola"].(bool),
 			"andalalin:keputusan":     claims["andalalin:keputusan"].(bool),
 			"andalalin:ticket2":       claims["andalalin:ticket2"].(bool),
-			"andalalin:dokumen":       claims["andalalin:dokumen"].(bool),
+			"andalalin:berkas":        claims["andalalin:berkas"].(bool),
 
 			"product:add":    claims["product:add"].(bool),
 			"product:delete": claims["product:delete"].(bool),

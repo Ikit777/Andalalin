@@ -1440,7 +1440,7 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinPersyaratanredential]
+	credential := claim.Credentials[repository.AndalalinBerkasCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.
@@ -1581,7 +1581,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 		return
 	}
 
-	credential := claim.Credentials[repository.AndalalinDokumenCredential]
+	credential := claim.Credentials[repository.AndalalinBerkasCredential]
 
 	if !credential {
 		// Return status 403 and permission denied error message.

@@ -4,8 +4,6 @@ const (
 	//User
 	AndalalinPengajuanCredential string = "andalalin:pengajuan"
 
-	AndalalinPersyaratanredential string = "andalalin:persyaratan"
-
 	//Non User
 	AndalalinGetCredential string = "andalalin:get"
 
@@ -29,5 +27,5 @@ const (
 
 	AndalalinTicket2Credential string = "andalalin:ticket2"
 
-	AndalalinDokumenCredential string = "andalalin:dokumen"
+	AndalalinBerkasCredential string = "andalalin:berkas"
 )
