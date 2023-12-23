@@ -1480,25 +1480,25 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 					}
 				}
 
-				for i := range andalalin.BerkasPermohonan {
-					if andalalin.BerkasPermohonan[i].Nama == key {
+				for i, berkas := range andalalin.BerkasPermohonan {
+					if berkas.Nama == key {
 						andalalin.BerkasPermohonan[i].Berkas = data
 						break
 					} else {
 						if http.DetectContentType(data) == "application/pdf" {
 							andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Nama: key, Tipe: "Pdf", Status: "Selesai", Berkas: data})
+							break
 						} else {
 							andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Nama: key, Tipe: "Word", Status: "Selesai", Berkas: data})
+							break
 						}
-						break
 					}
 				}
-
 			}
 		}
 
 		if andalalin.StatusAndalalin == "Kelengkapan tidak terpenuhi" {
-			if andalalin.KelengkapanTidakSesuai == nil {
+			if len(andalalin.KelengkapanTidakSesuai) == 0 {
 				andalalin.StatusAndalalin = "Cek kelengkapan akhir"
 			}
 		} else {
