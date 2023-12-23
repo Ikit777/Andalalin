@@ -2022,6 +2022,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 
 	andalalin.Nomor = payload.NomorSurat
 	andalalin.Tanggal = payload.TanggalSurat
+	andalalin.StatusAndalalin = "Persetujuan administrasi"
 
 	ac.DB.Save(&andalalin)
 
