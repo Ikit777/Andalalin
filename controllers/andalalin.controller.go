@@ -1471,9 +1471,10 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 
 				if andalalin.StatusAndalalin == "Kelengkapan tidak terpenuhi" {
 					if andalalin.KelengkapanTidakSesuai != nil {
-						for i := range andalalin.KelengkapanTidakSesuai {
-							if andalalin.KelengkapanTidakSesuai[i].Dokumen == key {
+						for i, kelengkapan := range andalalin.KelengkapanTidakSesuai {
+							if kelengkapan.Dokumen == key {
 								andalalin.KelengkapanTidakSesuai = append(andalalin.KelengkapanTidakSesuai[:i], andalalin.KelengkapanTidakSesuai[i+1:]...)
+								break
 							}
 						}
 					}
