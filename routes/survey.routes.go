@@ -21,6 +21,7 @@ func (sc *SurveyRouteController) SurveyRoute(rg *gin.RouterGroup) {
 	router.POST("/kepuasan/:id_andalalin", middleware.DeserializeUser(), sc.surveyController.SurveiKepuasan)
 	router.GET("/kepuasan/cek/:id_andalalin", middleware.DeserializeUser(), sc.surveyController.CekSurveiKepuasan)
 	router.GET("/kepuasan/hasil", middleware.DeserializeUser(), sc.surveyController.HasilSurveiKepuasan)
+	router.GET("/kepuasan/periode/:waktu", middleware.DeserializeUser(), sc.surveyController.HasilSurveiKepuasan)
 
 	//Survei mandiri
 	router.POST("/mandiri", middleware.DeserializeUser(), sc.surveyController.IsiSurveyMandiri)

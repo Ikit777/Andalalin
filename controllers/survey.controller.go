@@ -202,7 +202,128 @@ func (sc *SurveyController) HasilSurveiKepuasan(ctx *gin.Context) {
 
 	var survei []models.SurveiKepuasan
 
-	result := sc.DB.Where("tanggal_pelaksanaan LIKE ?", fmt.Sprintf("%%%s%%", utils.Bulan(nowTime.Month()))+" "+nowTime.Format("2006")).Find(&survei)
+	result := sc.DB.Where("tanggal_pelaksanaan LIKE ?", fmt.Sprintf("%%%s%%", utils.Bulan(nowTime.Month())+" "+nowTime.Format("2006"))).Find(&survei)
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	nilai := []data{}
+
+	nilai = append(nilai, data{Jenis: "Persyaratan pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Prosedur pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Waktu pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Biaya / tarif pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Produk pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Kompetensi pelaksana", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Perilaku / sikap petugas", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Maklumat pelayanan", Nilai: 0, Hasil: "0"})
+	nilai = append(nilai, data{Jenis: "Ketersediaan sarana pengaduan", Nilai: 0, Hasil: "0"})
+
+	komen := []komentar{}
+
+	for _, data := range survei {
+		komen = append(komen, komentar{Nama: data.Nama, Komentar: *data.KritikSaran})
+		for _, isi := range data.DataSurvei {
+			for i, item := range nilai {
+				if item.Jenis == isi.Jenis {
+					switch isi.Nilai {
+					case "Sangat baik":
+						nilai[i].Nilai = nilai[i].Nilai + 4
+					case "Baik":
+						nilai[i].Nilai = nilai[i].Nilai + 3
+					case "Kurang baik":
+						nilai[i].Nilai = nilai[i].Nilai + 2
+					case "Buruk":
+						nilai[i].Nilai = nilai[i].Nilai + 1
+					}
+					break
+				}
+			}
+		}
+	}
+
+	total := 0
+
+	for i, item := range nilai {
+		hasil := float64(item.Nilai) * float64(100) / float64(len(survei)) / float64(4)
+		nilai[i].Hasil = fmt.Sprintf("%.2f", hasil)
+		total = total + item.Nilai
+	}
+
+	indeksHasil := float64(total) * float64(100) / float64(9) / float64(4) / float64(len(survei))
+	indeks := fmt.Sprintf("%.2f", indeksHasil)
+
+	hasil := struct {
+		Periode        string     `json:"periode,omitempty"`
+		Responden      string     `json:"responden,omitempty"`
+		IndeksKepuasan string     `json:"indeks_kepuasan,omitempty"`
+		NilaiInterval  string     `json:"nilai_interval,omitempty"`
+		Mutu           string     `json:"mutu,omitempty"`
+		Kinerja        string     `json:"kinerja,omitempty"`
+		DataHasil      []data     `json:"hasil,omitempty"`
+		Komentar       []komentar `json:"komentar,omitempty"`
+	}{
+		Periode:        periode,
+		Responden:      strconv.Itoa(len(survei)),
+		IndeksKepuasan: indeks,
+		NilaiInterval:  interval(indeksHasil),
+		Mutu:           mutu(indeksHasil),
+		Kinerja:        kinerja(indeksHasil),
+		DataHasil:      nilai,
+		Komentar:       komen,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
+}
+
+func (sc *SurveyController) HasilSurveiKepuasanTertentu(ctx *gin.Context) {
+	config, _ := initializers.LoadConfig()
+	waktu := ctx.Param("waktu")
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinSurveiKepuasan]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	tahun, err := strconv.Atoi(waktu[3:7])
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	convertBulan, err := strconv.Atoi(waktu[0:2])
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		return
+	}
+
+	bulan := time.Month(convertBulan)
+
+	startOfMonth := getStartOfMonth(tahun, bulan)
+
+	endOfMonth := getEndOfMonth(tahun, bulan)
+
+	periode := startOfMonth.Format("02") + " - " + endOfMonth.Format("02") + " " + utils.Bulan(bulan) + " " + waktu[3:7]
+
+	var survei []models.SurveiKepuasan
+
+	result := sc.DB.Where("tanggal_pelaksanaan LIKE ?", fmt.Sprintf("%%%s%%", utils.Bulan(bulan)+" "+waktu[3:7])).Find(&survei)
 
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
