@@ -202,7 +202,7 @@ func (sc *SurveyController) HasilSurveiKepuasan(ctx *gin.Context) {
 
 	var survei []models.SurveiKepuasan
 
-	result := sc.DB.Where("tanggal_pelaksanaan LIKE ?", fmt.Sprintf("%%%s%%", utils.Bulan(nowTime.Month()))).Find(&survei)
+	result := sc.DB.Where("tanggal_pelaksanaan LIKE ?", fmt.Sprintf("%%%s%%", utils.Bulan(nowTime.Month()))+" "+nowTime.Format("2006")).Find(&survei)
 
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
