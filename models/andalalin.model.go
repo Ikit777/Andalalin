@@ -483,7 +483,7 @@ type Perlalin struct {
 type InputPerlalin struct {
 	Kategori                    string  `json:"kategori" binding:"required"`
 	Jenis                       string  `json:"jenis_perlengkapan" binding:"required"`
-	ProvinsiPemasangan          string  `json:"provinsi_Pemasangan" binding:"required"`
+	ProvinsiPemasangan          string  `json:"provinsi_pemasangan" binding:"required"`
 	KabupatenPemasangan         string  `json:"kabupaten_pemasangan" binding:"required"`
 	KecamatanPemasangan         string  `json:"kecamatan_pemasangan" binding:"required"`
 	KelurahanPemasangan         string  `json:"kelurahan_pemasangan" binding:"required"`
