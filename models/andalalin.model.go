@@ -11,7 +11,7 @@ type Andalalin struct {
 	JenisAndalalin    string    `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin    string    `gorm:"not null"`
 	TanggalAndalalin  string    `gorm:"not null"`
-	StatusAndalalin   string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Persyaratan terpenuhi', 'Berita acara pemeriksaan', 'Persetujuan dokumen', 'Pembuatan surat keputusan', 'Permohonan selesai', 'Permohonan ditolak')"`
+	StatusAndalalin   string    `gorm:"type:varchar(255);not null"`
 	Bangkitan         string    `gorm:"type:varchar(255);not null"`
 	Pemohon           string    `gorm:"type:varchar(255);not null"`
 	Kategori          string    `gorm:"type:varchar(255);not null"`
@@ -421,7 +421,7 @@ type Perlalin struct {
 	Kode                string    `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin      string    `gorm:"not null"`
 	TanggalAndalalin    string    `gorm:"not null"`
-	StatusAndalalin     string    `sql:"type:enum('Cek persyaratan', 'Persyaratan tidak terpenuhi', 'Persyaratan terpenuhi', 'Survei lapangan', 'Laporan survei', 'Menunggu hasil keputusan', 'Tunda pemasangan', 'Pemasangan sedang dilakukan', 'Permohonan ditolak', 'Permohonan ditunda', 'Permohonan dibatalkan', 'Pemasangan selesai')"`
+	StatusAndalalin     string    `gorm:"type:varchar(255);not null"`
 	NegaraPemasangan    string    `gorm:"type:varchar(255);not null"`
 	ProvinsiPemasangan  string    `gorm:"type:varchar(255);not null"`
 	KabupatenPemasangan string    `gorm:"type:varchar(255);not null"`
