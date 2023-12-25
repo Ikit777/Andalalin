@@ -432,6 +432,12 @@ type Perlalin struct {
 	KodeJalan           string    `gorm:"type:varchar(255);not null"`
 	KodeJalanMerge      string    `gorm:"type:varchar(255);not null"`
 	NamaJalan           string    `gorm:"type:varchar(255);not null"`
+	PangkalJalan        string    `gorm:"type:varchar(255);not null"`
+	UjungJalan          string    `gorm:"type:varchar(255);not null"`
+	PanjangJalan        string    `gorm:"type:varchar(255);not null"`
+	LebarJalan          string    `gorm:"type:varchar(255);not null"`
+	PermukaanJalan      string    `gorm:"type:varchar(255);not null"`
+	FungsiJalan         string    `gorm:"type:varchar(255);not null"`
 
 	//Data Pemohon
 	IdUser                      uuid.UUID `gorm:"type:varchar(255);not null"`
@@ -486,6 +492,12 @@ type InputPerlalin struct {
 	KodeJalan                   string  `json:"kode_jalan" binding:"required"`
 	KodeJalanMerge              string  `json:"kode_jalan_merge" binding:"required"`
 	NamaJalan                   string  `json:"nama_jalan" binding:"required"`
+	PangkalJalan                string  `json:"pangkal_jalan" binding:"required"`
+	UjungJalan                  string  `json:"ujung_jalan" binding:"required"`
+	PanjangJalan                string  `json:"panjang_jalan" binding:"required"`
+	LebarJalan                  string  `json:"lebar_jalan" binding:"required"`
+	PermukaanJalan              string  `json:"permukaan_jalan" binding:"required"`
+	FungsiJalan                 string  `json:"fungsi_jalan" binding:"required"`
 	NikPemohon                  string  `json:"nik_pemohon" binding:"required"`
 	TempatLahirPemohon          string  `json:"tempat_lahir_pemohon" binding:"required"`
 	TanggalLahirPemohon         string  `json:"tanggal_lahir_pemohon" binding:"required"`
@@ -525,6 +537,12 @@ type PerlalinResponse struct {
 	KodeJalan           string    `json:"kode_jalan,omitempty"`
 	KodeJalanMerge      string    `json:"kode_jalan_merge,omitempty"`
 	NamaJalan           string    `json:"nama_jalan,omitempty"`
+	PangkalJalan        string    `json:"pangkal_jalan,omitempty"`
+	UjungJalan          string    `json:"ujung_jalan,omitempty"`
+	PanjangJalan        string    `json:"panjang_jalan,omitempty"`
+	LebarJalan          string    `json:"lebar_jalan,omitempty"`
+	PermukaanJalan      string    `json:"permukaan_jalan,omitempty"`
+	FungsiJalan         string    `json:"fungsi_jalan,omitempty"`
 
 	//Data Pemohon
 	NikPemohon                  string `json:"nik_pemohon,omitempty"`
@@ -588,6 +606,12 @@ type PerlalinResponseUser struct {
 	KodeJalan           string    `json:"kode_jalan,omitempty"`
 	KodeJalanMerge      string    `json:"kode_jalan_merge,omitempty"`
 	NamaJalan           string    `json:"nama_jalan,omitempty"`
+	PangkalJalan        string    `json:"pangkal_jalan,omitempty"`
+	UjungJalan          string    `json:"ujung_jalan,omitempty"`
+	PanjangJalan        string    `json:"panjang_jalan,omitempty"`
+	LebarJalan          string    `json:"lebar_jalan,omitempty"`
+	PermukaanJalan      string    `json:"permukaan_jalan,omitempty"`
+	FungsiJalan         string    `json:"fungsi_jalan,omitempty"`
 
 	//Data Pemohon
 	NikPemohon   string `json:"nik_pemohon,omitempty"`
