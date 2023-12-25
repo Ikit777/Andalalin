@@ -1451,7 +1451,7 @@ func (ac *AndalalinController) GetDokumen(ctx *gin.Context) {
 	}
 
 	if perlalin.IdAndalalin != uuid.Nil {
-		for _, item := range andalalin.BerkasPermohonan {
+		for _, item := range perlalin.BerkasPermohonan {
 			if item.Nama == dokumen {
 				docs = item.Berkas
 				tipe = item.Tipe
