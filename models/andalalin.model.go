@@ -439,16 +439,20 @@ type Perlalin struct {
 	FungsiJalan         string    `gorm:"type:varchar(255);not null"`
 
 	//Data Pemohon
-	IdUser                      uuid.UUID `gorm:"type:varchar(255);not null"`
-	NikPemohon                  string    `gorm:"type:varchar(255);not null"`
-	NamaPemohon                 string    `gorm:"type:varchar(255);not null"`
-	EmailPemohon                string    `gorm:"type:varchar(255);not null"`
-	TempatLahirPemohon          string    `gorm:"type:varchar(255);not null"`
-	TanggalLahirPemohon         string    `gorm:"type:varchar(255);not null"`
-	WilayahAdministratifPemohon string    `gorm:"type:varchar(255);not null"`
-	AlamatPemohon               string    `gorm:"type:varchar(255);not null"`
-	JenisKelaminPemohon         string    `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
-	NomerPemohon                string    `gorm:"type:varchar(255);not null"`
+	IdUser              uuid.UUID `gorm:"type:varchar(255);not null"`
+	NikPemohon          string    `gorm:"type:varchar(255);not null"`
+	NamaPemohon         string    `gorm:"type:varchar(255);not null"`
+	EmailPemohon        string    `gorm:"type:varchar(255);not null"`
+	TempatLahirPemohon  string    `gorm:"type:varchar(255);not null"`
+	TanggalLahirPemohon string    `gorm:"type:varchar(255);not null"`
+	NegaraPemohon       string    `gorm:"type:varchar(255);not null"`
+	ProvinsiPemohon     string    `gorm:"type:varchar(255);not null"`
+	KabupatenPemohon    string    `gorm:"type:varchar(255);not null"`
+	KecamatanPemohon    string    `gorm:"type:varchar(255);not null"`
+	KelurahanPemohon    string    `gorm:"type:varchar(255);not null"`
+	AlamatPemohon       string    `gorm:"type:varchar(255);not null"`
+	JenisKelaminPemohon string    `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
+	NomerPemohon        string    `gorm:"type:varchar(255);not null"`
 
 	//Data Kegiatan
 	Alasan              string `gorm:"type:varchar(255);not null"`
@@ -480,36 +484,39 @@ type Perlalin struct {
 }
 
 type InputPerlalin struct {
-	Kategori                    string  `json:"kategori" binding:"required"`
-	Jenis                       string  `json:"jenis_perlengkapan" binding:"required"`
-	ProvinsiPemasangan          string  `json:"provinsi_pemasangan" binding:"required"`
-	KabupatenPemasangan         string  `json:"kabupaten_pemasangan" binding:"required"`
-	KecamatanPemasangan         string  `json:"kecamatan_pemasangan" binding:"required"`
-	KelurahanPemasangan         string  `json:"kelurahan_pemasangan" binding:"required"`
-	AlamatPemasangan            string  `json:"alamat_pemasangan" binding:"required"`
-	KodeJalan                   string  `json:"kode_jalan" binding:"required"`
-	KodeJalanMerge              string  `json:"kode_jalan_merge" binding:"required"`
-	NamaJalan                   string  `json:"nama_jalan" binding:"required"`
-	PangkalJalan                string  `json:"pangkal_jalan" binding:"required"`
-	UjungJalan                  string  `json:"ujung_jalan" binding:"required"`
-	PanjangJalan                string  `json:"panjang_jalan" binding:"required"`
-	LebarJalan                  string  `json:"lebar_jalan" binding:"required"`
-	PermukaanJalan              string  `json:"permukaan_jalan" binding:"required"`
-	FungsiJalan                 string  `json:"fungsi_jalan" binding:"required"`
-	NikPemohon                  string  `json:"nik_pemohon" binding:"required"`
-	TempatLahirPemohon          string  `json:"tempat_lahir_pemohon" binding:"required"`
-	TanggalLahirPemohon         string  `json:"tanggal_lahir_pemohon" binding:"required"`
-	WilayahAdministratifPemohon string  `json:"wilayah_administratif_pemohon" binding:"required"`
-	AlamatPemohon               string  `json:"alamat_pemohon" binding:"required"`
-	JenisKelaminPemohon         string  `json:"jenis_kelamin_pemohon" binding:"required"`
-	NomerPemohon                string  `json:"nomer_pemohon" binding:"required"`
-	LokasiPengambilan           string  `json:"lokasi_pengambilan" binding:"required"`
-	Alasan                      string  `json:"alasan" binding:"required"`
-	Peruntukan                  string  `json:"peruntukan" binding:"required"`
-	LokasiPemasangan            string  `json:"lokasi_pemasangan" binding:"required"`
-	LatitudePemasangan          float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
-	LongitudePemasangan         float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
-	Catatan                     *string `json:"catatan" binding:"required"`
+	Kategori            string  `json:"kategori" binding:"required"`
+	Jenis               string  `json:"jenis_perlengkapan" binding:"required"`
+	ProvinsiPemasangan  string  `json:"provinsi_pemasangan" binding:"required"`
+	KabupatenPemasangan string  `json:"kabupaten_pemasangan" binding:"required"`
+	KecamatanPemasangan string  `json:"kecamatan_pemasangan" binding:"required"`
+	KelurahanPemasangan string  `json:"kelurahan_pemasangan" binding:"required"`
+	AlamatPemasangan    string  `json:"alamat_pemasangan" binding:"required"`
+	KodeJalan           string  `json:"kode_jalan" binding:"required"`
+	KodeJalanMerge      string  `json:"kode_jalan_merge" binding:"required"`
+	NamaJalan           string  `json:"nama_jalan" binding:"required"`
+	PangkalJalan        string  `json:"pangkal_jalan" binding:"required"`
+	UjungJalan          string  `json:"ujung_jalan" binding:"required"`
+	PanjangJalan        string  `json:"panjang_jalan" binding:"required"`
+	LebarJalan          string  `json:"lebar_jalan" binding:"required"`
+	PermukaanJalan      string  `json:"permukaan_jalan" binding:"required"`
+	FungsiJalan         string  `json:"fungsi_jalan" binding:"required"`
+	NikPemohon          string  `json:"nik_pemohon" binding:"required"`
+	TempatLahirPemohon  string  `json:"tempat_lahir_pemohon" binding:"required"`
+	TanggalLahirPemohon string  `json:"tanggal_lahir_pemohon" binding:"required"`
+	ProvinsiPemohon     string  `json:"provinsi_pemohon" binding:"required"`
+	KabupatenPemohon    string  `json:"kabupaten_pemohon" binding:"required"`
+	KecamatanPemohon    string  `json:"kecamatan_pemohon" binding:"required"`
+	KelurahanPemohon    string  `json:"kelurahan_pemohon" binding:"required"`
+	AlamatPemohon       string  `json:"alamat_pemohon" binding:"required"`
+	JenisKelaminPemohon string  `json:"jenis_kelamin_pemohon" binding:"required"`
+	NomerPemohon        string  `json:"nomer_pemohon" binding:"required"`
+	LokasiPengambilan   string  `json:"lokasi_pengambilan" binding:"required"`
+	Alasan              string  `json:"alasan" binding:"required"`
+	Peruntukan          string  `json:"peruntukan" binding:"required"`
+	LokasiPemasangan    string  `json:"lokasi_pemasangan" binding:"required"`
+	LatitudePemasangan  float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
+	LongitudePemasangan float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
+	Catatan             *string `json:"catatan" binding:"required"`
 }
 
 type DataPerlalin struct {
@@ -543,16 +550,20 @@ type PerlalinResponse struct {
 	FungsiJalan         string    `json:"fungsi_jalan,omitempty"`
 
 	//Data Pemohon
-	NikPemohon                  string `json:"nik_pemohon,omitempty"`
-	NamaPemohon                 string `json:"nama_pemohon,omitempty"`
-	EmailPemohon                string `json:"email_pemohon,omitempty"`
-	TempatLahirPemohon          string `json:"tempat_lahir_pemohon,omitempty"`
-	TanggalLahirPemohon         string `json:"tanggal_lahir_pemohon,omitempty"`
-	WilayahAdministratifPemohon string `json:"wilayah_administratif_pemohon,omitempty"`
-	AlamatPemohon               string `json:"alamat_pemohon,omitempty"`
-	JenisKelaminPemohon         string `json:"jenis_kelamin_pemohon,omitempty"`
-	NomerPemohon                string `json:"nomer_pemohon,omitempty"`
-	LokasiPengambilan           string `json:"lokasi_pengambilan,omitempty"`
+	NikPemohon          string `json:"nik_pemohon,omitempty"`
+	NamaPemohon         string `json:"nama_pemohon,omitempty"`
+	EmailPemohon        string `json:"email_pemohon,omitempty"`
+	TempatLahirPemohon  string `json:"tempat_lahir_pemohon,omitempty"`
+	TanggalLahirPemohon string `json:"tanggal_lahir_pemohon,omitempty"`
+	NegaraPemohon       string `json:"negara_pemohon,omitempty"`
+	ProvinsiPemohon     string `json:"provinsi_pemohon,omitempty"`
+	KabupatenPemohon    string `json:"kabupaten_pemohon,omitempty"`
+	KecamatanPemohon    string `json:"kecamatan_pemohon,omitempty"`
+	KelurahanPemohon    string `json:"kelurahan_pemohon,omitempty"`
+	AlamatPemohon       string `json:"alamat_pemohon,omitempty"`
+	JenisKelaminPemohon string `json:"jenis_kelamin_pemohon,omitempty"`
+	NomerPemohon        string `json:"nomer_pemohon,omitempty"`
+	LokasiPengambilan   string `json:"lokasi_pengambilan,omitempty"`
 
 	//Data Kegiatan
 	Alasan              string  `json:"alasan,omitempty"`
