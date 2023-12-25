@@ -375,7 +375,6 @@ type AndalalinResponseUser struct {
 	NamaProyek      string `json:"nama_proyek,omitempty"`
 	JenisProyek     string `json:"jenis_proyek,omitempty"`
 	NamaJalan       string `json:"nama_jalan,omitempty"`
-	FungsiJalan     string `json:"fungsi_jalan,omitempty"`
 	NegaraProyek    string `json:"negara_proyek,omitempty"`
 	ProvinsiProyek  string `json:"provinsi_proyek,omitempty"`
 	KabupatenProyek string `json:"kabupaten_proyek,omitempty"`
@@ -603,7 +602,6 @@ type PerlalinResponseUser struct {
 	KelurahanPemasangan string    `json:"kelurahan_pemasangan,omitempty"`
 	AlamatPemasangan    string    `json:"alamat_pemasangan,omitempty"`
 	NamaJalan           string    `json:"nama_jalan,omitempty"`
-	FungsiJalan         string    `json:"fungsi_jalan,omitempty"`
 
 	//Data Pemohon
 	NikPemohon   string `json:"nik_pemohon,omitempty"`

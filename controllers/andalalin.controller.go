@@ -1024,7 +1024,6 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				NamaProyek:      andalalin.NamaProyek,
 				JenisProyek:     andalalin.JenisProyek,
 				NamaJalan:       andalalin.NamaJalan,
-				FungsiJalan:     andalalin.FungsiJalan,
 				NegaraProyek:    andalalin.NegaraProyek,
 				ProvinsiProyek:  andalalin.ProvinsiProyek,
 				KabupatenProyek: andalalin.KabupatenProyek,
@@ -1211,7 +1210,6 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				KelurahanPemasangan: perlalin.KelurahanPemasangan,
 				AlamatPemasangan:    perlalin.AlamatPemasangan,
 				NamaJalan:           perlalin.NamaJalan,
-				FungsiJalan:         perlalin.FungsiJalan,
 
 				//Data Pemohon
 				NamaPemohon:       perlalin.NamaPemohon,
