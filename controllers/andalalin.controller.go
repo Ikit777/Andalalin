@@ -1210,9 +1210,8 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				KecamatanPemasangan: perlalin.KecamatanPemasangan,
 				KelurahanPemasangan: perlalin.KelurahanPemasangan,
 				AlamatPemasangan:    perlalin.AlamatPemasangan,
-				KodeJalan:           perlalin.KodeJalan,
-				KodeJalanMerge:      perlalin.KodeJalanMerge,
 				NamaJalan:           perlalin.NamaJalan,
+				FungsiJalan:         perlalin.FungsiJalan,
 
 				//Data Pemohon
 				NamaPemohon:       perlalin.NamaPemohon,

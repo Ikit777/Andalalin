@@ -602,14 +602,7 @@ type PerlalinResponseUser struct {
 	KecamatanPemasangan string    `json:"kecamatan_pemasangan,omitempty"`
 	KelurahanPemasangan string    `json:"kelurahan_pemasangan,omitempty"`
 	AlamatPemasangan    string    `json:"alamat_pemasangan,omitempty"`
-	KodeJalan           string    `json:"kode_jalan,omitempty"`
-	KodeJalanMerge      string    `json:"kode_jalan_merge,omitempty"`
 	NamaJalan           string    `json:"nama_jalan,omitempty"`
-	PangkalJalan        string    `json:"pangkal_jalan,omitempty"`
-	UjungJalan          string    `json:"ujung_jalan,omitempty"`
-	PanjangJalan        string    `json:"panjang_jalan,omitempty"`
-	LebarJalan          string    `json:"lebar_jalan,omitempty"`
-	PermukaanJalan      string    `json:"permukaan_jalan,omitempty"`
 	FungsiJalan         string    `json:"fungsi_jalan,omitempty"`
 
 	//Data Pemohon
