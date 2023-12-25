@@ -1715,8 +1715,8 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 	} else {
 		dataFile := []file{}
 		for i, permohonan := range perlalin {
-			for j, tambahan := range permohonan.Persyaratan {
-				if tambahan.Persyaratan == persyaratan {
+			for j, tambahan := range permohonan.BerkasPermohonan {
+				if tambahan.Nama == persyaratan {
 					oldSubstr := "/"
 					newSubstr := "-"
 
@@ -1724,7 +1724,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 					fileName := result + ".pdf"
 
 					dataFile = append(dataFile, file{Name: fileName, File: tambahan.Berkas})
-					perlalin[i].Persyaratan = append(perlalin[i].Persyaratan[:j], perlalin[i].Persyaratan[j+1:]...)
+					perlalin[i].BerkasPermohonan = append(perlalin[i].BerkasPermohonan[:j], perlalin[i].BerkasPermohonan[j+1:]...)
 					break
 				}
 			}
