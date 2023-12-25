@@ -468,6 +468,15 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		Kategori:                    payload.Perlalin.Kategori,
 		Jenis:                       payload.Perlalin.Jenis,
 		Kode:                        kode,
+		NegaraPemasangan:            "Indonesia",
+		ProvinsiPemasangan:          payload.Perlalin.ProvinsiPemasangan,
+		KabupatenPemasangan:         payload.Perlalin.KabupatenPemasangan,
+		KecamatanPemasangan:         payload.Perlalin.KecamatanPemasangan,
+		KelurahanPemasangan:         payload.Perlalin.KelurahanPemasangan,
+		AlamatPemasangan:            payload.Perlalin.AlamatPemasangan,
+		KodeJalan:                   payload.Perlalin.KodeJalan,
+		KodeJalanMerge:              payload.Perlalin.KodeJalanMerge,
+		NamaJalan:                   payload.Perlalin.NamaJalan,
 		NikPemohon:                  payload.Perlalin.NikPemohon,
 		NamaPemohon:                 currentUser.Name,
 		EmailPemohon:                currentUser.Email,
@@ -487,6 +496,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		LongitudePemasangan:         payload.Perlalin.LongitudePemasangan,
 		Catatan:                     payload.Perlalin.Catatan,
 		StatusAndalalin:             "Cek persyaratan",
+		BerkasPermohonan:            berkas,
 	}
 
 	result := ac.DB.Create(&permohonan)
@@ -1180,14 +1190,23 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		if currentUser.Role == "User" {
 			dataUser := models.PerlalinResponseUser{
 				//Data Permohonan
-				IdAndalalin:      perlalin.IdAndalalin,
-				JenisAndalalin:   perlalin.JenisAndalalin,
-				Kategori:         perlalin.Kategori,
-				Jenis:            perlalin.Jenis,
-				Kode:             perlalin.Kode,
-				WaktuAndalalin:   perlalin.WaktuAndalalin,
-				TanggalAndalalin: perlalin.TanggalAndalalin,
-				StatusAndalalin:  perlalin.StatusAndalalin,
+				IdAndalalin:         perlalin.IdAndalalin,
+				JenisAndalalin:      perlalin.JenisAndalalin,
+				Kategori:            perlalin.Kategori,
+				Jenis:               perlalin.Jenis,
+				Kode:                perlalin.Kode,
+				WaktuAndalalin:      perlalin.WaktuAndalalin,
+				TanggalAndalalin:    perlalin.TanggalAndalalin,
+				StatusAndalalin:     perlalin.StatusAndalalin,
+				NegaraPemasangan:    perlalin.NegaraPemasangan,
+				ProvinsiPemasangan:  perlalin.ProvinsiPemasangan,
+				KabupatenPemasangan: perlalin.KabupatenPemasangan,
+				KecamatanPemasangan: perlalin.KecamatanPemasangan,
+				KelurahanPemasangan: perlalin.KelurahanPemasangan,
+				AlamatPemasangan:    perlalin.AlamatPemasangan,
+				KodeJalan:           perlalin.KodeJalan,
+				KodeJalanMerge:      perlalin.KodeJalanMerge,
+				NamaJalan:           perlalin.NamaJalan,
 
 				//Data Pemohon
 				NamaPemohon:       perlalin.NamaPemohon,
@@ -1220,14 +1239,23 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		} else {
 			data := models.PerlalinResponse{
 				//Data Permohonan
-				IdAndalalin:      perlalin.IdAndalalin,
-				JenisAndalalin:   perlalin.JenisAndalalin,
-				Kategori:         perlalin.Kategori,
-				Jenis:            perlalin.Jenis,
-				Kode:             perlalin.Kode,
-				WaktuAndalalin:   perlalin.WaktuAndalalin,
-				TanggalAndalalin: perlalin.TanggalAndalalin,
-				StatusAndalalin:  perlalin.StatusAndalalin,
+				IdAndalalin:         perlalin.IdAndalalin,
+				JenisAndalalin:      perlalin.JenisAndalalin,
+				Kategori:            perlalin.Kategori,
+				Jenis:               perlalin.Jenis,
+				Kode:                perlalin.Kode,
+				WaktuAndalalin:      perlalin.WaktuAndalalin,
+				TanggalAndalalin:    perlalin.TanggalAndalalin,
+				StatusAndalalin:     perlalin.StatusAndalalin,
+				NegaraPemasangan:    perlalin.NegaraPemasangan,
+				ProvinsiPemasangan:  perlalin.ProvinsiPemasangan,
+				KabupatenPemasangan: perlalin.KabupatenPemasangan,
+				KecamatanPemasangan: perlalin.KecamatanPemasangan,
+				KelurahanPemasangan: perlalin.KelurahanPemasangan,
+				AlamatPemasangan:    perlalin.AlamatPemasangan,
+				KodeJalan:           perlalin.KodeJalan,
+				KodeJalanMerge:      perlalin.KodeJalanMerge,
+				NamaJalan:           perlalin.NamaJalan,
 
 				//Data Pemohon
 				NikPemohon:                  perlalin.NikPemohon,
