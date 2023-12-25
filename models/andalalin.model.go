@@ -487,7 +487,6 @@ type InputPerlalin struct {
 	KabupatenPemasangan         string  `json:"kabupaten_pemasangan" binding:"required"`
 	KecamatanPemasangan         string  `json:"kecamatan_pemasangan" binding:"required"`
 	KelurahanPemasangan         string  `json:"kelurahan_pemasangan" binding:"required"`
-	JenisPemasangan             string  `json:"jenis_pemasangan" binding:"required"`
 	AlamatPemasangan            string  `json:"alamat_pemasangan" binding:"required"`
 	KodeJalan                   string  `json:"kode_jalan" binding:"required"`
 	KodeJalanMerge              string  `json:"kode_jalan_merge" binding:"required"`
