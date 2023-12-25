@@ -435,30 +435,32 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		return
 	}
 
-	dokumen := []models.PersyaratanPermohonan{}
+	berkas := []models.BerkasPermohonan{}
 
 	for key, files := range form.File {
 		for _, file := range files {
 			// Save the uploaded file with key as prefix
-			file, err := file.Open()
+			filed, err := file.Open()
 
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			defer file.Close()
+			defer filed.Close()
 
-			data, err := io.ReadAll(file)
+			data, err := io.ReadAll(filed)
 			if err != nil {
 				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
 
 			// Store the blob data in the map
-			dokumen = append(dokumen, models.PersyaratanPermohonan{Persyaratan: key, Berkas: data})
+			berkas = append(berkas, models.BerkasPermohonan{Nama: key, Tipe: "Pdf", Status: "Selesai", Berkas: data})
 
 		}
 	}
+
+	berkas = append(berkas, models.BerkasPermohonan{Nama: "Tanda terima pendaftaran", Tipe: "Pdf", Status: "Selesai", Berkas: pdfg.Bytes()})
 
 	permohonan := models.Perlalin{
 		IdUser:                      currentUser.ID,
@@ -485,9 +487,6 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		LongitudePemasangan:         payload.Perlalin.LongitudePemasangan,
 		Catatan:                     payload.Perlalin.Catatan,
 		StatusAndalalin:             "Cek persyaratan",
-		TandaTerimaPendaftaran:      pdfg.Bytes(),
-
-		Persyaratan: dokumen,
 	}
 
 	result := ac.DB.Create(&permohonan)
@@ -931,6 +930,12 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		}
 	}
 
+	var persyaratan_perlalin []string
+	for _, persyaratan := range master.Persyaratan.PersyaratanPerlalin {
+		persyaratan_perlalin = append(persyaratan_perlalin, persyaratan.Persyaratan)
+
+	}
+
 	var persyaratan_dishub []string
 	var berkas_dishub []string
 	for _, dokumen := range andalalin.BerkasPermohonan {
@@ -968,6 +973,18 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	for _, dokumen := range andalalin.KelengkapanTidakSesuai {
 		if dokumen.Role == "Dishub" {
 			kelengkapan_dushub = append(kelengkapan_dushub, models.KelengkapanTidakSesuaiResponse{Dokumen: dokumen.Dokumen, Tipe: dokumen.Tipe})
+		}
+	}
+
+	var berkas_persyaratan_perlalin []string
+	var berkas_permohonan_perlalin []string
+	for _, dokumen := range perlalin.BerkasPermohonan {
+		index := findItem(persyaratan_perlalin, dokumen.Nama)
+
+		if index != -1 {
+			berkas_persyaratan_perlalin = append(berkas_persyaratan_perlalin, dokumen.Nama)
+		} else {
+			berkas_permohonan_perlalin = append(berkas_permohonan_perlalin, dokumen.Nama)
 		}
 	}
 
@@ -1187,6 +1204,9 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				LongitudePemasangan:    perlalin.LongitudePemasangan,
 				PersyaratanTidakSesuai: perlalin.PersyaratanTidakSesuai,
 
+				PersyaratanPermohonan: berkas_persyaratan_perlalin,
+				BerkasPermohonan:      berkas_permohonan_perlalin,
+
 				//Catatan
 				Catatan: perlalin.Catatan,
 
@@ -1232,6 +1252,9 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				NamaPetugas:            perlalin.NamaPetugas,
 				EmailPetugas:           perlalin.EmailPetugas,
 				StatusTiketLevel2:      status,
+
+				PersyaratanPermohonan: berkas_persyaratan_perlalin,
+				BerkasPermohonan:      berkas_permohonan_perlalin,
 
 				Catatan: perlalin.Catatan,
 
@@ -1381,7 +1404,6 @@ func (ac *AndalalinController) GetDokumen(ctx *gin.Context) {
 	var tipe string
 
 	if andalalin.IdAndalalin != uuid.Nil {
-
 		for _, item := range andalalin.BerkasPermohonan {
 			if item.Nama == dokumen {
 				docs = item.Berkas
@@ -1392,17 +1414,10 @@ func (ac *AndalalinController) GetDokumen(ctx *gin.Context) {
 	}
 
 	if perlalin.IdAndalalin != uuid.Nil {
-		if dokumen == "Tanda terima pendaftaran" {
-			docs = perlalin.TandaTerimaPendaftaran
-		}
-
-		if dokumen == "Laporan survei" {
-			docs = perlalin.LaporanSurvei
-		}
-
-		for _, item := range perlalin.Persyaratan {
-			if item.Persyaratan == dokumen {
+		for _, item := range andalalin.BerkasPermohonan {
+			if item.Nama == dokumen {
 				docs = item.Berkas
+				tipe = item.Tipe
 				break
 			}
 		}
@@ -1534,9 +1549,9 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 					return
 				}
 
-				for i := range perlalin.Persyaratan {
-					if perlalin.Persyaratan[i].Persyaratan == key {
-						perlalin.Persyaratan[i].Berkas = data
+				for i, berkas := range perlalin.BerkasPermohonan {
+					if berkas.Nama == key {
+						perlalin.BerkasPermohonan[i].Berkas = data
 						break
 					}
 				}
@@ -3723,7 +3738,7 @@ func (ac *AndalalinController) LaporanSurvei(ctx *gin.Context) {
 		return
 	}
 
-	perlalin.LaporanSurvei = data
+	perlalin.BerkasPermohonan = append(perlalin.BerkasPermohonan, models.BerkasPermohonan{Nama: "Laporan survei", Tipe: "Pdf", Status: "Selesai", Berkas: data})
 	perlalin.StatusAndalalin = "Menunggu hasil keputusan"
 
 	resultLaporan := ac.DB.Save(&perlalin)

@@ -450,17 +450,11 @@ type Perlalin struct {
 	NamaPetugas  string    `gorm:"type:varchar(255);"`
 	EmailPetugas string    `gorm:"type:varchar(255);"`
 
-	//Tanda Terima Pendaftaran
-	TandaTerimaPendaftaran []byte
-
 	//Data Persyaratan
-	Persyaratan []PersyaratanPermohonan `gorm:"serializer:json"`
+	BerkasPermohonan []BerkasPermohonan `gorm:"serializer:json"`
 
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `gorm:"serializer:json"`
-
-	//Data Laporan Survei
-	LaporanSurvei []byte
 
 	//Data Tindakan
 	Tindakan string
@@ -534,8 +528,9 @@ type PerlalinResponse struct {
 	EmailPetugas      string    `json:"email_petugas,omitempty"`
 	StatusTiketLevel2 string    `json:"status_tiket,omitempty"`
 
-	//Data Persyaratan
-	Persyaratan []string `json:"persyaratan,omitempty"`
+	//Berkas Permohonan
+	PersyaratanPermohonan []string `json:"persyaratan,omitempty"`
+	BerkasPermohonan      []string `json:"berkas,omitempty"`
 
 	//Data Tindakan
 	Tindakan string `json:"keputusan_hasil,omitempty"`
@@ -575,6 +570,10 @@ type PerlalinResponseUser struct {
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
 
+	//Berkas Permohonan
+	PersyaratanPermohonan []string `json:"persyaratan,omitempty"`
+	BerkasPermohonan      []string `json:"berkas,omitempty"`
+
 	//Data Tindakan
 	Tindakan string `json:"keputusan_hasil,omitempty"`
 
@@ -600,12 +599,6 @@ type KelengkapanTidakSesuai struct {
 type KelengkapanTidakSesuaiResponse struct {
 	Dokumen string `json:"dokumen,omitempty"`
 	Tipe    string `json:"tipe,omitempty"`
-}
-
-type PersyaratanPermohonan struct {
-	Persyaratan string
-	Tipe        string
-	Berkas      []byte
 }
 
 type DaftarAndalalinResponse struct {
