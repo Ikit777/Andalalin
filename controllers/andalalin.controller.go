@@ -3471,13 +3471,6 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		return
 	}
 
-	var userPengusul models.User
-	resulPengusul := ac.DB.First(&userPengusul, "id = ?", usulan.IdPengusulTindakan)
-	if resulPengusul.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
-		return
-	}
-
 	if perlalin.IdAndalalin != uuid.Nil {
 		var userPetugas models.User
 		resultPetugas := ac.DB.First(&userPetugas, "id = ?", perlalin.IdPetugas)
@@ -3487,40 +3480,42 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		}
 
 		switch jenis {
-		case "Tunda":
-			perlalin.StatusAndalalin = "Survei ditunda"
-			simpanNotifPengusul := models.Notifikasi{
-				IdUser: userPengusul.ID,
-				Title:  "Pelaksanaan survei ditunda",
-				Body:   "Usulan tindakan anda pada permohonan dengan kode " + perlalin.Kode + " telah diputuskan bahwa pelaksanaan survei ditunda",
-			}
-
-			ac.DB.Create(&simpanNotifPengusul)
-
+		case "Buka":
+			perlalin.StatusAndalalin = "Survei lapangan"
 			simpanNotifPetugas := models.Notifikasi{
 				IdUser: userPetugas.ID,
-				Title:  "Pelaksanaan survei ditunda",
-				Body:   "Pelakasnaan survei pada permohonan dengan kode " + perlalin.Kode + " dibatalkan",
+				Title:  "Pelaksanaan survei dilanjutkan",
+				Body:   "Pelaksanaan survei pada permohonan dengan kode " + perlalin.Kode + " telah dilanjutkan",
 			}
 
 			ac.DB.Create(&simpanNotifPetugas)
 
-			if userPengusul.PushToken != "" {
-				notifPengusul := utils.Notification{
-					IdUser: userPengusul.ID,
-					Title:  "Pelaksanaan survei ditunda",
-					Body:   "Usulan tindakan anda pada permohonan dengan kode " + perlalin.Kode + " telah diputuskan bahwa pelaksanaan survei ditunda",
-					Token:  userPengusul.PushToken,
+			if userPetugas.PushToken != "" {
+				notifPetugas := utils.Notification{
+					IdUser: userPetugas.ID,
+					Title:  "Pelaksanaan survei dilanjutkan",
+					Body:   "Pelaksanaan survei pada permohonan dengan kode " + perlalin.Kode + " telah dilanjutkan",
+					Token:  userPetugas.PushToken,
 				}
 
-				utils.SendPushNotifications(&notifPengusul)
+				utils.SendPushNotifications(&notifPetugas)
 			}
+		case "Tunda":
+			perlalin.StatusAndalalin = "Survei ditunda"
+
+			simpanNotifPetugas := models.Notifikasi{
+				IdUser: userPetugas.ID,
+				Title:  "Pelaksanaan survei ditunda",
+				Body:   "Pelakasnaan survei pada permohonan dengan kode " + perlalin.Kode + " telah ditunda",
+			}
+
+			ac.DB.Create(&simpanNotifPetugas)
 
 			if userPetugas.PushToken != "" {
 				notifPetugas := utils.Notification{
 					IdUser: userPetugas.ID,
 					Title:  "Pelaksanaan survei ditunda",
-					Body:   "Pelakasnaan survei pada permohonan dengan kode " + perlalin.Kode + " ditunda",
+					Body:   "Pelakasnaan survei pada permohonan dengan kode " + perlalin.Kode + " telah ditunda",
 					Token:  userPetugas.PushToken,
 				}
 
@@ -3528,38 +3523,20 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 			}
 		case "Batal":
 			perlalin.StatusAndalalin = "Survei dibatalkan"
-			simpanNotifPengusul := models.Notifikasi{
-				IdUser: userPengusul.ID,
-				Title:  "Pelaksanaan survei dibatalkan",
-				Body:   "Usulan tindakan anda pada permohonan dengan kode " + perlalin.Kode + " telah diputuskan bahwa pelaksanaan survei dibatalkan",
-			}
-
-			ac.DB.Create(&simpanNotifPengusul)
 
 			simpanNotifPetugas := models.Notifikasi{
 				IdUser: userPetugas.ID,
 				Title:  "Pelaksanaan survei dibatalkan",
-				Body:   "Pelakasnaan survei pada permohonan dengan kode " + perlalin.Kode + " dibatalkan",
+				Body:   "Pelakasnaan survei pada permohonan dengan kode " + perlalin.Kode + " telah dibatalkan",
 			}
 
 			ac.DB.Create(&simpanNotifPetugas)
-
-			if userPengusul.PushToken != "" {
-				notifPengusul := utils.Notification{
-					IdUser: userPengusul.ID,
-					Title:  "Pelaksanaan survei dibatalkan",
-					Body:   "Usulan tindakan anda pada permohonan dengan kode " + perlalin.Kode + " telah diputuskan bahwa pelaksanaan survei dibatalkan",
-					Token:  userPengusul.PushToken,
-				}
-
-				utils.SendPushNotifications(&notifPengusul)
-			}
 
 			if userPetugas.PushToken != "" {
 				notifPetugas := utils.Notification{
 					IdUser: userPetugas.ID,
 					Title:  "Pelaksanaan survei dibatalkan",
-					Body:   "Pelakasnaan survei pada permohonan dengan kode " + perlalin.Kode + " dibatalkan",
+					Body:   "Pelakasnaan survei pada permohonan dengan kode " + perlalin.Kode + " telah dibatalkan",
 					Token:  userPetugas.PushToken,
 				}
 
@@ -3638,8 +3615,8 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 	if perlalin.IdAndalalin != uuid.Nil {
 		simpanNotifPengusul := models.Notifikasi{
 			IdUser: userPengusul.ID,
-			Title:  "Usulan tindakan dihapus",
-			Body:   "Usulan tindakan anda pada permohonan dengan kode " + perlalin.Kode + " telah dihapus",
+			Title:  "Pelaksanaan survei dilanjutkan",
+			Body:   "Pelaksanaan survei pada permohonan dengan kode " + perlalin.Kode + " telah dilanjutkan",
 		}
 
 		ac.DB.Create(&simpanNotifPengusul)
@@ -3647,8 +3624,8 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 		if userPengusul.PushToken != "" {
 			notifPengusul := utils.Notification{
 				IdUser: userPengusul.ID,
-				Title:  "Usulan tindakan dihapus",
-				Body:   "Usulan tindakan anda pada permohonan dengan kode " + perlalin.Kode + " telah dihapus",
+				Title:  "Pelaksanaan survei dilanjutkan",
+				Body:   "Pelaksanaan survei pada permohonan dengan kode " + perlalin.Kode + " telah dilanjutkan",
 				Token:  userPengusul.PushToken,
 			}
 
