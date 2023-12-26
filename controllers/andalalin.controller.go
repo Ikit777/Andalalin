@@ -3354,32 +3354,28 @@ func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
 	} else {
 		var respone []models.DaftarAndalalinResponse
 		for _, s := range usulan {
-			var ticket2 models.TiketLevel2
-			resultTiket2 := ac.DB.Not("status = ?", "Tunda").Where("id_andalalin = ? AND status = ?", s.IdAndalalin, "Buka").First(&ticket2)
-			if resultTiket2.Error == nil {
-				var perlalin models.Perlalin
+			var perlalin models.Perlalin
 
-				resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", ticket2.IdAndalalin)
+			resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin)
 
-				if resultsPerlalin.Error != nil {
-					ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
-					return
-				}
-
-				if perlalin.IdAndalalin != uuid.Nil {
-					respone = append(respone, models.DaftarAndalalinResponse{
-						IdAndalalin:      perlalin.IdAndalalin,
-						Kode:             perlalin.Kode,
-						TanggalAndalalin: perlalin.TanggalAndalalin,
-						Nama:             perlalin.NamaPemohon,
-						Email:            perlalin.EmailPemohon,
-						Petugas:          perlalin.NamaPetugas,
-						JenisAndalalin:   perlalin.JenisAndalalin,
-						StatusAndalalin:  perlalin.StatusAndalalin,
-					})
-				}
-
+			if resultsPerlalin.Error != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+				return
 			}
+
+			if perlalin.IdAndalalin != uuid.Nil {
+				respone = append(respone, models.DaftarAndalalinResponse{
+					IdAndalalin:      perlalin.IdAndalalin,
+					Kode:             perlalin.Kode,
+					TanggalAndalalin: perlalin.TanggalAndalalin,
+					Nama:             perlalin.NamaPemohon,
+					Email:            perlalin.EmailPemohon,
+					Petugas:          perlalin.NamaPetugas,
+					JenisAndalalin:   perlalin.JenisAndalalin,
+					StatusAndalalin:  perlalin.StatusAndalalin,
+				})
+			}
+
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
 	}
