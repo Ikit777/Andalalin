@@ -3568,6 +3568,8 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 		}
 	}
 
+	ac.DB.Save(&perlalin)
+
 	ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin = ?", id)
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
