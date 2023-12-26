@@ -68,7 +68,6 @@ func main() {
 	}
 
 	filePath := "assets/default.png"
-
 	fileData, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Fatal("Error reading the file:", err)

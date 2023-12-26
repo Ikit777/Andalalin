@@ -83,6 +83,7 @@ func GetCredentialsByRole(role string) ([]string, error) {
 			repository.AndalalinPemasanganCredential,
 			repository.AndalalinTicket2Credential,
 			repository.AndalalinSurveiKepuasan,
+			repository.AndalalinKelolaTiket,
 		}
 	case repository.UserRoleName:
 		// User credentials.
