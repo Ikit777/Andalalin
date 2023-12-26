@@ -3488,6 +3488,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 
 		switch jenis {
 		case "Tunda":
+			perlalin.StatusAndalalin = "Survei ditunda"
 			simpanNotifPengusul := models.Notifikasi{
 				IdUser: userPengusul.ID,
 				Title:  "Pelaksanaan survei ditunda",
@@ -3526,6 +3527,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 				utils.SendPushNotifications(&notifPetugas)
 			}
 		case "Batal":
+			perlalin.StatusAndalalin = "Survei dibatalkan"
 			simpanNotifPengusul := models.Notifikasi{
 				IdUser: userPengusul.ID,
 				Title:  "Pelaksanaan survei dibatalkan",
@@ -3563,31 +3565,10 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 
 				utils.SendPushNotifications(&notifPetugas)
 			}
-		case "Buka":
-			simpanNotifPetugas := models.Notifikasi{
-				IdUser: userPetugas.ID,
-				Title:  "Pelaksanaan survei dilanjutkan",
-				Body:   "Pelaksanaan survei pada permohonan dengan kode " + perlalin.Kode + " telah dilanjutkan kembali",
-			}
-
-			ac.DB.Create(&simpanNotifPetugas)
-
-			if userPetugas.PushToken != "" {
-				notifPetugas := utils.Notification{
-					IdUser: userPetugas.ID,
-					Title:  "Pelaksanaan survei dilanjutkan",
-					Body:   "Pelaksanaan survei pada permohonan dengan kode " + perlalin.Kode + " telah dilanjutkan kembali",
-					Token:  userPetugas.PushToken,
-				}
-
-				utils.SendPushNotifications(&notifPetugas)
-			}
 		}
 	}
 
-	if jenis == "Batal" || jenis == "Buka" {
-		ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin = ?", id)
-	}
+	ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin = ?", id)
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }
@@ -3681,67 +3662,6 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
-}
-
-func (ac *AndalalinController) GetAllAndalalinByTiketLevel2(ctx *gin.Context) {
-	status := ctx.Param("status")
-
-	config, _ := initializers.LoadConfig()
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinTicket2Credential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
-
-	var ticket []models.TiketLevel2
-
-	results := ac.DB.Find(&ticket, "status = ?", status)
-
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
-		return
-	} else {
-		var respone []models.DaftarAndalalinResponse
-		for _, s := range ticket {
-			var perlalin models.Perlalin
-
-			resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin)
-
-			if resultsPerlalin.Error != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
-				return
-			}
-
-			if perlalin.IdAndalalin != uuid.Nil {
-				respone = append(respone, models.DaftarAndalalinResponse{
-					IdAndalalin:      perlalin.IdAndalalin,
-					Kode:             perlalin.Kode,
-					TanggalAndalalin: perlalin.TanggalAndalalin,
-					Nama:             perlalin.NamaPemohon,
-					Email:            perlalin.EmailPemohon,
-					Petugas:          perlalin.NamaPetugas,
-					JenisAndalalin:   perlalin.JenisAndalalin,
-					StatusAndalalin:  perlalin.StatusAndalalin,
-				})
-			}
-
-		}
-		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
-	}
 }
 
 func (ac *AndalalinController) LaporanSurvei(ctx *gin.Context) {
@@ -3849,7 +3769,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 	if payload.Keputusan == "Pemasangan ditunda" {
 		perlalin.Tindakan = payload.Keputusan
 		perlalin.PertimbanganTindakan = payload.Pertimbangan
-		perlalin.StatusAndalalin = "Tunda pemasangan"
+		perlalin.StatusAndalalin = "Pemasangan ditunda"
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
 		perlalin.Tindakan = payload.Keputusan
 		perlalin.StatusAndalalin = "Pemasangan sedang dilakukan"
@@ -3885,7 +3805,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 					return
 				}
 
-				if data.StatusAndalalin == "Tunda pemasangan" {
+				if data.StatusAndalalin == "Pemasangan ditunda" {
 					ac.CloseTiketLevel1(ctx, data.IdAndalalin)
 					ac.BatalkanPermohonan(ctx, id)
 					data.Tindakan = "Permohonan dibatalkan"
@@ -3899,7 +3819,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			}
 		}()
 	} else if payload.Keputusan == "Pemasangan disegerakan" {
-		if perlalin.StatusAndalalin == "Tunda pemasangan" {
+		if perlalin.StatusAndalalin == "Pemasangan ditunda" {
 			close(updateChannelTunda)
 		}
 
@@ -3923,7 +3843,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 				if data.StatusAndalalin == "Pemasangan sedang dilakukan" {
 					data.Tindakan = "Pemasangan ditunda"
 					data.PertimbanganTindakan = "Pemasangan ditunda"
-					data.StatusAndalalin = "Tunda pemasangan"
+					data.StatusAndalalin = "Pemasangan ditunda"
 					ac.DB.Save(&data)
 
 					updateChannelTunda = make(chan struct{})
@@ -3945,7 +3865,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 								return
 							}
 
-							if data.StatusAndalalin == "Tunda pemasangan" {
+							if data.StatusAndalalin == "Pemasangan ditunda" {
 								ac.CloseTiketLevel1(ctx, data.IdAndalalin)
 								ac.BatalkanPermohonan(ctx, id)
 								updateChannelTunda <- struct{}{}
@@ -3962,7 +3882,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 			}
 		}()
 	} else if payload.Keputusan == "Batalkan permohonan" {
-		if perlalin.StatusAndalalin == "Tunda pemasangan" {
+		if perlalin.StatusAndalalin == "Pemasangan ditunda" {
 			close(updateChannelTunda)
 		}
 

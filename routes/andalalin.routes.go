@@ -28,7 +28,6 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.GET("/detail/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanByIdAndalalin)
 	router.GET("/status/:status_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanByStatus)
 	router.GET("/petugas/:status", middleware.DeserializeUser(), uc.andalalinController.GetAndalalinTicketLevel2)
-	router.GET("/tiket/2/:status", middleware.DeserializeUser(), uc.andalalinController.GetAllAndalalinByTiketLevel2)
 
 	//Get Berkas Permohonan
 	router.GET("/berkas/:id_andalalin/:dokumen", middleware.DeserializeUser(), uc.andalalinController.GetDokumen)
@@ -73,8 +72,6 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.GET("/usulan/detail/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetDetailUsulan)
 	router.POST("/usulan/tindakan/:id_andalalin/:jenis_pelaksanaan", middleware.DeserializeUser(), uc.andalalinController.TindakanPengelolaan)
 	router.DELETE("/usulan/hapus/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.HapusUsulan)
-
-	//Get semua permohonan berdasarkan tiket level 2
 
 	//Laporan survei
 	router.POST("/laporan/survei/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.LaporanSurvei)
