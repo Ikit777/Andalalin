@@ -3293,6 +3293,10 @@ func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 		return
 	}
 
+	ticket2.Status = "Tunda"
+
+	ac.DB.Save(&ticket2)
+
 	if perlalin.IdAndalalin != uuid.Nil {
 		usul := models.UsulanPengelolaan{
 			IdAndalalin:                perlalin.IdAndalalin,
@@ -3453,7 +3457,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 
 	var tiket models.TiketLevel2
 
-	result := ac.DB.Model(&tiket).Where("id_andalalin = ? AND status = ?", id, "Buka").Or("id_andalalin = ? AND status = ?", id, "Tunda").Update("status", jenis)
+	result := ac.DB.Model(&tiket).Where("id_andalalin = ? AND status = ?", id, "Tunda").Update("status", jenis)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Telah terjadi sesuatu"})
 		return
@@ -3615,6 +3619,18 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 		})
 		return
 	}
+
+	var ticket2 models.TiketLevel2
+
+	resultTiket2 := ac.DB.Find(&ticket2, "id_andalalin = ?", id)
+	if resultTiket2.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
+		return
+	}
+
+	ticket2.Status = "Buka"
+
+	ac.DB.Save(&ticket2)
 
 	var usulan models.UsulanPengelolaan
 
