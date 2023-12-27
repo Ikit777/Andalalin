@@ -36,4 +36,4 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
           docker stop andalalin || true
           docker rm andalalin || true
-          docker run -d -p 8080:8080 --name andalalin ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
+          docker run -m 2g -d -p 8080:8080 --name andalalin ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
