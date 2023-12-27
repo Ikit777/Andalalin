@@ -8,6 +8,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    
+    resources:
+      limits:
+        memory: 2GB
 
     steps:
     - name: Checkout repository
@@ -36,4 +40,4 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
           docker stop andalalin || true
           docker rm andalalin || true
-          docker run -d -p 8080:8080 --name andalalin --memory=2g ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
+          docker run -d -p 8080:8080 --name andalalin --memory=2g --memory-reservation=1g ${{ secrets.DOCKER_USERNAME }}/andalalin:latest
