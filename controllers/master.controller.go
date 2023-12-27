@@ -34,22 +34,20 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	var master models.DataMaster
 
-	results := dm.DB.First(&master)
+	results_jenis := dm.DB.Select("jenis_proyek").First(&master)
 
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+	if results_jenis.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results_jenis.Error})
 		return
 	}
 
 	respone := struct {
 		IdDataMaster uuid.UUID `json:"id_data_master,omitempty"`
 		JenisProyek  []string  `json:"jenis_proyek,omitempty"`
-		Lokasi       []string  `json:"lokasi_pengambilan,omitempty"`
 		UpdatedAt    string    `json:"update,omitempty"`
 	}{
 		IdDataMaster: master.IdDataMaster,
 		JenisProyek:  master.JenisProyek,
-		Lokasi:       master.LokasiPengambilan,
 		UpdatedAt:    master.UpdatedAt,
 	}
 
