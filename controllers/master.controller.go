@@ -921,7 +921,7 @@ func (dm *DataMasterControler) TambahKategoriUtamaPerlengkapan(ctx *gin.Context)
 	}
 
 	respone := struct {
-		KategoriPerlengkapanUtama []string `json:"kategori_perlengkapan,omitempty"`
+		KategoriPerlengkapanUtama []string `json:"kategori_utama,omitempty"`
 		UpdatedAt                 string   `json:"update,omitempty"`
 	}{
 		KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama,
@@ -1004,7 +1004,7 @@ func (dm *DataMasterControler) HapusKategoriUtamaPerlengkapan(ctx *gin.Context) 
 	}
 
 	respone := struct {
-		KategoriPerlengkapanUtama []string `json:"kategori_perlengkapan,omitempty"`
+		KategoriPerlengkapanUtama []string `json:"kategori_utama,omitempty"`
 		UpdatedAt                 string   `json:"update,omitempty"`
 	}{
 		KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama,
@@ -1103,7 +1103,7 @@ func (dm *DataMasterControler) EditKategoriUtamaPerlengkapan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		KategoriPerlengkapanUtama []string `json:"kategori_perlengkapan,omitempty"`
+		KategoriPerlengkapanUtama []string `json:"kategori_utama,omitempty"`
 		UpdatedAt                 string   `json:"update,omitempty"`
 	}{
 		KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama,
