@@ -3,7 +3,7 @@ package utils
 import (
 	"fmt"
 
-	"github.com/Ikit777/E-Andalalin/repository"
+	"Andalalin-Backend/repository"
 )
 
 func GetRoleGives(role string) ([]string, error) {

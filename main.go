@@ -4,9 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Ikit777/E-Andalalin/controllers"
-	"github.com/Ikit777/E-Andalalin/initializers"
-	"github.com/Ikit777/E-Andalalin/routes"
+	"Andalalin-Backend/controllers"
+	"Andalalin-Backend/initializers"
+	"Andalalin-Backend/routes"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )

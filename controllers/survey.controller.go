@@ -7,10 +7,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Ikit777/E-Andalalin/initializers"
-	"github.com/Ikit777/E-Andalalin/models"
-	"github.com/Ikit777/E-Andalalin/repository"
-	"github.com/Ikit777/E-Andalalin/utils"
+	"Andalalin-Backend/initializers"
+	"Andalalin-Backend/models"
+	"Andalalin-Backend/repository"
+	"Andalalin-Backend/utils"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"

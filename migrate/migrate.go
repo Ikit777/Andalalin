@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Ikit777/E-Andalalin/initializers"
-	"github.com/Ikit777/E-Andalalin/models"
-	"github.com/Ikit777/E-Andalalin/utils"
+	"Andalalin-Backend/initializers"
+	"Andalalin-Backend/models"
+	"Andalalin-Backend/utils"
 
 	_ "time/tzdata"
 )

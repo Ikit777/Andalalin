@@ -3,7 +3,7 @@ package utils
 import (
 	"fmt"
 
-	"github.com/Ikit777/E-Andalalin/repository"
+	"Andalalin-Backend/repository"
 )
 
 // GetCredentialsByRole func for getting credentials from a role name.

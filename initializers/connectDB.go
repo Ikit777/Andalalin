@@ -12,7 +12,7 @@ var DB *gorm.DB
 
 func ConnectDB(config *Config) {
 	var err error
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Singapore", config.DBHost, config.DBUserName, config.DBUserPassword, config.DBName, config.DBPort)
+	dsn := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", config.DBUserName, config.DBUserPassword, config.DBName)
 
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {

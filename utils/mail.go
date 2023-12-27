@@ -6,7 +6,8 @@ import (
 	"html/template"
 	"log"
 
-	"github.com/Ikit777/E-Andalalin/initializers"
+	"Andalalin-Backend/initializers"
+
 	gomail "gopkg.in/gomail.v2"
 )
 

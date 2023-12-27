@@ -1,4 +1,4 @@
-module github.com/Ikit777/E-Andalalin
+module Andalalin-Backend
 
 go 1.20
 

@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"github.com/Ikit777/E-Andalalin/controllers"
-	"github.com/Ikit777/E-Andalalin/middleware"
+	"Andalalin-Backend/controllers"
+	"Andalalin-Backend/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
