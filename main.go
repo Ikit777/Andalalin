@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"Andalalin-Backend/controllers"
-	"Andalalin-Backend/initializers"
-	"Andalalin-Backend/routes"
+	"andalalin/controllers"
+	"andalalin/initializers"
+	"andalalin/routes"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"

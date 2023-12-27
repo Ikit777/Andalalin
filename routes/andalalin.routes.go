@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"Andalalin-Backend/controllers"
-	"Andalalin-Backend/middleware"
+	"andalalin/controllers"
+	"andalalin/middleware"
 
 	"github.com/gin-gonic/gin"
 )

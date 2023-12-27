@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"Andalalin-Backend/initializers"
-	"Andalalin-Backend/models"
-	"Andalalin-Backend/repository"
-	"Andalalin-Backend/utils"
+	"andalalin/initializers"
+	"andalalin/models"
+	"andalalin/repository"
+	"andalalin/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

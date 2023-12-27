@@ -6,7 +6,7 @@ import (
 	"html/template"
 	"log"
 
-	"Andalalin-Backend/initializers"
+	"andalalin/initializers"
 
 	gomail "gopkg.in/gomail.v2"
 )

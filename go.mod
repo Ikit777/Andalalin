@@ -1,4 +1,4 @@
-module Andalalin-Backend
+module andalalin
 
 go 1.20
 
