@@ -42,35 +42,37 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		IdDataMaster           uuid.UUID                  `json:"id_data_master,omitempty"`
-		JenisProyek            []string                   `json:"jenis_proyek,omitempty"`
-		Lokasi                 []string                   `json:"lokasi_pengambilan,omitempty"`
-		JenisRencana           []string                   `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan     []models.Rencana           `json:"rencana_pembangunan,omitempty"`
-		KategoriPerlengkapan   []string                   `json:"kategori_perlengkapan,omitempty"`
-		PerlengkapanLaluLintas []models.JenisPerlengkapan `json:"perlengkapan,omitempty"`
-		Persyaratan            models.Persyaratan         `json:"persyaratan,omitempty"`
-		Provinsi               []models.Provinsi          `json:"provinsi,omitempty"`
-		Kabupaten              []models.Kabupaten         `json:"kabupaten,omitempty"`
-		Kecamatan              []models.Kecamatan         `json:"kecamatan,omitempty"`
-		Kelurahan              []models.Kelurahan         `json:"kelurahan,omitempty"`
-		Jalan                  []models.Jalan             `json:"jalan,omitempty"`
-		UpdatedAt              string                     `json:"update,omitempty"`
+		IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
+		JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
+		Lokasi                     []string                         `json:"lokasi_pengambilan,omitempty"`
+		KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
+		JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
+		KategoriPerlengkapanUtama  []string                         `json:"kategori_utama,omitempty"`
+		KategoriPerlengkapan       []models.KategoriPerlengkapan    `json:"kategori_perlengkapan,omitempty"`
+		PerlengkapanLaluLintas     []models.JenisPerlengkapan       `json:"perlengkapan,omitempty"`
+		Persyaratan                models.Persyaratan               `json:"persyaratan,omitempty"`
+		Provinsi                   []models.Provinsi                `json:"provinsi,omitempty"`
+		Kabupaten                  []models.Kabupaten               `json:"kabupaten,omitempty"`
+		Kecamatan                  []models.Kecamatan               `json:"kecamatan,omitempty"`
+		Kelurahan                  []models.Kelurahan               `json:"kelurahan,omitempty"`
+		Jalan                      []models.Jalan                   `json:"jalan,omitempty"`
+		UpdatedAt                  string                           `json:"update,omitempty"`
 	}{
-		IdDataMaster:           master.IdDataMaster,
-		JenisProyek:            master.JenisProyek,
-		Lokasi:                 master.LokasiPengambilan,
-		JenisRencana:           master.JenisRencanaPembangunan,
-		RencanaPembangunan:     master.RencanaPembangunan,
-		KategoriPerlengkapan:   master.KategoriPerlengkapan,
-		PerlengkapanLaluLintas: master.PerlengkapanLaluLintas,
-		Persyaratan:            master.Persyaratan,
-		Provinsi:               master.Provinsi,
-		Kabupaten:              master.Kabupaten,
-		Kecamatan:              master.Kecamatan,
-		Kelurahan:              master.Kelurahan,
-		Jalan:                  master.Jalan,
-		UpdatedAt:              master.UpdatedAt,
+		IdDataMaster:               master.IdDataMaster,
+		JenisProyek:                master.JenisProyek,
+		Lokasi:                     master.LokasiPengambilan,
+		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
+		JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
+		KategoriPerlengkapanUtama:  master.KategoriPerlengkapanUtama,
+		KategoriPerlengkapan:       master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas:     master.PerlengkapanLaluLintas,
+		Persyaratan:                master.Persyaratan,
+		Provinsi:                   master.Provinsi,
+		Kabupaten:                  master.Kabupaten,
+		Kecamatan:                  master.Kecamatan,
+		Kelurahan:                  master.Kelurahan,
+		Jalan:                      master.Jalan,
+		UpdatedAt:                  master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -157,8 +159,13 @@ func compressFiles(zipFileName string, fileData []file) error {
 }
 
 func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
-	lokasi := ctx.Param("lokasi")
 	id := ctx.Param("id")
+	var payload *models.LokasiInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -190,14 +197,14 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 		return
 	}
 
-	exist := contains(master.LokasiPengambilan, lokasi)
+	exist := contains(master.LokasiPengambilan, payload.Lokasi)
 
 	if exist {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
 	}
 
-	master.LokasiPengambilan = append(master.LokasiPengambilan, lokasi)
+	master.LokasiPengambilan = append(master.LokasiPengambilan, payload.Lokasi)
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
@@ -222,8 +229,14 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapusLokasi(ctx *gin.Context) {
-	lokasi := ctx.Param("lokasi")
 	id := ctx.Param("id")
+
+	var payload *models.LokasiInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -256,7 +269,7 @@ func (dm *DataMasterControler) HapusLokasi(ctx *gin.Context) {
 	}
 
 	for i, item := range master.LokasiPengambilan {
-		if item == lokasi {
+		if item == payload.Lokasi {
 			master.LokasiPengambilan = append(master.LokasiPengambilan[:i], master.LokasiPengambilan[i+1:]...)
 			break
 		}
@@ -285,9 +298,14 @@ func (dm *DataMasterControler) HapusLokasi(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditLokasi(ctx *gin.Context) {
-	lokasi := ctx.Param("lokasi")
-	newLokasi := ctx.Param("new_lokasi")
 	id := ctx.Param("id")
+
+	var payload *models.LokasiEdit
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -322,14 +340,14 @@ func (dm *DataMasterControler) EditLokasi(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i, item := range master.LokasiPengambilan {
-		if item == lokasi {
+		if item == payload.Lokasi {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.LokasiPengambilan[itemIndex] = newLokasi
+		master.LokasiPengambilan[itemIndex] = payload.LokasiEdit
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -355,8 +373,14 @@ func (dm *DataMasterControler) EditLokasi(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) TambahKategori(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
 	id := ctx.Param("id")
+
+	var payload *models.KategoriRencanaInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -388,14 +412,14 @@ func (dm *DataMasterControler) TambahKategori(ctx *gin.Context) {
 		return
 	}
 
-	exist := contains(master.JenisRencanaPembangunan, kategori)
+	exist := contains(master.KategoriRencanaPembangunan, payload.Kategori)
 
 	if exist {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
 	}
 
-	master.JenisRencanaPembangunan = append(master.JenisRencanaPembangunan, kategori)
+	master.KategoriRencanaPembangunan = append(master.KategoriRencanaPembangunan, payload.Kategori)
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
@@ -409,19 +433,25 @@ func (dm *DataMasterControler) TambahKategori(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		JenisRencana []string `json:"jenis_rencana,omitempty"`
-		UpdatedAt    string   `json:"update,omitempty"`
+		KategoriRencanaPembangunan []string `json:"kategori_rencana,omitempty"`
+		UpdatedAt                  string   `json:"update,omitempty"`
 	}{
-		JenisRencana: master.JenisRencanaPembangunan,
-		UpdatedAt:    master.UpdatedAt,
+		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
+		UpdatedAt:                  master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
 
 func (dm *DataMasterControler) HapusKategori(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
 	id := ctx.Param("id")
+
+	var payload *models.KategoriRencanaInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -453,16 +483,16 @@ func (dm *DataMasterControler) HapusKategori(ctx *gin.Context) {
 		return
 	}
 
-	for i, item := range master.JenisRencanaPembangunan {
-		if item == kategori {
-			master.JenisRencanaPembangunan = append(master.JenisRencanaPembangunan[:i], master.JenisRencanaPembangunan[i+1:]...)
+	for i, item := range master.KategoriRencanaPembangunan {
+		if item == payload.Kategori {
+			master.KategoriRencanaPembangunan = append(master.KategoriRencanaPembangunan[:i], master.KategoriRencanaPembangunan[i+1:]...)
 			break
 		}
 	}
 
-	for i, item := range master.RencanaPembangunan {
-		if item.Kategori == kategori {
-			master.RencanaPembangunan = append(master.RencanaPembangunan[:i], master.RencanaPembangunan[i+1:]...)
+	for i, item := range master.JenisRencanaPembangunan {
+		if item.Kategori == payload.Kategori {
+			master.JenisRencanaPembangunan = append(master.JenisRencanaPembangunan[:i], master.JenisRencanaPembangunan[i+1:]...)
 			break
 		}
 	}
@@ -479,20 +509,25 @@ func (dm *DataMasterControler) HapusKategori(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		JenisRencana []string `json:"jenis_rencana,omitempty"`
-		UpdatedAt    string   `json:"update,omitempty"`
+		KategoriRencanaPembangunan []string `json:"kategori_rencana,omitempty"`
+		UpdatedAt                  string   `json:"update,omitempty"`
 	}{
-		JenisRencana: master.JenisRencanaPembangunan,
-		UpdatedAt:    master.UpdatedAt,
+		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
+		UpdatedAt:                  master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
 
 func (dm *DataMasterControler) EditKategori(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
-	newKategori := ctx.Param("new_kategori")
 	id := ctx.Param("id")
+
+	var payload *models.KategoriRencanaEdit
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -527,26 +562,26 @@ func (dm *DataMasterControler) EditKategori(ctx *gin.Context) {
 	itemIndex := -1
 	itemIndexRencana := -1
 
-	for i, item := range master.JenisRencanaPembangunan {
-		if item == kategori {
+	for i, item := range master.KategoriRencanaPembangunan {
+		if item == payload.Kategori {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.JenisRencanaPembangunan[itemIndex] = newKategori
+		master.KategoriRencanaPembangunan[itemIndex] = payload.KategoriEdit
 	}
 
-	for i, item := range master.RencanaPembangunan {
-		if item.Kategori == kategori {
+	for i, item := range master.JenisRencanaPembangunan {
+		if item.Kategori == payload.Kategori {
 			itemIndexRencana = i
 			break
 		}
 	}
 
 	if itemIndexRencana != -1 {
-		master.RencanaPembangunan[itemIndexRencana].Kategori = newKategori
+		master.JenisRencanaPembangunan[itemIndexRencana].Kategori = payload.KategoriEdit
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -561,23 +596,25 @@ func (dm *DataMasterControler) EditKategori(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		JenisRencana []string `json:"jenis_rencana,omitempty"`
-		UpdatedAt    string   `json:"update,omitempty"`
+		KategoriRencanaPembangunan []string `json:"kategori_rencana,omitempty"`
+		UpdatedAt                  string   `json:"update,omitempty"`
 	}{
-		JenisRencana: master.JenisRencanaPembangunan,
-		UpdatedAt:    master.UpdatedAt,
+		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
+		UpdatedAt:                  master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
 
 func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
-	rencana := ctx.Param("rencana")
-	kriteria := ctx.Param("kriteria")
-	satuan := ctx.Param("satuan")
-	terbilang := ctx.Param("terbilang")
 	id := ctx.Param("id")
+
+	var payload *models.JenisRencanaPembangunanInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -613,12 +650,12 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 	jenisExists := false
 	itemIndex := 0
 
-	for i := range master.RencanaPembangunan {
-		if master.RencanaPembangunan[i].Kategori == kategori {
+	for i := range master.JenisRencanaPembangunan {
+		if master.JenisRencanaPembangunan[i].Kategori == payload.Kategori {
 			kategoriExists = true
 			itemIndex = i
-			for _, item := range master.RencanaPembangunan[i].JenisRencana {
-				if item.Jenis == rencana {
+			for _, item := range master.JenisRencanaPembangunan[i].JenisRencana {
+				if item.Jenis == payload.Jenis {
 					jenisExists = true
 					ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 					return
@@ -629,17 +666,17 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 
 	if !kategoriExists {
 		jenis_rencana := []models.JenisRencana{}
-		jenis_rencana = append(jenis_rencana, models.JenisRencana{Jenis: rencana,
-			Kriteria: kriteria,
-			Satuan:   satuan, Terbilang: terbilang})
+		jenis_rencana = append(jenis_rencana, models.JenisRencana{Jenis: payload.Jenis,
+			Kriteria: payload.Kriteria,
+			Satuan:   payload.Satuan, Terbilang: payload.Terbilang})
 
-		master.RencanaPembangunan = append(master.RencanaPembangunan, models.Rencana{Kategori: kategori, JenisRencana: jenis_rencana})
+		master.JenisRencanaPembangunan = append(master.JenisRencanaPembangunan, models.JenisRencanaPembangunan{Kategori: payload.Kategori, JenisRencana: jenis_rencana})
 	}
 
 	if !jenisExists && kategoriExists {
-		master.RencanaPembangunan[itemIndex].JenisRencana = append(master.RencanaPembangunan[itemIndex].JenisRencana, models.JenisRencana{Jenis: rencana,
-			Kriteria: kriteria,
-			Satuan:   satuan, Terbilang: terbilang})
+		master.JenisRencanaPembangunan[itemIndex].JenisRencana = append(master.JenisRencanaPembangunan[itemIndex].JenisRencana, models.JenisRencana{Jenis: payload.Jenis,
+			Kriteria: payload.Kriteria,
+			Satuan:   payload.Satuan, Terbilang: payload.Terbilang})
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -654,22 +691,27 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		JenisRencana       []string         `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan []models.Rencana `json:"rencana_pembangunan,omitempty"`
-		UpdatedAt          string           `json:"update,omitempty"`
+		KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
+		JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
+		UpdatedAt                  string                           `json:"update,omitempty"`
 	}{
-		JenisRencana:       master.JenisRencanaPembangunan,
-		RencanaPembangunan: master.RencanaPembangunan,
-		UpdatedAt:          master.UpdatedAt,
+		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
+		JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
+		UpdatedAt:                  master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
 
 func (dm *DataMasterControler) HapusJenisRencanaPembangunan(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
-	rencana := ctx.Param("rencana")
 	id := ctx.Param("id")
+
+	var payload *models.JenisRencanaPembangunanHapus
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -701,11 +743,11 @@ func (dm *DataMasterControler) HapusJenisRencanaPembangunan(ctx *gin.Context) {
 		return
 	}
 
-	for i := range master.RencanaPembangunan {
-		if master.RencanaPembangunan[i].Kategori == kategori {
-			for j, item := range master.RencanaPembangunan[i].JenisRencana {
-				if item.Jenis == rencana {
-					master.RencanaPembangunan[i].JenisRencana = append(master.RencanaPembangunan[i].JenisRencana[:j], master.RencanaPembangunan[i].JenisRencana[j+1:]...)
+	for i := range master.JenisRencanaPembangunan {
+		if master.JenisRencanaPembangunan[i].Kategori == payload.Kategori {
+			for j, item := range master.JenisRencanaPembangunan[i].JenisRencana {
+				if item.Jenis == payload.Jenis {
+					master.JenisRencanaPembangunan[i].JenisRencana = append(master.JenisRencanaPembangunan[i].JenisRencana[:j], master.JenisRencanaPembangunan[i].JenisRencana[j+1:]...)
 				}
 			}
 		}
@@ -723,26 +765,27 @@ func (dm *DataMasterControler) HapusJenisRencanaPembangunan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		JenisRencana       []string         `json:"jenis_rencana,omitempty"`
-		RencanaPembangunan []models.Rencana `json:"rencana_pembangunan,omitempty"`
-		UpdatedAt          string           `json:"update,omitempty"`
+		KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
+		JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
+		UpdatedAt                  string                           `json:"update,omitempty"`
 	}{
-		JenisRencana:       master.JenisRencanaPembangunan,
-		RencanaPembangunan: master.RencanaPembangunan,
-		UpdatedAt:          master.UpdatedAt,
+		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
+		JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
+		UpdatedAt:                  master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
 
 func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
-	rencana := ctx.Param("rencana")
-	newRencana := ctx.Param("rencana_new")
-	kriteria := ctx.Param("kriteria")
-	satuan := ctx.Param("satuan")
-	terbilang := ctx.Param("terbilang")
 	id := ctx.Param("id")
+
+	var payload *models.JenisRencanaPembangunanEdit
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -777,11 +820,11 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 	itemIndexKategori := -1
 	itemIndexRencana := -1
 
-	for i := range master.RencanaPembangunan {
-		if master.RencanaPembangunan[i].Kategori == kategori {
+	for i := range master.JenisRencanaPembangunan {
+		if master.JenisRencanaPembangunan[i].Kategori == payload.Kategori {
 			itemIndexKategori = i
-			for j, item := range master.RencanaPembangunan[i].JenisRencana {
-				if item.Jenis == rencana {
+			for j, item := range master.JenisRencanaPembangunan[i].JenisRencana {
+				if item.Jenis == payload.Jenis {
 					itemIndexRencana = j
 					break
 				}
@@ -790,9 +833,9 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 	}
 
 	if itemIndexKategori != -1 && itemIndexRencana != -1 {
-		master.RencanaPembangunan[itemIndexKategori].JenisRencana[itemIndexRencana] = models.JenisRencana{Jenis: newRencana,
-			Kriteria: kriteria,
-			Satuan:   satuan, Terbilang: terbilang}
+		master.JenisRencanaPembangunan[itemIndexKategori].JenisRencana[itemIndexRencana] = models.JenisRencana{Jenis: payload.JenisEdit,
+			Kriteria: payload.Kriteria,
+			Satuan:   payload.Satuan, Terbilang: payload.Terbilang}
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -807,18 +850,24 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		RencanaPembangunan []models.Rencana `json:"rencana_pembangunan,omitempty"`
-		UpdatedAt          string           `json:"update,omitempty"`
+		JenisRencanaPembangunan []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
+		UpdatedAt               string                           `json:"update,omitempty"`
 	}{
-		RencanaPembangunan: master.RencanaPembangunan,
-		UpdatedAt:          master.UpdatedAt,
+		JenisRencanaPembangunan: master.JenisRencanaPembangunan,
+		UpdatedAt:               master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
 
-func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
+func (dm *DataMasterControler) TambahKategoriUtamaPerlengkapan(ctx *gin.Context) {
+	var payload *models.KategoriPerlengkapanUtamaInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
 	id := ctx.Param("id")
 
 	config, _ := initializers.LoadConfig()
@@ -851,14 +900,14 @@ func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
 		return
 	}
 
-	exist := contains(master.KategoriPerlengkapan, kategori)
+	exist := contains(master.KategoriPerlengkapanUtama, payload.Kategori)
 
 	if exist {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
 	}
 
-	master.KategoriPerlengkapan = append(master.KategoriPerlengkapan, kategori)
+	master.KategoriPerlengkapanUtama = append(master.KategoriPerlengkapanUtama, payload.Kategori)
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
@@ -872,8 +921,270 @@ func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		KategoriPerlengkapan []string `json:"kategori_perlengkapan,omitempty"`
-		UpdatedAt            string   `json:"update,omitempty"`
+		KategoriPerlengkapanUtama []string `json:"kategori_perlengkapan,omitempty"`
+		UpdatedAt                 string   `json:"update,omitempty"`
+	}{
+		KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama,
+		UpdatedAt:                 master.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) HapusKategoriUtamaPerlengkapan(ctx *gin.Context) {
+	var payload *models.KategoriPerlengkapanUtamaInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	for i, item := range master.KategoriPerlengkapanUtama {
+		if item == payload.Kategori {
+			master.KategoriPerlengkapanUtama = append(master.KategoriPerlengkapanUtama[:i], master.KategoriPerlengkapanUtama[i+1:]...)
+			break
+		}
+	}
+
+	for i, item := range master.KategoriPerlengkapan {
+		if item.KategoriUtama == payload.Kategori {
+			master.KategoriPerlengkapan = append(master.KategoriPerlengkapan[:i], master.KategoriPerlengkapan[i+1:]...)
+			break
+		}
+	}
+
+	for i, item := range master.PerlengkapanLaluLintas {
+		if item.KategoriUtama == payload.Kategori {
+			master.PerlengkapanLaluLintas = append(master.PerlengkapanLaluLintas[:i], master.PerlengkapanLaluLintas[i+1:]...)
+			break
+		}
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		KategoriPerlengkapanUtama []string `json:"kategori_perlengkapan,omitempty"`
+		UpdatedAt                 string   `json:"update,omitempty"`
+	}{
+		KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama,
+		UpdatedAt:                 master.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) EditKategoriUtamaPerlengkapan(ctx *gin.Context) {
+	var payload *models.KategoriPerlengkapanUtamaEdit
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	id := ctx.Param("id")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	itemIndex := -1
+	itemIndexKategori := -1
+	itemIndexPerlengkapan := -1
+
+	for i, item := range master.KategoriPerlengkapanUtama {
+		if item == payload.Kategori {
+			itemIndex = i
+			break
+		}
+	}
+
+	if itemIndex != -1 {
+		master.KategoriPerlengkapanUtama[itemIndex] = payload.KategoriEdit
+	}
+
+	for i, item := range master.KategoriPerlengkapan {
+		if item.KategoriUtama == payload.Kategori {
+			itemIndexKategori = i
+			break
+		}
+	}
+
+	if itemIndexKategori != -1 {
+		master.KategoriPerlengkapan[itemIndexKategori].KategoriUtama = payload.KategoriEdit
+	}
+
+	for i, item := range master.PerlengkapanLaluLintas {
+		if item.KategoriUtama == payload.Kategori {
+			itemIndexPerlengkapan = i
+			break
+		}
+	}
+
+	if itemIndexPerlengkapan != -1 {
+		master.PerlengkapanLaluLintas[itemIndexPerlengkapan].KategoriUtama = payload.KategoriEdit
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		KategoriPerlengkapanUtama []string `json:"kategori_perlengkapan,omitempty"`
+		UpdatedAt                 string   `json:"update,omitempty"`
+	}{
+		KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama,
+		UpdatedAt:                 master.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	var payload *models.KategoriPerlengkapanInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	kategoriExists := false
+
+	for _, kategori := range master.KategoriPerlengkapan {
+		if kategori.KategoriUtama == payload.KategoriUtama && kategori.Kategori == payload.Kategori {
+			kategoriExists = true
+			break
+		}
+	}
+
+	if !kategoriExists {
+		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
+		return
+	}
+
+	if kategoriExists {
+		master.KategoriPerlengkapan = append(master.KategoriPerlengkapan, models.KategoriPerlengkapan{KategoriUtama: payload.KategoriUtama, Kategori: payload.Kategori})
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		KategoriPerlengkapan []models.KategoriPerlengkapan `json:"kategori_perlengkapan,omitempty"`
+		UpdatedAt            string                        `json:"update,omitempty"`
 	}{
 		KategoriPerlengkapan: master.KategoriPerlengkapan,
 		UpdatedAt:            master.UpdatedAt,
@@ -883,8 +1194,14 @@ func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
 	id := ctx.Param("id")
+
+	var payload *models.KategoriPerlengkapanInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -917,14 +1234,14 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 	}
 
 	for i, item := range master.KategoriPerlengkapan {
-		if item == kategori {
+		if item.KategoriUtama == payload.KategoriUtama && item.Kategori == payload.Kategori {
 			master.KategoriPerlengkapan = append(master.KategoriPerlengkapan[:i], master.KategoriPerlengkapan[i+1:]...)
 			break
 		}
 	}
 
 	for i, item := range master.PerlengkapanLaluLintas {
-		if item.Kategori == kategori {
+		if item.KategoriUtama == payload.KategoriUtama && item.Kategori == payload.Kategori {
 			master.PerlengkapanLaluLintas = append(master.PerlengkapanLaluLintas[:i], master.PerlengkapanLaluLintas[i+1:]...)
 			break
 		}
@@ -942,8 +1259,8 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		KategoriPerlengkapan []string `json:"kategori_perlengkapan,omitempty"`
-		UpdatedAt            string   `json:"update,omitempty"`
+		KategoriPerlengkapan []models.KategoriPerlengkapan `json:"kategori_perlengkapan,omitempty"`
+		UpdatedAt            string                        `json:"update,omitempty"`
 	}{
 		KategoriPerlengkapan: master.KategoriPerlengkapan,
 		UpdatedAt:            master.UpdatedAt,
@@ -953,9 +1270,14 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
-	newKategori := ctx.Param("new_kategori")
 	id := ctx.Param("id")
+
+	var payload *models.KategoriPerlengkapanEdit
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -991,25 +1313,25 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 	itemIndexKategori := -1
 
 	for i, item := range master.KategoriPerlengkapan {
-		if item == kategori {
+		if item.KategoriUtama == payload.KategoriUtama && item.Kategori == payload.Kategori {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.KategoriPerlengkapan[itemIndex] = newKategori
+		master.KategoriPerlengkapan[itemIndex].Kategori = payload.KategoriEdit
 	}
 
 	for i, item := range master.PerlengkapanLaluLintas {
-		if item.Kategori == kategori {
+		if item.KategoriUtama == payload.KategoriUtama && item.Kategori == payload.Kategori {
 			itemIndexKategori = i
 			break
 		}
 	}
 
 	if itemIndexKategori != -1 {
-		master.PerlengkapanLaluLintas[itemIndexKategori].Kategori = newKategori
+		master.PerlengkapanLaluLintas[itemIndexKategori].Kategori = payload.KategoriEdit
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -1024,8 +1346,8 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		KategoriPerlengkapan []string `json:"kategori_perlengkapan,omitempty"`
-		UpdatedAt            string   `json:"update,omitempty"`
+		KategoriPerlengkapan []models.KategoriPerlengkapan `json:"kategori_perlengkapan,omitempty"`
+		UpdatedAt            string                        `json:"update,omitempty"`
 	}{
 		KategoriPerlengkapan: master.KategoriPerlengkapan,
 		UpdatedAt:            master.UpdatedAt,
@@ -1035,9 +1357,14 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) TambahPerlengkapan(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
-	perlengkapan := ctx.Param("perlengkapan")
 	id := ctx.Param("id")
+
+	var payload *models.DataPerlengkapan
+
+	if err := ctx.ShouldBind(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -1073,12 +1400,12 @@ func (dm *DataMasterControler) TambahPerlengkapan(ctx *gin.Context) {
 	perlengkapanExist := false
 	itemIndex := 0
 
-	for i := range master.PerlengkapanLaluLintas {
-		if master.PerlengkapanLaluLintas[i].Kategori == kategori {
+	for i, item := range master.PerlengkapanLaluLintas {
+		if item.KategoriUtama == payload.Perlengkapan.KategoriUtama && item.Kategori == payload.Perlengkapan.Kategori {
 			kategoriExists = true
 			itemIndex = i
 			for _, item := range master.PerlengkapanLaluLintas[i].Perlengkapan {
-				if item.JenisPerlengkapan == perlengkapan {
+				if item.JenisPerlengkapan == payload.Perlengkapan.Jenis {
 					perlengkapanExist = true
 					ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 					return
@@ -1108,19 +1435,20 @@ func (dm *DataMasterControler) TambahPerlengkapan(ctx *gin.Context) {
 
 	if !kategoriExists {
 		perlengkapan := models.PerlengkapanItem{
-			JenisPerlengkapan:  perlengkapan,
+			JenisPerlengkapan:  payload.Perlengkapan.Jenis,
 			GambarPerlengkapan: data,
 		}
 		jenis := models.JenisPerlengkapan{
-			Kategori:     kategori,
-			Perlengkapan: []models.PerlengkapanItem{perlengkapan},
+			KategoriUtama: payload.Perlengkapan.KategoriUtama,
+			Kategori:      payload.Perlengkapan.Kategori,
+			Perlengkapan:  []models.PerlengkapanItem{perlengkapan},
 		}
 		master.PerlengkapanLaluLintas = append(master.PerlengkapanLaluLintas, jenis)
 	}
 
 	if !perlengkapanExist && kategoriExists {
 		perlengkapan := models.PerlengkapanItem{
-			JenisPerlengkapan:  perlengkapan,
+			JenisPerlengkapan:  payload.Perlengkapan.Jenis,
 			GambarPerlengkapan: data,
 		}
 		master.PerlengkapanLaluLintas[itemIndex].Perlengkapan = append(master.PerlengkapanLaluLintas[itemIndex].Perlengkapan, perlengkapan)
@@ -1149,9 +1477,14 @@ func (dm *DataMasterControler) TambahPerlengkapan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapuspPerlengkapan(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
-	perlengkapan := ctx.Param("perlengkapan")
 	id := ctx.Param("id")
+
+	var payload *models.JenisPerlengkapanInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -1183,10 +1516,10 @@ func (dm *DataMasterControler) HapuspPerlengkapan(ctx *gin.Context) {
 		return
 	}
 
-	for i := range master.PerlengkapanLaluLintas {
-		if master.PerlengkapanLaluLintas[i].Kategori == kategori {
+	for i, perlengkapan := range master.PerlengkapanLaluLintas {
+		if perlengkapan.KategoriUtama == payload.KategoriUtama && perlengkapan.Kategori == payload.Kategori {
 			for j, item := range master.PerlengkapanLaluLintas[i].Perlengkapan {
-				if item.JenisPerlengkapan == perlengkapan {
+				if item.JenisPerlengkapan == payload.Jenis {
 					master.PerlengkapanLaluLintas[i].Perlengkapan = append(master.PerlengkapanLaluLintas[i].Perlengkapan[:j], master.PerlengkapanLaluLintas[i].Perlengkapan[j+1:]...)
 				}
 			}
@@ -1216,10 +1549,14 @@ func (dm *DataMasterControler) HapuspPerlengkapan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditPerlengkapan(ctx *gin.Context) {
-	kategori := ctx.Param("kategori")
-	perlengkapan := ctx.Param("perlengkapan")
-	newPerlengkapan := ctx.Param("perlengkapan_new")
 	id := ctx.Param("id")
+
+	var payload *models.DataPerlengkapanEdit
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -1254,11 +1591,11 @@ func (dm *DataMasterControler) EditPerlengkapan(ctx *gin.Context) {
 	itemIndexKategori := -1
 	itemIndexPerlengkapan := -1
 
-	for i := range master.PerlengkapanLaluLintas {
-		if master.PerlengkapanLaluLintas[i].Kategori == kategori {
+	for i, perlengkapan := range master.PerlengkapanLaluLintas {
+		if perlengkapan.KategoriUtama == payload.Perlengkapan.KategoriUtama && perlengkapan.Kategori == payload.Perlengkapan.Kategori {
 			itemIndexKategori = i
 			for j, item := range master.PerlengkapanLaluLintas[i].Perlengkapan {
-				if item.JenisPerlengkapan == perlengkapan {
+				if item.JenisPerlengkapan == payload.Perlengkapan.Jenis {
 					itemIndexPerlengkapan = j
 					break
 				}
@@ -1269,7 +1606,7 @@ func (dm *DataMasterControler) EditPerlengkapan(ctx *gin.Context) {
 	file, _ := ctx.FormFile("perlengkapan")
 
 	if itemIndexKategori != -1 && itemIndexPerlengkapan != -1 {
-		master.PerlengkapanLaluLintas[itemIndexKategori].Perlengkapan[itemIndexPerlengkapan].JenisPerlengkapan = newPerlengkapan
+		master.PerlengkapanLaluLintas[itemIndexKategori].Perlengkapan[itemIndexPerlengkapan].JenisPerlengkapan = payload.Perlengkapan.JenisEdit
 		if file != nil {
 			uploadedFile, err := file.Open()
 			if err != nil {
@@ -1393,8 +1730,14 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
-	persyaratan := ctx.Param("persyaratan")
 	id := ctx.Param("id")
+
+	var payload *models.PersyaratanAndalalinHapus
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -1427,7 +1770,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 	}
 
 	for i := range master.Persyaratan.PersyaratanAndalalin {
-		if master.Persyaratan.PersyaratanAndalalin[i].Persyaratan == persyaratan {
+		if master.Persyaratan.PersyaratanAndalalin[i].Persyaratan == payload.Persyaratan {
 			master.Persyaratan.PersyaratanAndalalin = append(master.Persyaratan.PersyaratanAndalalin[:i], master.Persyaratan.PersyaratanAndalalin[i+1:]...)
 			break
 		}
@@ -1444,7 +1787,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 		dataFile := []file{}
 		for i, permohonan := range andalalin {
 			for j, tambahan := range permohonan.BerkasPermohonan {
-				if tambahan.Nama == persyaratan {
+				if tambahan.Nama == payload.Persyaratan {
 					oldSubstr := "/"
 					newSubstr := "-"
 
@@ -1458,7 +1801,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 			}
 		}
 
-		zipFile := persyaratan + ".zip"
+		zipFile := payload.Persyaratan + ".zip"
 		error = compressFiles(zipFile, dataFile)
 		if error != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": error})
@@ -1499,9 +1842,8 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
-	var payload *models.PersyaratanAndalalinInput
+	var payload *models.PersyaratanAndalalinEdit
 	id := ctx.Param("id")
-	syarat := ctx.Param("persyaratan")
 
 	config, _ := initializers.LoadConfig()
 
@@ -1541,7 +1883,7 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i := range master.Persyaratan.PersyaratanAndalalin {
-		if master.Persyaratan.PersyaratanAndalalin[i].Persyaratan == syarat {
+		if master.Persyaratan.PersyaratanAndalalin[i].Persyaratan == payload.Persyaratan {
 			itemIndex = i
 			break
 		}
@@ -1552,8 +1894,8 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 			master.Persyaratan.PersyaratanAndalalin[itemIndex].Kebutuhan = payload.Kebutuhan
 		}
 
-		if master.Persyaratan.PersyaratanAndalalin[itemIndex].Persyaratan != payload.Persyaratan {
-			master.Persyaratan.PersyaratanAndalalin[itemIndex].Persyaratan = payload.Persyaratan
+		if master.Persyaratan.PersyaratanAndalalin[itemIndex].Persyaratan != payload.PersyaratanEdit {
+			master.Persyaratan.PersyaratanAndalalin[itemIndex].Persyaratan = payload.PersyaratanEdit
 		}
 
 		if master.Persyaratan.PersyaratanAndalalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
@@ -1665,8 +2007,14 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
-	persyaratan := ctx.Param("persyaratan")
 	id := ctx.Param("id")
+
+	var payload *models.PersyaratanPerlalinHapus
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -1699,7 +2047,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 	}
 
 	for i := range master.Persyaratan.PersyaratanPerlalin {
-		if master.Persyaratan.PersyaratanPerlalin[i].Persyaratan == persyaratan {
+		if master.Persyaratan.PersyaratanPerlalin[i].Persyaratan == payload.Persyaratan {
 			master.Persyaratan.PersyaratanPerlalin = append(master.Persyaratan.PersyaratanPerlalin[:i], master.Persyaratan.PersyaratanPerlalin[i+1:]...)
 			break
 		}
@@ -1716,7 +2064,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 		dataFile := []file{}
 		for i, permohonan := range perlalin {
 			for j, tambahan := range permohonan.BerkasPermohonan {
-				if tambahan.Nama == persyaratan {
+				if tambahan.Nama == payload.Persyaratan {
 					oldSubstr := "/"
 					newSubstr := "-"
 
@@ -1730,7 +2078,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 			}
 		}
 
-		zipFile := persyaratan + ".zip"
+		zipFile := payload.Persyaratan + ".zip"
 		error = compressFiles(zipFile, dataFile)
 		if error != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": error})
@@ -1771,9 +2119,8 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
-	var payload *models.PersyaratanPerlalinInput
+	var payload *models.PersyaratanPerlalinEdit
 	id := ctx.Param("id")
-	syarat := ctx.Param("persyaratan")
 
 	config, _ := initializers.LoadConfig()
 
@@ -1813,7 +2160,7 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i := range master.Persyaratan.PersyaratanPerlalin {
-		if master.Persyaratan.PersyaratanPerlalin[i].Persyaratan == syarat {
+		if master.Persyaratan.PersyaratanPerlalin[i].Persyaratan == payload.Persyaratan {
 			itemIndex = i
 			break
 		}
@@ -1824,8 +2171,8 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 			master.Persyaratan.PersyaratanPerlalin[itemIndex].Kebutuhan = payload.Kebutuhan
 		}
 
-		if master.Persyaratan.PersyaratanPerlalin[itemIndex].Persyaratan != payload.Persyaratan {
-			master.Persyaratan.PersyaratanPerlalin[itemIndex].Persyaratan = payload.Persyaratan
+		if master.Persyaratan.PersyaratanPerlalin[itemIndex].Persyaratan != payload.PersyaratanEdit {
+			master.Persyaratan.PersyaratanPerlalin[itemIndex].Persyaratan = payload.PersyaratanEdit
 		}
 
 		if master.Persyaratan.PersyaratanPerlalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
@@ -1856,8 +2203,14 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
-	provinsi := ctx.Param("provinsi")
 	id := ctx.Param("id")
+
+	var payload *models.ProvinsiInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -1893,7 +2246,7 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 	dataId := utils.Encode(2)
 
 	for _, item := range master.Provinsi {
-		if item.Name == provinsi {
+		if item.Name == payload.Provinsi {
 			exist = true
 			break
 		}
@@ -1910,7 +2263,7 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 	if !exist {
 		data := models.Provinsi{
 			Id:   dataId,
-			Name: provinsi,
+			Name: payload.Provinsi,
 		}
 		master.Provinsi = append(master.Provinsi, data)
 	}
@@ -1938,8 +2291,14 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapusProvinsi(ctx *gin.Context) {
-	provinsi := ctx.Param("provinsi")
 	id := ctx.Param("id")
+
+	var payload *models.ProvinsiInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -1976,7 +2335,7 @@ func (dm *DataMasterControler) HapusProvinsi(ctx *gin.Context) {
 	var id_kecamatan string
 
 	for i, item := range master.Provinsi {
-		if item.Name == provinsi {
+		if item.Name == payload.Provinsi {
 			id_provinsi = item.Id
 			master.Provinsi = append(master.Provinsi[:i], master.Provinsi[i+1:]...)
 			break
@@ -2029,9 +2388,14 @@ func (dm *DataMasterControler) HapusProvinsi(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditProvinsi(ctx *gin.Context) {
-	provinsi := ctx.Param("provinsi")
-	newProvinsi := ctx.Param("new_provinsi")
 	id := ctx.Param("id")
+
+	var payload *models.ProvinsiEdit
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2066,14 +2430,14 @@ func (dm *DataMasterControler) EditProvinsi(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i, item := range master.Provinsi {
-		if item.Name == provinsi {
+		if item.Name == payload.Provinsi {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.Provinsi[itemIndex].Name = newProvinsi
+		master.Provinsi[itemIndex].Name = payload.ProvinsiEdit
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -2099,9 +2463,14 @@ func (dm *DataMasterControler) EditProvinsi(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
-	kabupaten := ctx.Param("kabupaten")
-	provinsi := ctx.Param("provinsi")
 	id := ctx.Param("id")
+
+	var payload *models.KabupatenInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2137,14 +2506,14 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 	var id_provinsi string
 
 	for _, item := range master.Provinsi {
-		if item.Name == provinsi {
+		if item.Name == payload.Provinsi {
 			id_provinsi = item.Id
 			break
 		}
 	}
 
 	for _, item := range master.Kabupaten {
-		if item.Name == kabupaten {
+		if item.Name == payload.Kabupaten {
 			exist = true
 			break
 		}
@@ -2164,7 +2533,7 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 		data := models.Kabupaten{
 			Id:         dataId,
 			IdProvinsi: id_provinsi,
-			Name:       kabupaten,
+			Name:       payload.Kabupaten,
 		}
 		master.Kabupaten = append(master.Kabupaten, data)
 	}
@@ -2192,8 +2561,14 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapusKabupaten(ctx *gin.Context) {
-	kabupaten := ctx.Param("kabupaten")
 	id := ctx.Param("id")
+
+	var payload *models.KabupatenHapus
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2229,7 +2604,7 @@ func (dm *DataMasterControler) HapusKabupaten(ctx *gin.Context) {
 	var id_kecamatan string
 
 	for i, item := range master.Kabupaten {
-		if item.Name == kabupaten {
+		if item.Name == payload.Kabupaten {
 			id_kabupaten = item.Id
 			master.Kabupaten = append(master.Kabupaten[:i], master.Kabupaten[i+1:]...)
 			break
@@ -2274,9 +2649,14 @@ func (dm *DataMasterControler) HapusKabupaten(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditKabupaten(ctx *gin.Context) {
-	kabupaten := ctx.Param("kabupaten")
-	newKabupaten := ctx.Param("new_kabupaten")
 	id := ctx.Param("id")
+
+	var payload *models.KabupatenEdit
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2311,14 +2691,14 @@ func (dm *DataMasterControler) EditKabupaten(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i, item := range master.Kabupaten {
-		if item.Name == kabupaten {
+		if item.Name == payload.Kabupaten {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.Kabupaten[itemIndex].Name = newKabupaten
+		master.Kabupaten[itemIndex].Name = payload.KabupatenEdit
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -2344,9 +2724,14 @@ func (dm *DataMasterControler) EditKabupaten(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
-	kecamatan := ctx.Param("kecamatan")
-	kabupaten := ctx.Param("kabupaten")
 	id := ctx.Param("id")
+
+	var payload *models.KecamatanInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2382,14 +2767,14 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 	var id_kabupaten string
 
 	for _, item := range master.Kabupaten {
-		if item.Name == kabupaten {
+		if item.Name == payload.Kabupaten {
 			id_kabupaten = item.Id
 			break
 		}
 	}
 
 	for _, item := range master.Kecamatan {
-		if item.Name == kecamatan {
+		if item.Name == payload.Kecamatan {
 			exist = true
 			break
 		}
@@ -2409,7 +2794,7 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 		data := models.Kecamatan{
 			Id:          dataId,
 			IdKabupaten: id_kabupaten,
-			Name:        kecamatan,
+			Name:        payload.Kecamatan,
 		}
 		master.Kecamatan = append(master.Kecamatan, data)
 	}
@@ -2437,8 +2822,14 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapusKecamatan(ctx *gin.Context) {
-	kecamatan := ctx.Param("kecamatan")
 	id := ctx.Param("id")
+
+	var payload *models.KecamatanHapus
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2473,7 +2864,7 @@ func (dm *DataMasterControler) HapusKecamatan(ctx *gin.Context) {
 	var id_kecamatan string
 
 	for i, item := range master.Kecamatan {
-		if item.Name == kecamatan {
+		if item.Name == payload.Kecamatan {
 			id_kecamatan = item.Id
 			master.Kecamatan = append(master.Kecamatan[:i], master.Kecamatan[i+1:]...)
 			break
@@ -2510,9 +2901,14 @@ func (dm *DataMasterControler) HapusKecamatan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditKecamatan(ctx *gin.Context) {
-	kecamatan := ctx.Param("kecamatan")
-	newKecamatan := ctx.Param("new_kecamatan")
 	id := ctx.Param("id")
+
+	var payload *models.KecamatanEdit
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2547,14 +2943,14 @@ func (dm *DataMasterControler) EditKecamatan(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i, item := range master.Kecamatan {
-		if item.Name == kecamatan {
+		if item.Name == payload.Kecamatan {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.Kecamatan[itemIndex].Name = newKecamatan
+		master.Kecamatan[itemIndex].Name = payload.KecamatanEdit
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -2580,9 +2976,14 @@ func (dm *DataMasterControler) EditKecamatan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
-	kecamatan := ctx.Param("kecamatan")
-	kelurahan := ctx.Param("kelurahan")
 	id := ctx.Param("id")
+
+	var payload *models.KelurahanInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2618,14 +3019,14 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 	var id_kecamatan string
 
 	for _, item := range master.Kecamatan {
-		if item.Name == kecamatan {
+		if item.Name == payload.Kecamatan {
 			id_kecamatan = item.Id
 			break
 		}
 	}
 
 	for _, item := range master.Kelurahan {
-		if item.Name == kelurahan {
+		if item.Name == payload.Kelurahan {
 			exist = true
 			break
 		}
@@ -2645,7 +3046,7 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 		data := models.Kelurahan{
 			Id:          dataId,
 			IdKecamatan: id_kecamatan,
-			Name:        kelurahan,
+			Name:        payload.Kelurahan,
 		}
 		master.Kelurahan = append(master.Kelurahan, data)
 	}
@@ -2673,8 +3074,14 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapusKelurahan(ctx *gin.Context) {
-	kelurahan := ctx.Param("kelurahan")
 	id := ctx.Param("id")
+
+	var payload *models.KelurahanHapus
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2707,7 +3114,7 @@ func (dm *DataMasterControler) HapusKelurahan(ctx *gin.Context) {
 	}
 
 	for i, item := range master.Kelurahan {
-		if item.Name == kelurahan {
+		if item.Name == payload.Kelurahan {
 			master.Kelurahan = append(master.Kelurahan[:i], master.Kelurahan[i+1:]...)
 			break
 		}
@@ -2736,9 +3143,14 @@ func (dm *DataMasterControler) HapusKelurahan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditKelurahan(ctx *gin.Context) {
-	kelurahan := ctx.Param("kelurahan")
-	newKelurahan := ctx.Param("new_kelurahan")
 	id := ctx.Param("id")
+
+	var payload *models.KelurahanEdit
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2773,14 +3185,14 @@ func (dm *DataMasterControler) EditKelurahan(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i, item := range master.Kelurahan {
-		if item.Name == kelurahan {
+		if item.Name == payload.Kelurahan {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.Kelurahan[itemIndex].Name = newKelurahan
+		master.Kelurahan[itemIndex].Name = payload.KelurahanEdit
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -2806,8 +3218,14 @@ func (dm *DataMasterControler) EditKelurahan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) TambahJenisProyek(ctx *gin.Context) {
-	proyek := ctx.Param("proyek")
 	id := ctx.Param("id")
+
+	var payload *models.JenisProyekInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2839,14 +3257,14 @@ func (dm *DataMasterControler) TambahJenisProyek(ctx *gin.Context) {
 		return
 	}
 
-	exist := contains(master.JenisProyek, proyek)
+	exist := contains(master.JenisProyek, payload.Jenis)
 
 	if exist {
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
 		return
 	}
 
-	master.JenisProyek = append(master.JenisProyek, proyek)
+	master.JenisProyek = append(master.JenisProyek, payload.Jenis)
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
@@ -2871,8 +3289,14 @@ func (dm *DataMasterControler) TambahJenisProyek(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapusJenisProyek(ctx *gin.Context) {
-	proyek := ctx.Param("proyek")
 	id := ctx.Param("id")
+
+	var payload *models.JenisProyekInput
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2905,7 +3329,7 @@ func (dm *DataMasterControler) HapusJenisProyek(ctx *gin.Context) {
 	}
 
 	for i, item := range master.JenisProyek {
-		if item == proyek {
+		if item == payload.Jenis {
 			master.JenisProyek = append(master.JenisProyek[:i], master.JenisProyek[i+1:]...)
 			break
 		}
@@ -2934,9 +3358,14 @@ func (dm *DataMasterControler) HapusJenisProyek(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditJenisProyek(ctx *gin.Context) {
-	proyek := ctx.Param("proyek")
-	newProyek := ctx.Param("new_proyek")
 	id := ctx.Param("id")
+
+	var payload *models.JenisProyekEdit
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -2971,14 +3400,14 @@ func (dm *DataMasterControler) EditJenisProyek(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i, item := range master.JenisProyek {
-		if item == proyek {
+		if item == payload.Jenis {
 			itemIndex = i
 			break
 		}
 	}
 
 	if itemIndex != -1 {
-		master.JenisProyek[itemIndex] = newProyek
+		master.JenisProyek[itemIndex] = payload.JenisEdit
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -3095,8 +3524,14 @@ func (dm *DataMasterControler) TambahJalan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) HapusJalan(ctx *gin.Context) {
-	kode := ctx.Param("kode")
 	id := ctx.Param("id")
+
+	var payload *models.JalanHapus
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	config, _ := initializers.LoadConfig()
 
@@ -3129,7 +3564,7 @@ func (dm *DataMasterControler) HapusJalan(ctx *gin.Context) {
 	}
 
 	for i, item := range master.Jalan {
-		if item.KodeJalan == kode {
+		if item.KodeJalan == payload.Kode {
 			master.Jalan = append(master.Jalan[:i], master.Jalan[i+1:]...)
 			break
 		}
@@ -3158,10 +3593,8 @@ func (dm *DataMasterControler) HapusJalan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) EditJalan(ctx *gin.Context) {
-	var payload *models.Jalan
+	var payload *models.JalanEdit
 	id := ctx.Param("id")
-	jalan := ctx.Param("jalan")
-	kode := ctx.Param("kode")
 
 	config, _ := initializers.LoadConfig()
 
@@ -3201,7 +3634,7 @@ func (dm *DataMasterControler) EditJalan(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i, item := range master.Jalan {
-		if item.Nama == jalan && item.KodeJalan == kode {
+		if item.Nama == payload.Jalan && item.KodeJalan == payload.Kode {
 			itemIndex = i
 			break
 		}

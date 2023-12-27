@@ -34,7 +34,6 @@ func removeExtension(fileName string) string {
 func main() {
 	initializers.DB.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
 
-	initializers.DB.Migrator().DropTable(&models.User{})
 	initializers.DB.Migrator().DropTable(&models.Andalalin{})
 	initializers.DB.Migrator().DropTable(&models.Perlalin{})
 	initializers.DB.Migrator().DropTable(&models.Survei{})
@@ -47,7 +46,6 @@ func main() {
 	initializers.DB.Migrator().DropTable(&models.SurveiKepuasan{})
 	initializers.DB.Migrator().DropTable(&models.Pemasangan{})
 
-	initializers.DB.AutoMigrate(&models.User{})
 	initializers.DB.AutoMigrate(&models.Andalalin{})
 	initializers.DB.AutoMigrate(&models.Perlalin{})
 	initializers.DB.AutoMigrate(&models.Survei{})
@@ -151,13 +149,11 @@ func main() {
 	lainnya = append(lainnya, models.JenisRencana{Jenis: "Kegiatan yang menimbukan kepadatan 500 kendaraan", Kriteria: "", Satuan: "", Terbilang: ""})
 	lainnya = append(lainnya, models.JenisRencana{Jenis: "Kegiatan yang menimbukan kepadatan 100 kendaraan", Kriteria: "", Satuan: "", Terbilang: ""})
 
-	rencana := []models.Rencana{}
-	rencana = append(rencana, models.Rencana{Kategori: "Pusat kegiatan", JenisRencana: pusat_kegiatan})
-	rencana = append(rencana, models.Rencana{Kategori: "Pemukiman", JenisRencana: pemukiman})
-	rencana = append(rencana, models.Rencana{Kategori: "Infrastruktur", JenisRencana: infrastruktur})
-	rencana = append(rencana, models.Rencana{Kategori: "Lainnya", JenisRencana: lainnya})
-
-	ketegori_perlengkapan := []string{"Rambu peringatan", "Rambu larangan", "Rambu perintah", "Rambu petunjuk", "Rambu peringatan sementara", "Papan tambahan"}
+	rencana := []models.JenisRencanaPembangunan{}
+	rencana = append(rencana, models.JenisRencanaPembangunan{Kategori: "Pusat kegiatan", JenisRencana: pusat_kegiatan})
+	rencana = append(rencana, models.JenisRencanaPembangunan{Kategori: "Pemukiman", JenisRencana: pemukiman})
+	rencana = append(rencana, models.JenisRencanaPembangunan{Kategori: "Infrastruktur", JenisRencana: infrastruktur})
+	rencana = append(rencana, models.JenisRencanaPembangunan{Kategori: "Lainnya", JenisRencana: lainnya})
 
 	andalalin := []models.PersyaratanAndalalinInput{}
 	andalalin = append(andalalin, models.PersyaratanAndalalinInput{Kebutuhan: "Wajib", Bangkitan: "Bangkitan rendah", Persyaratan: "Surat permohonan persetujuan andalalin", KeteranganPersyaratan: "Surat permohonan persetujuan analisis dampak lalu lintas adalah surat yang digunakan untuk mengajukan permohonan kepada pihak yang berwenang, biasanya pemerintah daerah, untuk mendapatkan persetujuan atau izin terkait dengan rencana atau proyek tertentu. Surat ini harus memuat informasi yang lengkap dan jelas mengenai rencana atau proyek yang diajukan, termasuk tujuan, dampak lingkungan, serta segala persyaratan yang harus dipenuhi."})
@@ -196,6 +192,27 @@ func main() {
 		PersyaratanAndalalin: andalalin,
 		PersyaratanPerlalin:  perlalin,
 	}
+
+	kategori_utama := []string{"Rambu lalu lintas", "Marka jalan", "Alat pengendali pengguna jalan", "Alat pengaman pengguna jalan"}
+
+	ketegori_perlengkapan := []models.KategoriPerlengkapan{}
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu peringatan"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu larangan"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu perintah"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu petunjuk"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu peringatan sementara"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Papan tambahan"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Marka jalan", Kategori: "Marka jalan berupan peralatan"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Marka jalan", Kategori: "Marka jalan berupan tanda"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengendali pengguna jalan", Kategori: "Alat pembatas kecepatan"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengendali pengguna jalan", Kategori: "Alat pembatas tinggi dan lebar"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pagar pengaman (guardrail)"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Cermin tikungan"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Patok lalu lintas (delineator)"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pulau lalu lintas"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pita penggaduh"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Jalur penghentian darurat"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pembatas lalu lintas"})
 
 	perlengkapanPeringatan := []models.PerlengkapanItem{}
 
@@ -332,7 +349,7 @@ func main() {
 
 	for _, fileInfo := range fileSementara {
 		if fileInfo.Mode().IsRegular() {
-			filePath := filepath.Join(folderPetunjuk, fileInfo.Name())
+			filePath := filepath.Join(folderSementara, fileInfo.Name())
 			content, err := os.ReadFile(filePath)
 			if err != nil {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
@@ -361,7 +378,326 @@ func main() {
 
 	for _, fileInfo := range filePapan {
 		if fileInfo.Mode().IsRegular() {
-			filePath := filepath.Join(folderPetunjuk, fileInfo.Name())
+			filePath := filepath.Join(folderPapan, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanMarkaPeralatan := []models.PerlengkapanItem{}
+
+	folderPeralatan := "assets/Perlalin/Marka/Peralatan"
+
+	folder7, err := os.Open(folderPeralatan)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder7.Close()
+
+	filePeralatan, err := folder7.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range filePeralatan {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderPeralatan, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanMarkaTanda := []models.PerlengkapanItem{}
+
+	folderTanda := "assets/Perlalin/Marka/Tanda"
+
+	folder8, err := os.Open(folderTanda)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder8.Close()
+
+	fileTanda, err := folder8.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range fileTanda {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderTanda, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanPengendaliKecepatan := []models.PerlengkapanItem{}
+
+	folderKecepatan := "assets/Perlalin/Pengendali/Kecepatan"
+
+	folder9, err := os.Open(folderKecepatan)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder9.Close()
+
+	fileKecepatan, err := folder9.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range fileKecepatan {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderKecepatan, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanPengendaliTinggiLebar := []models.PerlengkapanItem{}
+
+	folderTinggiLebar := "assets/Perlalin/Pengendali/TinggiLebar"
+
+	folder10, err := os.Open(folderTinggiLebar)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder10.Close()
+
+	fileTinggiLebar, err := folder10.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range fileTinggiLebar {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderTinggiLebar, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanPengamanPagar := []models.PerlengkapanItem{}
+
+	folderPagar := "assets/Perlalin/Pengaman/Pagar"
+
+	folder11, err := os.Open(folderPagar)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder11.Close()
+
+	filePagar, err := folder11.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range filePagar {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderPagar, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanPengamanCermin := []models.PerlengkapanItem{}
+
+	folderCermin := "assets/Perlalin/Pengaman/Cermin"
+
+	folder12, err := os.Open(folderCermin)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder12.Close()
+
+	fileCermin, err := folder12.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range fileCermin {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderCermin, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanPengamanPatok := []models.PerlengkapanItem{}
+
+	folderPatok := "assets/Perlalin/Pengaman/Patok"
+
+	folder13, err := os.Open(folderPatok)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder13.Close()
+
+	filePatok, err := folder13.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range filePatok {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderPatok, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanPengamanPulau := []models.PerlengkapanItem{}
+
+	folderPulau := "assets/Perlalin/Pengaman/Pulau"
+
+	folder14, err := os.Open(folderPulau)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder14.Close()
+
+	filePulau, err := folder14.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range filePulau {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderPulau, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanPengamanPita := []models.PerlengkapanItem{}
+
+	folderPita := "assets/Perlalin/Pengaman/Pita"
+
+	folder15, err := os.Open(folderPita)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder15.Close()
+
+	filePita, err := folder15.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range filePita {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderPita, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanPengamanDarurat := []models.PerlengkapanItem{}
+
+	folderDarurat := "assets/Perlalin/Pengaman/Darurat"
+
+	folder16, err := os.Open(folderDarurat)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder16.Close()
+
+	fileDarurat, err := folder16.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range fileDarurat {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderDarurat, fileInfo.Name())
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
+				continue
+			}
+			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+		}
+	}
+
+	perlengkapanPengamanPembatas := []models.PerlengkapanItem{}
+
+	folderPembatas := "assets/Perlalin/Pengaman/Pembatas"
+
+	folder17, err := os.Open(folderPembatas)
+	if err != nil {
+		fmt.Println("Error opening folder:", err)
+		return
+	}
+	defer folder17.Close()
+
+	filePembatas, err := folder17.Readdir(0)
+	if err != nil {
+		fmt.Println("Error reading folder contents:", err)
+		return
+	}
+
+	for _, fileInfo := range filePembatas {
+		if fileInfo.Mode().IsRegular() {
+			filePath := filepath.Join(folderPembatas, fileInfo.Name())
 			content, err := os.ReadFile(filePath)
 			if err != nil {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
@@ -372,12 +708,23 @@ func main() {
 	}
 
 	perlengkapan := []models.JenisPerlengkapan{}
-	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu peringatan", Perlengkapan: perlengkapanPeringatan})
-	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu larangan", Perlengkapan: perlengkapanLarangan})
-	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu perintah", Perlengkapan: perlengkapanPerintah})
-	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu petunjuk", Perlengkapan: perlengkapanPetunjuk})
-	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Rambu peringatan sementara", Perlengkapan: perlengkapanSementara})
-	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{Kategori: "Papan tambahan", Perlengkapan: perlengkapanPapan})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu peringatan", Perlengkapan: perlengkapanPeringatan})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu larangan", Perlengkapan: perlengkapanLarangan})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu perintah", Perlengkapan: perlengkapanPerintah})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu petunjuk", Perlengkapan: perlengkapanPetunjuk})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu peringatan sementara", Perlengkapan: perlengkapanSementara})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Papan tambahan", Perlengkapan: perlengkapanPapan})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Marka jalan", Kategori: "Marka jalan berupan peralatan", Perlengkapan: perlengkapanMarkaPeralatan})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Marka jalan", Kategori: "Marka jalan berupan tanda", Perlengkapan: perlengkapanMarkaTanda})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Alat pengendali pengguna jalan", Kategori: "Alat pembatas kecepatan", Perlengkapan: perlengkapanPengendaliKecepatan})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Alat pengendali pengguna jalan", Kategori: "Alat pembatas tinggi dan lebar", Perlengkapan: perlengkapanPengendaliTinggiLebar})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pagar pengaman (guardrail)", Perlengkapan: perlengkapanPengamanPagar})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Cermin tikungan", Perlengkapan: perlengkapanPengamanCermin})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Patok lalu lintas (delineator)", Perlengkapan: perlengkapanPengamanPatok})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pulau lalu lintas", Perlengkapan: perlengkapanPengamanPulau})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pita penggaduh", Perlengkapan: perlengkapanPengamanPita})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Jalur penghentian darurat", Perlengkapan: perlengkapanPengamanDarurat})
+	perlengkapan = append(perlengkapan, models.JenisPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pembatas lalu lintas", Perlengkapan: perlengkapanPengamanPembatas})
 
 	fileProvinsi, err := os.Open("assets/Indonesia/provinces.csv")
 	if err != nil {
@@ -490,19 +837,20 @@ func main() {
 	}
 
 	initializers.DB.Create(&models.DataMaster{
-		JenisProyek:             jenis_proyek,
-		LokasiPengambilan:       lokasi,
-		JenisRencanaPembangunan: jenis_kegiatan,
-		RencanaPembangunan:      rencana,
-		Persyaratan:             persyaratan,
-		KategoriPerlengkapan:    ketegori_perlengkapan,
-		PerlengkapanLaluLintas:  perlengkapan,
-		Provinsi:                provinsi,
-		Kabupaten:               Kabupaten,
-		Kecamatan:               kecamatan,
-		Kelurahan:               kelurahan,
-		Jalan:                   jalan,
-		UpdatedAt:               now + " " + time.Now().In(loc).Format("15:04:05"),
+		JenisProyek:                jenis_proyek,
+		LokasiPengambilan:          lokasi,
+		KategoriRencanaPembangunan: jenis_kegiatan,
+		JenisRencanaPembangunan:    rencana,
+		Persyaratan:                persyaratan,
+		KategoriPerlengkapanUtama:  kategori_utama,
+		KategoriPerlengkapan:       ketegori_perlengkapan,
+		PerlengkapanLaluLintas:     perlengkapan,
+		Provinsi:                   provinsi,
+		Kabupaten:                  Kabupaten,
+		Kecamatan:                  kecamatan,
+		Kelurahan:                  kelurahan,
+		Jalan:                      jalan,
+		UpdatedAt:                  now + " " + time.Now().In(loc).Format("15:04:05"),
 	})
 
 	fmt.Println("Migration complete")
