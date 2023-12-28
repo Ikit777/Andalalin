@@ -53,7 +53,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		UpdatedAt                  string                           `json:"update,omitempty"`
 	}{}
 
-	if err := dm.DB.Model(&master).Select("id_data_master, jenis_proyek, lokasi_pengambilan, kategori_rencana_pembangunan, jenis_rencana_pembangunan, kategori_utama, kategori_perlengkapan_utama, kategori_perlengkapan, perlengkapan_lalu_lintas, persyaratan, provinsi, kabupaten, kecamatan, kelurahan, jalan, updated_at").Scan(&respone).Error; err != nil {
+	if err := dm.DB.Model(&master).Scan(&respone).Error; err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err})
 		return
 	}
