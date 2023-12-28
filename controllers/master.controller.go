@@ -4,8 +4,10 @@ import (
 	"archive/zip"
 	"encoding/base64"
 	"io"
+	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -2380,7 +2382,7 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 	}
 
 	for _, item := range master.Provinsi {
-		generate := utils.Encode(2)
+		generate := strconv.Itoa(rand.Intn(10)*10 + rand.Intn(10))
 		if item.Id != generate {
 			dataId += generate
 			notExistId = true
@@ -2666,7 +2668,7 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 	var dataId string
 
 	for _, item := range master.Kabupaten {
-		generate := id_provinsi + utils.Encode(2)
+		generate := id_provinsi + strconv.Itoa(rand.Intn(10)*10+rand.Intn(10))
 		if item.Id != generate {
 			dataId += generate
 			notExistId = true
@@ -2943,7 +2945,7 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 	var dataId string
 
 	for _, item := range master.Kecamatan {
-		generate := id_kabupaten + utils.Encode(3)
+		generate := id_kabupaten + strconv.Itoa(rand.Intn(10)*10+rand.Intn(10))
 		if item.Id != generate {
 			dataId += generate
 			notExistId = true
@@ -3212,7 +3214,7 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 	var dataId string
 
 	for _, item := range master.Kelurahan {
-		generate := id_kecamatan + utils.Encode(3)
+		generate := id_kecamatan + strconv.Itoa(rand.Intn(10)*10+rand.Intn(10))
 		if item.Id != generate {
 			dataId += generate
 			notExistId = true
