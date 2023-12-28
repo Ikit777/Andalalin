@@ -35,11 +35,13 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	var master models.DataMaster
 
-	results := dm.DB.First(&master)
+	var jenis []string
 
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
-		return
+	jenis_proyek, _ := dm.DB.Model(&master).Select("jenis_proyek").Limit(1).Rows()
+	defer jenis_proyek.Close()
+
+	for jenis_proyek.Next() {
+		dm.DB.ScanRows(jenis_proyek, &jenis)
 	}
 
 	respone := struct {
@@ -60,7 +62,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		UpdatedAt                  string                           `json:"update,omitempty"`
 	}{
 		IdDataMaster:               master.IdDataMaster,
-		JenisProyek:                master.JenisProyek,
+		JenisProyek:                jenis,
 		Lokasi:                     master.LokasiPengambilan,
 		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
 		JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
