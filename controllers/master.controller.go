@@ -94,7 +94,7 @@ func (dm *DataMasterControler) streamMaster(ctx *gin.Context) {
 		ctx.Writer.Flush()
 		time.Sleep(100 * time.Millisecond)
 	}
-	ctx.Writer.WriteString("}")
+	ctx.Writer.WriteString("}}")
 	ctx.Writer.Flush()
 }
 
