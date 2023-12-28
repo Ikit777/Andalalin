@@ -2382,7 +2382,7 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 	for _, item := range master.Provinsi {
 		generate := utils.Encode(2)
 		if item.Id != generate {
-			dataId = generate
+			dataId += generate
 			notExistId = true
 			break
 		}
@@ -2668,7 +2668,7 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 	for _, item := range master.Kabupaten {
 		generate := id_provinsi + utils.Encode(2)
 		if item.Id != generate {
-			dataId = generate
+			dataId += generate
 			notExistId = true
 			break
 		}
@@ -2945,7 +2945,7 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 	for _, item := range master.Kecamatan {
 		generate := id_kabupaten + utils.Encode(3)
 		if item.Id != generate {
-			dataId = generate
+			dataId += generate
 			notExistId = true
 			break
 		}
@@ -3214,7 +3214,7 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 	for _, item := range master.Kelurahan {
 		generate := id_kecamatan + utils.Encode(3)
 		if item.Id != generate {
-			dataId = generate
+			dataId += generate
 			notExistId = true
 			break
 		}
