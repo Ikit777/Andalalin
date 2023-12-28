@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"andalalin/initializers"
@@ -33,50 +34,69 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 }
 
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
-	var master models.DataMaster
+	var mutex sync.Mutex
 
-	results := dm.DB.First(&master)
+	mutex.Lock()
+	defer mutex.Unlock()
 
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+	bufferSize := 10
+	resultChan := make(chan models.DataMaster, bufferSize)
+
+	rows, err := dm.DB.Table("data_masters").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
+	defer rows.Close()
 
-	respone := struct {
-		IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
-		JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
-		Lokasi                     []string                         `json:"lokasi_pengambilan,omitempty"`
-		KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
-		JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
-		KategoriPerlengkapanUtama  []string                         `json:"kategori_utama,omitempty"`
-		KategoriPerlengkapan       []models.KategoriPerlengkapan    `json:"kategori_perlengkapan,omitempty"`
-		PerlengkapanLaluLintas     []models.JenisPerlengkapan       `json:"perlengkapan,omitempty"`
-		Persyaratan                models.Persyaratan               `json:"persyaratan,omitempty"`
-		Provinsi                   []models.Provinsi                `json:"provinsi,omitempty"`
-		Kabupaten                  []models.Kabupaten               `json:"kabupaten,omitempty"`
-		Kecamatan                  []models.Kecamatan               `json:"kecamatan,omitempty"`
-		Kelurahan                  []models.Kelurahan               `json:"kelurahan,omitempty"`
-		Jalan                      []models.Jalan                   `json:"jalan,omitempty"`
-		UpdatedAt                  string                           `json:"update,omitempty"`
-	}{
-		IdDataMaster:               master.IdDataMaster,
-		JenisProyek:                master.JenisProyek,
-		Lokasi:                     master.LokasiPengambilan,
-		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
-		JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
-		KategoriPerlengkapanUtama:  master.KategoriPerlengkapanUtama,
-		KategoriPerlengkapan:       master.KategoriPerlengkapan,
-		PerlengkapanLaluLintas:     master.PerlengkapanLaluLintas,
-		Persyaratan:                master.Persyaratan,
-		Provinsi:                   master.Provinsi,
-		Kabupaten:                  master.Kabupaten,
-		Kecamatan:                  master.Kecamatan,
-		Kelurahan:                  master.Kelurahan,
-		Jalan:                      master.Jalan,
-		UpdatedAt:                  master.UpdatedAt,
+	for rows.Next() {
+		var result models.DataMaster
+		if err := dm.DB.ScanRows(rows, &result); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
+
+		resultChan <- result
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+	close(resultChan)
+
+	for result := range resultChan {
+		respone := struct {
+			IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
+			JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
+			Lokasi                     []string                         `json:"lokasi_pengambilan,omitempty"`
+			KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
+			JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
+			KategoriPerlengkapanUtama  []string                         `json:"kategori_utama,omitempty"`
+			KategoriPerlengkapan       []models.KategoriPerlengkapan    `json:"kategori_perlengkapan,omitempty"`
+			PerlengkapanLaluLintas     []models.JenisPerlengkapan       `json:"perlengkapan,omitempty"`
+			Persyaratan                models.Persyaratan               `json:"persyaratan,omitempty"`
+			Provinsi                   []models.Provinsi                `json:"provinsi,omitempty"`
+			Kabupaten                  []models.Kabupaten               `json:"kabupaten,omitempty"`
+			Kecamatan                  []models.Kecamatan               `json:"kecamatan,omitempty"`
+			Kelurahan                  []models.Kelurahan               `json:"kelurahan,omitempty"`
+			Jalan                      []models.Jalan                   `json:"jalan,omitempty"`
+			UpdatedAt                  string                           `json:"update,omitempty"`
+		}{
+			IdDataMaster:               result.IdDataMaster,
+			JenisProyek:                result.JenisProyek,
+			Lokasi:                     result.LokasiPengambilan,
+			KategoriRencanaPembangunan: result.KategoriRencanaPembangunan,
+			JenisRencanaPembangunan:    result.JenisRencanaPembangunan,
+			KategoriPerlengkapanUtama:  result.KategoriPerlengkapanUtama,
+			KategoriPerlengkapan:       result.KategoriPerlengkapan,
+			PerlengkapanLaluLintas:     result.PerlengkapanLaluLintas,
+			Persyaratan:                result.Persyaratan,
+			Provinsi:                   result.Provinsi,
+			Kabupaten:                  result.Kabupaten,
+			Kecamatan:                  result.Kecamatan,
+			Kelurahan:                  result.Kelurahan,
+			Jalan:                      result.Jalan,
+			UpdatedAt:                  result.UpdatedAt,
+		}
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+	}
 }
 
 func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {
