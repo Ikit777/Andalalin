@@ -2633,7 +2633,7 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kabupaten", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -2910,7 +2910,7 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kecamatan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kabupaten", "kecamatan", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -3179,7 +3179,7 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kecamatan", "kelurahan", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
