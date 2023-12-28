@@ -36,7 +36,6 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	var master models.DataMaster
 
 	iter, _ := dm.DB.Model(&master).Rows()
-	defer iter.Close()
 
 	// Loop untuk memuat data secara bertahap
 	for iter.Next() {
@@ -44,6 +43,11 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error})
 			return
 		}
+	}
+
+	if err := iter.Close(); err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error})
+		return
 	}
 
 	respone := struct {
