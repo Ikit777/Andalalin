@@ -19,6 +19,7 @@ func (dm *DataMasterRouteController) DataMasterRoute(rg *gin.RouterGroup) {
 	router := rg.Group("/master")
 
 	router.GET("/andalalin", dm.dataMasterController.GetDataMaster)
+	router.GET("/tipe/:tipe", dm.dataMasterController.GetDataMasterByType)
 
 	router.GET("/check", dm.dataMasterController.CheckDataMaster)
 

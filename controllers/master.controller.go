@@ -120,6 +120,61 @@ func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 }
 
+func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
+	tipe := ctx.Param("tipe")
+
+	switch tipe {
+	case "proyek":
+		var mutex sync.Mutex
+
+		mutex.Lock()
+		defer mutex.Unlock()
+
+		bufferSize := 10
+		resultChan := make(chan models.DataMaster, bufferSize)
+
+		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "jenis_proyek").Rows()
+		if err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var result models.DataMaster
+			if err := dm.DB.ScanRows(rows, &result); err != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				return
+			}
+
+			resultChan <- result
+		}
+
+		close(resultChan)
+
+		for result := range resultChan {
+			respone := struct {
+				IdDataMaster uuid.UUID `json:"id_data_master,omitempty"`
+				JenisProyek  []string  `json:"jenis_proyek,omitempty"`
+			}{
+				IdDataMaster: result.IdDataMaster,
+				JenisProyek:  result.JenisProyek,
+			}
+			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+		}
+	case "wilayah":
+	case "jalan":
+	case "pengambilan":
+	case "kategori_pembangunan":
+	case "jenis_pembangunan":
+	case "kategori_utama":
+	case "kategori_perlengkapan":
+	case "jenis_perlengkapan":
+	case "persyaratan_andalalin":
+	case "persyaratam_perlalin":
+	}
+}
+
 func contains(s []string, str string) bool {
 	for _, v := range s {
 		if v == str {
