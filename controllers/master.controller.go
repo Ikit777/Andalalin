@@ -2369,7 +2369,8 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 	}
 
 	exist := false
-	dataId := utils.Encode(2)
+	notExistId := false
+	var dataId string
 
 	for _, item := range master.Provinsi {
 		if item.Name == payload.Provinsi {
@@ -2379,14 +2380,15 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 	}
 
 	for _, item := range master.Provinsi {
-		if item.Id == dataId {
-			dataId = utils.Encode(2)
-		} else {
+		generate := utils.Encode(2)
+		if item.Id != generate {
+			dataId = generate
+			notExistId = true
 			break
 		}
 	}
 
-	if !exist {
+	if !exist && notExistId {
 		data := models.Provinsi{
 			Id:   dataId,
 			Name: payload.Provinsi,
@@ -2660,17 +2662,19 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 		}
 	}
 
-	dataId := id_provinsi + utils.Encode(2)
+	notExistId := false
+	var dataId string
 
 	for _, item := range master.Kabupaten {
-		if item.Id == dataId {
-			dataId = id_provinsi + utils.Encode(2)
-		} else {
+		generate := id_provinsi + utils.Encode(2)
+		if item.Id != generate {
+			dataId = generate
+			notExistId = true
 			break
 		}
 	}
 
-	if !exist {
+	if !exist && notExistId {
 		data := models.Kabupaten{
 			Id:         dataId,
 			IdProvinsi: id_provinsi,
@@ -2935,17 +2939,19 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 		}
 	}
 
-	dataId := id_kabupaten + utils.Encode(3)
+	notExistId := false
+	var dataId string
 
 	for _, item := range master.Kecamatan {
-		if item.Id == dataId {
-			dataId = id_kabupaten + utils.Encode(3)
-		} else {
+		generate := id_kabupaten + utils.Encode(3)
+		if item.Id != generate {
+			dataId = generate
+			notExistId = true
 			break
 		}
 	}
 
-	if !exist {
+	if !exist && notExistId {
 		data := models.Kecamatan{
 			Id:          dataId,
 			IdKabupaten: id_kabupaten,
@@ -3202,17 +3208,19 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 		}
 	}
 
-	dataId := id_kecamatan + utils.Encode(3)
+	notExistId := false
+	var dataId string
 
 	for _, item := range master.Kelurahan {
-		if item.Id == dataId {
-			dataId = id_kecamatan + utils.Encode(3)
-		} else {
+		generate := id_kecamatan + utils.Encode(3)
+		if item.Id != generate {
+			dataId = generate
+			notExistId = true
 			break
 		}
 	}
 
-	if !exist {
+	if !exist && notExistId {
 		data := models.Kelurahan{
 			Id:          dataId,
 			IdKecamatan: id_kecamatan,
