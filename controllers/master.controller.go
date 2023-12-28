@@ -51,10 +51,10 @@ func (dm *DataMasterControler) streamMaster(ctx *gin.Context) {
 			return
 		}
 
-		response := struct {
+		respone := struct {
 			IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
 			JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
-			LokasiPengambilan          []string                         `json:"lokasi_pengambilan,omitempty"`
+			Lokasi                     []string                         `json:"lokasi_pengambilan,omitempty"`
 			KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
 			JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
 			KategoriPerlengkapanUtama  []string                         `json:"kategori_utama,omitempty"`
@@ -70,7 +70,7 @@ func (dm *DataMasterControler) streamMaster(ctx *gin.Context) {
 		}{
 			IdDataMaster:               master.IdDataMaster,
 			JenisProyek:                master.JenisProyek,
-			LokasiPengambilan:          master.LokasiPengambilan,
+			Lokasi:                     master.LokasiPengambilan,
 			KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
 			JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
 			KategoriPerlengkapanUtama:  master.KategoriPerlengkapanUtama,
@@ -85,7 +85,7 @@ func (dm *DataMasterControler) streamMaster(ctx *gin.Context) {
 			UpdatedAt:                  master.UpdatedAt,
 		}
 
-		if err := encoder.Encode(response); err != nil {
+		if err := encoder.Encode(respone); err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error})
 			return
 		}
