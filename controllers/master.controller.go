@@ -3,8 +3,8 @@ package controllers
 import (
 	"archive/zip"
 	"encoding/base64"
+	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -33,62 +33,75 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 	return DataMasterControler{DB}
 }
 
-func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
-	var master models.DataMaster
-
-	rows, err := dm.DB.Table("data_masters").Rows()
+func (dm *DataMasterControler) streamMaster(ctx *gin.Context) {
+	rows, err := dm.DB.Model(&models.DataMaster{}).Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error})
 		return
 	}
 	defer rows.Close()
 
+	encoder := json.NewEncoder(ctx.Writer)
+	ctx.Writer.WriteString(`{"status":"success","data":[`)
+
 	for rows.Next() {
+		var master models.DataMaster
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error})
 			return
 		}
-	}
 
-	if err := rows.Err(); err != nil {
-		log.Fatal(err)
-	}
+		response := struct {
+			IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
+			JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
+			LokasiPengambilan          []string                         `json:"lokasi_pengambilan,omitempty"`
+			KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
+			JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
+			KategoriPerlengkapanUtama  []string                         `json:"kategori_utama,omitempty"`
+			KategoriPerlengkapan       []models.KategoriPerlengkapan    `json:"kategori_perlengkapan,omitempty"`
+			PerlengkapanLaluLintas     []models.JenisPerlengkapan       `json:"perlengkapan,omitempty"`
+			Persyaratan                models.Persyaratan               `json:"persyaratan,omitempty"`
+			Provinsi                   []models.Provinsi                `json:"provinsi,omitempty"`
+			Kabupaten                  []models.Kabupaten               `json:"kabupaten,omitempty"`
+			Kecamatan                  []models.Kecamatan               `json:"kecamatan,omitempty"`
+			Kelurahan                  []models.Kelurahan               `json:"kelurahan,omitempty"`
+			Jalan                      []models.Jalan                   `json:"jalan,omitempty"`
+			UpdatedAt                  string                           `json:"update,omitempty"`
+		}{
+			IdDataMaster:               master.IdDataMaster,
+			JenisProyek:                master.JenisProyek,
+			LokasiPengambilan:          master.LokasiPengambilan,
+			KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
+			JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
+			KategoriPerlengkapanUtama:  master.KategoriPerlengkapanUtama,
+			KategoriPerlengkapan:       master.KategoriPerlengkapan,
+			PerlengkapanLaluLintas:     master.PerlengkapanLaluLintas,
+			Persyaratan:                master.Persyaratan,
+			Provinsi:                   master.Provinsi,
+			Kabupaten:                  master.Kabupaten,
+			Kecamatan:                  master.Kecamatan,
+			Kelurahan:                  master.Kelurahan,
+			Jalan:                      master.Jalan,
+			UpdatedAt:                  master.UpdatedAt,
+		}
 
-	respone := struct {
-		IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
-		JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
-		Lokasi                     []string                         `json:"lokasi_pengambilan,omitempty"`
-		KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
-		JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
-		KategoriPerlengkapanUtama  []string                         `json:"kategori_utama,omitempty"`
-		KategoriPerlengkapan       []models.KategoriPerlengkapan    `json:"kategori_perlengkapan,omitempty"`
-		PerlengkapanLaluLintas     []models.JenisPerlengkapan       `json:"perlengkapan,omitempty"`
-		Persyaratan                models.Persyaratan               `json:"persyaratan,omitempty"`
-		Provinsi                   []models.Provinsi                `json:"provinsi,omitempty"`
-		Kabupaten                  []models.Kabupaten               `json:"kabupaten,omitempty"`
-		Kecamatan                  []models.Kecamatan               `json:"kecamatan,omitempty"`
-		Kelurahan                  []models.Kelurahan               `json:"kelurahan,omitempty"`
-		Jalan                      []models.Jalan                   `json:"jalan,omitempty"`
-		UpdatedAt                  string                           `json:"update,omitempty"`
-	}{
-		IdDataMaster:               master.IdDataMaster,
-		JenisProyek:                master.JenisProyek,
-		Lokasi:                     master.LokasiPengambilan,
-		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
-		JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
-		KategoriPerlengkapanUtama:  master.KategoriPerlengkapanUtama,
-		KategoriPerlengkapan:       master.KategoriPerlengkapan,
-		PerlengkapanLaluLintas:     master.PerlengkapanLaluLintas,
-		Persyaratan:                master.Persyaratan,
-		Provinsi:                   master.Provinsi,
-		Kabupaten:                  master.Kabupaten,
-		Kecamatan:                  master.Kecamatan,
-		Kelurahan:                  master.Kelurahan,
-		Jalan:                      master.Jalan,
-		UpdatedAt:                  master.UpdatedAt,
-	}
+		if err := encoder.Encode(response); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error})
+			return
+		}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+		ctx.Writer.WriteString(",")
+		ctx.Writer.Flush()
+		time.Sleep(100 * time.Millisecond)
+	}
+	ctx.Writer.WriteString("]")
+	ctx.Writer.Flush()
+}
+
+func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
+	ctx.Header("Content-Type", "application/json")
+	ctx.Status(http.StatusOK)
+	dm.streamMaster(ctx)
 }
 
 func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {
