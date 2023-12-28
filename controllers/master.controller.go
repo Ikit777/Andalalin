@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"encoding/base64"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -35,19 +36,22 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	var master models.DataMaster
 
-	iter, _ := dm.DB.Model(&master).Rows()
+	rows, err := dm.DB.Table("data_masters").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error})
+		return
+	}
+	defer rows.Close()
 
-	// Loop untuk memuat data secara bertahap
-	for iter.Next() {
-		if err := iter.Scan(&master); err != nil {
+	for rows.Next() {
+		if err := rows.Scan(&master); err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error})
 			return
 		}
 	}
 
-	if err := iter.Close(); err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error})
-		return
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
 	}
 
 	respone := struct {
