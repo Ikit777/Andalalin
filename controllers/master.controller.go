@@ -3252,7 +3252,7 @@ func (dm *DataMasterControler) TambahJenisProyek(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek").Select("updated_at").First(&master)
+	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek", "updated_at").First(&master)
 
 	if resultsData.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
@@ -3323,7 +3323,7 @@ func (dm *DataMasterControler) HapusJenisProyek(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek").Select("updated_at").First(&master)
+	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek", "updated_at").First(&master)
 
 	if resultsData.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
@@ -3392,7 +3392,7 @@ func (dm *DataMasterControler) EditJenisProyek(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek").Select("updated_at").First(&master)
+	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek", "updated_at").First(&master)
 
 	if resultsData.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
