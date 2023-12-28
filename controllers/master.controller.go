@@ -44,7 +44,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&master); err != nil {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error})
 			return
 		}
