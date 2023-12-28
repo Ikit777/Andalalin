@@ -42,7 +42,7 @@ func (dm *DataMasterControler) streamMaster(ctx *gin.Context) {
 	defer rows.Close()
 
 	encoder := json.NewEncoder(ctx.Writer)
-	ctx.Writer.WriteString(`{"status":"success","data":[`)
+	ctx.Writer.WriteString(`{"status":"success","data":{`)
 
 	for rows.Next() {
 		var master models.DataMaster
@@ -94,7 +94,7 @@ func (dm *DataMasterControler) streamMaster(ctx *gin.Context) {
 		ctx.Writer.Flush()
 		time.Sleep(100 * time.Millisecond)
 	}
-	ctx.Writer.WriteString("]")
+	ctx.Writer.WriteString("}")
 	ctx.Writer.Flush()
 }
 
