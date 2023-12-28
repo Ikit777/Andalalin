@@ -38,7 +38,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	respone := struct {
 		IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
 		JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
-		Lokasi                     []string                         `json:"lokasi_pengambilan,omitempty"`
+		LokasiPengambilan          []string                         `json:"lokasi_pengambilan,omitempty"`
 		KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
 		JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
 		KategoriPerlengkapanUtama  []string                         `json:"kategori_utama,omitempty"`
@@ -51,25 +51,9 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		Kelurahan                  []models.Kelurahan               `json:"kelurahan,omitempty"`
 		Jalan                      []models.Jalan                   `json:"jalan,omitempty"`
 		UpdatedAt                  string                           `json:"update,omitempty"`
-	}{
-		IdDataMaster:               master.IdDataMaster,
-		JenisProyek:                master.JenisProyek,
-		Lokasi:                     master.LokasiPengambilan,
-		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
-		JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
-		KategoriPerlengkapanUtama:  master.KategoriPerlengkapanUtama,
-		KategoriPerlengkapan:       master.KategoriPerlengkapan,
-		PerlengkapanLaluLintas:     master.PerlengkapanLaluLintas,
-		Persyaratan:                master.Persyaratan,
-		Provinsi:                   master.Provinsi,
-		Kabupaten:                  master.Kabupaten,
-		Kecamatan:                  master.Kecamatan,
-		Kelurahan:                  master.Kelurahan,
-		Jalan:                      master.Jalan,
-		UpdatedAt:                  master.UpdatedAt,
-	}
+	}{}
 
-	if err := dm.DB.Model(&master).Select("id_data_master, jenis_proyek, lokasi_pengambilan, kategori_rencana, jenis_rencana, kategori_utama, kategori_perlengkapan, perlengkapan, persyaratan, provinsi, kabupaten, kecamatan, kelurahan, jalan, updated_at").Scan(&respone).Error; err != nil {
+	if err := dm.DB.Model(&master).Select("id_data_master, jenis_proyek, lokasi_pengambilan, kategori_rencana_pembangunan, jenis_rencana_pembangunan, kategori_utama, kategori_perlengkapan_utama, kategori_perlengkapan, perlengkapan_lalu_lintas, persyaratan, provinsi, kabupaten, kecamatan, kelurahan, jalan, updated_at").Scan(&respone).Error; err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err})
 		return
 	}
