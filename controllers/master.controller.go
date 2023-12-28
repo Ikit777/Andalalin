@@ -35,13 +35,12 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	var master models.DataMaster
 
-	var jenis []string
+	iter, _ := dm.DB.Model(&master).Rows()
+	defer iter.Close()
 
-	jenis_proyek, _ := dm.DB.Model(&master).Select("jenis_proyek").Limit(1).Rows()
-	defer jenis_proyek.Close()
-
-	for jenis_proyek.Next() {
-		dm.DB.ScanRows(jenis_proyek, &jenis)
+	// Loop untuk memuat data secara bertahap
+	for iter.Next() {
+		dm.DB.ScanRows(iter, &master)
 	}
 
 	respone := struct {
@@ -62,7 +61,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		UpdatedAt                  string                           `json:"update,omitempty"`
 	}{
 		IdDataMaster:               master.IdDataMaster,
-		JenisProyek:                jenis,
+		JenisProyek:                master.JenisProyek,
 		Lokasi:                     master.LokasiPengambilan,
 		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
 		JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
