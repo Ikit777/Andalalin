@@ -3374,7 +3374,7 @@ func (dm *DataMasterControler) HapusJenisProyek(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Update("jenis_proyek", master.JenisProyek).Update("updated_at", master.UpdatedAt)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_proyek", "updated_at").Updates(models.DataMaster{JenisProyek: master.JenisProyek, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
@@ -3456,7 +3456,7 @@ func (dm *DataMasterControler) EditJenisProyek(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Update("jenis_proyek", master.JenisProyek).Update("updated_at", master.UpdatedAt)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_proyek", "updated_at").Updates(models.DataMaster{JenisProyek: master.JenisProyek, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
