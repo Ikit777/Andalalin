@@ -40,7 +40,10 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 
 	// Loop untuk memuat data secara bertahap
 	for iter.Next() {
-		dm.DB.ScanRows(iter, &master)
+		if err := iter.Scan(&master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error})
+			return
+		}
 	}
 
 	respone := struct {
