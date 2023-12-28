@@ -45,7 +45,7 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	respone := struct {
 		IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
 		JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
-		LokasiPengambilan          []string                         `json:"lokasi_pengambilan,omitempty"`
+		Lokasi                     []string                         `json:"lokasi_pengambilan,omitempty"`
 		KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
 		JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
 		KategoriPerlengkapanUtama  []string                         `json:"kategori_utama,omitempty"`
@@ -58,11 +58,22 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		Kelurahan                  []models.Kelurahan               `json:"kelurahan,omitempty"`
 		Jalan                      []models.Jalan                   `json:"jalan,omitempty"`
 		UpdatedAt                  string                           `json:"update,omitempty"`
-	}{}
-
-	if err := dm.DB.Model(&master).Scan(&respone).Error; err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err})
-		return
+	}{
+		IdDataMaster:               master.IdDataMaster,
+		JenisProyek:                master.JenisProyek,
+		Lokasi:                     master.LokasiPengambilan,
+		KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
+		JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
+		KategoriPerlengkapanUtama:  master.KategoriPerlengkapanUtama,
+		KategoriPerlengkapan:       master.KategoriPerlengkapan,
+		PerlengkapanLaluLintas:     master.PerlengkapanLaluLintas,
+		Persyaratan:                master.Persyaratan,
+		Provinsi:                   master.Provinsi,
+		Kabupaten:                  master.Kabupaten,
+		Kecamatan:                  master.Kecamatan,
+		Kelurahan:                  master.Kelurahan,
+		Jalan:                      master.Jalan,
+		UpdatedAt:                  master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -3240,7 +3251,7 @@ func (dm *DataMasterControler) TambahJenisProyek(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek", "updated_at").First(&master)
+	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek0", "updated_at").First(&master)
 
 	if resultsData.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
@@ -3311,7 +3322,7 @@ func (dm *DataMasterControler) HapusJenisProyek(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek", "updated_at").First(&master)
+	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek0", "updated_at").First(&master)
 
 	if resultsData.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
@@ -3380,7 +3391,7 @@ func (dm *DataMasterControler) EditJenisProyek(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek", "updated_at").First(&master)
+	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek0", "updated_at").First(&master)
 
 	if resultsData.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
