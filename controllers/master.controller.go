@@ -3298,7 +3298,7 @@ func (dm *DataMasterControler) TambahJenisProyek(ctx *gin.Context) {
 	now := time.Now().In(loc).Format("02-01-2006")
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
-	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Update("jenis_proyek", master.JenisProyek).Update("updated_at", master.UpdatedAt)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Updates(map[string]interface{}{"jenis_proyek": master.JenisProyek, "updated_at": master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
