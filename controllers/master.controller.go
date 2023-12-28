@@ -35,16 +35,7 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	var master models.DataMaster
 
-	results := dm.DB.Select("id_data_master", "jenis_proyek", "lokasi_pengambilan", "kategori_rencana", "update_at").
-		Preload("JenisRencanaPembangunan").
-		Preload("KategoriPerlengkapan").
-		Preload("PerlengkapanLaluLintas").
-		Preload("Provinsi").
-		Preload("Kabupaten").
-		Preload("Kecamatan").
-		Preload("Kelurahan").
-		Preload("Jalan").
-		First(&master)
+	results := dm.DB.Preload("JenisRencanaPembangunan").Preload("KategoriPerlengkapan").Preload("PerlengkapanLaluLintas").Preload("Persyaratan").Preload("Provinsi").Preload("Kabupaten").Preload("Kecamatan").Preload("Kelurahan").Preload("Jalan").First(&master)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
