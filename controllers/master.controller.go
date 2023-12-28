@@ -35,6 +35,13 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	var master models.DataMaster
 
+	results := dm.DB.First(&master)
+
+	if results.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		return
+	}
+
 	respone := struct {
 		IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
 		JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
