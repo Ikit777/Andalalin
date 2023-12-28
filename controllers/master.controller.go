@@ -2354,7 +2354,7 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -2406,15 +2406,9 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
-		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
-		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
-		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
+		Provinsi []models.Provinsi `json:"provinsi,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
-		Kabupaten: master.Kabupaten,
-		Kecamatan: master.Kecamatan,
-		Kelurahan: master.Kelurahan,
+		Provinsi: master.Provinsi,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -2514,15 +2508,9 @@ func (dm *DataMasterControler) HapusProvinsi(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
-		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
-		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
-		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
+		Provinsi []models.Provinsi `json:"provinsi,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
-		Kabupaten: master.Kabupaten,
-		Kecamatan: master.Kecamatan,
-		Kelurahan: master.Kelurahan,
+		Provinsi: master.Provinsi,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -2561,7 +2549,7 @@ func (dm *DataMasterControler) EditProvinsi(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -2600,15 +2588,9 @@ func (dm *DataMasterControler) EditProvinsi(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
-		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
-		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
-		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
+		Provinsi []models.Provinsi `json:"provinsi,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
-		Kabupaten: master.Kabupaten,
-		Kecamatan: master.Kecamatan,
-		Kelurahan: master.Kelurahan,
+		Provinsi: master.Provinsi,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -2647,7 +2629,7 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kabupaten", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -2709,15 +2691,9 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
 		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
-		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
-		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
 		Kabupaten: master.Kabupaten,
-		Kecamatan: master.Kecamatan,
-		Kelurahan: master.Kelurahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -2756,7 +2732,7 @@ func (dm *DataMasterControler) HapusKabupaten(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -2808,15 +2784,9 @@ func (dm *DataMasterControler) HapusKabupaten(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
 		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
-		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
-		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
 		Kabupaten: master.Kabupaten,
-		Kecamatan: master.Kecamatan,
-		Kelurahan: master.Kelurahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -2855,7 +2825,7 @@ func (dm *DataMasterControler) EditKabupaten(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kabupaten", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -2893,15 +2863,9 @@ func (dm *DataMasterControler) EditKabupaten(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
 		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
-		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
-		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
 		Kabupaten: master.Kabupaten,
-		Kecamatan: master.Kecamatan,
-		Kelurahan: master.Kelurahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -2940,7 +2904,7 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kecamatan", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -3002,15 +2966,9 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
-		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
 		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
-		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
-		Kabupaten: master.Kabupaten,
 		Kecamatan: master.Kecamatan,
-		Kelurahan: master.Kelurahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -3049,7 +3007,7 @@ func (dm *DataMasterControler) HapusKecamatan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kecamatan", "kelurahan", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -3092,15 +3050,9 @@ func (dm *DataMasterControler) HapusKecamatan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
-		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
 		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
-		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
-		Kabupaten: master.Kabupaten,
 		Kecamatan: master.Kecamatan,
-		Kelurahan: master.Kelurahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -3139,7 +3091,7 @@ func (dm *DataMasterControler) EditKecamatan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kecamatan", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -3178,15 +3130,9 @@ func (dm *DataMasterControler) EditKecamatan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
-		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
 		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
-		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
-		Kabupaten: master.Kabupaten,
 		Kecamatan: master.Kecamatan,
-		Kelurahan: master.Kelurahan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -3225,7 +3171,7 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kelurahan", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -3287,14 +3233,8 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
-		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
-		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
 		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
-		Kabupaten: master.Kabupaten,
-		Kecamatan: master.Kecamatan,
 		Kelurahan: master.Kelurahan,
 	}
 
@@ -3334,7 +3274,7 @@ func (dm *DataMasterControler) HapusKelurahan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kelurahan", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -3367,14 +3307,8 @@ func (dm *DataMasterControler) HapusKelurahan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
-		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
-		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
 		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
-		Kabupaten: master.Kabupaten,
-		Kecamatan: master.Kecamatan,
 		Kelurahan: master.Kelurahan,
 	}
 
@@ -3414,7 +3348,7 @@ func (dm *DataMasterControler) EditKelurahan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kelurahan", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
@@ -3453,14 +3387,8 @@ func (dm *DataMasterControler) EditKelurahan(ctx *gin.Context) {
 	}
 
 	respone := struct {
-		Provinsi  []models.Provinsi  `json:"provinsi,omitempty"`
-		Kabupaten []models.Kabupaten `json:"kabupaten,omitempty"`
-		Kecamatan []models.Kecamatan `json:"kecamatan,omitempty"`
 		Kelurahan []models.Kelurahan `json:"kelurahan,omitempty"`
 	}{
-		Provinsi:  master.Provinsi,
-		Kabupaten: master.Kabupaten,
-		Kecamatan: master.Kecamatan,
 		Kelurahan: master.Kelurahan,
 	}
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
