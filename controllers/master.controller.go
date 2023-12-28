@@ -2650,7 +2650,7 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 
 	for _, item := range master.Provinsi {
 		if item.Name == payload.Provinsi {
-			id_provinsi = item.Id
+			id_provinsi += item.Id
 			break
 		}
 	}
@@ -2927,7 +2927,7 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 
 	for _, item := range master.Kabupaten {
 		if item.Name == payload.Kabupaten {
-			id_kabupaten = item.Id
+			id_kabupaten += item.Id
 			break
 		}
 	}
@@ -3196,7 +3196,7 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 
 	for _, item := range master.Kecamatan {
 		if item.Name == payload.Kecamatan {
-			id_kecamatan = item.Id
+			id_kecamatan += item.Id
 			break
 		}
 	}
