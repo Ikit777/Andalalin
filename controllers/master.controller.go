@@ -35,13 +35,6 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	var master models.DataMaster
 
-	results := dm.DB.Preload("JenisRencanaPembangunan").Preload("KategoriPerlengkapan").Preload("PerlengkapanLaluLintas").Preload("Persyaratan").Preload("Provinsi").Preload("Kabupaten").Preload("Kecamatan").Preload("Kelurahan").Preload("Jalan").First(&master)
-
-	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
-		return
-	}
-
 	respone := struct {
 		IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
 		JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
@@ -74,6 +67,11 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 		Kelurahan:                  master.Kelurahan,
 		Jalan:                      master.Jalan,
 		UpdatedAt:                  master.UpdatedAt,
+	}
+
+	if err := dm.DB.Model(&master).Select("id_data_master, jenis_proyek, lokasi_pengambilan, kategori_rencana, jenis_rencana, kategori_utama, kategori_perlengkapan, perlengkapan, persyaratan, provinsi, kabupaten, kecamatan, kelurahan, jalan, updated_at").Scan(&respone).Error; err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
