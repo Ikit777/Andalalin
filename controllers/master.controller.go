@@ -3271,11 +3271,18 @@ func (dm *DataMasterControler) TambahJenisProyek(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek0", "updated_at").First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_proyek", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	exist := contains(master.JenisProyek, payload.Jenis)
@@ -3342,11 +3349,18 @@ func (dm *DataMasterControler) HapusJenisProyek(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek0", "updated_at").First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_proyek", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	for i, item := range master.JenisProyek {
@@ -3411,11 +3425,18 @@ func (dm *DataMasterControler) EditJenisProyek(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).Select("jenis_proyek0", "updated_at").First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_proyek", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	itemIndex := -1
