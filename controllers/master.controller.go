@@ -285,7 +285,7 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 		bufferSize := 10
 		resultChan := make(chan models.DataMaster, bufferSize)
 
-		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "jenis_proyek").Rows()
+		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "lokasi_pengambilan").Rows()
 		if err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 			return
