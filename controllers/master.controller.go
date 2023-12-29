@@ -1458,7 +1458,6 @@ func (dm *DataMasterControler) HapusKategoriUtamaPerlengkapan(ctx *gin.Context) 
 	for i, item := range master.KategoriPerlengkapan {
 		if item.KategoriUtama == payload.Kategori {
 			master.KategoriPerlengkapan = append(master.KategoriPerlengkapan[:i], master.KategoriPerlengkapan[i+1:]...)
-			break
 		}
 	}
 
