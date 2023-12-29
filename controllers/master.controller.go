@@ -512,8 +512,44 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
-	case "persyaratan_andalalin":
-	case "persyaratam_perlalin":
+	case "persyaratan":
+		var mutex sync.Mutex
+
+		mutex.Lock()
+		defer mutex.Unlock()
+
+		bufferSize := 10
+		resultChan := make(chan models.DataMaster, bufferSize)
+
+		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "persyaratan").Rows()
+		if err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var result models.DataMaster
+			if err := dm.DB.ScanRows(rows, &result); err != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				return
+			}
+
+			resultChan <- result
+		}
+
+		close(resultChan)
+
+		for result := range resultChan {
+			respone := struct {
+				IdDataMaster uuid.UUID          `json:"id_data_master,omitempty"`
+				Persyaratan  models.Persyaratan `json:"persyaratan,omitempty"`
+			}{
+				IdDataMaster: result.IdDataMaster,
+				Persyaratan:  result.Persyaratan,
+			}
+			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+		}
 	}
 }
 
@@ -2194,11 +2230,18 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	persyaratanExist := false
@@ -2226,7 +2269,7 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Save(&master)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
@@ -2234,10 +2277,8 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 
 	respone := struct {
 		Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
-		UpdatedAt   string             `json:"update,omitempty"`
 	}{
 		Persyaratan: master.Persyaratan,
-		UpdatedAt:   master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -2276,11 +2317,18 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	for i := range master.Persyaratan.PersyaratanAndalalin {
@@ -2337,7 +2385,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 
 		master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-		resultsSave := dm.DB.Save(&master)
+		resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 		if resultsSave.Error != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 			return
@@ -2345,10 +2393,8 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 
 		respone := struct {
 			Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
-			UpdatedAt   string             `json:"update,omitempty"`
 		}{
 			Persyaratan: master.Persyaratan,
-			UpdatedAt:   master.UpdatedAt,
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone, "file": base64ZipData})
@@ -2387,11 +2433,18 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	itemIndex := -1
@@ -2423,7 +2476,7 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Save(&master)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
@@ -2431,10 +2484,8 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 
 	respone := struct {
 		Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
-		UpdatedAt   string             `json:"update,omitempty"`
 	}{
 		Persyaratan: master.Persyaratan,
-		UpdatedAt:   master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -2472,11 +2523,18 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	persyaratanExist := false
@@ -2503,7 +2561,7 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Save(&master)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
@@ -2511,10 +2569,8 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 
 	respone := struct {
 		Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
-		UpdatedAt   string             `json:"update,omitempty"`
 	}{
 		Persyaratan: master.Persyaratan,
-		UpdatedAt:   master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -2553,11 +2609,18 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	for i := range master.Persyaratan.PersyaratanPerlalin {
@@ -2614,7 +2677,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 
 		master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-		resultsSave := dm.DB.Save(&master)
+		resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 		if resultsSave.Error != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 			return
@@ -2622,10 +2685,8 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 
 		respone := struct {
 			Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
-			UpdatedAt   string             `json:"update,omitempty"`
 		}{
 			Persyaratan: master.Persyaratan,
-			UpdatedAt:   master.UpdatedAt,
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone, "file": base64ZipData})
@@ -2664,11 +2725,18 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	itemIndex := -1
@@ -2699,7 +2767,7 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Save(&master)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
@@ -2707,10 +2775,8 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 
 	respone := struct {
 		Persyaratan models.Persyaratan `json:"persyaratan,omitempty"`
-		UpdatedAt   string             `json:"update,omitempty"`
 	}{
 		Persyaratan: master.Persyaratan,
-		UpdatedAt:   master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
