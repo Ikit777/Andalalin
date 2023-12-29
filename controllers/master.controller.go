@@ -209,6 +209,43 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
 	case "jalan":
+		var mutex sync.Mutex
+
+		mutex.Lock()
+		defer mutex.Unlock()
+
+		bufferSize := 10
+		resultChan := make(chan models.DataMaster, bufferSize)
+
+		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "jenis_proyek").Rows()
+		if err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var result models.DataMaster
+			if err := dm.DB.ScanRows(rows, &result); err != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				return
+			}
+
+			resultChan <- result
+		}
+
+		close(resultChan)
+
+		for result := range resultChan {
+			respone := struct {
+				IdDataMaster uuid.UUID      `json:"id_data_master,omitempty"`
+				Jalan        []models.Jalan `json:"jalan,omitempty"`
+			}{
+				IdDataMaster: result.IdDataMaster,
+				Jalan:        result.Jalan,
+			}
+			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+		}
 	case "pengambilan":
 	case "kategori_pembangunan":
 	case "jenis_pembangunan":
@@ -3665,11 +3702,18 @@ func (dm *DataMasterControler) TambahJalan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	jalanExist := false
@@ -3707,18 +3751,16 @@ func (dm *DataMasterControler) TambahJalan(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Save(&master)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Updates(models.DataMaster{Jalan: master.Jalan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
 	respone := struct {
-		Jalan     []models.Jalan `json:"jalan,omitempty"`
-		UpdatedAt string         `json:"update,omitempty"`
+		Jalan []models.Jalan `json:"jalan,omitempty"`
 	}{
-		Jalan:     master.Jalan,
-		UpdatedAt: master.UpdatedAt,
+		Jalan: master.Jalan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -3757,11 +3799,18 @@ func (dm *DataMasterControler) HapusJalan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	for i, item := range master.Jalan {
@@ -3776,18 +3825,16 @@ func (dm *DataMasterControler) HapusJalan(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Save(&master)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Updates(models.DataMaster{Jalan: master.Jalan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
 	respone := struct {
-		Jalan     []models.Jalan `json:"jalan,omitempty"`
-		UpdatedAt string         `json:"update,omitempty"`
+		Jalan []models.Jalan `json:"jalan,omitempty"`
 	}{
-		Jalan:     master.Jalan,
-		UpdatedAt: master.UpdatedAt,
+		Jalan: master.Jalan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -3825,11 +3872,18 @@ func (dm *DataMasterControler) EditJalan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	itemIndex := -1
@@ -3860,18 +3914,16 @@ func (dm *DataMasterControler) EditJalan(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Save(&master)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Updates(models.DataMaster{Jalan: master.Jalan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
 	respone := struct {
-		Jalan     []models.Jalan `json:"jalan,omitempty"`
-		UpdatedAt string         `json:"update,omitempty"`
+		Jalan []models.Jalan `json:"jalan,omitempty"`
 	}{
-		Jalan:     master.Jalan,
-		UpdatedAt: master.UpdatedAt,
+		Jalan: master.Jalan,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
