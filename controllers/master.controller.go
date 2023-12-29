@@ -314,7 +314,7 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
-	case "kategori_pembangunan":
+	case "rencana":
 		var mutex sync.Mutex
 
 		mutex.Lock()
@@ -352,7 +352,7 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
-	case "jenis_pembangunan":
+	case "pembangunan":
 		var mutex sync.Mutex
 
 		mutex.Lock()
@@ -392,7 +392,7 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
-	case "kategori_utama":
+	case "utama":
 		var mutex sync.Mutex
 
 		mutex.Lock()
