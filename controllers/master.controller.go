@@ -217,7 +217,7 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 		bufferSize := 10
 		resultChan := make(chan models.DataMaster, bufferSize)
 
-		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "jalan", "provinsi", "kabupaten", "kecamatan").Rows()
+		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "jalan", "kabupaten", "kecamatan").Rows()
 		if err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 			return
@@ -237,18 +237,30 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 		close(resultChan)
 
 		for result := range resultChan {
+			var id_kabupaten string
+
+			for _, kabupaten := range result.Kabupaten {
+				if kabupaten.Name == "Kota Banjarmasin" {
+					id_kabupaten += kabupaten.Id
+				}
+			}
+
+			kecamatan_filter := []models.Kecamatan{}
+
+			for _, kecamatan := range result.Kecamatan {
+				if kecamatan.IdKabupaten == "Kota Banjarmasin" {
+					kecamatan_filter = append(kecamatan_filter, models.Kecamatan{Id: kecamatan.Id, IdKabupaten: kecamatan.IdKabupaten, Name: kecamatan.Name})
+				}
+			}
+
 			respone := struct {
 				IdDataMaster uuid.UUID          `json:"id_data_master,omitempty"`
 				Jalan        []models.Jalan     `json:"jalan,omitempty"`
-				Provinsi     []models.Provinsi  `json:"provinsi,omitempty"`
-				Kabupaten    []models.Kabupaten `json:"kabupaten,omitempty"`
 				Kecamatan    []models.Kecamatan `json:"kecamatan,omitempty"`
 			}{
 				IdDataMaster: result.IdDataMaster,
 				Jalan:        result.Jalan,
-				Provinsi:     result.Provinsi,
-				Kabupaten:    result.Kabupaten,
-				Kecamatan:    result.Kecamatan,
+				Kecamatan:    kecamatan_filter,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
