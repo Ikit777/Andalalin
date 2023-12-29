@@ -405,7 +405,7 @@ func main() {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
 				continue
 			}
-			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+			perlengkapanMarkaPeralatan = append(perlengkapanMarkaPeralatan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
 		}
 	}
 
@@ -434,7 +434,7 @@ func main() {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
 				continue
 			}
-			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+			perlengkapanMarkaTanda = append(perlengkapanMarkaTanda, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
 		}
 	}
 
@@ -463,7 +463,7 @@ func main() {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
 				continue
 			}
-			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+			perlengkapanPengendaliKecepatan = append(perlengkapanPengendaliKecepatan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
 		}
 	}
 
@@ -492,7 +492,7 @@ func main() {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
 				continue
 			}
-			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+			perlengkapanPengendaliTinggiLebar = append(perlengkapanPengendaliTinggiLebar, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
 		}
 	}
 
@@ -521,7 +521,7 @@ func main() {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
 				continue
 			}
-			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+			perlengkapanPengamanPagar = append(perlengkapanPengamanPagar, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
 		}
 	}
 
@@ -550,7 +550,7 @@ func main() {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
 				continue
 			}
-			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+			perlengkapanPengamanCermin = append(perlengkapanPengamanCermin, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
 		}
 	}
 
@@ -579,7 +579,7 @@ func main() {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
 				continue
 			}
-			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+			perlengkapanPengamanPatok = append(perlengkapanPengamanPatok, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
 		}
 	}
 
@@ -608,7 +608,7 @@ func main() {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
 				continue
 			}
-			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+			perlengkapanPengamanPulau = append(perlengkapanPengamanPulau, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
 		}
 	}
 
@@ -637,7 +637,7 @@ func main() {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
 				continue
 			}
-			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+			perlengkapanPengamanPita = append(perlengkapanPengamanPita, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
 		}
 	}
 
@@ -666,7 +666,7 @@ func main() {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
 				continue
 			}
-			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+			perlengkapanPengamanDarurat = append(perlengkapanPengamanDarurat, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
 		}
 	}
 
@@ -695,7 +695,7 @@ func main() {
 				fmt.Printf("Error reading file %s: %v\n", fileInfo.Name(), err)
 				continue
 			}
-			perlengkapanPapan = append(perlengkapanPapan, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
+			perlengkapanPengamanPembatas = append(perlengkapanPengamanPembatas, models.PerlengkapanItem{JenisPerlengkapan: removeExtension(fileInfo.Name()), GambarPerlengkapan: content})
 		}
 	}
 
