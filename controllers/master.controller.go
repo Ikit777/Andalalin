@@ -1461,9 +1461,11 @@ func (dm *DataMasterControler) HapusKategoriUtamaPerlengkapan(ctx *gin.Context) 
 		}
 	}
 
-	for i, item := range master.PerlengkapanLaluLintas {
-		if item.KategoriUtama == payload.Kategori {
-			master.PerlengkapanLaluLintas = append(master.PerlengkapanLaluLintas[:i], master.PerlengkapanLaluLintas[i+1:]...)
+	var result []models.JenisPerlengkapan
+
+	for _, item := range master.PerlengkapanLaluLintas {
+		if item.KategoriUtama != payload.Kategori {
+			result = append(result, item)
 		}
 	}
 
@@ -1472,7 +1474,7 @@ func (dm *DataMasterControler) HapusKategoriUtamaPerlengkapan(ctx *gin.Context) 
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan_utama", "kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Updates(models.DataMaster{KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama, KategoriPerlengkapan: master.KategoriPerlengkapan, PerlengkapanLaluLintas: master.PerlengkapanLaluLintas, UpdatedAt: master.UpdatedAt})
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan_utama", "kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Updates(models.DataMaster{KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama, KategoriPerlengkapan: master.KategoriPerlengkapan, PerlengkapanLaluLintas: result, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
