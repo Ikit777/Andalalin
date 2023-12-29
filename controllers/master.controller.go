@@ -314,7 +314,7 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
-	case "rencana":
+	case "kategorirencana":
 		var mutex sync.Mutex
 
 		mutex.Lock()
@@ -352,7 +352,7 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
-	case "pembangunan":
+	case "jenispembangunan":
 		var mutex sync.Mutex
 
 		mutex.Lock()
@@ -392,7 +392,7 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
-	case "utama":
+	case "kategoriutama":
 		var mutex sync.Mutex
 
 		mutex.Lock()
@@ -430,8 +430,86 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
-	case "kategori_perlengkapan":
-	case "jenis_perlengkapan":
+	case "kategoriperlengkapan":
+		var mutex sync.Mutex
+
+		mutex.Lock()
+		defer mutex.Unlock()
+
+		bufferSize := 10
+		resultChan := make(chan models.DataMaster, bufferSize)
+
+		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "kategori_perlengkapan").Rows()
+		if err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var result models.DataMaster
+			if err := dm.DB.ScanRows(rows, &result); err != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				return
+			}
+
+			resultChan <- result
+		}
+
+		close(resultChan)
+
+		for result := range resultChan {
+			respone := struct {
+				IdDataMaster         uuid.UUID                     `json:"id_data_master,omitempty"`
+				KategoriPerlengkapan []models.KategoriPerlengkapan `json:"kategori_perlengkapan,omitempty"`
+			}{
+				IdDataMaster:         result.IdDataMaster,
+				KategoriPerlengkapan: result.KategoriPerlengkapan,
+			}
+			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+		}
+	case "jenisperlengkapan":
+		var mutex sync.Mutex
+
+		mutex.Lock()
+		defer mutex.Unlock()
+
+		bufferSize := 10
+		resultChan := make(chan models.DataMaster, bufferSize)
+
+		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "kategori_perlengkapan_utama", "kategori_perlengkapan", "perlengkapan_lalu_lintas").Rows()
+		if err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var result models.DataMaster
+			if err := dm.DB.ScanRows(rows, &result); err != nil {
+				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				return
+			}
+
+			resultChan <- result
+		}
+
+		close(resultChan)
+
+		for result := range resultChan {
+			respone := struct {
+				IdDataMaster              uuid.UUID                     `json:"id_data_master,omitempty"`
+				KategoriPerlengkapanUtama []string                      `json:"kategori_utama,omitempty"`
+				KategoriPerlengkapan      []models.KategoriPerlengkapan `json:"kategori_perlengkapan,omitempty"`
+				PerlengkapanLaluLintas    []models.JenisPerlengkapan    `json:"perlengkapan,omitempty"`
+			}{
+				IdDataMaster:              result.IdDataMaster,
+				KategoriPerlengkapanUtama: result.KategoriPerlengkapanUtama,
+				KategoriPerlengkapan:      result.KategoriPerlengkapan,
+				PerlengkapanLaluLintas:    result.PerlengkapanLaluLintas,
+			}
+			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+		}
 	case "persyaratan_andalalin":
 	case "persyaratam_perlalin":
 	}
