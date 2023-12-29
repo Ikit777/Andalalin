@@ -439,7 +439,7 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 		bufferSize := 10
 		resultChan := make(chan models.DataMaster, bufferSize)
 
-		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "kategori_perlengkapan").Rows()
+		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "kategori_perlengkapan_utama", "kategori_perlengkapan").Rows()
 		if err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 			return
@@ -461,10 +461,12 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 		for result := range resultChan {
 			respone := struct {
 				IdDataMaster              uuid.UUID                     `json:"id_data_master,omitempty"`
+				KategoriPerlengkapanUtama []string                      `json:"kategori_utama,omitempty"`
 				KategoriPerlengkapan      []models.KategoriPerlengkapan `json:"kategori_perlengkapan,omitempty"`
 			}{
 				IdDataMaster:              result.IdDataMaster,
 				KategoriPerlengkapan:      result.KategoriPerlengkapan,
+				KategoriPerlengkapanUtama: result.KategoriPerlengkapanUtama,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
