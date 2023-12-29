@@ -1641,21 +1641,32 @@ func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
 	}
 
 	kategoriExists := false
+	jenisExists := false
+	itemIndex := 0
 
-	for _, kategori := range master.KategoriPerlengkapan {
-		if kategori.KategoriUtama == payload.KategoriUtama && kategori.Kategori == payload.Kategori {
+	for i := range master.KategoriPerlengkapan {
+		if master.KategoriPerlengkapan[i].KategoriUtama == payload.KategoriUtama {
 			kategoriExists = true
-			break
+			itemIndex = i
+			for _, item := range master.KategoriPerlengkapan[i].Kategori {
+				if item == payload.Kategori {
+					jenisExists = true
+					ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
+					return
+				}
+			}
 		}
 	}
 
 	if !kategoriExists {
-		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
-		return
+		kategori_perlengkapan := []string{}
+		kategori_perlengkapan = append(kategori_perlengkapan, payload.Kategori)
+
+		master.KategoriPerlengkapan = append(master.KategoriPerlengkapan, models.KategoriPerlengkapan{KategoriUtama: payload.KategoriUtama, Kategori: kategori_perlengkapan})
 	}
 
-	if kategoriExists {
-		master.KategoriPerlengkapan = append(master.KategoriPerlengkapan, models.KategoriPerlengkapan{KategoriUtama: payload.KategoriUtama, Kategori: payload.Kategori})
+	if !jenisExists && kategoriExists {
+		master.KategoriPerlengkapan[itemIndex].Kategori = append(master.KategoriPerlengkapan[itemIndex].Kategori, payload.Kategori)
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -1725,17 +1736,20 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 		}
 	}
 
-	for i, item := range master.KategoriPerlengkapan {
-		if item.KategoriUtama == payload.KategoriUtama && item.Kategori == payload.Kategori {
-			master.KategoriPerlengkapan = append(master.KategoriPerlengkapan[:i], master.KategoriPerlengkapan[i+1:]...)
-			break
-		}
-	}
-
 	for i, item := range master.PerlengkapanLaluLintas {
 		if item.KategoriUtama == payload.KategoriUtama && item.Kategori == payload.Kategori {
 			master.PerlengkapanLaluLintas = append(master.PerlengkapanLaluLintas[:i], master.PerlengkapanLaluLintas[i+1:]...)
 			break
+		}
+	}
+
+	for i := range master.KategoriPerlengkapan {
+		if master.KategoriPerlengkapan[i].KategoriUtama == payload.KategoriUtama {
+			for j, item := range master.KategoriPerlengkapan[i].Kategori {
+				if item == payload.Kategori {
+					master.KategoriPerlengkapan[i].Kategori = append(master.KategoriPerlengkapan[i].Kategori[:j], master.KategoriPerlengkapan[i].Kategori[j+1:]...)
+				}
+			}
 		}
 	}
 
@@ -1807,9 +1821,26 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 	}
 
 	itemIndex := -1
+	itemIndexKategoriUtama := -1
 	itemIndexKategori := -1
 
-	for i, item := range master.KategoriPerlengkapan {
+	for i := range master.KategoriPerlengkapan {
+		if master.KategoriPerlengkapan[i].KategoriUtama == payload.KategoriUtama {
+			itemIndexKategoriUtama = i
+			for j, item := range master.KategoriPerlengkapan[i].Kategori {
+				if item == payload.Kategori {
+					itemIndexKategori = j
+					break
+				}
+			}
+		}
+	}
+
+	if itemIndexKategoriUtama != -1 && itemIndexKategori != -1 {
+		master.KategoriPerlengkapan[itemIndexKategoriUtama].Kategori[itemIndexKategori] = payload.KategoriEdit
+	}
+
+	for i, item := range master.PerlengkapanLaluLintas {
 		if item.KategoriUtama == payload.KategoriUtama && item.Kategori == payload.Kategori {
 			itemIndex = i
 			break
@@ -1817,18 +1848,7 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		master.KategoriPerlengkapan[itemIndex].Kategori = payload.KategoriEdit
-	}
-
-	for i, item := range master.PerlengkapanLaluLintas {
-		if item.KategoriUtama == payload.KategoriUtama && item.Kategori == payload.Kategori {
-			itemIndexKategori = i
-			break
-		}
-	}
-
-	if itemIndexKategori != -1 {
-		master.PerlengkapanLaluLintas[itemIndexKategori].Kategori = payload.KategoriEdit
+		master.PerlengkapanLaluLintas[itemIndex].Kategori = payload.KategoriEdit
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")

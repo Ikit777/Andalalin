@@ -94,7 +94,7 @@ type KategoriPerlengkapanUtamaEdit struct {
 //Kategori perlengkapan
 type KategoriPerlengkapan struct {
 	KategoriUtama string
-	Kategori      string
+	Kategori      []string
 }
 
 type KategoriPerlengkapanInput struct {

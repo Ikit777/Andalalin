@@ -195,24 +195,16 @@ func main() {
 
 	kategori_utama := []string{"Rambu lalu lintas", "Marka jalan", "Alat pengendali pengguna jalan", "Alat pengaman pengguna jalan"}
 
+	kategori_rambu := []string{"Rambu peringatan", "Rambu larangan", "Rambu perintah", "Rambu petunjuk", "Rambu peringatan sementara", "Papan tambahan"}
+	kategori_marka := []string{"Marka jalan berupan peralatan", "Marka jalan berupan tanda"}
+	kategori_pengendali := []string{"Alat pembatas kecepatan", "Alat pembatas tinggi dan lebar"}
+	kategori_pengaman := []string{"Pagar pengaman (guardrail)", "Cermin tikungan", "Patok lalu lintas (delineator)", "Pulau lalu lintas", "Pita penggaduh", "Jalur penghentian darurat", "Pembatas lalu lintas"}
+
 	ketegori_perlengkapan := []models.KategoriPerlengkapan{}
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu peringatan"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu larangan"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu perintah"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu petunjuk"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Rambu peringatan sementara"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: "Papan tambahan"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Marka jalan", Kategori: "Marka jalan berupan peralatan"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Marka jalan", Kategori: "Marka jalan berupan tanda"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengendali pengguna jalan", Kategori: "Alat pembatas kecepatan"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengendali pengguna jalan", Kategori: "Alat pembatas tinggi dan lebar"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pagar pengaman (guardrail)"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Cermin tikungan"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Patok lalu lintas (delineator)"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pulau lalu lintas"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pita penggaduh"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Jalur penghentian darurat"})
-	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: "Pembatas lalu lintas"})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Rambu lalu lintas", Kategori: kategori_rambu})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Marka jalan", Kategori: kategori_marka})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengendali pengguna jalan", Kategori: kategori_pengendali})
+	ketegori_perlengkapan = append(ketegori_perlengkapan, models.KategoriPerlengkapan{KategoriUtama: "Alat pengaman pengguna jalan", Kategori: kategori_pengaman})
 
 	perlengkapanPeringatan := []models.PerlengkapanItem{}
 
