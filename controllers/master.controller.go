@@ -460,11 +460,11 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		for result := range resultChan {
 			respone := struct {
-				IdDataMaster         uuid.UUID                     `json:"id_data_master,omitempty"`
-				KategoriPerlengkapan []models.KategoriPerlengkapan `json:"kategori_perlengkapan,omitempty"`
+				IdDataMaster              uuid.UUID                     `json:"id_data_master,omitempty"`
+				KategoriPerlengkapan      []models.KategoriPerlengkapan `json:"kategori_perlengkapan,omitempty"`
 			}{
-				IdDataMaster:         result.IdDataMaster,
-				KategoriPerlengkapan: result.KategoriPerlengkapan,
+				IdDataMaster:              result.IdDataMaster,
+				KategoriPerlengkapan:      result.KategoriPerlengkapan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
