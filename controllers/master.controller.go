@@ -1624,11 +1624,18 @@ func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	kategoriExists := false
@@ -1654,7 +1661,7 @@ func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Save(&master)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "updated_at").Updates(models.DataMaster{KategoriPerlengkapan: master.KategoriPerlengkapan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
@@ -1662,10 +1669,8 @@ func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
 
 	respone := struct {
 		KategoriPerlengkapan []models.KategoriPerlengkapan `json:"kategori_perlengkapan,omitempty"`
-		UpdatedAt            string                        `json:"update,omitempty"`
 	}{
 		KategoriPerlengkapan: master.KategoriPerlengkapan,
-		UpdatedAt:            master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -1704,11 +1709,18 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	for i, item := range master.KategoriPerlengkapan {
@@ -1730,7 +1742,7 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Save(&master)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Updates(models.DataMaster{KategoriPerlengkapan: master.KategoriPerlengkapan, PerlengkapanLaluLintas: master.PerlengkapanLaluLintas, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
@@ -1738,10 +1750,8 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 
 	respone := struct {
 		KategoriPerlengkapan []models.KategoriPerlengkapan `json:"kategori_perlengkapan,omitempty"`
-		UpdatedAt            string                        `json:"update,omitempty"`
 	}{
 		KategoriPerlengkapan: master.KategoriPerlengkapan,
-		UpdatedAt:            master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -1780,11 +1790,18 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	itemIndex := -1
@@ -1817,7 +1834,7 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 
-	resultsSave := dm.DB.Save(&master)
+	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Updates(models.DataMaster{KategoriPerlengkapan: master.KategoriPerlengkapan, PerlengkapanLaluLintas: master.PerlengkapanLaluLintas, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
 		return
@@ -1825,10 +1842,8 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 
 	respone := struct {
 		KategoriPerlengkapan []models.KategoriPerlengkapan `json:"kategori_perlengkapan,omitempty"`
-		UpdatedAt            string                        `json:"update,omitempty"`
 	}{
 		KategoriPerlengkapan: master.KategoriPerlengkapan,
-		UpdatedAt:            master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
