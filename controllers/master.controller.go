@@ -415,7 +415,7 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("lokasi_pemgambilan", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("lokasi_pengambilan", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
