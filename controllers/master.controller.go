@@ -217,7 +217,7 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 		bufferSize := 10
 		resultChan := make(chan models.DataMaster, bufferSize)
 
-		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "jenis_proyek").Rows()
+		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "jalan", "provinsi", "kabupaten", "kecamatan").Rows()
 		if err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 			return
@@ -238,11 +238,17 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		for result := range resultChan {
 			respone := struct {
-				IdDataMaster uuid.UUID      `json:"id_data_master,omitempty"`
-				Jalan        []models.Jalan `json:"jalan,omitempty"`
+				IdDataMaster uuid.UUID          `json:"id_data_master,omitempty"`
+				Jalan        []models.Jalan     `json:"jalan,omitempty"`
+				Provinsi     []models.Provinsi  `json:"provinsi,omitempty"`
+				Kabupaten    []models.Kabupaten `json:"kabupaten,omitempty"`
+				Kecamatan    []models.Kecamatan `json:"kecamatan,omitempty"`
 			}{
 				IdDataMaster: result.IdDataMaster,
 				Jalan:        result.Jalan,
+				Provinsi:     result.Provinsi,
+				Kabupaten:    result.Kabupaten,
+				Kecamatan:    result.Kecamatan,
 			}
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 		}
