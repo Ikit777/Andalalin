@@ -58,11 +58,11 @@ type JenisRencana struct {
 }
 
 type JenisRencanaPembangunanInput struct {
-	Kategori  string `json:"kategori" binding:"required"`
-	Jenis     string `json:"jenis" binding:"required"`
-	Kriteria  string `json:"kriteria" binding:"required"`
-	Satuan    string `json:"satuan" binding:"required"`
-	Terbilang string `json:"terbilang" binding:"required"`
+	Kategori  string  `json:"kategori" binding:"required"`
+	Jenis     string  `json:"jenis" binding:"required"`
+	Kriteria  *string `json:"kriteria" binding:"required"`
+	Satuan    *string `json:"satuan" binding:"required"`
+	Terbilang *string `json:"terbilang" binding:"required"`
 }
 
 type JenisRencanaPembangunanHapus struct {
@@ -71,12 +71,12 @@ type JenisRencanaPembangunanHapus struct {
 }
 
 type JenisRencanaPembangunanEdit struct {
-	Kategori  string `json:"kategori" binding:"required"`
-	Jenis     string `json:"jenis" binding:"required"`
-	JenisEdit string `json:"jenis_edit" binding:"required"`
-	Kriteria  string `json:"kriteria" binding:"required"`
-	Satuan    string `json:"satuan" binding:"required"`
-	Terbilang string `json:"terbilang" binding:"required"`
+	Kategori  string  `json:"kategori" binding:"required"`
+	Jenis     string  `json:"jenis" binding:"required"`
+	JenisEdit string  `json:"jenis_edit" binding:"required"`
+	Kriteria  *string `json:"kriteria" binding:"required"`
+	Satuan    *string `json:"satuan" binding:"required"`
+	Terbilang *string `json:"terbilang" binding:"required"`
 }
 
 //Kategori perlengkapan utama

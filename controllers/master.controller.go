@@ -1042,16 +1042,16 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 	if !kategoriExists {
 		jenis_rencana := []models.JenisRencana{}
 		jenis_rencana = append(jenis_rencana, models.JenisRencana{Jenis: payload.Jenis,
-			Kriteria: payload.Kriteria,
-			Satuan:   payload.Satuan, Terbilang: payload.Terbilang})
+			Kriteria: *payload.Kriteria,
+			Satuan:   *payload.Satuan, Terbilang: *payload.Terbilang})
 
 		master.JenisRencanaPembangunan = append(master.JenisRencanaPembangunan, models.JenisRencanaPembangunan{Kategori: payload.Kategori, JenisRencana: jenis_rencana})
 	}
 
 	if !jenisExists && kategoriExists {
 		master.JenisRencanaPembangunan[itemIndex].JenisRencana = append(master.JenisRencanaPembangunan[itemIndex].JenisRencana, models.JenisRencana{Jenis: payload.Jenis,
-			Kriteria: payload.Kriteria,
-			Satuan:   payload.Satuan, Terbilang: payload.Terbilang})
+			Kriteria: *payload.Kriteria,
+			Satuan:   *payload.Satuan, Terbilang: *payload.Terbilang})
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -1219,8 +1219,8 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 
 	if itemIndexKategori != -1 && itemIndexRencana != -1 {
 		master.JenisRencanaPembangunan[itemIndexKategori].JenisRencana[itemIndexRencana] = models.JenisRencana{Jenis: payload.JenisEdit,
-			Kriteria: payload.Kriteria,
-			Satuan:   payload.Satuan, Terbilang: payload.Terbilang}
+			Kriteria: *payload.Kriteria,
+			Satuan:   *payload.Satuan, Terbilang: *payload.Terbilang}
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
