@@ -2067,7 +2067,7 @@ func (dm *DataMasterControler) EditPerlengkapan(ctx *gin.Context) {
 
 	var payload *models.DataPerlengkapanEdit
 
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
+	if err := ctx.ShouldBind(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
