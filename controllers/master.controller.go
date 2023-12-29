@@ -248,7 +248,7 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			kecamatan_filter := []models.Kecamatan{}
 
 			for _, kecamatan := range result.Kecamatan {
-				if kecamatan.IdKabupaten == "Kota Banjarmasin" {
+				if kecamatan.IdKabupaten == id_kabupaten {
 					kecamatan_filter = append(kecamatan_filter, models.Kecamatan{Id: kecamatan.Id, IdKabupaten: kecamatan.IdKabupaten, Name: kecamatan.Name})
 				}
 			}
