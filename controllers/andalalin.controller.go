@@ -466,6 +466,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 	permohonan := models.Perlalin{
 		IdUser:              currentUser.ID,
 		JenisAndalalin:      "Perlengkapan lalu lintas",
+		KategoriUtama:       payload.Perlalin.KategoriUtama,
 		Kategori:            payload.Perlalin.Kategori,
 		Jenis:               payload.Perlalin.Jenis,
 		Kode:                kode,
@@ -1169,6 +1170,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				//Data Permohonan
 				IdAndalalin:         perlalin.IdAndalalin,
 				JenisAndalalin:      perlalin.JenisAndalalin,
+				KategoriUtama:       perlalin.KategoriUtama,
 				Kategori:            perlalin.Kategori,
 				Jenis:               perlalin.Jenis,
 				Kode:                perlalin.Kode,
@@ -1216,6 +1218,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				//Data Permohonan
 				IdAndalalin:         perlalin.IdAndalalin,
 				JenisAndalalin:      perlalin.JenisAndalalin,
+				KategoriUtama:       perlalin.KategoriUtama,
 				Kategori:            perlalin.Kategori,
 				Jenis:               perlalin.Jenis,
 				Kode:                perlalin.Kode,

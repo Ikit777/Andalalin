@@ -417,6 +417,7 @@ type Perlalin struct {
 	IdAndalalin         uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
 	JenisAndalalin      string    `gorm:"type:varchar(255);not null"`
 	Kategori            string    `gorm:"type:varchar(255);not null"`
+	KategoriUtama       string    `gorm:"type:varchar(255);not null"`
 	Jenis               string    `gorm:"type:varchar(255);not null"`
 	Kode                string    `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin      string    `gorm:"not null"`
@@ -484,6 +485,7 @@ type Perlalin struct {
 }
 
 type InputPerlalin struct {
+	KategoriUtama       string  `json:"kategori_utama" binding:"required"`
 	Kategori            string  `json:"kategori" binding:"required"`
 	Jenis               string  `json:"jenis_perlengkapan" binding:"required"`
 	ProvinsiPemasangan  string  `json:"provinsi_pemasangan" binding:"required"`
@@ -527,6 +529,7 @@ type PerlalinResponse struct {
 	//Data Permohonan
 	IdAndalalin         uuid.UUID `json:"id_andalalin,omitempty"`
 	JenisAndalalin      string    `json:"jenis_andalalin,omitempty"`
+	KategoriUtama       string    `json:"kategori_utama,omitempty"`
 	Kategori            string    `json:"kategori,omitempty"`
 	Jenis               string    `json:"jenis,omitempty"`
 	Kode                string    `json:"kode_andalalin,omitempty"`
@@ -605,6 +608,7 @@ type PerlalinResponseUser struct {
 	TanggalAndalalin    string    `json:"tanggal_andalalin,omitempty"`
 	StatusAndalalin     string    `json:"status_andalalin,omitempty"`
 	Jenis               string    `json:"jenis,omitempty"`
+	KategoriUtama       string    `json:"kategori_utama,omitempty"`
 	Kategori            string    `json:"kategori,omitempty"`
 	NegaraPemasangan    string    `json:"negara_pemasangan,omitempty"`
 	ProvinsiPemasangan  string    `json:"provinsi_pemasangan,omitempty"`
