@@ -36,9 +36,16 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 	return DataMasterControler{DB}
 }
 
+var once sync.Once
+
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	bufferSize := 10
 	resultChan := make(chan models.DataMaster, bufferSize)
+
+	once.Do(func() {
+		// Start a goroutine to periodically update data and send it to the channel
+		go StartStreaming(dm.DB, resultChan)
+	})
 
 	data := <-resultChan
 

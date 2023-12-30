@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"andalalin/controllers"
 	"andalalin/initializers"
 	"andalalin/models"
 	"andalalin/utils"
@@ -845,12 +844,6 @@ func main() {
 		Jalan:                      jalan,
 		UpdatedAt:                  now + " " + time.Now().In(loc).Format("15:04:05"),
 	})
-
-	bufferSize := 10
-	resultChan := make(chan models.DataMaster, bufferSize)
-
-	// Start a goroutine to periodically update data and send it to the channel
-	go controllers.StartStreaming(initializers.DB, resultChan)
 
 	fmt.Println("Migration complete")
 }
