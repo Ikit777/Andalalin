@@ -2,7 +2,10 @@ package controllers
 
 import (
 	"archive/zip"
+	"bytes"
+	"compress/gzip"
 	"encoding/base64"
+	"encoding/json"
 	"io"
 	"log"
 	"math/rand"
@@ -37,7 +40,7 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 }
 
 var (
-	stream      chan models.DataMaster
+	stream      chan string
 	streamMutex sync.Mutex
 	once        sync.Once
 )
@@ -47,45 +50,12 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 
 	data := <-dataStream
 
-	respone := struct {
-		IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
-		JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
-		Lokasi                     []string                         `json:"lokasi_pengambilan,omitempty"`
-		KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
-		JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
-		KategoriPerlengkapanUtama  []string                         `json:"kategori_utama,omitempty"`
-		KategoriPerlengkapan       []models.KategoriPerlengkapan    `json:"kategori_perlengkapan,omitempty"`
-		PerlengkapanLaluLintas     []models.JenisPerlengkapan       `json:"perlengkapan,omitempty"`
-		Persyaratan                models.Persyaratan               `json:"persyaratan,omitempty"`
-		Provinsi                   []models.Provinsi                `json:"provinsi,omitempty"`
-		Kabupaten                  []models.Kabupaten               `json:"kabupaten,omitempty"`
-		Kecamatan                  []models.Kecamatan               `json:"kecamatan,omitempty"`
-		Kelurahan                  []models.Kelurahan               `json:"kelurahan,omitempty"`
-		Jalan                      []models.Jalan                   `json:"jalan,omitempty"`
-		UpdatedAt                  string                           `json:"update,omitempty"`
-	}{
-		IdDataMaster:               data.IdDataMaster,
-		JenisProyek:                data.JenisProyek,
-		Lokasi:                     data.LokasiPengambilan,
-		KategoriRencanaPembangunan: data.KategoriRencanaPembangunan,
-		JenisRencanaPembangunan:    data.JenisRencanaPembangunan,
-		KategoriPerlengkapanUtama:  data.KategoriPerlengkapanUtama,
-		KategoriPerlengkapan:       data.KategoriPerlengkapan,
-		PerlengkapanLaluLintas:     data.PerlengkapanLaluLintas,
-		Persyaratan:                data.Persyaratan,
-		Provinsi:                   data.Provinsi,
-		Kabupaten:                  data.Kabupaten,
-		Kecamatan:                  data.Kecamatan,
-		Kelurahan:                  data.Kelurahan,
-		Jalan:                      data.Jalan,
-		UpdatedAt:                  data.UpdatedAt,
-	}
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 
 }
 
 func StartStreaming(db *gorm.DB) {
-	stream = make(chan models.DataMaster)
+	stream = make(chan string)
 
 	ticker := time.NewTicker(5 * time.Second) // Update data every 5 seconds
 
@@ -101,11 +71,61 @@ func StartStreaming(db *gorm.DB) {
 			continue
 		}
 
-		stream <- latestData
+		respone := struct {
+			IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
+			JenisProyek                []string                         `json:"jenis_proyek,omitempty"`
+			Lokasi                     []string                         `json:"lokasi_pengambilan,omitempty"`
+			KategoriRencanaPembangunan []string                         `json:"kategori_rencana,omitempty"`
+			JenisRencanaPembangunan    []models.JenisRencanaPembangunan `json:"jenis_rencana,omitempty"`
+			KategoriPerlengkapanUtama  []string                         `json:"kategori_utama,omitempty"`
+			KategoriPerlengkapan       []models.KategoriPerlengkapan    `json:"kategori_perlengkapan,omitempty"`
+			PerlengkapanLaluLintas     []models.JenisPerlengkapan       `json:"perlengkapan,omitempty"`
+			Persyaratan                models.Persyaratan               `json:"persyaratan,omitempty"`
+			Provinsi                   []models.Provinsi                `json:"provinsi,omitempty"`
+			Kabupaten                  []models.Kabupaten               `json:"kabupaten,omitempty"`
+			Kecamatan                  []models.Kecamatan               `json:"kecamatan,omitempty"`
+			Kelurahan                  []models.Kelurahan               `json:"kelurahan,omitempty"`
+			Jalan                      []models.Jalan                   `json:"jalan,omitempty"`
+			UpdatedAt                  string                           `json:"update,omitempty"`
+		}{
+			IdDataMaster:               latestData.IdDataMaster,
+			JenisProyek:                latestData.JenisProyek,
+			Lokasi:                     latestData.LokasiPengambilan,
+			KategoriRencanaPembangunan: latestData.KategoriRencanaPembangunan,
+			JenisRencanaPembangunan:    latestData.JenisRencanaPembangunan,
+			KategoriPerlengkapanUtama:  latestData.KategoriPerlengkapanUtama,
+			KategoriPerlengkapan:       latestData.KategoriPerlengkapan,
+			PerlengkapanLaluLintas:     latestData.PerlengkapanLaluLintas,
+			Persyaratan:                latestData.Persyaratan,
+			Provinsi:                   latestData.Provinsi,
+			Kabupaten:                  latestData.Kabupaten,
+			Kecamatan:                  latestData.Kecamatan,
+			Kelurahan:                  latestData.Kelurahan,
+			Jalan:                      latestData.Jalan,
+			UpdatedAt:                  latestData.UpdatedAt,
+		}
+
+		jsonData, err := json.Marshal(respone)
+		if err != nil {
+			log.Println("Error converting to JSON:", err)
+			continue
+		}
+
+		var compressedData bytes.Buffer
+		writer := gzip.NewWriter(&compressedData)
+		_, err = writer.Write([]byte(jsonData))
+		if err != nil {
+			log.Println("Error compressing data:", err)
+			continue
+		}
+		writer.Close()
+
+		encodedData := base64.StdEncoding.EncodeToString(compressedData.Bytes())
+		stream <- encodedData
 	}
 }
 
-func GetDataStream(db *gorm.DB) <-chan models.DataMaster {
+func GetDataStream(db *gorm.DB) <-chan string {
 	once.Do(func() {
 		// Start streaming only once
 		go StartStreaming(db)
@@ -114,28 +134,44 @@ func GetDataStream(db *gorm.DB) <-chan models.DataMaster {
 }
 
 func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {
-	var master models.DataMaster
+	dataStream := GetDataStream(dm.DB)
 
-	rows, err := dm.DB.Table("data_masters").Select("id_data_master", "updated_at").Rows()
+	data := <-dataStream
+
+	decodedData, err := base64.StdEncoding.DecodeString(data)
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
-	defer rows.Close()
 
-	for rows.Next() {
-		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
-			return
-		}
+	// Decompress data using gzip
+	reader, err := gzip.NewReader(bytes.NewReader(decodedData))
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		return
+	}
+	defer reader.Close()
+
+	decompressedData, err := io.ReadAll(reader)
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		return
+	}
+
+	// Assume the data is JSON and decode it
+	var jsonData models.DataMaster
+	err = json.Unmarshal(decompressedData, &jsonData)
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		return
 	}
 
 	respone := struct {
 		IdDataMaster uuid.UUID `json:"id_data_master,omitempty"`
 		UpdatedAt    string    `json:"update,omitempty"`
 	}{
-		IdDataMaster: master.IdDataMaster,
-		UpdatedAt:    master.UpdatedAt,
+		IdDataMaster: jsonData.IdDataMaster,
+		UpdatedAt:    jsonData.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
