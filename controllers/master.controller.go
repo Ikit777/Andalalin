@@ -36,18 +36,16 @@ func NewDataMasterControler(DB *gorm.DB) DataMasterControler {
 	return DataMasterControler{DB}
 }
 
-var once sync.Once
+var (
+	stream      chan models.DataMaster
+	streamMutex sync.Mutex
+	once        sync.Once
+)
 
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
-	bufferSize := 10
-	resultChan := make(chan models.DataMaster, bufferSize)
+	dataStream := GetDataStream(dm.DB)
 
-	once.Do(func() {
-		// Start a goroutine to periodically update data and send it to the channel
-		go StartStreaming(dm.DB, resultChan)
-	})
-
-	data := <-resultChan
+	data := <-dataStream
 
 	respone := struct {
 		IdDataMaster               uuid.UUID                        `json:"id_data_master,omitempty"`
@@ -86,8 +84,8 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 
 }
 
-func StartStreaming(db *gorm.DB, resultChan chan models.DataMaster) {
-	var streamMutex sync.Mutex
+func StartStreaming(db *gorm.DB) {
+	stream = make(chan models.DataMaster)
 
 	ticker := time.NewTicker(5 * time.Second) // Update data every 5 seconds
 
@@ -102,8 +100,17 @@ func StartStreaming(db *gorm.DB, resultChan chan models.DataMaster) {
 			log.Println("Error fetching data:", result.Error)
 			continue
 		}
-		resultChan <- latestData
+
+		stream <- latestData
 	}
+}
+
+func GetDataStream(db *gorm.DB) <-chan models.DataMaster {
+	once.Do(func() {
+		// Start streaming only once
+		go StartStreaming(db)
+	})
+	return stream
 }
 
 func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {
