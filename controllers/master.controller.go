@@ -51,7 +51,6 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	data := <-dataStream
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
-
 }
 
 func StartStreaming(db *gorm.DB) {
@@ -134,44 +133,28 @@ func GetDataStream(db *gorm.DB) <-chan string {
 }
 
 func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {
-	dataStream := GetDataStream(dm.DB)
+	var master models.DataMaster
 
-	data := <-dataStream
-
-	decodedData, err := base64.StdEncoding.DecodeString(data)
+	rows, err := dm.DB.Table("data_masters").Select("jenis_proyek", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
+	defer rows.Close()
 
-	// Decompress data using gzip
-	reader, err := gzip.NewReader(bytes.NewReader(decodedData))
-	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
-		return
-	}
-	defer reader.Close()
-
-	decompressedData, err := io.ReadAll(reader)
-	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
-		return
-	}
-
-	// Assume the data is JSON and decode it
-	var jsonData models.DataMaster
-	err = json.Unmarshal(decompressedData, &jsonData)
-	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
-		return
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	respone := struct {
 		IdDataMaster uuid.UUID `json:"id_data_master,omitempty"`
 		UpdatedAt    string    `json:"update,omitempty"`
 	}{
-		IdDataMaster: jsonData.IdDataMaster,
-		UpdatedAt:    jsonData.UpdatedAt,
+		IdDataMaster: master.IdDataMaster,
+		UpdatedAt:    master.UpdatedAt,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
