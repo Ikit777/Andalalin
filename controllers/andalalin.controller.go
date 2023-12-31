@@ -1751,7 +1751,14 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 
 				}
 			}
-			andalalin.StatusAndalalin = "Pembuatan surat keputusan"
+
+			switch andalalin.Bangkitan {
+			case "Bangkitan rendah":
+				andalalin.StatusAndalalin = "Pembuatan surat keputusan"
+			case "Bangkitan sedang":
+				andalalin.StatusAndalalin = "Pembuatan penyusun dokumen"
+			case "Bangkitan tinggi":
+			}
 		}
 
 		if dokumen == "Surat keputusan persetujuan teknis andalalin" {
