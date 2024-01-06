@@ -41,12 +41,6 @@ div.WordSection1
 	{margin-bottom:0cm;}
 ul
 	{margin-bottom:0cm;}
-#tabel-data tr {
-    page-break-inside: avoid;
-}
-#tabel-data {
-    page-break-before: auto;
-}
 -->
 </style>
 
@@ -199,7 +193,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
 
 <p class=MsoNormal style='margin-bottom:0cm;line-height:50%'>&nbsp;</p>
 
-<table id="tabel-data" class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%"
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%"
  style='width:100.0%;border-collapse:collapse'>
  <thead>
   <tr style='height:17.0pt'>
@@ -242,7 +236,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
     for (let i = 0; i <= data.length; i++) {
       const row = document.createElement('tr');
 	  
-	  row.innerHTML = `<td width="5%" style='width:5.68%;border:solid windowtext 1.0pt;border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:17.0pt'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><span style='font-size:12.0pt;line-height:30%;font-family:"Times New Roman",serif'>&nbsp;</span></p><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${i+1}</span></p><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><span style='font-size:12.0pt;line-height:30%;font-family:"Times New Roman",serif'>&nbsp;</span></p></td><td width="30%" style='width:30.66%;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:17.0pt'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].substansi}</span></p></td><td width="61%" valign=top style='width:61.68%;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 0cm 0cm 0cm;height:17.0pt'><table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;border-collapse:collapse;border:none'><tbody id="${data[i].substansi}"></tbody></table></td>`;
+	  row.innerHTML = `<td width="5%" style='width:5.68%;border:solid windowtext 1.0pt;border-top:none;padding:0.5cm 5.4pt 0.5cm 5.4pt;height:17.0pt'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${i+1}</span></p></td><td width="30%" style='width:30.66%;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:17.0pt'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].substansi}</span></p></td><td width="61%" valign=top style='width:61.68%;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 0cm 0cm 0cm;height:17.0pt'><table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;border-collapse:collapse;border:none'><tbody id="${data[i].substansi}"></tbody></table></td>`;
 	  
       tableBody.appendChild(row);	  
 	  
@@ -251,7 +245,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
 	  for (let j = 0; j < data[i].muatan.length; j++){	
 		const row1 = document.createElement('tr');
 			
-		row1.innerHTML = `<td width="1%" valign=top style='width:1.9%;border:none;padding:0cm 1.4pt 0cm 5.4pt'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${j+1}.</span></p></td><td width="98%" valign=top style='width:98.1%;border:none;border-left:none;padding:0cm 1.4pt 0cm 2.4pt'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].muatan[j].judul}</span></p><table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;border-collapse:collapse;border:none'><tbody id="${data[i].muatan[j].judul}"></tbody></table></td>`;
+		row1.innerHTML = `<td width="1%" valign=top style='width:1.9%;border:none;padding:0cm 1.4pt 0cm 5.4pt'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${j+1}.</span></p></td><td width="98%" valign=top style='width:98.1%;border:none;border-left:none;padding:0cm 1.4pt 0cm 2.4pt'><p class=elementsWithClass align=justify style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].muatan[j].judul}</span></p><table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;border-collapse:collapse;border:none'><tbody id="${data[i].muatan[j].judul}"></tbody></table></td>`;
 		
 		tableMuatan.appendChild(row1);
 				
@@ -260,7 +254,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
 		for (let h = 0; h < data[i].muatan[j].tambahan.length; h++){
 			const row2 = document.createElement('tr');
 					
-			row2.innerHTML = `<td width="1%" valign=top style='width:1.9%;border:none;padding:0cm 1.4pt 0cm 0cm'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${alphabetArray[h]}.</span></p></td><td width="98%" valign=top style='width:98.1%;border:none;border-left:none;padding:0cm 1.4pt 0cm 2.4pt'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].muatan[j].tambahan[h].judul}</span></p><table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;border-collapse:collapse;border:none'><tbody id="${data[i].muatan[j].tambahan[h].judul}"></tbody></table></td>`;
+			row2.innerHTML = `<td width="1%" valign=top style='width:1.9%;border:none;padding:0cm 1.4pt 0cm 0cm'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${alphabetArray[h]}.</span></p></td><td width="98%" valign=top style='width:98.1%;border:none;border-left:none;padding:0cm 1.4pt 0cm 2.4pt'><p class=elementsWithClass align=justify style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].muatan[j].tambahan[h].judul}</span></p><table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;border-collapse:collapse;border:none'><tbody id="${data[i].muatan[j].tambahan[h].judul}"></tbody></table></td>`;
 					
 			tableTambahan.appendChild(row2);
 			
@@ -269,7 +263,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
 			for (let g = 0; g < data[i].muatan[j].tambahan[h].poin.length; g++){
 				const row3 = document.createElement('tr');
 			
-				row3.innerHTML = `<td width="1%" valign=top style='width:1.9%;border:none;padding:0cm 1.4pt 0cm 0cm'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${g+1})</span></p></td><td width="98%" valign=top style='width:98.1%;border:none;border-left:none;padding:0cm 5.4pt 0cm 2.4pt'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].muatan[j].tambahan[h].poin[g]}</span></p></td>`;
+				row3.innerHTML = `<td width="1%" valign=top style='width:1.9%;border:none;padding:0cm 1.4pt 0cm 0cm'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${g+1})</span></p></td><td width="98%" valign=top style='width:98.1%;border:none;border-left:none;padding:0cm 5.4pt 0cm 2.4pt'><p class=elementsWithClass align=justify style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].muatan[j].tambahan[h].poin[g]}</span></p></td>`;
 					
 				tablePoin.appendChild(row3);
 
