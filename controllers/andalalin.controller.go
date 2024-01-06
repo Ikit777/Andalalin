@@ -2846,15 +2846,9 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 
 	pdfg.AddPage(page)
 
-	marginInMillimeters := 2.54 * 10
-
 	pdfg.Dpi.Set(300)
 	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
 	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(uint(marginInMillimeters))
-	pdfg.MarginLeft.Set(uint(marginInMillimeters))
-	pdfg.MarginRight.Set(uint(marginInMillimeters))
-	pdfg.MarginTop.Set(uint(marginInMillimeters))
 
 	err = pdfg.Create()
 	if err != nil {
