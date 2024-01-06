@@ -2855,6 +2855,9 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	pdfg.MarginLeft.Set(uint(marginInMillimeters))
 	pdfg.MarginRight.Set(uint(marginInMillimeters))
 	pdfg.MarginTop.Set(uint(marginInMillimeters))
+	pdfg.NoCollate.Set(false)
+	pdfg.LowQuality.Set(false)
+	pdfg.Cover.DisableSmartShrinking.Set(false)
 
 	err = pdfg.Create()
 	if err != nil {
