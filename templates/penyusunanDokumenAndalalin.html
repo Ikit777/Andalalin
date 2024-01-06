@@ -43,6 +43,13 @@ ul
 	{margin-bottom:0cm;}
 #table-data tr {
 	page-break-inside: avoid !important;
+	page-break-after: auto !important;
+}
+@media print { .tr {
+	page-break-inside: avoid !important;
+	-webkit-column-break-inside: avoid;
+	break-inside: avoid;
+	-webkit-region-break-inside: avoid;
 }
 -->
 </style>
