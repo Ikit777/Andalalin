@@ -41,10 +41,14 @@ div.WordSection1
 	{margin-bottom:0cm;}
 ul
 	{margin-bottom:0cm;}
-#table-data tr{
-	page-break-inside: avoid !important;
-	page-break-after: auto !important;
-}
+.wrapping-div {
+        display: block;
+        page-break-inside: avoid !important;
+    }
+
+.wrapping-div table, .wrapping-div tbody, .wrapping-div tr, .wrapping-div td, .wrapping-div th {
+        page-break-inside: avoid !important;
+    }
 -->
 </style>
 
@@ -197,6 +201,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
 
 <p class=MsoNormal style='margin-bottom:0cm;line-height:50%'>&nbsp;</p>
 
+<div class="wrapping-div">
 <table id="table-data" class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%"
  style='width:100.0%;border-collapse:collapse'>
  <thead>
@@ -226,6 +231,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
       <!-- The table rows will be generated here -->
  </tbody>
 </table>
+</div>
 
 <script>
 	const data = {{.Data}};
