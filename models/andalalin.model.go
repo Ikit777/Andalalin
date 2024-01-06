@@ -830,3 +830,22 @@ type DataDokumen struct {
 	Dokumen string `json:"dokumen" binding:"required"`
 	Tipe    string `json:"tipe" binding:"required"`
 }
+
+type PenyusunDokumen struct {
+	Penyusun []DataPenyusunDokumen `json:"penyusun" binding:"required"`
+}
+
+type DataPenyusunDokumen struct {
+	Substansi string       `json:"substansi" binding:"required"`
+	Muatan    []DataMuatan `json:"muatan" binding:"required"`
+}
+
+type DataMuatan struct {
+	Judul    string         `json:"judul" binding:"required"`
+	Tambahan []DataTambahan `json:"tambahan" binding:"required"`
+}
+
+type DataTambahan struct {
+	Judul string   `json:"judul" binding:"required"`
+	Poin  []string `json:"poin" binding:"required"`
+}

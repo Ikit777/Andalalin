@@ -2337,68 +2337,72 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		bangkitan = "Tinggi"
 	}
 
-	listContent := ""
-	for i, item := range payload.Kewajiban {
-		if i == len(payload.Kewajiban)-1 {
-			listContent += fmt.Sprint(i+1, ". ", item)
+	switch andalalin.Bangkitan {
+	case "Bangkitan tinggi":
+	default:
+		listContent := ""
+		for i, item := range payload.Kewajiban {
+			if i == len(payload.Kewajiban)-1 {
+				listContent += fmt.Sprint(i+1, ". ", item)
+			} else {
+				listContent += fmt.Sprint(i+1, ". ", item, "\n")
+			}
+		}
+
+		replaceMap := docx.PlaceholderMap{
+			"_nama_":       andalalin.NamaPimpinanPengembang,
+			"_jabatan_":    andalalin.JabatanPimpinanPengembang,
+			"_alamat_":     andalalin.AlamatPimpinanPengembang + ", " + andalalin.KelurahanPimpinanPengembang + ", " + andalalin.KecamatanPimpinanPengembang + ", " + andalalin.KabupatenPimpinanPengembang + ", " + andalalin.ProvinsiPimpinanPengembang + ", " + andalalin.NegaraPimpinanPengembang,
+			"_pengembang_": andalalin.NamaPengembang,
+			"_bangkitan_":  bangkitan,
+			"_nomor_":      andalalin.Nomor,
+			"_tanggal_":    andalalin.Tanggal[0:2],
+			"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
+			"_tahun_":      andalalin.Tanggal[6:10],
+			"_kegiatan_":   andalalin.JenisProyek + " " + customTitleCase(andalalin.Jenis),
+			"_kewajiban_":  listContent,
+		}
+
+		doc, err := docx.Open("templates/suratPernyataanKesanggupan.docx")
+		if err != nil {
+			panic(err)
+		}
+
+		// replace the keys with values from replaceMap
+		err = doc.ReplaceAll(replaceMap)
+		if err != nil {
+			panic(err)
+		}
+
+		tempFilePath := "temp.docx"
+		err = doc.WriteToFile(tempFilePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		docBytes, err := os.ReadFile(tempFilePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		_ = os.Remove(tempFilePath)
+
+		andalalin.StatusAndalalin = "Menunggu surat pernyataan"
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Surat pernyataan kesanggupan (word)" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = docBytes
 		} else {
-			listContent += fmt.Sprint(i+1, ". ", item, "\n")
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Nama: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docBytes})
 		}
-	}
-
-	replaceMap := docx.PlaceholderMap{
-		"_nama_":       andalalin.NamaPimpinanPengembang,
-		"_jabatan_":    andalalin.JabatanPimpinanPengembang,
-		"_alamat_":     andalalin.AlamatPimpinanPengembang + ", " + andalalin.KelurahanPimpinanPengembang + ", " + andalalin.KecamatanPimpinanPengembang + ", " + andalalin.KabupatenPimpinanPengembang + ", " + andalalin.ProvinsiPimpinanPengembang + ", " + andalalin.NegaraPimpinanPengembang,
-		"_pengembang_": andalalin.NamaPengembang,
-		"_bangkitan_":  bangkitan,
-		"_nomor_":      andalalin.Nomor,
-		"_tanggal_":    andalalin.Tanggal[0:2],
-		"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
-		"_tahun_":      andalalin.Tanggal[6:10],
-		"_kegiatan_":   andalalin.JenisProyek + " " + customTitleCase(andalalin.Jenis),
-		"_kewajiban_":  listContent,
-	}
-
-	doc, err := docx.Open("templates/suratPernyataanKesanggupan.docx")
-	if err != nil {
-		panic(err)
-	}
-
-	// replace the keys with values from replaceMap
-	err = doc.ReplaceAll(replaceMap)
-	if err != nil {
-		panic(err)
-	}
-
-	tempFilePath := "temp.docx"
-	err = doc.WriteToFile(tempFilePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	docBytes, err := os.ReadFile(tempFilePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	_ = os.Remove(tempFilePath)
-
-	andalalin.StatusAndalalin = "Menunggu surat pernyataan"
-
-	itemIndex := -1
-
-	for i, item := range andalalin.BerkasPermohonan {
-		if item.Nama == "Surat pernyataan kesanggupan (word)" {
-			itemIndex = i
-			break
-		}
-	}
-
-	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = docBytes
-	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Nama: "Surat pernyataan kesanggupan (word)", Tipe: "Word", Berkas: docBytes})
 	}
 
 	ac.DB.Save(&andalalin)
@@ -2730,6 +2734,150 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 	}
 
 	andalalin.StatusAndalalin = "Persetujuan kelengkapan akhir"
+
+	ac.DB.Save(&andalalin)
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
+	var payload *models.PenyusunDokumen
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig()
+
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var andalalin models.Andalalin
+
+	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
+
+	t, err := template.ParseFiles("templates/penyusunanDokumenAndalalin.html")
+	if err != nil {
+		log.Fatal("Error reading the email template:", err)
+		return
+	}
+
+	var bangkitan string
+
+	switch andalalin.Bangkitan {
+	case "Bangkitan rendah":
+		bangkitan = "RENDAH"
+	case "Bangkitan sedang":
+		bangkitan = "SEDANG"
+	case "Bangkitan tinggi":
+		bangkitan = "TINGGI"
+	}
+
+	kelengkapan := struct {
+		Bangkitan   string
+		Objek       string
+		Lokasi      string
+		Pengembang  string
+		Pemohon     string
+		Sertifikat  string
+		Klasifikasi string
+		Diterima    string
+		Pemeriksaan string
+		Data        []models.DataPenyusunDokumen
+		Operator    string
+		Nip         string
+	}{
+		Bangkitan:   bangkitan,
+		Objek:       andalalin.Jenis,
+		Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+		Pengembang:  andalalin.NamaPengembang,
+		Pemohon:     andalalin.NamaPemohon,
+		Sertifikat:  andalalin.NomerSertifikatPemohon,
+		Klasifikasi: andalalin.KlasifikasiPemohon,
+		Diterima:    andalalin.TanggalAndalalin,
+		Pemeriksaan: tanggal,
+		Data:        payload.Penyusun,
+		Operator:    currentUser.Name,
+		Nip:         *currentUser.NIP,
+	}
+
+	buffer := new(bytes.Buffer)
+	if err = t.Execute(buffer, kelengkapan); err != nil {
+		log.Fatal("Eror saat membaca template:", err)
+		return
+	}
+
+	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	if err != nil {
+		log.Fatal("Eror generate pdf", err)
+		return
+	}
+
+	// read the HTML page as a PDF page
+	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
+
+	pdfg.AddPage(page)
+
+	marginInMillimeters := 2.54 * 10
+
+	pdfg.Dpi.Set(300)
+	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
+	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
+	pdfg.MarginBottom.Set(uint(marginInMillimeters))
+	pdfg.MarginLeft.Set(uint(marginInMillimeters))
+	pdfg.MarginRight.Set(uint(marginInMillimeters))
+	pdfg.MarginTop.Set(uint(marginInMillimeters))
+
+	err = pdfg.Create()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	itemIndex := -1
+
+	for i, item := range andalalin.BerkasPermohonan {
+		if item.Nama == "Penyusun dokumen analsis dampak lalu lintas" {
+			itemIndex = i
+			break
+		}
+	}
+
+	if itemIndex != -1 {
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
+		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+	} else {
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+	}
+
+	andalalin.StatusAndalalin = "Persetujuan penyusun dokumen"
 
 	ac.DB.Save(&andalalin)
 
