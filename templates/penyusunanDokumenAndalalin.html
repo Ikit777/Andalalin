@@ -221,11 +221,9 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
   </tr>
  </thead>
  
-<div style="page-break-inside: avoid;">
-   <tbody id="table-body">
+ <tbody id="table-body">
       <!-- The table rows will be generated here -->
  </tbody>
-</div>
 </table>
 
 <script>
@@ -240,6 +238,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
 
     for (let i = 0; i <= data.length; i++) {
       const row = document.createElement('tr');
+	  row.style.pageBreakInside  = "avoid"
 	  
 	  row.innerHTML = `<td width="5%" style='width:5.68%;border:solid windowtext 1.0pt;border-top:none;padding:0.5cm 5.4pt 0.5cm 5.4pt;height:17.0pt'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${i+1}</span></p></td><td width="30%" style='width:30.66%;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:17.0pt'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].substansi}</span></p></td><td width="61%" valign=top style='width:61.68%;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 0cm 0cm 0cm;height:17.0pt'><table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;border-collapse:collapse;border:none'><tbody id="${data[i].substansi}"></tbody></table></td>`;
 	  
