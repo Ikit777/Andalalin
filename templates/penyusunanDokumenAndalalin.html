@@ -41,14 +41,6 @@ div.WordSection1
 	{margin-bottom:0cm;}
 ul
 	{margin-bottom:0cm;}
-.wrapping-div {
-        display: block;
-        page-break-inside: avoid !important;
-    }
-
-.wrapping-div table, .wrapping-div tbody, .wrapping-div tr, .wrapping-div td, .wrapping-div th {
-        page-break-inside: avoid !important;
-    }
 -->
 </style>
 
@@ -201,7 +193,6 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
 
 <p class=MsoNormal style='margin-bottom:0cm;line-height:50%'>&nbsp;</p>
 
-<div class="wrapping-div">
 <table id="table-data" class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width="100%"
  style='width:100.0%;border-collapse:collapse'>
  <thead>
@@ -224,6 +215,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
    line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:
    "Times New Roman",serif'>Muatan Minimal</span></p>
    </td>
+   <div style="page-break-inside:avoid !important; page-break-after:auto !important; overflow: hidden; display:block !important; width:100% ">
   </tr>
  </thead>
  
@@ -231,7 +223,6 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
       <!-- The table rows will be generated here -->
  </tbody>
 </table>
-</div>
 
 <script>
 	const data = {{.Data}};
@@ -246,7 +237,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
     for (let i = 0; i <= data.length; i++) {
       const row = document.createElement('tr');
 	  
-	  row.innerHTML = `<td width="5%" style='width:5.68%;border:solid windowtext 1.0pt;border-top:none;padding:0.5cm 5.4pt 0.5cm 5.4pt;height:17.0pt'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${i+1}</span></p></td><td width="30%" style='width:30.66%;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:17.0pt'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].substansi}</span></p></td><td width="61%" valign=top style='width:61.68%;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 0cm 0cm 0cm;height:17.0pt'><table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;border-collapse:collapse;border:none'><tbody id="${data[i].substansi}"></tbody></table></td>`;
+	  row.innerHTML = `<td width="5%" style='width:5.68%;border:solid windowtext 1.0pt;border-top:none;padding:0.5cm 5.4pt 0.5cm 5.4pt;height:17.0pt'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${i+1}</span></p></td><td width="30%" style='width:30.66%;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:17.0pt'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].substansi}</span></p></td><td width="61%" valign=top style='width:61.68%;border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 0cm 0cm 0cm;height:17.0pt'><table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;border-collapse:collapse;border:none'><tbody id="${data[i].substansi}"></tbody></table></td><div style="page-break-inside:avoid !important; page-break-after:auto !important; overflow: hidden; display:block !important; width:100% ">`;
 	  
       tableBody.appendChild(row);	  
 	  
