@@ -64,17 +64,24 @@ func htmlToPDF(htmlContent string) ([]byte, error) {
 	}
 	defer deleteFile(htmlFile)
 
-	// Run the pandoc command
-	cmd := exec.Command("pandoc", htmlFile, "--to=pdf")
-	var pdfBuffer bytes.Buffer
-	cmd.Stdout = &pdfBuffer
+	// Create a temporary PDF file
+	pdfFile := "/path/to/output.pdf"
+	defer deleteFile(pdfFile)
 
+	// Run the WeasyPrint command
+	cmd := exec.Command("weasyprint", htmlFile, pdfFile)
 	err = cmd.Run()
 	if err != nil {
 		return nil, err
 	}
 
-	return pdfBuffer.Bytes(), nil
+	// Read the PDF content from the file
+	pdfBytes, err := os.ReadFile(pdfFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return pdfBytes, nil
 }
 
 func writeToFile(filePath string, content string) error {
