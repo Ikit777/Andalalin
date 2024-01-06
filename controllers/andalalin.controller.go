@@ -2855,7 +2855,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	pdfg.MarginLeft.Set(uint(marginInMillimeters))
 	pdfg.MarginRight.Set(uint(marginInMillimeters))
 	pdfg.MarginTop.Set(uint(marginInMillimeters))
-	pdfg.Cover.Zoom.Set(0.1)
+	pdfg.Cover.Zoom.Set(0.0)
 	pdfg.Cover.DisableSmartShrinking.Set(false)
 
 	err = pdfg.Create()
