@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"sync"
 	"time"
@@ -52,6 +53,50 @@ func findItem(array []string, target string) int {
 		}
 	}
 	return -1
+}
+
+func htmlToPDF(htmlContent string) ([]byte, error) {
+	// Create a temporary HTML file
+	htmlFile := os.TempDir() + "/temp.html"
+	err := writeToFile(htmlFile, htmlContent)
+	if err != nil {
+		return nil, err
+	}
+	defer deleteFile(htmlFile)
+
+	// Create a temporary PDF file
+	pdfFile := os.TempDir() + "/output.pdf"
+	defer deleteFile(pdfFile)
+
+	// Run the wkhtmltopdf command
+	cmd := exec.Command("wkhtmltopdf --page-width 210mm --page-height 297mm --margin-top 2.54cm --margin-bottom 2.54cm --margin-left 2.54cm --margin-right 2.54cm --zoom value between 0.0 to 1.0 --disable-smart-shrinking", htmlFile, pdfFile)
+	err = cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	// Read the PDF content from the file
+	pdfBytes, err := os.ReadFile(pdfFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return pdfBytes, nil
+}
+
+func writeToFile(filePath string, content string) error {
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(content)
+	return err
+}
+
+func deleteFile(filePath string) {
+	_ = os.Remove(filePath)
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -2835,30 +2880,10 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		return
 	}
 
-	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	pdfBytes, err := htmlToPDF(buffer.String())
 	if err != nil {
-		log.Fatal("Eror generate pdf", err)
+		fmt.Println("Error converting HTML to PDF:", err)
 		return
-	}
-
-	// read the HTML page as a PDF page
-	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
-
-	pdfg.AddPage(page)
-
-	marginInMillimeters := 2.54 * 10
-
-	pdfg.Dpi.Set(300)
-	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(uint(marginInMillimeters))
-	pdfg.MarginLeft.Set(uint(marginInMillimeters))
-	pdfg.MarginRight.Set(uint(marginInMillimeters))
-	pdfg.MarginTop.Set(uint(marginInMillimeters))
-
-	err = pdfg.Create()
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	itemIndex := -1
@@ -2871,10 +2896,10 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfBytes
 		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfBytes})
 	}
 
 	andalalin.StatusAndalalin = "Persetujuan penyusun dokumen"
