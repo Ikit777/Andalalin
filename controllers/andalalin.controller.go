@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"html/template"
 	"io"
@@ -26,6 +27,8 @@ import (
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 
 	"github.com/lukasjarosch/go-docx"
+
+	"github.com/chromedp/chromedp"
 )
 
 type AndalalinController struct {
@@ -52,6 +55,68 @@ func findItem(array []string, target string) int {
 		}
 	}
 	return -1
+}
+
+func generatePDF(htmlContent string, pageSize PageSize, margins Margins) ([]byte, error) {
+	// Create a new context
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+
+	// Use a local variable to capture the result
+	var result string
+
+	// Inject custom CSS styles for page size and margins
+	cssStyles := fmt.Sprintf(`
+		<style>
+			@page {
+				size: %s;
+				margin-top: %s;
+				margin-bottom: %s;
+				margin-left: %s;
+				margin-right: %s;
+			}
+			body {
+				width: 100%%;
+				height: 100%%;
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+	`, pageSize.String(), formatSize(margins.Top), formatSize(margins.Bottom), formatSize(margins.Left), formatSize(margins.Right))
+
+	err := chromedp.Run(ctx,
+		chromedp.Navigate("data:text/html,"+cssStyles+htmlContent),
+		chromedp.WaitVisible("body"),
+		chromedp.Sleep(2*time.Second), // Wait for rendering, adjust as needed
+		chromedp.EvaluateAsDevTools("document.documentElement.outerHTML", &result),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the result to bytes
+	return []byte(result), nil
+}
+
+type PageSize struct {
+	Width  float64
+	Height float64
+}
+
+func (p PageSize) String() string {
+	return fmt.Sprintf("%.2fmm %.2fmm", p.Width, p.Height)
+}
+
+type Margins struct {
+	Top    float64
+	Bottom float64
+	Left   float64
+	Right  float64
+}
+
+func formatSize(value float64) string {
+	return fmt.Sprintf("%.2fmm", value)
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -2835,30 +2900,13 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		return
 	}
 
-	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	pageSize := PageSize{Width: 210, Height: 297}                // A4 size in millimeters
+	margins := Margins{Top: 10, Bottom: 10, Left: 10, Right: 10} // 10mm margins
+
+	pdfBytes, err := generatePDF(buffer.String(), pageSize, margins)
 	if err != nil {
-		log.Fatal("Eror generate pdf", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
-	}
-
-	// read the HTML page as a PDF page
-	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
-
-	pdfg.AddPage(page)
-
-	marginInMillimeters := 2.54 * 10
-
-	pdfg.Dpi.Set(300)
-	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(uint(marginInMillimeters))
-	pdfg.MarginLeft.Set(uint(marginInMillimeters))
-	pdfg.MarginRight.Set(uint(marginInMillimeters))
-	pdfg.MarginTop.Set(uint(marginInMillimeters))
-
-	err = pdfg.Create()
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	itemIndex := -1
@@ -2871,10 +2919,10 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfBytes
 		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfBytes})
 	}
 
 	andalalin.StatusAndalalin = "Persetujuan penyusun dokumen"
