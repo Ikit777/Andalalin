@@ -42,8 +42,13 @@ div.WordSection1
 ul
 	{margin-bottom:0cm;}
 #table-data thead, tfoot { display: table-row-group }
-#table-body tbody, tr {
-    page-break-inside: avoid;
+@media print {
+    table tbody tr td:before,
+    table tbody tr td:after {
+        content: "";
+        height: 0px;
+        display: block;
+    }
 }
 -->
 </style>
