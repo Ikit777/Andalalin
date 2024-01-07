@@ -41,8 +41,13 @@ div.WordSection1
 	{margin-bottom:0cm;}
 ul
 	{margin-bottom:0cm;}
-#table-data thead, tfoot { display: table-row-group }
-#table-data tr { page-break-inside: avoid }
+@media all {
+  #table-data { page-break-after:auto }
+  #table-data tr    { page-break-inside:avoid; page-break-after:auto }
+  #table-data td    { page-break-inside:avoid; page-break-after:auto }
+  #table-data thead { display:table-header-group }
+  #table-data tfoot { display:table-footer-group }
+}
 -->
 </style>
 
