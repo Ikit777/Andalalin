@@ -69,7 +69,7 @@ func htmlToPDF(htmlContent string) ([]byte, error) {
 	defer deleteFile(pdfFile)
 
 	// Run the wkhtmltopdf command
-	cmd := exec.Command("wkhtmltopdf --page-width 210mm --page-height 297mm --margin-top 2.54cm --margin-bottom 2.54cm --margin-left 2.54cm --margin-right 2.54cm --zoom value between 0.0 to 1.0 --disable-smart-shrinking", htmlFile, pdfFile)
+	cmd := exec.Command("wkhtmltopdf", "--page-width", "210mm", "--page-height", "297mm", "--margin-top", "25.4mm", "--margin-bottom", "25.4mm", "--margin-left", "25.4mm", "--margin-right", "25.4mm", "--zoom", "0.1", "--disable-smart-shrinking", htmlFile, pdfFile)
 	err = cmd.Run()
 	if err != nil {
 		return nil, err
