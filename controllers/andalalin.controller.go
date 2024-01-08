@@ -166,30 +166,10 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	}
 
-	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	pdfContent, err := generatePDF(buffer.String())
 	if err != nil {
-		log.Fatal("Eror generate pdf", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
-	}
-
-	// read the HTML page as a PDF page
-	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
-
-	pdfg.AddPage(page)
-
-	marginInMillimeters := 2.54 * 10
-
-	pdfg.Dpi.Set(300)
-	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(uint(marginInMillimeters))
-	pdfg.MarginLeft.Set(uint(marginInMillimeters))
-	pdfg.MarginRight.Set(uint(marginInMillimeters))
-	pdfg.MarginTop.Set(uint(marginInMillimeters))
-
-	err = pdfg.Create()
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	form, err := ctx.MultipartForm()
@@ -223,7 +203,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		}
 	}
 
-	berkas = append(berkas, models.BerkasPermohonan{Nama: "Tanda terima pendaftaran", Tipe: "Pdf", Status: "Selesai", Berkas: pdfg.Bytes()})
+	berkas = append(berkas, models.BerkasPermohonan{Nama: "Tanda terima pendaftaran", Tipe: "Pdf", Status: "Selesai", Berkas: pdfContent})
 
 	permohonan := models.Andalalin{
 		//Data Permohonan
@@ -442,30 +422,10 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		return
 	}
 
-	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	pdfContent, err := generatePDF(buffer.String())
 	if err != nil {
-		log.Fatal("Eror generate pdf", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
-	}
-
-	// read the HTML page as a PDF page
-	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
-
-	pdfg.AddPage(page)
-
-	marginInMillimeters := 2.54 * 10
-
-	pdfg.Dpi.Set(300)
-	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(uint(marginInMillimeters))
-	pdfg.MarginLeft.Set(uint(marginInMillimeters))
-	pdfg.MarginRight.Set(uint(marginInMillimeters))
-	pdfg.MarginTop.Set(uint(marginInMillimeters))
-
-	err = pdfg.Create()
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	form, err := ctx.MultipartForm()
@@ -499,7 +459,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		}
 	}
 
-	berkas = append(berkas, models.BerkasPermohonan{Nama: "Tanda terima pendaftaran", Tipe: "Pdf", Status: "Selesai", Berkas: pdfg.Bytes()})
+	berkas = append(berkas, models.BerkasPermohonan{Nama: "Tanda terima pendaftaran", Tipe: "Pdf", Status: "Selesai", Berkas: pdfContent})
 
 	permohonan := models.Perlalin{
 		IdUser:              currentUser.ID,
@@ -2875,7 +2835,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 
 	pdfContent, err := generatePDF(buffer.String())
 	if err != nil {
-		fmt.Println("Error generating PDF:", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
