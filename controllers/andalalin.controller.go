@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -108,7 +107,7 @@ func generatePDF(htmlContent []byte) ([]byte, error) {
 
 func printPDF(pdfContent []byte) ([]byte, error) {
 	// Create a temporary PDF file
-	pdfFile, err := ioutil.TempFile("", "file.pdf")
+	pdfFile, err := os.CreateTemp("", "file.pdf")
 	if err != nil {
 		return nil, err
 	}
