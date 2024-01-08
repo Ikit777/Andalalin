@@ -59,7 +59,7 @@ func findItem(array []string, target string) int {
 	return -1
 }
 
-func generatePDF(htmlContent []byte) ([]byte, error) {
+func generatePDF(htmlContent string) ([]byte, error) {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
@@ -85,17 +85,15 @@ func generatePDF(htmlContent []byte) ([]byte, error) {
 		}),
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			// Capture PDF content
-			var buf []byte
 			err := chromedp.ActionFunc(func(ctx context.Context) error {
-				var err error
-				buf, _, err = page.PrintToPDF().Do(ctx)
-				return err
+				buf, _, err := page.PrintToPDF().Do(ctx)
+				if err != nil {
+					return err
+				}
+				pdfContent = buf
+				return nil
 			}).Do(ctx)
-			if err != nil {
-				return err
-			}
-			pdfContent = buf
-			return nil
+			return err
 		}),
 	)
 	if err != nil {
@@ -2914,7 +2912,21 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		return
 	}
 
-	pdfContent, err := generatePDF(buffer.Bytes())
+	htmlFile, err := os.CreateTemp("", "templates.html")
+	if err != nil {
+		fmt.Println("Error creating HTML file:", err)
+		return
+	}
+	defer os.Remove(htmlFile.Name())
+	defer htmlFile.Close()
+
+	// Step 3: Write HTML content to the file
+	if _, err := htmlFile.Write(buffer.Bytes()); err != nil {
+		fmt.Println("Error writing to HTML file:", err)
+		return
+	}
+
+	pdfContent, err := generatePDF(htmlFile.Name())
 	if err != nil {
 		fmt.Println("Error generating PDF:", err)
 		return
