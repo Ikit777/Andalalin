@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -106,20 +107,31 @@ func generatePDF(htmlContent []byte) ([]byte, error) {
 }
 
 func printPDF(pdfContent []byte) ([]byte, error) {
-	// Print the PDF content directly without saving to a file
-	printCommand := exec.Command("google-chrome", "--headless", "--disable-gpu", "--print-to-pdf=-", "--no-sandbox")
-	printCommand.Stdin = bytes.NewReader(pdfContent)
+	// Create a temporary PDF file
+	pdfFile, err := ioutil.TempFile("", "file.pdf")
+	if err != nil {
+		return nil, err
+	}
+	defer os.Remove(pdfFile.Name())
+	defer pdfFile.Close()
 
-	// Capture the output
-	var output bytes.Buffer
-	printCommand.Stdout = &output
-	printCommand.Stderr = os.Stderr
+	// Write PDF content to the file
+	if _, err := pdfFile.Write(pdfContent); err != nil {
+		return nil, err
+	}
 
+	// Print the PDF file
+	printCommand := exec.Command("google-chrome", "--headless", "--disable-gpu", "--print-to-pdf="+pdfFile.Name(), "--no-sandbox")
 	if err := printCommand.Run(); err != nil {
 		return nil, err
 	}
 
-	return output.Bytes(), nil
+	fileData, err := os.ReadFile(pdfFile.Name())
+	if err != nil {
+		log.Fatal("Error reading the file:", err)
+	}
+
+	return fileData, nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
