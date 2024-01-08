@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"strings"
 	"sync"
 	"time"
@@ -75,9 +74,8 @@ func generatePDF(htmlContent string) ([]byte, error) {
 			return page.SetDocumentContent(frameTree.Frame.ID, htmlContent).Do(ctx)
 		}),
 		chromedp.ActionFunc(func(ctx context.Context) error {
-			// Capture PDF content
 			err := chromedp.ActionFunc(func(ctx context.Context) error {
-				buf, _, err := page.PrintToPDF().WithMarginBottom(1).WithMarginLeft(1).WithMarginRight(1).WithMarginTop(1).WithDisplayHeaderFooter(false).WithPrintBackground(false).Do(ctx)
+				buf, _, err := page.PrintToPDF().WithPaperHeight(11.7).WithPaperWidth(8.3).WithMarginBottom(1).WithMarginLeft(1).WithMarginRight(1).WithMarginTop(1).WithDisplayHeaderFooter(false).WithPrintBackground(false).Do(ctx)
 				if err != nil {
 					return err
 				}
@@ -92,34 +90,6 @@ func generatePDF(htmlContent string) ([]byte, error) {
 	}
 
 	return pdfContent, nil
-}
-
-func printPDF(pdfContent []byte) ([]byte, error) {
-	// Create a temporary PDF file
-	pdfFile, err := os.CreateTemp("", "file.pdf")
-	if err != nil {
-		return nil, err
-	}
-	defer os.Remove(pdfFile.Name())
-	defer pdfFile.Close()
-
-	// Write PDF content to the file
-	if _, err := pdfFile.Write(pdfContent); err != nil {
-		return nil, err
-	}
-
-	// Print the PDF file
-	printCommand := exec.Command("google-chrome", "--headless", "--disable-gpu", "--print-to-pdf="+pdfFile.Name(), "--no-sandbox")
-	if err := printCommand.Run(); err != nil {
-		return nil, err
-	}
-
-	fileData, err := os.ReadFile(pdfFile.Name())
-	if err != nil {
-		log.Fatal("Error reading the file:", err)
-	}
-
-	return fileData, nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
