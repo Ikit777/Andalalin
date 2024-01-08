@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"sync"
 	"time"
@@ -100,6 +101,23 @@ func generatePDF(htmlContent []byte) ([]byte, error) {
 	}
 
 	return pdfContent, nil
+}
+
+func printPDF(pdfContent []byte) ([]byte, error) {
+	// Print the PDF content directly without saving to a file
+	printCommand := exec.Command("google-chrome", "--headless", "--disable-gpu", "--print-to-pdf=-", "--no-sandbox")
+	printCommand.Stdin = bytes.NewReader(pdfContent)
+
+	// Capture the output
+	var output bytes.Buffer
+	printCommand.Stdout = &output
+	printCommand.Stderr = os.Stderr
+
+	if err := printCommand.Run(); err != nil {
+		return nil, err
+	}
+
+	return output.Bytes(), nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -2889,6 +2907,12 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		return
 	}
 
+	pdfBytes, err := printPDF(pdfContent)
+	if err != nil {
+		fmt.Println("Error printing PDF:", err)
+		return
+	}
+
 	itemIndex := -1
 
 	for i, item := range andalalin.BerkasPermohonan {
@@ -2899,10 +2923,10 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfBytes
 		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfContent})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfBytes})
 	}
 
 	andalalin.StatusAndalalin = "Persetujuan penyusun dokumen"
