@@ -113,6 +113,9 @@ type Andalalin struct {
 	//Berkas Permohonan
 	BerkasPermohonan []BerkasPermohonan `gorm:"serializer:json"`
 
+	//Status Berkas Permohonan (Baru atau Revisi)
+	StatusBerkasPermohonan string `gorm:"type:varchar(255);not null"`
+
 	//Kelengkapan Tidak Sesuai
 	KelengkapanTidakSesuai []KelengkapanTidakSesuai `gorm:"serializer:json"`
 
