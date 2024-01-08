@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"html/template"
 	"io"
@@ -19,7 +20,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jung-kurt/gofpdf"
 	"gorm.io/gorm"
 
 	_ "time/tzdata"
@@ -27,6 +27,9 @@ import (
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 
 	"github.com/lukasjarosch/go-docx"
+
+	"github.com/chromedp/cdproto/page"
+	"github.com/chromedp/chromedp"
 )
 
 type AndalalinController struct {
@@ -53,6 +56,50 @@ func findItem(array []string, target string) int {
 		}
 	}
 	return -1
+}
+
+func generatePDF(htmlContent []byte) ([]byte, error) {
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+
+	var pdfContent []byte
+	err := chromedp.Run(ctx,
+		chromedp.Navigate("data:text/html,"+string(htmlContent)),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			// Set page size in mm (replace with your desired values)
+			err := chromedp.EvaluateAsDevTools(`
+				const style = document.createElement('style');
+				style.innerHTML = '@page { size: 210mm 297mm; margin: 25.4mm; }';
+				document.head.appendChild(style);
+			`, nil).Do(ctx)
+			if err != nil {
+				return err
+			}
+			return nil
+		}),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			// Wait for rendering
+			time.Sleep(2 * time.Second)
+			return nil
+		}),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			// Capture PDF content
+			err := chromedp.ActionFunc(func(ctx context.Context) error {
+				buf, _, err := page.PrintToPDF().Do(ctx)
+				if err != nil {
+					return err
+				}
+				pdfContent = buf
+				return nil
+			}).Do(ctx)
+			return err
+		}),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return pdfContent, nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -2836,20 +2883,9 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		return
 	}
 
-	pdf := gofpdf.New("P", "mm", "A4", "times")
-
-	pdf.SetMargins(25.4, 25.4, 25.4)
-
-	pdf.SetAutoPageBreak(true, 25.4)
-
-	pdf.AddPage()
-
-	pdf.Cell(0, 10, buffer.String())
-
-	var buf bytes.Buffer
-	err = pdf.Output(&buf)
+	pdfContent, err := generatePDF(buffer.Bytes())
 	if err != nil {
-		log.Fatal("Eror saat membaca template:", err)
+		fmt.Println("Error generating PDF:", err)
 		return
 	}
 
@@ -2863,10 +2899,10 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = buf.Bytes()
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
 		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: buf.Bytes()})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfContent})
 	}
 
 	andalalin.StatusAndalalin = "Persetujuan penyusun dokumen"
