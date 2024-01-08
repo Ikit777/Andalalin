@@ -29,6 +29,7 @@ import (
 
 	"github.com/lukasjarosch/go-docx"
 
+	"github.com/chromedp/cdproto/emulation"
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
 )
@@ -59,7 +60,7 @@ func findItem(array []string, target string) int {
 	return -1
 }
 
-func generatePDF(htmlContent string) ([]byte, error) {
+func generatePDF(htmlContent []byte) ([]byte, error) {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
@@ -68,11 +69,7 @@ func generatePDF(htmlContent string) ([]byte, error) {
 		chromedp.Navigate("data:text/html,"+string(htmlContent)),
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			// Set page size in mm (replace with your desired values)
-			err := chromedp.EvaluateAsDevTools(`
-				const style = document.createElement('style');
-				style.innerHTML = '@page { size: 210mm 297mm; margin: 25.4mm; } @media print { @page { size: 210mm 297mm; margin: 0mm; } body::before, body::after { content: ""; display: none; } }';
-				document.head.appendChild(style);
-			`, nil).Do(ctx)
+			err := emulation.SetDeviceMetricsOverride(210, 297, 1, false).Do(ctx)
 			if err != nil {
 				return err
 			}
@@ -105,7 +102,7 @@ func generatePDF(htmlContent string) ([]byte, error) {
 
 func printPDF(pdfContent []byte) ([]byte, error) {
 	// Create a temporary PDF file
-	pdfFile, err := os.CreateTemp("", "file.pdf")
+	pdfFile, err := os.CreateTemp("", "file")
 	if err != nil {
 		return nil, err
 	}
@@ -2912,21 +2909,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		return
 	}
 
-	htmlFile, err := os.CreateTemp("", "templates.html")
-	if err != nil {
-		fmt.Println("Error creating HTML file:", err)
-		return
-	}
-	defer os.Remove(htmlFile.Name())
-	defer htmlFile.Close()
-
-	// Step 3: Write HTML content to the file
-	if _, err := htmlFile.Write(buffer.Bytes()); err != nil {
-		fmt.Println("Error writing to HTML file:", err)
-		return
-	}
-
-	pdfContent, err := generatePDF(htmlFile.Name())
+	pdfContent, err := generatePDF(buffer.Bytes())
 	if err != nil {
 		fmt.Println("Error generating PDF:", err)
 		return
