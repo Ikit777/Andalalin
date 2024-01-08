@@ -60,47 +60,44 @@ func findItem(array []string, target string) int {
 	return -1
 }
 
-func generatePDF(htmlContent []byte) ([]byte, error) {
+func generatePDF(htmlContent string) ([]byte, error) {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
 	var pdfContent []byte
 	err := chromedp.Run(ctx,
-		chromedp.Navigate("data:text/html,"+string(htmlContent)),
 		chromedp.ActionFunc(func(ctx context.Context) error {
-			// Set page size in mm (replace with your desired values)
+			// Set page size and margin in mm
 			err := emulation.SetDeviceMetricsOverride(210, 297, 1, false).Do(ctx)
 			if err != nil {
 				return err
 			}
 
-			// Inject custom CSS to hide headers and footers during print
-			err = chromedp.EvaluateAsDevTools(`
-				const style = document.createElement('style');
-				style.innerHTML = '@media print { @page { margin: 0mm; } body::before, body::after { content: ""; display: none; } }';
-				document.head.appendChild(style);
-			`, nil).Do(ctx)
+			// Set the document content directly
+			frameTree, err := page.GetFrameTree().Do(ctx)
 			if err != nil {
 				return err
 			}
-			return nil
-		}),
-		chromedp.ActionFunc(func(ctx context.Context) error {
+			err = page.SetDocumentContent(frameTree.Frame.ID, htmlContent).Do(ctx)
+			if err != nil {
+				return err
+			}
+
 			// Wait for rendering
 			time.Sleep(2 * time.Second)
-			return nil
-		}),
-		chromedp.ActionFunc(func(ctx context.Context) error {
+
 			// Capture PDF content
-			err := chromedp.ActionFunc(func(ctx context.Context) error {
-				buf, _, err := page.PrintToPDF().Do(ctx)
-				if err != nil {
-					return err
-				}
-				pdfContent = buf
-				return nil
+			var buf []byte
+			err = chromedp.ActionFunc(func(ctx context.Context) error {
+				var err error
+				buf, _, err = page.PrintToPDF().WithMarginBottom(1).WithMarginLeft(1).WithMarginRight(1).WithMarginTop(1).WithDisplayHeaderFooter(false).Do(ctx)
+				return err
 			}).Do(ctx)
-			return err
+			if err != nil {
+				return err
+			}
+			pdfContent = buf
+			return nil
 		}),
 	)
 	if err != nil {
@@ -111,19 +108,31 @@ func generatePDF(htmlContent []byte) ([]byte, error) {
 }
 
 func printPDF(pdfContent []byte) ([]byte, error) {
-	printCommand := exec.Command("google-chrome", "--headless", "--disable-gpu", "--print-to-pdf=-", "--no-sandbox")
-	printCommand.Stdin = bytes.NewReader(pdfContent)
+	// Create a temporary PDF file
+	pdfFile, err := os.CreateTemp("", "file.pdf")
+	if err != nil {
+		return nil, err
+	}
+	defer os.Remove(pdfFile.Name())
+	defer pdfFile.Close()
 
-	// Capture the output
-	var output bytes.Buffer
-	printCommand.Stdout = &output
-	printCommand.Stderr = os.Stderr
+	// Write PDF content to the file
+	if _, err := pdfFile.Write(pdfContent); err != nil {
+		return nil, err
+	}
 
+	// Print the PDF file
+	printCommand := exec.Command("google-chrome", "--headless", "--disable-gpu", "--print-to-pdf="+pdfFile.Name(), "--no-sandbox")
 	if err := printCommand.Run(); err != nil {
 		return nil, err
 	}
 
-	return output.Bytes(), nil
+	fileData, err := os.ReadFile(pdfFile.Name())
+	if err != nil {
+		log.Fatal("Error reading the file:", err)
+	}
+
+	return fileData, nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -2907,7 +2916,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		return
 	}
 
-	pdfContent, err := generatePDF(buffer.Bytes())
+	pdfContent, err := generatePDF(buffer.String())
 	if err != nil {
 		fmt.Println("Error generating PDF:", err)
 		return
