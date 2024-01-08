@@ -29,7 +29,6 @@ import (
 
 	"github.com/lukasjarosch/go-docx"
 
-	"github.com/chromedp/cdproto/emulation"
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
 )
@@ -60,44 +59,29 @@ func findItem(array []string, target string) int {
 	return -1
 }
 
-func generatePDF(htmlContent string) ([]byte, error) {
+func generatePDF(htmlContent []byte) ([]byte, error) {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
 	var pdfContent []byte
 	err := chromedp.Run(ctx,
+		chromedp.Navigate("data:text/html,"+string(htmlContent)),
 		chromedp.ActionFunc(func(ctx context.Context) error {
-			// Set page size and margin in mm
-			err := emulation.SetDeviceMetricsOverride(210, 297, 1, false).Do(ctx)
-			if err != nil {
-				return err
-			}
-
-			// Set the document content directly
-			frameTree, err := page.GetFrameTree().Do(ctx)
-			if err != nil {
-				return err
-			}
-			err = page.SetDocumentContent(frameTree.Frame.ID, htmlContent).Do(ctx)
-			if err != nil {
-				return err
-			}
-
 			// Wait for rendering
 			time.Sleep(2 * time.Second)
-
-			// Capture PDF content
-			var buf []byte
-			err = chromedp.ActionFunc(func(ctx context.Context) error {
-				var err error
-				buf, _, err = page.PrintToPDF().WithMarginBottom(1).WithMarginLeft(1).WithMarginRight(1).WithMarginTop(1).WithDisplayHeaderFooter(false).Do(ctx)
-				return err
-			}).Do(ctx)
-			if err != nil {
-				return err
-			}
-			pdfContent = buf
 			return nil
+		}),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			// Capture PDF content
+			err := chromedp.ActionFunc(func(ctx context.Context) error {
+				buf, _, err := page.PrintToPDF().WithMarginBottom(1).WithMarginLeft(1).WithMarginRight(1).WithMarginTop(1).WithDisplayHeaderFooter(false).Do(ctx)
+				if err != nil {
+					return err
+				}
+				pdfContent = buf
+				return nil
+			}).Do(ctx)
+			return err
 		}),
 	)
 	if err != nil {
@@ -2916,7 +2900,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		return
 	}
 
-	pdfContent, err := generatePDF(buffer.String())
+	pdfContent, err := generatePDF(buffer.Bytes())
 	if err != nil {
 		fmt.Println("Error generating PDF:", err)
 		return
