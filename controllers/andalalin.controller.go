@@ -85,15 +85,17 @@ func generatePDF(htmlContent []byte) ([]byte, error) {
 		}),
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			// Capture PDF content
+			var buf []byte
 			err := chromedp.ActionFunc(func(ctx context.Context) error {
-				buf, _, err := page.PrintToPDF().Do(ctx)
-				if err != nil {
-					return err
-				}
-				pdfContent = buf
-				return nil
+				var err error
+				buf, _, err = page.PrintToPDF().Do(ctx)
+				return err
 			}).Do(ctx)
-			return err
+			if err != nil {
+				return err
+			}
+			pdfContent = buf
+			return nil
 		}),
 	)
 	if err != nil {
