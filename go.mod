@@ -3,6 +3,8 @@ module andalalin
 go 1.20
 
 require (
+	github.com/chromedp/cdproto v0.0.0-20240102194822-c006b26f21c7
+	github.com/chromedp/chromedp v0.9.3
 	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
@@ -17,8 +19,6 @@ require (
 
 require (
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
-	github.com/chromedp/cdproto v0.0.0-20240102194822-c006b26f21c7 // indirect
-	github.com/chromedp/chromedp v0.9.3 // indirect
 	github.com/chromedp/sysutil v1.0.0 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
@@ -36,7 +36,6 @@ require (
 )
 
 require (
-	github.com/SebastiaanKlippert/go-wkhtmltopdf v1.9.2
 	github.com/bytedance/sonic v1.10.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect

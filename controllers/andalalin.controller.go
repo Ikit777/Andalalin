@@ -24,8 +24,6 @@ import (
 
 	_ "time/tzdata"
 
-	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
-
 	"github.com/lukasjarosch/go-docx"
 
 	"github.com/chromedp/cdproto/page"
@@ -1983,33 +1981,13 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			return
 		}
 
-		pdfg, err := wkhtmltopdf.NewPDFGenerator()
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
-			log.Fatal("Eror generate pdf", err)
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		// read the HTML page as a PDF page
-		page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
-
-		pdfg.AddPage(page)
-
-		marginInMillimeters := 2.54 * 10
-
-		pdfg.Dpi.Set(300)
-		pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-		pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-		pdfg.MarginBottom.Set(uint(marginInMillimeters))
-		pdfg.MarginLeft.Set(uint(marginInMillimeters))
-		pdfg.MarginRight.Set(uint(marginInMillimeters))
-		pdfg.MarginTop.Set(uint(marginInMillimeters))
-
-		err = pdfg.Create()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
 		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
 		administrasi := struct {
@@ -2050,33 +2028,13 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			return
 		}
 
-		pdfg, err := wkhtmltopdf.NewPDFGenerator()
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
-			log.Fatal("Eror generate pdf", err)
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		// read the HTML page as a PDF page
-		page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
-
-		pdfg.AddPage(page)
-
-		marginInMillimeters := 2.54 * 10
-
-		pdfg.Dpi.Set(300)
-		pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-		pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-		pdfg.MarginBottom.Set(uint(marginInMillimeters))
-		pdfg.MarginLeft.Set(uint(marginInMillimeters))
-		pdfg.MarginRight.Set(uint(marginInMillimeters))
-		pdfg.MarginTop.Set(uint(marginInMillimeters))
-
-		err = pdfg.Create()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist administrasi", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist administrasi", Tipe: "Pdf", Berkas: pdfContent})
 	}
 
 	if andalalin.PersyaratanTidakSesuai != nil {
@@ -2532,30 +2490,10 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			return
 		}
 
-		pdfg, err := wkhtmltopdf.NewPDFGenerator()
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
-			log.Fatal("Eror generate pdf", err)
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
-		}
-
-		// read the HTML page as a PDF page
-		page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
-
-		pdfg.AddPage(page)
-
-		marginInMillimeters := 2.54 * 10
-
-		pdfg.Dpi.Set(300)
-		pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-		pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-		pdfg.MarginBottom.Set(uint(marginInMillimeters))
-		pdfg.MarginLeft.Set(uint(marginInMillimeters))
-		pdfg.MarginRight.Set(uint(marginInMillimeters))
-		pdfg.MarginTop.Set(uint(marginInMillimeters))
-
-		err = pdfg.Create()
-		if err != nil {
-			log.Fatal(err)
 		}
 
 		itemIndex := -1
@@ -2568,10 +2506,10 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 		}
 
 		if itemIndex != -1 {
-			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
 			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 		} else {
-			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Surat keputusan persetujuan teknis andalalin", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Surat keputusan persetujuan teknis andalalin", Tipe: "Pdf", Berkas: pdfContent})
 		}
 	}
 
@@ -2677,30 +2615,10 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		return
 	}
 
-	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	pdfContent, err := generatePDF(buffer.String())
 	if err != nil {
-		log.Fatal("Eror generate pdf", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
-	}
-
-	// read the HTML page as a PDF page
-	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
-
-	pdfg.AddPage(page)
-
-	marginInMillimeters := 2.54 * 10
-
-	pdfg.Dpi.Set(300)
-	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(uint(marginInMillimeters))
-	pdfg.MarginLeft.Set(uint(marginInMillimeters))
-	pdfg.MarginRight.Set(uint(marginInMillimeters))
-	pdfg.MarginTop.Set(uint(marginInMillimeters))
-
-	err = pdfg.Create()
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	itemIndex := -1
@@ -2713,10 +2631,10 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
 		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfContent})
 	}
 
 	if andalalin.KelengkapanTidakSesuai != nil {
