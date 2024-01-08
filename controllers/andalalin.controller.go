@@ -70,7 +70,7 @@ func generatePDF(htmlContent []byte) ([]byte, error) {
 			// Set page size in mm (replace with your desired values)
 			err := chromedp.EvaluateAsDevTools(`
 				const style = document.createElement('style');
-				style.innerHTML = '@page { size: 210mm 297mm; margin: 25.4mm; }';
+				style.innerHTML = '@page { size: 210mm 297mm; margin: 25.4mm; } @media print { @page { size: 210mm 297mm; margin: 0mm; } }';
 				document.head.appendChild(style);
 			`, nil).Do(ctx)
 			if err != nil {
