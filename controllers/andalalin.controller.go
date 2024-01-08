@@ -73,6 +73,16 @@ func generatePDF(htmlContent []byte) ([]byte, error) {
 			if err != nil {
 				return err
 			}
+
+			// Inject custom CSS to hide headers and footers during print
+			err = chromedp.EvaluateAsDevTools(`
+				const style = document.createElement('style');
+				style.innerHTML = '@media print { @page { margin: 0mm; } body::before, body::after { content: ""; display: none; } }';
+				document.head.appendChild(style);
+			`, nil).Do(ctx)
+			if err != nil {
+				return err
+			}
 			return nil
 		}),
 		chromedp.ActionFunc(func(ctx context.Context) error {
@@ -101,31 +111,19 @@ func generatePDF(htmlContent []byte) ([]byte, error) {
 }
 
 func printPDF(pdfContent []byte) ([]byte, error) {
-	// Create a temporary PDF file
-	pdfFile, err := os.CreateTemp("", "file")
-	if err != nil {
-		return nil, err
-	}
-	defer os.Remove(pdfFile.Name())
-	defer pdfFile.Close()
+	printCommand := exec.Command("google-chrome", "--headless", "--disable-gpu", "--print-to-pdf=-", "--no-sandbox")
+	printCommand.Stdin = bytes.NewReader(pdfContent)
 
-	// Write PDF content to the file
-	if _, err := pdfFile.Write(pdfContent); err != nil {
-		return nil, err
-	}
+	// Capture the output
+	var output bytes.Buffer
+	printCommand.Stdout = &output
+	printCommand.Stderr = os.Stderr
 
-	// Print the PDF file
-	printCommand := exec.Command("google-chrome", "--headless", "--disable-gpu", "--print-to-pdf="+pdfFile.Name(), "--no-sandbox")
 	if err := printCommand.Run(); err != nil {
 		return nil, err
 	}
 
-	fileData, err := os.ReadFile(pdfFile.Name())
-	if err != nil {
-		log.Fatal("Error reading the file:", err)
-	}
-
-	return fileData, nil
+	return output.Bytes(), nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
