@@ -59,22 +59,25 @@ func findItem(array []string, target string) int {
 	return -1
 }
 
-func generatePDF(htmlContent []byte) ([]byte, error) {
+func generatePDF(htmlContent string) ([]byte, error) {
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
 	var pdfContent []byte
 	err := chromedp.Run(ctx,
-		chromedp.Navigate("data:text/html,"+string(htmlContent)),
+		chromedp.Navigate("about:blank"),
 		chromedp.ActionFunc(func(ctx context.Context) error {
-			// Wait for rendering
-			time.Sleep(2 * time.Second)
-			return nil
+			frameTree, err := page.GetFrameTree().Do(ctx)
+			if err != nil {
+				return err
+			}
+
+			return page.SetDocumentContent(frameTree.Frame.ID, htmlContent).Do(ctx)
 		}),
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			// Capture PDF content
 			err := chromedp.ActionFunc(func(ctx context.Context) error {
-				buf, _, err := page.PrintToPDF().WithMarginBottom(1).WithMarginLeft(1).WithMarginRight(1).WithMarginTop(1).WithDisplayHeaderFooter(false).Do(ctx)
+				buf, _, err := page.PrintToPDF().WithMarginBottom(1).WithMarginLeft(1).WithMarginRight(1).WithMarginTop(1).WithDisplayHeaderFooter(false).WithPrintBackground(false).Do(ctx)
 				if err != nil {
 					return err
 				}
@@ -2900,15 +2903,9 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		return
 	}
 
-	pdfContent, err := generatePDF(buffer.Bytes())
+	pdfContent, err := generatePDF(buffer.String())
 	if err != nil {
 		fmt.Println("Error generating PDF:", err)
-		return
-	}
-
-	pdfBytes, err := printPDF(pdfContent)
-	if err != nil {
-		fmt.Println("Error printing PDF:", err)
 		return
 	}
 
@@ -2922,10 +2919,10 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfBytes
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
 		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfBytes})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfContent})
 	}
 
 	andalalin.StatusAndalalin = "Persetujuan penyusun dokumen"
