@@ -18,6 +18,7 @@ require (
 require (
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
+	github.com/jung-kurt/gofpdf v1.16.2 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect

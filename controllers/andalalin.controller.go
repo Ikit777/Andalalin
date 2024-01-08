@@ -19,6 +19,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jung-kurt/gofpdf"
 	"gorm.io/gorm"
 
 	_ "time/tzdata"
@@ -2835,30 +2836,21 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		return
 	}
 
-	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	pdf := gofpdf.New("P", "mm", "A4", "times")
+
+	pdf.SetMargins(25.4, 25.4, 25.4)
+
+	pdf.SetAutoPageBreak(true, 25.4)
+
+	pdf.AddPage()
+
+	pdf.Cell(0, 10, buffer.String())
+
+	var buf bytes.Buffer
+	err = pdf.Output(&buf)
 	if err != nil {
-		log.Fatal("Eror generate pdf", err)
+		log.Fatal("Eror saat membaca template:", err)
 		return
-	}
-
-	// read the HTML page as a PDF page
-	page := wkhtmltopdf.NewPageReader(bytes.NewReader(buffer.Bytes()))
-
-	pdfg.AddPage(page)
-
-	marginInMillimeters := 2.54 * 10
-
-	pdfg.Dpi.Set(300)
-	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(uint(marginInMillimeters))
-	pdfg.MarginLeft.Set(uint(marginInMillimeters))
-	pdfg.MarginRight.Set(uint(marginInMillimeters))
-	pdfg.MarginTop.Set(uint(marginInMillimeters))
-
-	err = pdfg.Create()
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	itemIndex := -1
@@ -2871,10 +2863,10 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	}
 
 	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfg.Bytes()
+		andalalin.BerkasPermohonan[itemIndex].Berkas = buf.Bytes()
 		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfg.Bytes()})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: buf.Bytes()})
 	}
 
 	andalalin.StatusAndalalin = "Persetujuan penyusun dokumen"
