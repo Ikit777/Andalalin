@@ -113,8 +113,11 @@ type Andalalin struct {
 	//Berkas Permohonan
 	BerkasPermohonan []BerkasPermohonan `gorm:"serializer:json"`
 
-	//Status Berkas Permohonan (Baru atau Revisi)
+	//Status berkas permohonan (Baru atau Revisi)
 	StatusBerkasPermohonan string `gorm:"type:varchar(255);not null"`
+
+	//Data catatan asistensi dokumen andalalin
+	CatatanAsistensiDokumen []CatatanAsistensi `gorm:"serializer:json"`
 
 	//Kelengkapan Tidak Sesuai
 	KelengkapanTidakSesuai []KelengkapanTidakSesuai `gorm:"serializer:json"`
@@ -649,6 +652,11 @@ type PerlalinResponseUser struct {
 	PertimbanganTindakan  string `json:"pertimbangan_tindakan,omitempty"`
 	PertimbanganPenolakan string `json:"pertimbangan_penolakan,omitempty"`
 	PertimbanganPenundaan string `json:"pertimbangan_penundaan,omitempty"`
+}
+
+type CatatanAsistensi struct {
+	Substansi string
+	Catatan   []string
 }
 
 type BerkasPermohonan struct {
