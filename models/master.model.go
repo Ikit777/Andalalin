@@ -152,6 +152,7 @@ type PersyaratanAndalalinInput struct {
 	Kebutuhan             string `json:"kebutuhan" binding:"required"`
 	Bangkitan             string `json:"bangkitan" binding:"required"`
 	Persyaratan           string `json:"persyaratan" binding:"required"`
+	Tipe                  string `json:"tipe" binding:"required"`
 	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
 }
 
@@ -164,6 +165,7 @@ type PersyaratanAndalalinEdit struct {
 	Bangkitan             string `json:"bangkitan" binding:"required"`
 	Persyaratan           string `json:"persyaratan" binding:"required"`
 	PersyaratanEdit       string `json:"persyaratan_edit" binding:"required"`
+	Tipe                  string `json:"tipe" binding:"required"`
 	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
 }
 
@@ -171,6 +173,7 @@ type PersyaratanAndalalinEdit struct {
 type PersyaratanPerlalinInput struct {
 	Kebutuhan             string `json:"kebutuhan" binding:"required"`
 	Persyaratan           string `json:"persyaratan" binding:"required"`
+	Tipe                  string `json:"tipe" binding:"required"`
 	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
 }
 
@@ -182,6 +185,7 @@ type PersyaratanPerlalinEdit struct {
 	Kebutuhan             string `json:"kebutuhan" binding:"required"`
 	Persyaratan           string `json:"persyaratan" binding:"required"`
 	PersyaratanEdit       string `json:"persyaratan_edit" binding:"required"`
+	Tipe                  string `json:"tipe" binding:"required"`
 	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
 }
 

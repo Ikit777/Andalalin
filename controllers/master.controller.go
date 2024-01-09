@@ -2175,6 +2175,7 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 			Kebutuhan:             payload.Kebutuhan,
 			Bangkitan:             payload.Bangkitan,
 			Persyaratan:           payload.Persyaratan,
+			Tipe:                  payload.Tipe,
 			KeteranganPersyaratan: payload.KeteranganPersyaratan,
 		}
 		master.Persyaratan.PersyaratanAndalalin = append(master.Persyaratan.PersyaratanAndalalin, persyaratan)
@@ -2381,10 +2382,13 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 			master.Persyaratan.PersyaratanAndalalin[itemIndex].Persyaratan = payload.PersyaratanEdit
 		}
 
+		if master.Persyaratan.PersyaratanAndalalin[itemIndex].Tipe != payload.Tipe {
+			master.Persyaratan.PersyaratanAndalalin[itemIndex].Tipe = payload.Tipe
+		}
+
 		if master.Persyaratan.PersyaratanAndalalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
 			master.Persyaratan.PersyaratanAndalalin[itemIndex].KeteranganPersyaratan = payload.KeteranganPersyaratan
 		}
-
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
@@ -2467,6 +2471,7 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 		persyaratan := models.PersyaratanPerlalinInput{
 			Kebutuhan:             payload.Kebutuhan,
 			Persyaratan:           payload.Persyaratan,
+			Tipe:                  payload.Tipe,
 			KeteranganPersyaratan: payload.KeteranganPersyaratan,
 		}
 		master.Persyaratan.PersyaratanPerlalin = append(master.Persyaratan.PersyaratanPerlalin, persyaratan)
@@ -2671,6 +2676,10 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 
 		if master.Persyaratan.PersyaratanPerlalin[itemIndex].Persyaratan != payload.PersyaratanEdit {
 			master.Persyaratan.PersyaratanPerlalin[itemIndex].Persyaratan = payload.PersyaratanEdit
+		}
+
+		if master.Persyaratan.PersyaratanPerlalin[itemIndex].Tipe != payload.Tipe {
+			master.Persyaratan.PersyaratanPerlalin[itemIndex].Tipe = payload.Tipe
 		}
 
 		if master.Persyaratan.PersyaratanPerlalin[itemIndex].KeteranganPersyaratan != payload.KeteranganPersyaratan {
