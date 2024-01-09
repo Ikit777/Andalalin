@@ -195,9 +195,11 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 				return
 			}
 
-			// Store the blob data in the map
-			berkas = append(berkas, models.BerkasPermohonan{Nama: key, Tipe: "Pdf", Status: "Selesai", Berkas: data})
-
+			if http.DetectContentType(data) == "application/pdf" {
+				berkas = append(berkas, models.BerkasPermohonan{Nama: key, Tipe: "Pdf", Status: "Selesai", Berkas: data})
+			} else {
+				berkas = append(berkas, models.BerkasPermohonan{Nama: key, Tipe: "Word", Status: "Selesai", Berkas: data})
+			}
 		}
 	}
 
@@ -452,9 +454,11 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 				return
 			}
 
-			// Store the blob data in the map
-			berkas = append(berkas, models.BerkasPermohonan{Nama: key, Tipe: "Pdf", Status: "Selesai", Berkas: data})
-
+			if http.DetectContentType(data) == "application/pdf" {
+				berkas = append(berkas, models.BerkasPermohonan{Nama: key, Tipe: "Pdf", Status: "Selesai", Berkas: data})
+			} else {
+				berkas = append(berkas, models.BerkasPermohonan{Nama: key, Tipe: "Word", Status: "Selesai", Berkas: data})
+			}
 		}
 	}
 
