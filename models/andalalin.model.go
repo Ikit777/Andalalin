@@ -126,7 +126,7 @@ type Andalalin struct {
 	Pertimbangan string
 
 	//Persyaratan tidak terpenuhi
-	PersyaratanTidakSesuai []string `gorm:"serializer:json"`
+	PersyaratanTidakSesuai []PersayaratanTidakSesuai `gorm:"serializer:json"`
 
 	//Pemeriksaan surat persetujuan
 	HasilPemeriksaan   string `gorm:"type:varchar(255);"`
@@ -338,7 +338,7 @@ type AndalalinResponse struct {
 	Catatan           *string `json:"catatan,omitempty"`
 
 	//Persyaratan tidak terpenuhi
-	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
+	PersyaratanTidakSesuai []PersayaratanTidakSesuai `json:"persyaratan_tidak_sesuai,omitempty"`
 
 	Pertimbangan string `json:"pertimbangan,omitempty"`
 
@@ -406,7 +406,7 @@ type AndalalinResponseUser struct {
 	Catatan           *string `json:"catatan,omitempty"`
 
 	//Persyaratan tidak terpenuhi
-	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
+	PersyaratanTidakSesuai []PersayaratanTidakSesuai `json:"persyaratan_tidak_sesuai,omitempty"`
 
 	Pertimbangan string `json:"pertimbangan,omitempty"`
 
@@ -479,7 +479,7 @@ type Perlalin struct {
 	BerkasPermohonan []BerkasPermohonan `gorm:"serializer:json"`
 
 	//Persyaratan tidak terpenuhi
-	PersyaratanTidakSesuai []string `gorm:"serializer:json"`
+	PersyaratanTidakSesuai []PersayaratanTidakSesuai `gorm:"serializer:json"`
 
 	//Data Tindakan
 	Tindakan string
@@ -583,7 +583,7 @@ type PerlalinResponse struct {
 	Catatan             *string `json:"catatan,omitempty"`
 
 	//Persyaratan tidak terpenuhi
-	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
+	PersyaratanTidakSesuai []PersayaratanTidakSesuai `json:"persyaratan_tidak_sesuai,omitempty"`
 
 	//Data Petugas
 	IdPetugas         uuid.UUID `json:"id_petugas,omitempty"`
@@ -639,7 +639,7 @@ type PerlalinResponseUser struct {
 	Catatan             *string `json:"catatan,omitempty"`
 
 	//Persyaratan tidak terpenuhi
-	PersyaratanTidakSesuai []string `json:"persyaratan_tidak_sesuai,omitempty"`
+	PersyaratanTidakSesuai []PersayaratanTidakSesuai `json:"persyaratan_tidak_sesuai,omitempty"`
 
 	//Berkas Permohonan
 	PersyaratanPermohonan []string `json:"persyaratan,omitempty"`
@@ -677,6 +677,11 @@ type KelengkapanTidakSesuaiResponse struct {
 	Tipe    string `json:"tipe,omitempty"`
 }
 
+type PersayaratanTidakSesuai struct {
+	Persyaratan string `json:"persyaratan,omitempty"`
+	Tipe        string `json:"tipe,omitempty"`
+}
+
 type DaftarAndalalinResponse struct {
 	IdAndalalin      uuid.UUID `json:"id_andalalin,omitempty"`
 	Kode             string    `json:"kode_andalalin,omitempty"`
@@ -689,10 +694,6 @@ type DaftarAndalalinResponse struct {
 	StatusAndalalin  string    `json:"status_andalalin,omitempty"`
 }
 
-type PersayaratanTidakSesuaiInput struct {
-	Persyaratan []string `json:"persyaratan" binding:"required"`
-}
-
 type Pemeriksaan struct {
 	Hasil   string  `json:"hasil" binding:"required"`
 	Catatan *string `json:"catatan" binding:"required"`
@@ -701,16 +702,6 @@ type Pemeriksaan struct {
 type KeputusanHasil struct {
 	Keputusan    string `json:"keputusan" binding:"required"`
 	Pertimbangan string `json:"pertimbangan" binding:"required"`
-}
-
-type InputBAP struct {
-	NomerBAPDasar       string `json:"nomer_dasar" binding:"required"`
-	NomerBAPPelaksanaan string `json:"nomer_pelaksanaan" binding:"required"`
-	TanggalBAP          string `json:"tanggal" binding:"required"`
-}
-
-type BAPData struct {
-	Data InputBAP `form:"data"`
 }
 
 type TambahPetugas struct {
@@ -806,9 +797,22 @@ type Administrasi struct {
 type DataAdministrasi struct {
 	Persyaratan string `json:"persyaratan" binding:"required"`
 	Kebutuhan   string `json:"kebutuhan" binding:"required"`
+	Tipe        string `json:"tipe" binding:"required"`
 	Ada         string `json:"ada" binding:"required"`
 	Tidak       string `json:"tidak" binding:"required"`
 	Keterangan  string `json:"keterangan" binding:"required"`
+}
+
+type AdministrasiPerlalin struct {
+	Data []DataAdministrasiPerlalin `json:"data" binding:"required"`
+}
+
+type DataAdministrasiPerlalin struct {
+	Persyaratan string `json:"persyaratan" binding:"required"`
+	Kebutuhan   string `json:"kebutuhan" binding:"required"`
+	Tipe        string `json:"tipe" binding:"required"`
+	Ada         string `json:"ada" binding:"required"`
+	Tidak       string `json:"tidak" binding:"required"`
 }
 
 type Kewajiban struct {

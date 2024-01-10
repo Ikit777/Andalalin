@@ -2040,7 +2040,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 
 	for _, item := range payload.Data {
 		if item.Tidak != "" && item.Kebutuhan == "Wajib" {
-			andalalin.PersyaratanTidakSesuai = append(andalalin.PersyaratanTidakSesuai, item.Persyaratan)
+			andalalin.PersyaratanTidakSesuai = append(andalalin.PersyaratanTidakSesuai, models.PersayaratanTidakSesuai{Persyaratan: item.Persyaratan, Tipe: item.Tipe})
 		}
 	}
 
@@ -2053,45 +2053,9 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
-func (ac *AndalalinController) PersyaratanTerpenuhi(ctx *gin.Context) {
+func (ac *AndalalinController) CheckAdministrasiPerlalin(ctx *gin.Context) {
+	var payload *models.AdministrasiPerlalin
 	id := ctx.Param("id_andalalin")
-
-	config, _ := initializers.LoadConfig()
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinTindakLanjut]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
-
-	var perlalin models.Perlalin
-
-	ac.DB.First(&perlalin, "id_andalalin = ?", id)
-
-	if perlalin.IdAndalalin != uuid.Nil {
-		perlalin.StatusAndalalin = "Persyaratan terpenuhi"
-		ac.DB.Save(&perlalin)
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
-}
-
-func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
-	id := ctx.Param("id_andalalin")
-	var payload *models.PersayaratanTidakSesuaiInput
 
 	config, _ := initializers.LoadConfig()
 
@@ -2119,79 +2083,31 @@ func (ac *AndalalinController) PersyaratanTidakSesuai(ctx *gin.Context) {
 		return
 	}
 
-	var andalalin models.Andalalin
 	var perlalin models.Perlalin
 
-	ac.DB.First(&andalalin, "id_andalalin = ?", id)
-	ac.DB.First(&perlalin, "id_andalalin = ?", id)
-
-	if andalalin.IdAndalalin != uuid.Nil {
-		andalalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
-		andalalin.PersyaratanTidakSesuai = payload.Persyaratan
-
-		ac.DB.Save(&andalalin)
-
-		var user models.User
-		resultUser := ac.DB.First(&user, "id = ?", andalalin.IdUser)
-		if resultUser.Error != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
-			return
-		}
-
-		simpanNotif := models.Notifikasi{
-			IdUser: user.ID,
-			Title:  "Persyaratan tidak terpenuhi",
-			Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi",
-		}
-
-		ac.DB.Create(&simpanNotif)
-
-		if user.PushToken != "" {
-			notif := utils.Notification{
-				IdUser: user.ID,
-				Title:  "Persyaratan tidak terpenuhi",
-				Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi",
-				Token:  user.PushToken,
-			}
-
-			utils.SendPushNotifications(&notif)
-		}
-
+	result := ac.DB.First(&perlalin, "id_andalalin = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+		return
 	}
 
-	if perlalin.IdAndalalin != uuid.Nil {
+	if perlalin.PersyaratanTidakSesuai != nil {
+		perlalin.PersyaratanTidakSesuai = nil
+	}
+
+	for _, item := range payload.Data {
+		if item.Tidak != "" && item.Kebutuhan == "Wajib" {
+			perlalin.PersyaratanTidakSesuai = append(perlalin.PersyaratanTidakSesuai, models.PersayaratanTidakSesuai{Persyaratan: item.Persyaratan, Tipe: item.Tipe})
+		}
+	}
+
+	if perlalin.PersyaratanTidakSesuai == nil {
+		perlalin.StatusAndalalin = "Persyaratan terpenuhi"
+	} else {
 		perlalin.StatusAndalalin = "Persyaratan tidak terpenuhi"
-		perlalin.PersyaratanTidakSesuai = payload.Persyaratan
-
-		ac.DB.Save(&perlalin)
-
-		var user models.User
-		resultUser := ac.DB.First(&user, "id = ?", perlalin.IdUser)
-		if resultUser.Error != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
-			return
-		}
-
-		simpanNotif := models.Notifikasi{
-			IdUser: user.ID,
-			Title:  "Persyaratan tidak terpenuhi",
-			Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak terpenuhi",
-		}
-
-		ac.DB.Create(&simpanNotif)
-
-		if user.PushToken != "" {
-			notif := utils.Notification{
-				IdUser: user.ID,
-				Title:  "Persyaratan tidak terpenuhi",
-				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " terdapat persyaratan yang tidak terpenuhi",
-				Token:  user.PushToken,
-			}
-
-			utils.SendPushNotifications(&notif)
-		}
-
 	}
+
+	ac.DB.Save(&perlalin)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
