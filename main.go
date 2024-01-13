@@ -85,5 +85,6 @@ func main() {
 	AndalalinRouteController.AndalalainRoute(router)
 	SurveyRouteController.SurveyRoute(router)
 	DataMasterRouteController.DataMasterRoute(router)
+
 	log.Fatal(server.Run(":" + config.ServerPort))
 }
