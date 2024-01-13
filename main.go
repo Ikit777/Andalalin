@@ -54,11 +54,10 @@ func init() {
 	DataMasterRouteController = routes.NewDataMasterRouteController(DataMasterController)
 
 	server = gin.New()
+	gin.SetMode(gin.ReleaseMode)
 }
 
 func main() {
-	gin.SetMode(gin.ReleaseMode)
-
 	config, err := initializers.LoadConfig()
 	if err != nil {
 		log.Fatal("Could not load environment variables", err)
@@ -85,5 +84,6 @@ func main() {
 	AndalalinRouteController.AndalalainRoute(router)
 	SurveyRouteController.SurveyRoute(router)
 	DataMasterRouteController.DataMasterRoute(router)
+
 	log.Fatal(server.Run(":" + config.ServerPort))
 }
