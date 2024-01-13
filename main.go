@@ -54,8 +54,6 @@ func init() {
 	DataMasterRouteController = routes.NewDataMasterRouteController(DataMasterController)
 
 	server = gin.New()
-	server.Use(gin.Logger())
-	server.Use(gin.Recovery())
 	gin.SetMode(gin.ReleaseMode)
 }
 
@@ -86,5 +84,5 @@ func main() {
 	AndalalinRouteController.AndalalainRoute(router)
 	SurveyRouteController.SurveyRoute(router)
 	DataMasterRouteController.DataMasterRoute(router)
-	server.Run(":" + config.ServerPort)
+	log.Fatal(server.Run(":" + config.ServerPort))
 }
