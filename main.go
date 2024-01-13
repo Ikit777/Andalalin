@@ -53,7 +53,10 @@ func init() {
 	DataMasterController = controllers.NewDataMasterControler(initializers.DB)
 	DataMasterRouteController = routes.NewDataMasterRouteController(DataMasterController)
 
-	server = gin.Default()
+	server = gin.New()
+	server.Use(gin.Logger())
+	server.Use(gin.Recovery())
+	gin.SetMode(gin.ReleaseMode)
 }
 
 func main() {
