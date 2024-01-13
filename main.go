@@ -30,7 +30,7 @@ var (
 	DataMasterRouteController routes.DataMasterRouteController
 )
 
-func main() {
+func init() {
 	config, err := initializers.LoadConfig()
 	if err != nil {
 		log.Fatal("Could not load environment variables", err)
@@ -54,7 +54,15 @@ func main() {
 	DataMasterRouteController = routes.NewDataMasterRouteController(DataMasterController)
 
 	server = gin.New()
+}
+
+func main() {
 	gin.SetMode(gin.ReleaseMode)
+
+	config, err := initializers.LoadConfig()
+	if err != nil {
+		log.Fatal("Could not load environment variables", err)
+	}
 
 	corsConfig := cors.DefaultConfig()
 
