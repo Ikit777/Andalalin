@@ -57,6 +57,11 @@ func init() {
 }
 
 func main() {
+	config, err := initializers.LoadConfig()
+	if err != nil {
+		log.Fatal("Could not load environment variables", err)
+	}
+
 	corsConfig := cors.DefaultConfig()
 
 	corsConfig.AllowOrigins = []string{"*"}
@@ -78,5 +83,5 @@ func main() {
 	AndalalinRouteController.AndalalainRoute(router)
 	SurveyRouteController.SurveyRoute(router)
 	DataMasterRouteController.DataMasterRoute(router)
-	log.Fatal(server.Run())
+	log.Fatal(server.Run(":" + config.ServerPort))
 }
