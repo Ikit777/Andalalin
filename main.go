@@ -56,7 +56,7 @@ func init() {
 
 	os.Setenv("GIN_MODE", "release")
 	gin.SetMode(gin.ReleaseMode)
-	server = gin.Default()
+	server = gin.New()
 }
 
 func main() {
