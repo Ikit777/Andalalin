@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"andalalin/controllers"
 	"andalalin/initializers"
@@ -53,8 +54,9 @@ func init() {
 	DataMasterController = controllers.NewDataMasterControler(initializers.DB)
 	DataMasterRouteController = routes.NewDataMasterRouteController(DataMasterController)
 
-	server = gin.New()
+	os.Setenv("GIN_MODE", "release")
 	gin.SetMode(gin.ReleaseMode)
+	server = gin.Default()
 }
 
 func main() {
