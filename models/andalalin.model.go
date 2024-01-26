@@ -655,8 +655,8 @@ type PerlalinResponseUser struct {
 }
 
 type CatatanAsistensi struct {
-	Substansi string
-	Catatan   []string
+	Substansi string   `json:"substansi" binding:"required"`
+	Catatan   []string `json:"catatan" binding:"required"`
 }
 
 type BerkasPermohonan struct {
@@ -863,4 +863,9 @@ type DataMuatan struct {
 type DataTambahan struct {
 	Judul string   `json:"judul" binding:"required"`
 	Poin  []string `json:"poin" binding:"required"`
+}
+
+type PemeriksaanDokumen struct {
+	Status      string             `json:"status" binding:"required"`
+	Pemeriksaan []CatatanAsistensi `json:"pemeriksaan" binding:"required"`
 }

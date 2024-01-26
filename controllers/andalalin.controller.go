@@ -2630,7 +2630,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		bangkitan = "TINGGI"
 	}
 
-	kelengkapan := struct {
+	penyusun := struct {
 		Bangkitan   string
 		Objek       string
 		Lokasi      string
@@ -2659,7 +2659,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	}
 
 	buffer := new(bytes.Buffer)
-	if err = t.Execute(buffer, kelengkapan); err != nil {
+	if err = t.Execute(buffer, penyusun); err != nil {
 		log.Fatal("Eror saat membaca template:", err)
 		return
 	}
@@ -2691,6 +2691,137 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	ac.DB.Save(&andalalin)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
+	var payload *models.PemeriksaanDokumen
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig()
+
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var andalalin models.Andalalin
+
+	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
+
+	t, err := template.ParseFiles("templates/catatanAsistensiDokumen.html")
+	if err != nil {
+		log.Fatal("Error reading the email template:", err)
+		return
+	}
+
+	var bangkitan string
+
+	switch andalalin.Bangkitan {
+	case "Bangkitan rendah":
+		bangkitan = "RENDAH"
+	case "Bangkitan sedang":
+		bangkitan = "SEDANG"
+	case "Bangkitan tinggi":
+		bangkitan = "TINGGI"
+	}
+
+	pemeriksaan := struct {
+		Bangkitan   string
+		Objek       string
+		Lokasi      string
+		Pengembang  string
+		Pemohon     string
+		Sertifikat  string
+		Klasifikasi string
+		Diterima    string
+		Pemeriksaan string
+		Data        []models.CatatanAsistensi
+		Operator    string
+		Nip         string
+	}{
+		Bangkitan:   bangkitan,
+		Objek:       andalalin.Jenis,
+		Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+		Pengembang:  andalalin.NamaPengembang,
+		Pemohon:     andalalin.NamaPemohon,
+		Sertifikat:  andalalin.NomerSertifikatPemohon,
+		Klasifikasi: andalalin.KlasifikasiPemohon,
+		Diterima:    andalalin.TanggalAndalalin,
+		Pemeriksaan: tanggal,
+		Data:        payload.Pemeriksaan,
+		Operator:    currentUser.Name,
+		Nip:         *currentUser.NIP,
+	}
+
+	buffer := new(bytes.Buffer)
+	if err = t.Execute(buffer, pemeriksaan); err != nil {
+		log.Fatal("Eror saat membaca template:", err)
+		return
+	}
+
+	pdfContent, err := generatePDF(buffer.String())
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	itemIndex := -1
+
+	for i, item := range andalalin.BerkasPermohonan {
+		if item.Nama == "Catatan asistensi dokumen andalalin" {
+			itemIndex = i
+			break
+		}
+	}
+
+	if itemIndex != -1 {
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+	} else {
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Catatan asistensi dokumen andalalin", Tipe: "Pdf", Berkas: pdfContent})
+	}
+
+	if payload.Status == "Dokumen terpenuhi" {
+		andalalin.StatusAndalalin = "Dokumen terpenuhi"
+	} else {
+		andalalin.StatusAndalalin = "Dokumen tidak terpenuhi"
+	}
+
+	andalalin.CatatanAsistensiDokumen = payload.Pemeriksaan
+
+	ac.DB.Save(&andalalin)
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+
 }
 
 func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
