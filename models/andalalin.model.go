@@ -117,6 +117,7 @@ type Andalalin struct {
 	StatusBerkasPermohonan string `gorm:"type:varchar(255);not null"`
 
 	//Data catatan asistensi dokumen andalalin
+	HasilAsistensiDokumen   string
 	CatatanAsistensiDokumen []CatatanAsistensi `gorm:"serializer:json"`
 
 	//Kelengkapan Tidak Sesuai

@@ -2810,13 +2810,9 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Catatan asistensi dokumen andalalin", Tipe: "Pdf", Berkas: pdfContent})
 	}
 
-	if payload.Status == "Dokumen terpenuhi" {
-		andalalin.StatusAndalalin = "Dokumen terpenuhi"
-	} else {
-		andalalin.StatusAndalalin = "Dokumen tidak terpenuhi"
-	}
-
+	andalalin.HasilAsistensiDokumen = payload.Status
 	andalalin.CatatanAsistensiDokumen = payload.Pemeriksaan
+	andalalin.StatusAndalalin = "Persetujuan asistensi dokumen"
 
 	ac.DB.Save(&andalalin)
 
