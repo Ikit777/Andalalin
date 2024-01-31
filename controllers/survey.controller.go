@@ -441,9 +441,9 @@ func (sc *SurveyController) IsiSurveyMandiri(ctx *gin.Context) {
 		return
 	}
 
-	blobs := make(map[string][]byte)
+	foto := []models.Foto{}
 
-	for key, files := range form.File {
+	for _, files := range form.File {
 		for _, file := range files {
 			// Save the uploaded file with key as prefix
 			file, err := file.Open()
@@ -461,7 +461,7 @@ func (sc *SurveyController) IsiSurveyMandiri(ctx *gin.Context) {
 			}
 
 			// Store the blob data in the map
-			blobs[key] = data
+			foto = append(foto, models.Foto{Foto: data})
 		}
 	}
 
@@ -471,9 +471,7 @@ func (sc *SurveyController) IsiSurveyMandiri(ctx *gin.Context) {
 		EmailPetugas:  currentUser.Email,
 		Lokasi:        payload.Data.Lokasi,
 		Catatan:       payload.Data.Catatan,
-		Foto1:         blobs["foto1"],
-		Foto2:         blobs["foto2"],
-		Foto3:         blobs["foto3"],
+		Foto:          foto,
 		Latitude:      payload.Data.Latitude,
 		Longitude:     payload.Data.Longitude,
 		StatusSurvei:  "Perlu tindakan",
