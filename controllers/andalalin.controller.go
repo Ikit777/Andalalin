@@ -1832,6 +1832,44 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			andalalin.StatusAndalalin = andalalin.HasilAsistensiDokumen
 		}
 
+		if dokumen == "Surat pernyataan kesanggupan" {
+			itemPernyataan := -1
+
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Surat pernyataan kesanggupan (word)" {
+					itemPernyataan = i
+					break
+				}
+			}
+
+			for key, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					if key == "Surat pernyataan kesanggupan (word)" {
+						andalalin.BerkasPermohonan[itemPernyataan].Berkas = data
+					} else {
+						andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Nama: "Surat pernyataan kesanggupan (pdf)", Tipe: "Pdf", Berkas: data})
+					}
+
+				}
+			}
+
+			andalalin.StatusAndalalin = "Menunggu pembayaran"
+		}
+
 		if dokumen == "Surat keputusan persetujuan teknis andalalin" {
 			itenKeputusan := -1
 
@@ -1941,6 +1979,53 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 				}
 			}
 		}
+
+		if dokumen == "Dokumen andalalin" {
+			itemWord := -1
+			itemPdf := -1
+
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Dokumen hasil analisis dampak lalu lintas (word)" {
+					itemWord = i
+					break
+				}
+			}
+
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Dokumen hasil analisis dampak lalu lintas (pdf)" {
+					itemPdf = i
+					break
+				}
+			}
+
+			for key, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					if key == "Dokumen hasil analisis dampak lalu lintas (word)" {
+						andalalin.BerkasPermohonan[itemWord].Berkas = data
+					} else {
+						andalalin.BerkasPermohonan[itemPdf].Berkas = data
+					}
+
+				}
+			}
+
+			andalalin.StatusAndalalin = "Pemeriksaan dokumen andalalin"
+		}
+
 		ac.DB.Save(&andalalin)
 	}
 
@@ -2851,7 +2936,6 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 	ac.DB.Save(&andalalin)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
-
 }
 
 func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
