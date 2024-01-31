@@ -1798,6 +1798,40 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			andalalin.StatusAndalalin = "Pemeriksaan dokumen andalalin"
 		}
 
+		if dokumen == "Catatan asistensi dokumen" {
+			itemIndex := -1
+
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Catatan asistensi dokumen analisis dampak lalu lintas" {
+					itemIndex = i
+					break
+				}
+			}
+
+			for _, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					andalalin.BerkasPermohonan[itemIndex].Berkas = data
+				}
+			}
+
+			andalalin.BerkasPermohonan[itemIndex].Status = "Selesai"
+			andalalin.StatusAndalalin = andalalin.HasilAsistensiDokumen
+		}
+
 		if dokumen == "Surat keputusan persetujuan teknis andalalin" {
 			itenKeputusan := -1
 
@@ -2797,7 +2831,7 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 	itemIndex := -1
 
 	for i, item := range andalalin.BerkasPermohonan {
-		if item.Nama == "Catatan asistensi dokumen andalalin" {
+		if item.Nama == "Catatan asistensi dokumen analisis dampak lalu lintas" {
 			itemIndex = i
 			break
 		}
@@ -2807,7 +2841,7 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
 		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Catatan asistensi dokumen andalalin", Tipe: "Pdf", Berkas: pdfContent})
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Catatan asistensi dokumen analisis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfContent})
 	}
 
 	andalalin.HasilAsistensiDokumen = payload.Status
