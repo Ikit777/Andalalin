@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"archive/zip"
-	"bytes"
-	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -110,16 +108,7 @@ func StartStreaming(db *gorm.DB) {
 			continue
 		}
 
-		var compressedData bytes.Buffer
-		writer := gzip.NewWriter(&compressedData)
-		_, err = writer.Write([]byte(jsonData))
-		if err != nil {
-			log.Println("Error compressing data:", err)
-			continue
-		}
-		writer.Close()
-
-		encodedData := base64.StdEncoding.EncodeToString(compressedData.Bytes())
+		encodedData := base64.StdEncoding.EncodeToString(jsonData)
 		stream <- encodedData
 	}
 }
