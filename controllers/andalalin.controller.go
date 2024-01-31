@@ -3049,9 +3049,9 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 		return
 	}
 
-	blobs := make(map[string][]byte)
+	foto := []models.Foto{}
 
-	for key, files := range form.File {
+	for _, files := range form.File {
 		for _, file := range files {
 			// Save the uploaded file with key as prefix
 			file, err := file.Open()
@@ -3069,7 +3069,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 			}
 
 			// Store the blob data in the map
-			blobs[key] = data
+			foto = append(foto, models.Foto{Foto: data})
 		}
 	}
 
@@ -3083,9 +3083,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 			EmailPetugas:  currentUser.Email,
 			Lokasi:        payload.Data.Lokasi,
 			Catatan:       payload.Data.Catatan,
-			Foto1:         blobs["foto1"],
-			Foto2:         blobs["foto2"],
-			Foto3:         blobs["foto3"],
+			Foto:          foto,
 			Latitude:      payload.Data.Latitude,
 			Longitude:     payload.Data.Longitude,
 			TanggalSurvei: tanggal,
@@ -4027,9 +4025,9 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 		return
 	}
 
-	blobs := make(map[string][]byte)
+	foto := []models.Foto{}
 
-	for key, files := range form.File {
+	for _, files := range form.File {
 		for _, file := range files {
 			// Save the uploaded file with key as prefix
 			file, err := file.Open()
@@ -4047,7 +4045,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 			}
 
 			// Store the blob data in the map
-			blobs[key] = data
+			foto = append(foto, models.Foto{Foto: data})
 		}
 	}
 
@@ -4059,9 +4057,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 		EmailPetugas:      currentUser.Email,
 		Lokasi:            payload.Data.Lokasi,
 		Catatan:           payload.Data.Catatan,
-		Foto1:             blobs["foto1"],
-		Foto2:             blobs["foto2"],
-		Foto3:             blobs["foto3"],
+		Foto:              foto,
 		Latitude:          payload.Data.Latitude,
 		Longitude:         payload.Data.Longitude,
 		WaktuPemasangan:   tanggal,

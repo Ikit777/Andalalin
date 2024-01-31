@@ -720,14 +720,16 @@ type Survei struct {
 	Petugas       string    `gorm:"type:varchar(255);not null"`
 	EmailPetugas  string    `gorm:"type:varchar(255);not null"`
 	Catatan       *string
-	Foto1         []byte
-	Foto2         []byte
-	Foto3         []byte
+	Foto          []Foto `gorm:"serializer:json"`
 	Lokasi        string
 	Latitude      float64
 	Longitude     float64
 	WaktuSurvei   string `gorm:"not null"`
 	TanggalSurvei string `gorm:"not null"`
+}
+
+type Foto struct {
+	Foto []byte
 }
 
 type InputSurvey struct {
@@ -779,9 +781,7 @@ type Pemasangan struct {
 	Petugas           string    `gorm:"type:varchar(255);not null"`
 	EmailPetugas      string    `gorm:"type:varchar(255);not null"`
 	Catatan           *string
-	Foto1             []byte
-	Foto2             []byte
-	Foto3             []byte
+	Foto              []Foto `gorm:"serializer:json"`
 	Lokasi            string
 	Latitude          float64
 	Longitude         float64
