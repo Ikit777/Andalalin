@@ -1152,6 +1152,9 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 
 				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
 
+				HasilAsistensiDokumen: andalalin.HasilAsistensiDokumen,
+				CatatanAsistensiDokumen: andalalin.CatatanAsistensiDokumen,
+
 				//Data Pemeriksaan Surat Persetujuan
 				HasilPemeriksaan:   andalalin.HasilPemeriksaan,
 				CatatanPemeriksaan: andalalin.CatatanPemeriksaan,

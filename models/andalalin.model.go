@@ -347,6 +347,9 @@ type AndalalinResponse struct {
 	HasilPemeriksaan   string  `json:"hasil_pemeriksaan,omitempty"`
 	CatatanPemeriksaan *string `json:"catatan_pemeriksaan,omitempty"`
 
+	HasilAsistensiDokumen   string             `json:"hasil_asistensi,omitempty"`
+	CatatanAsistensiDokumen []CatatanAsistensi `json:"catatan_asistensi,omitempty"`
+
 	//Berkas Permohonan
 	PersyaratanPermohonan []string `json:"persyaratan,omitempty"`
 	BerkasPermohonan      []string `json:"berkas,omitempty"`
