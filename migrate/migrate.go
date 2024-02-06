@@ -34,6 +34,7 @@ func removeExtension(fileName string) string {
 func main() {
 	initializers.DB.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
 
+	initializers.DB.Migrator().DropTable(&models.User{})
 	initializers.DB.Migrator().DropTable(&models.Andalalin{})
 	initializers.DB.Migrator().DropTable(&models.Perlalin{})
 	initializers.DB.Migrator().DropTable(&models.Survei{})
@@ -46,6 +47,7 @@ func main() {
 	initializers.DB.Migrator().DropTable(&models.SurveiKepuasan{})
 	initializers.DB.Migrator().DropTable(&models.Pemasangan{})
 
+	initializers.DB.AutoMigrate(&models.User{})
 	initializers.DB.AutoMigrate(&models.Andalalin{})
 	initializers.DB.AutoMigrate(&models.Perlalin{})
 	initializers.DB.AutoMigrate(&models.Survei{})
@@ -137,7 +139,7 @@ func main() {
 	lainnya = append(lainnya, models.JenisRencana{Jenis: "Fasilitan olah raga", Kriteria: "Jumlah kapasitas penonton", Satuan: "orang", Terbilang: "orang"})
 	lainnya = append(lainnya, models.JenisRencana{Jenis: "Kawasan TOD (indoor atau outdoor)", Kriteria: "Luas lantai bangunan", Satuan: "m²", Terbilang: "meter persegi"})
 	lainnya = append(lainnya, models.JenisRencana{Jenis: "Asrama", Kriteria: "Jumlah unit", Satuan: "unit", Terbilang: "unit"})
-	lainnya = append(lainnya, models.JenisRencana{Jenis: "Ruko", Kriteria: "Luas lahan keseluruhan", Satuan: "m²", Terbilang: "meter persegi"})
+	lainnya = append(lainnya, models.JenisRencana{Jenis: "Ruko", Kriteria: "Luas lantai bangunan", Satuan: "m²", Terbilang: "meter persegi"})
 	lainnya = append(lainnya, models.JenisRencana{Jenis: "Jalan layang (flyover)", Kriteria: "", Satuan: "", Terbilang: ""})
 	lainnya = append(lainnya, models.JenisRencana{Jenis: "Lintas bawas (underpass)", Kriteria: "", Satuan: "", Terbilang: ""})
 	lainnya = append(lainnya, models.JenisRencana{Jenis: "Terowongan (tunnel)", Kriteria: "", Satuan: "", Terbilang: ""})
