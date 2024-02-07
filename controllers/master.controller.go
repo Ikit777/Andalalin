@@ -124,7 +124,7 @@ func GetDataStream(db *gorm.DB) <-chan string {
 func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Select("jenis_proyek", "updated_at").Rows()
+	rows, err := dm.DB.Table("data_masters").Select("id_data_master", "updated_at").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
 		return
