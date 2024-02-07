@@ -84,6 +84,77 @@ func main() {
 		UpdatedAt: now,
 	})
 
+	nip := "12344 4444 213"
+
+	pass, err := utils.HashPassword("password123")
+	if err != nil {
+		return
+	}
+
+	initializers.DB.Create(&models.User{
+		Name:      "Admin",
+		Email:     strings.ToLower("admin@gmail.com"),
+		Password:  pass,
+		Role:      "Admin",
+		Photo:     fileData,
+		NIP:       &nip,
+		Nomor:     "08726631233",
+		Verified:  true,
+		CreatedAt: now,
+		UpdatedAt: now,
+	})
+
+	initializers.DB.Create(&models.User{
+		Name:      "Operator",
+		Email:     strings.ToLower("operator@gmail.com"),
+		Password:  pass,
+		Role:      "Operator",
+		Photo:     fileData,
+		NIP:       &nip,
+		Nomor:     "08726631233",
+		Verified:  true,
+		CreatedAt: now,
+		UpdatedAt: now,
+	})
+
+	initializers.DB.Create(&models.User{
+		Name:      "Petugas",
+		Email:     strings.ToLower("petugas@gmail.com"),
+		Password:  pass,
+		Role:      "Petugas",
+		Photo:     fileData,
+		NIP:       &nip,
+		Nomor:     "08726631233",
+		Verified:  true,
+		CreatedAt: now,
+		UpdatedAt: now,
+	})
+
+	initializers.DB.Create(&models.User{
+		Name:      "Dinas",
+		Email:     strings.ToLower("dinas@gmail.com"),
+		Password:  pass,
+		Role:      "Dinas Perhubungan",
+		Photo:     fileData,
+		NIP:       &nip,
+		Nomor:     "08726631233",
+		Verified:  true,
+		CreatedAt: now,
+		UpdatedAt: now,
+	})
+
+	initializers.DB.Create(&models.User{
+		Name:      "Samsudin",
+		Email:     strings.ToLower("stuxnet0000@gmail.com"),
+		Password:  pass,
+		Role:      "User",
+		Photo:     fileData,
+		Nomor:     "08726631233",
+		Verified:  true,
+		CreatedAt: now,
+		UpdatedAt: now,
+	})
+
 	jenis_proyek := []string{"Pembangunan", "Pengembangan", "Operasional"}
 
 	lokasi := []string{"Banjarmasin"}
