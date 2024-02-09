@@ -88,12 +88,16 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 
 	result := ac.DB.Create(&newUser)
 
-	if result.Error != nil && strings.Contains(strings.ToLower(result.Error.Error()), "duplicate key value violates unique") {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Email is exist"})
-		return
-	} else if result.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
-		return
+	if result.Error != nil {
+		fmt.Println(result.Error)
+
+		if strings.Contains(strings.ToLower(result.Error.Error()), "unique constraint") {
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Email is exist"})
+			return
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+			return
+		}
 	}
 
 	emailData := utils.Verification{
