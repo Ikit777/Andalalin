@@ -114,7 +114,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 		CreatedAt: newUser.CreatedAt,
 		UpdatedAt: newUser.UpdatedAt,
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": userResponse})
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": userResponse})
 }
 
 func (ac *AuthController) ResendVerification(ctx *gin.Context) {
