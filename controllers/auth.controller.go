@@ -58,7 +58,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	_, errDom := net.LookupMX(domain)
 
 	if errDom != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Email validation error"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Email validation error"})
 		return
 	}
 
