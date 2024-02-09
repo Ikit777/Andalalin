@@ -474,7 +474,7 @@ func (ac *UserController) ForgotPassword(ctx *gin.Context) {
 
 	emailData := utils.ResetPassword{
 		Code:    resetToken,
-		Subject: "Kode Reset Akun Andalalin Anda",
+		Subject: "Kode Autentikasi Akun Andalalin Anda",
 	}
 
 	utils.SendEmailReset(user.Email, &emailData)
