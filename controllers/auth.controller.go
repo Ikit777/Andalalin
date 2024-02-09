@@ -32,12 +32,12 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	var payload *models.UserSignUp
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
 	if payload.Password != payload.PasswordConfirm {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": "Password tidak sama"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Confirmation error"})
 		return
 	}
 
