@@ -88,7 +88,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 
 	result := ac.DB.Create(&newUser)
 
-	if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
+	if result.Error != nil && strings.Contains(strings.ToLower(result.Error.Error()), "duplicate key value violates unique") {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Email is exist"})
 		return
 	} else if result.Error != nil {
