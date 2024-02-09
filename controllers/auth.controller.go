@@ -43,13 +43,13 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 
 	hashedPassword, err := utils.HashPassword(payload.Password)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
 
 	parts := strings.Split(payload.Email, "@")
 	if len(parts) != 2 {
-		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Email validation error"})
 		return
 	}
 
@@ -58,7 +58,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	_, errDom := net.LookupMX(domain)
 
 	if errDom != nil {
-		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": errDom.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Email validation error"})
 		return
 	}
 
@@ -69,7 +69,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	filePath := "assets/default.png"
 	fileData, err := os.ReadFile(filePath)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Eror saat membaca file"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": "Eror saat membaca file"})
 		return
 	}
 
@@ -89,10 +89,10 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	result := ac.DB.Create(&newUser)
 
 	if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
-		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Email sudah digunakan"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Email is exist"})
 		return
 	} else if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
