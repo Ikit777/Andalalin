@@ -125,14 +125,14 @@ func (ac *AuthController) ResendVerification(ctx *gin.Context) {
 	var payload *models.User
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
 	var user models.User
 	result := ac.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Invalid email"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": "Invalid email"})
 		return
 	}
 
