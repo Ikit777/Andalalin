@@ -27,7 +27,6 @@ func NewAuthController(DB *gorm.DB) AuthController {
 	return AuthController{DB}
 }
 
-// SignUp User
 func (ac *AuthController) SignUp(ctx *gin.Context) {
 	var payload *models.UserSignUp
 
@@ -121,82 +120,34 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": userResponse})
 }
 
-func (ac *AuthController) ResendVerification(ctx *gin.Context) {
-	var payload *models.User
-
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
-		return
-	}
-
-	var user models.User
-	result := ac.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
-	if result.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": "Invalid email"})
-		return
-	}
-
-	emailData := utils.Verification{
-		Code:    user.VerificationCode,
-		Name:    user.Name,
-		Subject: "Kode Verifikasi Akun Andalalin Anda",
-	}
-
-	utils.SendEmailVerification(user.Email, &emailData)
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "messege": "Kirim ulang email verifikasi berhasil"})
-}
-
-func (ac *AuthController) VerifyEmail(ctx *gin.Context) {
-
-	code := ctx.Params.ByName("verificationCode")
-
-	var updatedUser models.User
-	result := ac.DB.First(&updatedUser, "verification_code = ?", code)
-	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Pengguna tidak ditemukan"})
-		return
-	}
-
-	if updatedUser.Verified {
-		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Akun andalalin sudah diverifikasi"})
-		return
-	}
-
-	updatedUser.VerificationCode = ""
-	updatedUser.Verified = true
-	ac.DB.Save(&updatedUser)
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Verifikasi akun andalalin berhasil"})
-}
-
 func (ac *AuthController) SignIn(ctx *gin.Context) {
 	var payload *models.UserSignIn
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
 	var user models.User
 	result := ac.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Akun tidak terdaftar"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account not found"})
 		return
 	}
 
 	if !user.Verified {
-		ctx.JSON(http.StatusForbidden, gin.H{"status": "fail", "message": "Akun belum melakukan verifikasi"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account not verify"})
 		return
 	}
 
 	if err := utils.VerifyPassword(user.Password, payload.Password); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Akun tidak terdaftar"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account not found"})
 		return
 	}
 
 	credentials, err := utils.GetCredentialsByRole(user.Role)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
@@ -204,7 +155,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		if payload.PushToken != "" {
 			result := ac.DB.Model(&user).Where("id = ?", user.ID).Update("push_token", payload.PushToken)
 			if result.Error != nil {
-				ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 				return
 			}
 		}
@@ -214,13 +165,13 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 
 	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, config.AccessTokenPrivateKey, credentials)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
 	refresh_token, err := utils.CreateToken(config.RefreshTokenExpiresIn, user.ID, config.RefreshTokenPrivateKey, credentials)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
@@ -249,6 +200,54 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
+}
+
+func (ac *AuthController) ResendVerification(ctx *gin.Context) {
+	var payload *models.User
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var user models.User
+	result := ac.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Email not exist"})
+		return
+	}
+
+	emailData := utils.Verification{
+		Code:    user.VerificationCode,
+		Name:    user.Name,
+		Subject: "Kode Verifikasi Akun Andalalin Anda",
+	}
+
+	utils.SendEmailVerification(user.Email, &emailData)
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "messege": "Kirim ulang email verifikasi berhasil"})
+}
+
+func (ac *AuthController) VerifyEmail(ctx *gin.Context) {
+
+	code := ctx.Params.ByName("verificationCode")
+
+	var updatedUser models.User
+	result := ac.DB.First(&updatedUser, "verification_code = ?", code)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account not found"})
+		return
+	}
+
+	if updatedUser.Verified {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account already verify"})
+		return
+	}
+
+	updatedUser.VerificationCode = ""
+	updatedUser.Verified = true
+	ac.DB.Save(&updatedUser)
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Verifikasi akun andalalin berhasil"})
 }
 
 func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
@@ -320,7 +319,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 	} else {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"status": true, "msg": "Session telah berakhir"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": true, "msg": "Session telah berakhir"})
 		return
 	}
 }
@@ -331,7 +330,7 @@ func (ac *AuthController) LogoutUser(ctx *gin.Context) {
 	var user models.User
 	result := ac.DB.First(&user, "id = ?", currentUser.ID)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Akun tidak terdaftar"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account not found"})
 		return
 	}
 

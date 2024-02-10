@@ -166,7 +166,7 @@ func (ac *UserController) GetNotifikasi(ctx *gin.Context) {
 	results := ac.DB.Find(&notif, "id_user = ?", currentUser.ID)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	}
 
@@ -180,7 +180,7 @@ func (ac *UserController) ClearNotifikasi(ctx *gin.Context) {
 	results := ac.DB.Delete(&models.Notifikasi{}, "id_user = ?", currentUser.ID)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	}
 
@@ -449,19 +449,19 @@ func (ac *UserController) ForgotPassword(ctx *gin.Context) {
 	var payload *models.ForgotPasswordInput
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
 	var user models.User
 	result := ac.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Akun tidak terdaftar"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account not found"})
 		return
 	}
 
 	if !user.Verified {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Pengguna belum melakukan verifikasi"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Account not verify"})
 		return
 	}
 
@@ -492,12 +492,12 @@ func (ac *UserController) ResetPassword(ctx *gin.Context) {
 	resetToken := ctx.Params.ByName("resetToken")
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
 	if payload.Password != payload.PasswordConfirm {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Password tidak sama"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Password not match"})
 		return
 	}
 
@@ -506,7 +506,7 @@ func (ac *UserController) ResetPassword(ctx *gin.Context) {
 	var updatedUser models.User
 	result := ac.DB.First(&updatedUser, "reset_token = ? AND reset_at > ?", resetToken, time.Now().In(loc))
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": "Reset token kada luarsa"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Code expired"})
 		return
 	}
 
