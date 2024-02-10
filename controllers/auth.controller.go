@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"net"
 	"net/http"
 	"os"
 	"strings"
@@ -46,21 +45,6 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 		return
 	}
 
-	parts := strings.Split(payload.Email, "@")
-	if len(parts) != 2 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Email validation error"})
-		return
-	}
-
-	domain := parts[1]
-
-	_, errDom := net.LookupMX(domain)
-
-	if errDom != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Email validation error"})
-		return
-	}
-
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")
 	verification_code := utils.Encode(6)
@@ -68,7 +52,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 	filePath := "assets/default.png"
 	fileData, err := os.ReadFile(filePath)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": "Eror saat membaca file"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": "Eror when read file"})
 		return
 	}
 
@@ -91,10 +75,10 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 		fmt.Println(result.Error)
 
 		if strings.Contains(strings.ToLower(result.Error.Error()), "unique constraint") {
-			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Email is exist"})
+			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Email is exist"})
 			return
 		} else {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "An error occurred on the server. Please try again later"})
 			return
 		}
 	}
@@ -136,12 +120,12 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 	}
 
 	if !user.Verified {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account not verify"})
+		ctx.JSON(http.StatusForbidden, gin.H{"status": "fail", "message": "Account not verify"})
 		return
 	}
 
 	if err := utils.VerifyPassword(user.Password, payload.Password); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Account not found"})
 		return
 	}
 
