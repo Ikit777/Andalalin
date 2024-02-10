@@ -456,12 +456,12 @@ func (ac *UserController) ForgotPassword(ctx *gin.Context) {
 	var user models.User
 	result := ac.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Account not found"})
 		return
 	}
 
 	if !user.Verified {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Account not verify"})
+		ctx.JSON(http.StatusForbidden, gin.H{"status": "error", "message": "Account not verify"})
 		return
 	}
 
@@ -497,7 +497,7 @@ func (ac *UserController) ResetPassword(ctx *gin.Context) {
 	}
 
 	if payload.Password != payload.PasswordConfirm {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Password not match"})
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"status": "fail", "message": "Password not match"})
 		return
 	}
 

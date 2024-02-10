@@ -197,7 +197,7 @@ func (ac *AuthController) ResendVerification(ctx *gin.Context) {
 	var user models.User
 	result := ac.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Email not exist"})
+		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Email not exist"})
 		return
 	}
 
@@ -218,12 +218,12 @@ func (ac *AuthController) VerifyEmail(ctx *gin.Context) {
 	var updatedUser models.User
 	result := ac.DB.First(&updatedUser, "verification_code = ?", code)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Account not found"})
 		return
 	}
 
 	if updatedUser.Verified {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account already verify"})
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"status": "fail", "message": "Account already verify"})
 		return
 	}
 
@@ -271,25 +271,25 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 		var user models.User
 		result := initializers.DB.First(&user, "id = ?", fmt.Sprint(claim.UserID))
 		if result.Error != nil {
-			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+			ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Account not found"})
 			return
 		}
 		credentials, err := utils.GetCredentialsByRole(user.Role)
 		if err != nil {
 			// Return status 400 and error message.
-			ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 			return
 		}
 
 		access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, config.AccessTokenPrivateKey, credentials)
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": err.Error()})
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 			return
 		}
 
 		ref_token, err := utils.CreateToken(config.RefreshTokenExpiresIn, user.ID, config.RefreshTokenPrivateKey, credentials)
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": err.Error()})
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 			return
 		}
 
@@ -303,7 +303,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 	} else {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": true, "msg": "Session telah berakhir"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": true, "msg": "An error occurred on the server. Please try again later"})
 		return
 	}
 }
@@ -314,7 +314,7 @@ func (ac *AuthController) LogoutUser(ctx *gin.Context) {
 	var user models.User
 	result := ac.DB.First(&user, "id = ?", currentUser.ID)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Account not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Account not found"})
 		return
 	}
 
