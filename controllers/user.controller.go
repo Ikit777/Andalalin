@@ -381,7 +381,6 @@ func (ac *UserController) Add(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": userResponse})
 }
 
-// Delete User
 func (ac *UserController) Delete(ctx *gin.Context) {
 	var payload *models.Delete
 
