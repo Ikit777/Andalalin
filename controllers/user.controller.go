@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"fmt"
 	"image"
 	_ "image/jpeg"
 	"image/png"
@@ -87,7 +88,7 @@ func (ac *UserController) GetUserByEmail(ctx *gin.Context) {
 	result := ac.DB.First(&user, "email = ?", emailUser)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "pengguna tidak ditemukan"})
+		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "User not found"})
 		return
 	}
 
@@ -134,7 +135,7 @@ func (ac *UserController) GetUsers(ctx *gin.Context) {
 	results := ac.DB.Find(&users)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
 		var respone []models.UserResponse
@@ -216,7 +217,7 @@ func (ac *UserController) GetUsersSortRole(ctx *gin.Context) {
 	results := ac.DB.Find(&users, "role = ?", role)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
 		var respone []models.UserResponse
@@ -266,7 +267,7 @@ func (ac *UserController) GetPetugas(ctx *gin.Context) {
 	results := ac.DB.Find(&users, "role = ?", "Petugas")
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
 		var respone []models.UserResponse
@@ -284,18 +285,17 @@ func (ac *UserController) GetPetugas(ctx *gin.Context) {
 	}
 }
 
-// Add User
 func (ac *UserController) Add(ctx *gin.Context) {
 	var payload *models.UserAdd
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
 	hashedPassword, err := utils.HashPassword(payload.Password)
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
 
@@ -323,28 +323,13 @@ func (ac *UserController) Add(ctx *gin.Context) {
 
 	roleGives, err := utils.GetRoleGives(currentUser.Role)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": true, "msg": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": true, "msg": err.Error()})
 		return
 	}
 
 	roleExist := itemExists(roleGives, payload.Role)
 	if !roleExist {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": true, "msg": "Permission denied"})
-		return
-	}
-
-	parts := strings.Split(payload.Email, "@")
-	if len(parts) != 2 {
-		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": err.Error()})
-		return
-	}
-
-	domain := parts[1]
-
-	_, errDom := net.LookupMX(domain)
-
-	if errDom != nil {
-		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": errDom.Error()})
+		ctx.JSON(http.StatusForbidden, gin.H{"error": true, "msg": "Permission denied"})
 		return
 	}
 
@@ -353,7 +338,7 @@ func (ac *UserController) Add(ctx *gin.Context) {
 	filePath := "assets/default.png"
 	fileData, err := os.ReadFile(filePath)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Eror saat membaca file"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": "Eror read file"})
 		return
 	}
 	newUser := models.User{
@@ -371,12 +356,16 @@ func (ac *UserController) Add(ctx *gin.Context) {
 
 	result := ac.DB.Create(&newUser)
 
-	if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
-		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Email sudah digunakan"})
-		return
-	} else if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
-		return
+	if result.Error != nil {
+		fmt.Println(result.Error)
+
+		if strings.Contains(strings.ToLower(result.Error.Error()), "unique constraint") {
+			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Email is exist"})
+			return
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "An error occurred on the server. Please try again later"})
+			return
+		}
 	}
 
 	userResponse := &models.UserResponse{

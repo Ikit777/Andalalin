@@ -276,20 +276,19 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 		}
 		credentials, err := utils.GetCredentialsByRole(user.Role)
 		if err != nil {
-			// Return status 400 and error message.
 			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 			return
 		}
 
 		access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, config.AccessTokenPrivateKey, credentials)
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
+			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": err.Error()})
 			return
 		}
 
 		ref_token, err := utils.CreateToken(config.RefreshTokenExpiresIn, user.ID, config.RefreshTokenPrivateKey, credentials)
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
+			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": err.Error()})
 			return
 		}
 
@@ -303,7 +302,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 	} else {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": true, "msg": "An error occurred on the server. Please try again later"})
+		ctx.JSON(http.StatusUnauthorized, gin.H{"status": true, "msg": "Session end"})
 		return
 	}
 }
