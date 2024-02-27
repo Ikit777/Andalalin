@@ -461,7 +461,7 @@ func (sc *SurveyController) IsiSurveyMandiri(ctx *gin.Context) {
 			}
 
 			// Store the blob data in the map
-			foto = append(foto, models.Foto{Foto: data})
+			foto = append(foto, data)
 		}
 	}
 
