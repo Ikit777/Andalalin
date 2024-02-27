@@ -7,7 +7,6 @@ import (
 	_ "image/jpeg"
 	"image/png"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"strings"
@@ -385,7 +384,7 @@ func (ac *UserController) Delete(ctx *gin.Context) {
 	var payload *models.Delete
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
@@ -413,13 +412,13 @@ func (ac *UserController) Delete(ctx *gin.Context) {
 
 	roleGives, err := utils.GetRoleGives(currentUser.Role)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": true, "msg": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": true, "msg": err.Error()})
 		return
 	}
 
 	roleExist := itemExists(roleGives, payload.Role)
 	if !roleExist {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": true, "msg": "Permission denied"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": true, "msg": "Permission denied"})
 		return
 	}
 
@@ -511,7 +510,7 @@ func (ac *UserController) ResetPassword(ctx *gin.Context) {
 func (ac *UserController) UpdatePhoto(ctx *gin.Context) {
 	file, err := ctx.FormFile("profile")
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -544,7 +543,7 @@ func (ac *UserController) UpdatePhoto(ctx *gin.Context) {
 
 	result := ac.DB.First(&user, "id = ?", currentUser.ID)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Akun tidak ditemukan"})
+		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Akun tidak ditemukan"})
 		return
 	}
 
@@ -564,22 +563,7 @@ func (ac *UserController) EditAkun(ctx *gin.Context) {
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
-		return
-	}
-
-	parts := strings.Split(payload.Email, "@")
-	if len(parts) != 2 {
-		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": "Email tidak tersedia"})
-		return
-	}
-
-	domain := parts[1]
-
-	_, errDom := net.LookupMX(domain)
-
-	if errDom != nil {
-		ctx.JSON(http.StatusNoContent, gin.H{"status": "error", "message": errDom.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
@@ -587,7 +571,7 @@ func (ac *UserController) EditAkun(ctx *gin.Context) {
 
 	result := ac.DB.First(&user, "id = ?", currentUser.ID)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Akun tidak ditemukan"})
+		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Akun tidak ditemukan"})
 		return
 	}
 
