@@ -126,14 +126,14 @@ func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Select("id_data_master", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -158,14 +158,14 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		rows, err := dm.DB.Table("data_masters").Select("jenis_proyek", "updated_at").Rows()
 		if err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			if err := dm.DB.ScanRows(rows, &master); err != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 				return
 			}
 		}
@@ -184,14 +184,14 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "provinsi", "kabupaten", "kecamatan", "kelurahan").Rows()
 		if err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			if err := dm.DB.ScanRows(rows, &master); err != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 				return
 			}
 		}
@@ -215,14 +215,14 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "jalan", "kabupaten", "kecamatan", "kelurahan").Rows()
 		if err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			if err := dm.DB.ScanRows(rows, &master); err != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 				return
 			}
 		}
@@ -271,14 +271,14 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "lokasi_pengambilan").Rows()
 		if err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			if err := dm.DB.ScanRows(rows, &master); err != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 				return
 			}
 		}
@@ -297,14 +297,14 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "kategori_rencana_pembangunan").Rows()
 		if err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			if err := dm.DB.ScanRows(rows, &master); err != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 				return
 			}
 		}
@@ -323,14 +323,14 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "kategori_rencana_pembangunan", "jenis_rencana_pembangunan").Rows()
 		if err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			if err := dm.DB.ScanRows(rows, &master); err != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 				return
 			}
 		}
@@ -351,14 +351,14 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "kategori_perlengkapan_utama").Rows()
 		if err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			if err := dm.DB.ScanRows(rows, &master); err != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 				return
 			}
 		}
@@ -377,14 +377,14 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "kategori_perlengkapan_utama", "kategori_perlengkapan").Rows()
 		if err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			if err := dm.DB.ScanRows(rows, &master); err != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 				return
 			}
 		}
@@ -405,14 +405,14 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "kategori_perlengkapan_utama", "kategori_perlengkapan", "perlengkapan_lalu_lintas").Rows()
 		if err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			if err := dm.DB.ScanRows(rows, &master); err != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 				return
 			}
 		}
@@ -435,14 +435,14 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 
 		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "persyaratan").Rows()
 		if err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 		defer rows.Close()
 
 		for rows.Next() {
 			if err := dm.DB.ScanRows(rows, &master); err != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 				return
 			}
 		}
@@ -551,14 +551,14 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("lokasi_pengambilan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -579,7 +579,7 @@ func (dm *DataMasterControler) TambahLokasi(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("lokasi_pengambilan", "updated_at").Updates(models.DataMaster{LokasiPengambilan: master.LokasiPengambilan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -627,14 +627,14 @@ func (dm *DataMasterControler) HapusLokasi(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("lokasi_pengambilan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -653,7 +653,7 @@ func (dm *DataMasterControler) HapusLokasi(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("lokasi_pengambilan", "updated_at").Updates(models.DataMaster{LokasiPengambilan: master.LokasiPengambilan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -701,14 +701,14 @@ func (dm *DataMasterControler) EditLokasi(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("lokasi_pengambilan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -733,7 +733,7 @@ func (dm *DataMasterControler) EditLokasi(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("lokasi_pengambilan", "updated_at").Updates(models.DataMaster{LokasiPengambilan: master.LokasiPengambilan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -781,14 +781,14 @@ func (dm *DataMasterControler) TambahKategori(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_rencana_pembangunan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -809,7 +809,7 @@ func (dm *DataMasterControler) TambahKategori(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_rencana_pembangunan", "updated_at").Updates(models.DataMaster{KategoriRencanaPembangunan: master.KategoriRencanaPembangunan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -857,14 +857,14 @@ func (dm *DataMasterControler) HapusKategori(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_rencana_pembangunan", "jenis_rencana_pembangunan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -890,7 +890,7 @@ func (dm *DataMasterControler) HapusKategori(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_rencana_pembangunan", "jenis_rencana_pembangunan", "updated_at").Updates(models.DataMaster{KategoriRencanaPembangunan: master.KategoriRencanaPembangunan, JenisRencanaPembangunan: master.JenisRencanaPembangunan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -938,14 +938,14 @@ func (dm *DataMasterControler) EditKategori(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_rencana_pembangunan", "jenis_rencana_pembangunan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -982,7 +982,7 @@ func (dm *DataMasterControler) EditKategori(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_rencana_pembangunan", "jenis_rencana_pembangunan", "updated_at").Updates(models.DataMaster{KategoriRencanaPembangunan: master.KategoriRencanaPembangunan, JenisRencanaPembangunan: master.JenisRencanaPembangunan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -1030,14 +1030,14 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_rencana_pembangunan", "jenis_rencana_pembangunan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -1082,7 +1082,7 @@ func (dm *DataMasterControler) TambahJenisRencanaPembangunan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_rencana_pembangunan", "updated_at").Updates(models.DataMaster{JenisRencanaPembangunan: master.JenisRencanaPembangunan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -1132,14 +1132,14 @@ func (dm *DataMasterControler) HapusJenisRencanaPembangunan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_rencana_pembangunan", "jenis_rencana_pembangunan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -1161,7 +1161,7 @@ func (dm *DataMasterControler) HapusJenisRencanaPembangunan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_rencana_pembangunan", "updated_at").Updates(models.DataMaster{JenisRencanaPembangunan: master.JenisRencanaPembangunan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -1211,14 +1211,14 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_rencana_pembangunan", "jenis_rencana_pembangunan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -1251,7 +1251,7 @@ func (dm *DataMasterControler) EditJenisRencanaPembangunan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_rencana_pembangunan", "updated_at").Updates(models.DataMaster{JenisRencanaPembangunan: master.JenisRencanaPembangunan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -1301,14 +1301,14 @@ func (dm *DataMasterControler) TambahKategoriUtamaPerlengkapan(ctx *gin.Context)
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan_utama", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -1329,7 +1329,7 @@ func (dm *DataMasterControler) TambahKategoriUtamaPerlengkapan(ctx *gin.Context)
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan_utama", "updated_at").Updates(models.DataMaster{KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -1377,14 +1377,14 @@ func (dm *DataMasterControler) HapusKategoriUtamaPerlengkapan(ctx *gin.Context) 
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan_utama", "kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -1417,7 +1417,7 @@ func (dm *DataMasterControler) HapusKategoriUtamaPerlengkapan(ctx *gin.Context) 
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan_utama", "kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Updates(models.DataMaster{KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama, KategoriPerlengkapan: master.KategoriPerlengkapan, PerlengkapanLaluLintas: result, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -1465,14 +1465,14 @@ func (dm *DataMasterControler) EditKategoriUtamaPerlengkapan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan_utama", "kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -1521,7 +1521,7 @@ func (dm *DataMasterControler) EditKategoriUtamaPerlengkapan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan_utama", "kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Updates(models.DataMaster{KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama, KategoriPerlengkapan: master.KategoriPerlengkapan, PerlengkapanLaluLintas: master.PerlengkapanLaluLintas, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -1569,14 +1569,14 @@ func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -1617,7 +1617,7 @@ func (dm *DataMasterControler) TambahKategoriPerlengkapan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "updated_at").Updates(models.DataMaster{KategoriPerlengkapan: master.KategoriPerlengkapan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -1665,14 +1665,14 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -1700,7 +1700,7 @@ func (dm *DataMasterControler) HapusKategoriPerlengkapan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Updates(models.DataMaster{KategoriPerlengkapan: master.KategoriPerlengkapan, PerlengkapanLaluLintas: master.PerlengkapanLaluLintas, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -1748,14 +1748,14 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -1798,7 +1798,7 @@ func (dm *DataMasterControler) EditKategoriPerlengkapan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kategori_perlengkapan", "perlengkapan_lalu_lintas", "updated_at").Updates(models.DataMaster{KategoriPerlengkapan: master.KategoriPerlengkapan, PerlengkapanLaluLintas: master.PerlengkapanLaluLintas, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -1847,7 +1847,7 @@ func (dm *DataMasterControler) TambahPerlengkapan(ctx *gin.Context) {
 	resultsData := dm.DB.Where("id_data_master", id).First(&master)
 
 	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsData.Error})
 		return
 	}
 
@@ -1916,7 +1916,7 @@ func (dm *DataMasterControler) TambahPerlengkapan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -1967,7 +1967,7 @@ func (dm *DataMasterControler) HapuspPerlengkapan(ctx *gin.Context) {
 	resultsData := dm.DB.Where("id_data_master", id).First(&master)
 
 	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsData.Error})
 		return
 	}
 
@@ -1988,7 +1988,7 @@ func (dm *DataMasterControler) HapuspPerlengkapan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -2039,7 +2039,7 @@ func (dm *DataMasterControler) EditPerlengkapan(ctx *gin.Context) {
 	resultsData := dm.DB.Where("id_data_master", id).First(&master)
 
 	if resultsData.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsData.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsData.Error})
 		return
 	}
 
@@ -2088,7 +2088,7 @@ func (dm *DataMasterControler) EditPerlengkapan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Save(&master)
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -2137,14 +2137,14 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -2177,7 +2177,7 @@ func (dm *DataMasterControler) TambahPersyaratanAndalalin(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -2225,14 +2225,14 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -2249,7 +2249,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 	results := dm.DB.Find(&andalalin)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
 		dataFile := []file{}
@@ -2293,7 +2293,7 @@ func (dm *DataMasterControler) HapusPersyaratanAndalalin(ctx *gin.Context) {
 
 		resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 		if resultsSave.Error != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 			return
 		}
 
@@ -2341,14 +2341,14 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -2387,7 +2387,7 @@ func (dm *DataMasterControler) EditPersyaratanAndalalin(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -2434,14 +2434,14 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -2473,7 +2473,7 @@ func (dm *DataMasterControler) TambahPersyaratanPerlalin(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -2521,14 +2521,14 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -2545,7 +2545,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 	results := dm.DB.Find(&perlalin)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
 		dataFile := []file{}
@@ -2589,7 +2589,7 @@ func (dm *DataMasterControler) HapusPersyaratanPerlalin(ctx *gin.Context) {
 
 		resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 		if resultsSave.Error != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 			return
 		}
 
@@ -2637,14 +2637,14 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -2683,7 +2683,7 @@ func (dm *DataMasterControler) EditPersyaratanPerlalin(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("persyaratan", "updated_at").Updates(models.DataMaster{Persyaratan: master.Persyaratan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -2731,14 +2731,14 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -2778,7 +2778,7 @@ func (dm *DataMasterControler) TambahProvinsi(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "updated_at").Updates(models.DataMaster{Provinsi: master.Provinsi, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -2826,14 +2826,14 @@ func (dm *DataMasterControler) HapusProvinsi(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -2880,7 +2880,7 @@ func (dm *DataMasterControler) HapusProvinsi(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "kecamatan", "kelurahan", "updated_at").Updates(models.DataMaster{Provinsi: master.Provinsi, Kabupaten: master.Kabupaten, Kecamatan: master.Kecamatan, Kelurahan: master.Kelurahan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -2928,14 +2928,14 @@ func (dm *DataMasterControler) EditProvinsi(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -2960,7 +2960,7 @@ func (dm *DataMasterControler) EditProvinsi(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "updated_at").Updates(models.DataMaster{Provinsi: master.Provinsi, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3008,14 +3008,14 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("provinsi", "kabupaten", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3065,7 +3065,7 @@ func (dm *DataMasterControler) TambahKabupaten(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kabupaten", "updated_at").Updates(models.DataMaster{Kabupaten: master.Kabupaten, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3113,14 +3113,14 @@ func (dm *DataMasterControler) HapusKabupaten(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kabupaten", "kecamatan", "kelurahan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3158,7 +3158,7 @@ func (dm *DataMasterControler) HapusKabupaten(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kabupaten", "kecamatan", "kelurahan", "updated_at").Updates(models.DataMaster{Kabupaten: master.Kabupaten, Kecamatan: master.Kecamatan, Kelurahan: master.Kelurahan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3206,14 +3206,14 @@ func (dm *DataMasterControler) EditKabupaten(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kabupaten", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3237,7 +3237,7 @@ func (dm *DataMasterControler) EditKabupaten(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kabupaten", "updated_at").Updates(models.DataMaster{Kabupaten: master.Kabupaten, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3285,14 +3285,14 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kabupaten", "kecamatan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3342,7 +3342,7 @@ func (dm *DataMasterControler) TambahKecamatan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kecamatan", "updated_at").Updates(models.DataMaster{Kecamatan: master.Kecamatan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3390,14 +3390,14 @@ func (dm *DataMasterControler) HapusKecamatan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kecamatan", "kelurahan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3426,7 +3426,7 @@ func (dm *DataMasterControler) HapusKecamatan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kecamatan", "kelurahan", "updated_at").Updates(models.DataMaster{Kecamatan: master.Kecamatan, Kelurahan: master.Kelurahan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3474,14 +3474,14 @@ func (dm *DataMasterControler) EditKecamatan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kecamatan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3506,7 +3506,7 @@ func (dm *DataMasterControler) EditKecamatan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kecamatan", "updated_at").Updates(models.DataMaster{Kecamatan: master.Kecamatan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3554,14 +3554,14 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kecamatan", "kelurahan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3611,7 +3611,7 @@ func (dm *DataMasterControler) TambahKelurahan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kelurahan", "updated_at").Updates(models.DataMaster{Kelurahan: master.Kelurahan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3659,14 +3659,14 @@ func (dm *DataMasterControler) HapusKelurahan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kelurahan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3685,7 +3685,7 @@ func (dm *DataMasterControler) HapusKelurahan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kelurahan", "updated_at").Updates(models.DataMaster{Kelurahan: master.Kelurahan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3733,14 +3733,14 @@ func (dm *DataMasterControler) EditKelurahan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kelurahan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3765,7 +3765,7 @@ func (dm *DataMasterControler) EditKelurahan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("kelurahan", "updated_at").Updates(models.DataMaster{Kelurahan: master.Kelurahan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3812,14 +3812,14 @@ func (dm *DataMasterControler) TambahJenisProyek(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_proyek", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3839,7 +3839,7 @@ func (dm *DataMasterControler) TambahJenisProyek(ctx *gin.Context) {
 	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_proyek", "updated_at").Updates(models.DataMaster{JenisProyek: master.JenisProyek, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3887,14 +3887,14 @@ func (dm *DataMasterControler) HapusJenisProyek(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_proyek", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3913,7 +3913,7 @@ func (dm *DataMasterControler) HapusJenisProyek(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_proyek", "updated_at").Updates(models.DataMaster{JenisProyek: master.JenisProyek, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -3961,14 +3961,14 @@ func (dm *DataMasterControler) EditJenisProyek(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_proyek", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -3993,7 +3993,7 @@ func (dm *DataMasterControler) EditJenisProyek(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jenis_proyek", "updated_at").Updates(models.DataMaster{JenisProyek: master.JenisProyek, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -4040,14 +4040,14 @@ func (dm *DataMasterControler) TambahJalan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -4089,7 +4089,7 @@ func (dm *DataMasterControler) TambahJalan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Updates(models.DataMaster{Jalan: master.Jalan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -4137,14 +4137,14 @@ func (dm *DataMasterControler) HapusJalan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -4163,7 +4163,7 @@ func (dm *DataMasterControler) HapusJalan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Updates(models.DataMaster{Jalan: master.Jalan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 
@@ -4210,14 +4210,14 @@ func (dm *DataMasterControler) EditJalan(ctx *gin.Context) {
 
 	rows, err := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Rows()
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		if err := dm.DB.ScanRows(rows, &master); err != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Data error"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 			return
 		}
 	}
@@ -4252,7 +4252,7 @@ func (dm *DataMasterControler) EditJalan(ctx *gin.Context) {
 
 	resultsSave := dm.DB.Table("data_masters").Where("id_data_master", id).Select("jalan", "updated_at").Updates(models.DataMaster{Jalan: master.Jalan, UpdatedAt: master.UpdatedAt})
 	if resultsSave.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": resultsSave.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
 		return
 	}
 

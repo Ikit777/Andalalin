@@ -123,7 +123,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	nowTime := time.Now().In(loc)
 
-	kode := "andalalin/" + utils.Generate(6)
+	kode := "andalalin/" + utils.Generate(6) + "/" + nowTime.Format("2006")
 	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
 
 	var path string
@@ -394,7 +394,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	nowTime := time.Now().In(loc)
 
-	kode := "perlalin/" + utils.Generate(6)
+	kode := "perlalin/" + utils.Generate(6) + "/" + nowTime.Format("2006")
 	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
 
 	t, err := template.ParseFiles("templates/tandaterimaPerlalin.html")
@@ -1152,7 +1152,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 
 				PersyaratanTidakSesuai: andalalin.PersyaratanTidakSesuai,
 
-				HasilAsistensiDokumen: andalalin.HasilAsistensiDokumen,
+				HasilAsistensiDokumen:   andalalin.HasilAsistensiDokumen,
 				CatatanAsistensiDokumen: andalalin.CatatanAsistensiDokumen,
 
 				//Data Pemeriksaan Surat Persetujuan
