@@ -878,7 +878,7 @@ func (ac *AndalalinController) GetPermohonanByIdUser(ctx *gin.Context) {
 				Kode:             s.Kode,
 				TanggalAndalalin: s.TanggalAndalalin,
 				Nama:             s.NamaPemohon,
-				Pengembang:       s.NamaPengembang,
+				Email:            s.EmailPemohon,
 				JenisAndalalin:   s.JenisAndalalin,
 				StatusAndalalin:  s.StatusAndalalin,
 			})
