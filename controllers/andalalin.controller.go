@@ -437,6 +437,8 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 
 	berkas := []models.BerkasPermohonan{}
 
+	var perlengkapan []byte
+
 	for key, files := range form.File {
 		for _, file := range files {
 			// Save the uploaded file with key as prefix
@@ -459,6 +461,10 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 			} else {
 				berkas = append(berkas, models.BerkasPermohonan{Nama: key, Tipe: "Word", Status: "Selesai", Berkas: data})
 			}
+
+			if key == "Perlengkapan" {
+				perlengkapan = data
+			}
 		}
 	}
 
@@ -470,22 +476,8 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		KategoriUtama:       payload.Perlalin.KategoriUtama,
 		Kategori:            payload.Perlalin.Kategori,
 		Jenis:               payload.Perlalin.Jenis,
+		Perlengkapan:        perlengkapan,
 		Kode:                kode,
-		NegaraPemasangan:    "Indonesia",
-		ProvinsiPemasangan:  payload.Perlalin.ProvinsiPemasangan,
-		KabupatenPemasangan: payload.Perlalin.KabupatenPemasangan,
-		KecamatanPemasangan: payload.Perlalin.KecamatanPemasangan,
-		KelurahanPemasangan: payload.Perlalin.KelurahanPemasangan,
-		AlamatPemasangan:    payload.Perlalin.AlamatPemasangan,
-		KodeJalan:           payload.Perlalin.KodeJalan,
-		KodeJalanMerge:      payload.Perlalin.KodeJalanMerge,
-		NamaJalan:           payload.Perlalin.NamaJalan,
-		PangkalJalan:        payload.Perlalin.PangkalJalan,
-		UjungJalan:          payload.Perlalin.UjungJalan,
-		PanjangJalan:        payload.Perlalin.PanjangJalan,
-		LebarJalan:          payload.Perlalin.LebarJalan,
-		PermukaanJalan:      payload.Perlalin.PermukaanJalan,
-		FungsiJalan:         payload.Perlalin.FungsiJalan,
 		NikPemohon:          payload.Perlalin.NikPemohon,
 		NamaPemohon:         currentUser.Name,
 		EmailPemohon:        currentUser.Email,
@@ -499,12 +491,12 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		AlamatPemohon:       payload.Perlalin.AlamatPemohon,
 		JenisKelaminPemohon: payload.Perlalin.JenisKelaminPemohon,
 		NomerPemohon:        payload.Perlalin.NomerPemohon,
-		LokasiPengambilan:   payload.Perlalin.LokasiPengambilan,
 		WaktuAndalalin:      nowTime.Format("15:04:05"),
 		TanggalAndalalin:    tanggal,
 		Alasan:              payload.Perlalin.Alasan,
 		Peruntukan:          payload.Perlalin.Peruntukan,
 		LokasiPemasangan:    payload.Perlalin.LokasiPemasangan,
+		Detail:              payload.Perlalin.Detail,
 		LatitudePemasangan:  payload.Perlalin.LatitudePemasangan,
 		LongitudePemasangan: payload.Perlalin.LongitudePemasangan,
 		Catatan:             payload.Perlalin.Catatan,
@@ -1172,34 +1164,28 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		if currentUser.Role == "User" {
 			dataUser := models.PerlalinResponseUser{
 				//Data Permohonan
-				IdAndalalin:         perlalin.IdAndalalin,
-				JenisAndalalin:      perlalin.JenisAndalalin,
-				KategoriUtama:       perlalin.KategoriUtama,
-				Kategori:            perlalin.Kategori,
-				Jenis:               perlalin.Jenis,
-				Kode:                perlalin.Kode,
-				WaktuAndalalin:      perlalin.WaktuAndalalin,
-				TanggalAndalalin:    perlalin.TanggalAndalalin,
-				StatusAndalalin:     perlalin.StatusAndalalin,
-				NegaraPemasangan:    perlalin.NegaraPemasangan,
-				ProvinsiPemasangan:  perlalin.ProvinsiPemasangan,
-				KabupatenPemasangan: perlalin.KabupatenPemasangan,
-				KecamatanPemasangan: perlalin.KecamatanPemasangan,
-				KelurahanPemasangan: perlalin.KelurahanPemasangan,
-				AlamatPemasangan:    perlalin.AlamatPemasangan,
-				NamaJalan:           perlalin.NamaJalan,
+				IdAndalalin:      perlalin.IdAndalalin,
+				JenisAndalalin:   perlalin.JenisAndalalin,
+				KategoriUtama:    perlalin.KategoriUtama,
+				Kategori:         perlalin.Kategori,
+				Jenis:            perlalin.Jenis,
+				Perlengkapan:     perlalin.Perlengkapan,
+				Kode:             perlalin.Kode,
+				WaktuAndalalin:   perlalin.WaktuAndalalin,
+				TanggalAndalalin: perlalin.TanggalAndalalin,
+				StatusAndalalin:  perlalin.StatusAndalalin,
 
 				//Data Pemohon
-				NamaPemohon:       perlalin.NamaPemohon,
-				NikPemohon:        perlalin.NikPemohon,
-				EmailPemohon:      perlalin.EmailPemohon,
-				NomerPemohon:      perlalin.NomerPemohon,
-				LokasiPengambilan: perlalin.LokasiPengambilan,
+				NamaPemohon:  perlalin.NamaPemohon,
+				NikPemohon:   perlalin.NikPemohon,
+				EmailPemohon: perlalin.EmailPemohon,
+				NomerPemohon: perlalin.NomerPemohon,
 
 				//Data Kegiatan
 				Alasan:                 perlalin.Alasan,
 				Peruntukan:             perlalin.Peruntukan,
 				LokasiPemasangan:       perlalin.LokasiPemasangan,
+				Detail:                 perlalin.Detail,
 				LatitudePemasangan:     perlalin.LatitudePemasangan,
 				LongitudePemasangan:    perlalin.LongitudePemasangan,
 				PersyaratanTidakSesuai: perlalin.PersyaratanTidakSesuai,
@@ -1220,30 +1206,16 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		} else {
 			data := models.PerlalinResponse{
 				//Data Permohonan
-				IdAndalalin:         perlalin.IdAndalalin,
-				JenisAndalalin:      perlalin.JenisAndalalin,
-				KategoriUtama:       perlalin.KategoriUtama,
-				Kategori:            perlalin.Kategori,
-				Jenis:               perlalin.Jenis,
-				Kode:                perlalin.Kode,
-				WaktuAndalalin:      perlalin.WaktuAndalalin,
-				TanggalAndalalin:    perlalin.TanggalAndalalin,
-				StatusAndalalin:     perlalin.StatusAndalalin,
-				NegaraPemasangan:    perlalin.NegaraPemasangan,
-				ProvinsiPemasangan:  perlalin.ProvinsiPemasangan,
-				KabupatenPemasangan: perlalin.KabupatenPemasangan,
-				KecamatanPemasangan: perlalin.KecamatanPemasangan,
-				KelurahanPemasangan: perlalin.KelurahanPemasangan,
-				AlamatPemasangan:    perlalin.AlamatPemasangan,
-				KodeJalan:           perlalin.KodeJalan,
-				KodeJalanMerge:      perlalin.KodeJalanMerge,
-				NamaJalan:           perlalin.NamaJalan,
-				PangkalJalan:        perlalin.PangkalJalan,
-				UjungJalan:          perlalin.UjungJalan,
-				PanjangJalan:        perlalin.PanjangJalan,
-				LebarJalan:          perlalin.LebarJalan,
-				PermukaanJalan:      perlalin.PermukaanJalan,
-				FungsiJalan:         perlalin.FungsiJalan,
+				IdAndalalin:      perlalin.IdAndalalin,
+				JenisAndalalin:   perlalin.JenisAndalalin,
+				KategoriUtama:    perlalin.KategoriUtama,
+				Kategori:         perlalin.Kategori,
+				Jenis:            perlalin.Jenis,
+				Perlengkapan:     perlalin.Perlengkapan,
+				Kode:             perlalin.Kode,
+				WaktuAndalalin:   perlalin.WaktuAndalalin,
+				TanggalAndalalin: perlalin.TanggalAndalalin,
+				StatusAndalalin:  perlalin.StatusAndalalin,
 
 				//Data Pemohon
 				NikPemohon:          perlalin.NikPemohon,
@@ -1259,12 +1231,12 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				AlamatPemohon:       perlalin.AlamatPemohon,
 				JenisKelaminPemohon: perlalin.JenisKelaminPemohon,
 				NomerPemohon:        perlalin.NomerPemohon,
-				LokasiPengambilan:   perlalin.LokasiPengambilan,
 
 				//Data Kegiatan
 				Alasan:                 perlalin.Alasan,
 				Peruntukan:             perlalin.Peruntukan,
 				LokasiPemasangan:       perlalin.LokasiPemasangan,
+				Detail:                 perlalin.Detail,
 				LatitudePemasangan:     perlalin.LatitudePemasangan,
 				LongitudePemasangan:    perlalin.LongitudePemasangan,
 				PersyaratanTidakSesuai: perlalin.PersyaratanTidakSesuai,
