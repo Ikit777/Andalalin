@@ -556,7 +556,7 @@ func (ac *AndalalinController) ReleaseTicketLevel1(ctx *gin.Context, id uuid.UUI
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Tiket level 1 sudah tersedia"})
 		return
 	} else if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 }
@@ -576,7 +576,7 @@ func (ac *AndalalinController) ReleaseTicketLevel2(ctx *gin.Context, id uuid.UUI
 	results := ac.DB.First(&tiket1, "id_andalalin = ?", id)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	}
 
@@ -844,7 +844,7 @@ func (ac *AndalalinController) GetPermohonanByIdUser(ctx *gin.Context) {
 	resultsPerlalin := ac.DB.Order("tanggal_andalalin").Find(&perlalin, "id_user = ?", currentUser.ID)
 
 	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	} else {
 		var respone []models.DaftarAndalalinResponse
@@ -1285,7 +1285,7 @@ func (ac *AndalalinController) GetPermohonanByStatus(ctx *gin.Context) {
 	resultsPerlalin := ac.DB.Order("tanggal_andalalin").Find(&perlalin, "status_andalalin = ?", status)
 
 	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	} else {
 		var respone []models.DaftarAndalalinResponse
@@ -1345,7 +1345,7 @@ func (ac *AndalalinController) GetPermohonan(ctx *gin.Context) {
 	resultsPerlalin := ac.DB.Order("tanggal_andalalin").Find(&perlalin)
 
 	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	} else {
 		var respone []models.DaftarAndalalinResponse
@@ -1448,7 +1448,7 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 	resultsPerlalin := ac.DB.Find(&perlalin, "id_andalalin = ?", id)
 
 	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
@@ -1588,7 +1588,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if resultsAndalalin.Error != nil && resultsPerlalin != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
@@ -2942,7 +2942,7 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
@@ -2995,7 +2995,7 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
@@ -3046,7 +3046,7 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 	results := ac.DB.Find(&ticket, "status = ? AND id_petugas = ?", status, currentUser.ID)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
 		var respone []models.DaftarAndalalinResponse
@@ -3118,7 +3118,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 	resultTiket1 := ac.DB.Find(&ticket1, "id_andalalin = ?", id)
 	resultTiket2 := ac.DB.Find(&ticket2, "id_andalalin = ?", id)
 	if resultTiket1.Error != nil && resultTiket2.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
 		return
 	}
 
@@ -3126,7 +3126,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
@@ -3183,7 +3183,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data survey sudah tersedia"})
 			return
 		} else if result.Error != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 			return
 		}
 
@@ -3225,7 +3225,7 @@ func (ac *AndalalinController) GetAllSurvey(ctx *gin.Context) {
 	results := ac.DB.Find(&survey, "id_petugas = ?", currentUser.ID)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
 		var respone []models.DaftarAndalalinResponse
@@ -3280,7 +3280,7 @@ func (ac *AndalalinController) GetSurvey(ctx *gin.Context) {
 
 	result := ac.DB.First(&survey, "id_andalalin = ?", id)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
 		return
 	}
 
@@ -3321,7 +3321,7 @@ func (ac *AndalalinController) PemeriksaanSuratKeputusan(ctx *gin.Context) {
 
 	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
 		return
 	}
 
@@ -3375,7 +3375,7 @@ func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 	resultTiket1 := ac.DB.Find(&ticket1, "id_andalalin = ?", id)
 	resultTiket2 := ac.DB.Find(&ticket2, "id_andalalin = ?", id)
 	if resultTiket1.Error != nil && resultTiket2.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
 		return
 	}
 
@@ -3384,7 +3384,7 @@ func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
@@ -3409,7 +3409,7 @@ func (ac *AndalalinController) UsulanTindakanPengelolaan(ctx *gin.Context) {
 			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Usulan sudah ada"})
 			return
 		} else if result.Error != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 			return
 		}
 	}
@@ -3444,7 +3444,7 @@ func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
 	results := ac.DB.Find(&usulan)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
 		var respone []models.DaftarAndalalinResponse
@@ -3454,7 +3454,7 @@ func (ac *AndalalinController) GetUsulan(ctx *gin.Context) {
 			resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin)
 
 			if resultsPerlalin.Error != nil {
-				ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 				return
 			}
 
@@ -3562,7 +3562,7 @@ func (ac *AndalalinController) TindakanPengelolaan(ctx *gin.Context) {
 	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
@@ -3675,7 +3675,7 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 
 	resultTiket2 := ac.DB.Find(&ticket2, "id_andalalin = ?", id)
 	if resultTiket2.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
 		return
 	}
 
@@ -3696,7 +3696,7 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
@@ -3731,7 +3731,7 @@ func (ac *AndalalinController) HapusUsulan(ctx *gin.Context) {
 	results := ac.DB.Delete(&models.UsulanPengelolaan{}, "id_andalalin = ?", id)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	}
 
@@ -3766,7 +3766,7 @@ func (ac *AndalalinController) LaporanSurvei(ctx *gin.Context) {
 
 	result := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
 		return
 	}
 
@@ -3795,7 +3795,7 @@ func (ac *AndalalinController) LaporanSurvei(ctx *gin.Context) {
 	resultLaporan := ac.DB.Save(&perlalin)
 
 	if resultLaporan.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
@@ -3836,7 +3836,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 	result := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
 		return
 	}
 
@@ -3852,7 +3852,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 	resultKeputusan := ac.DB.Save(&perlalin)
 
 	if resultKeputusan.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
@@ -3875,7 +3875,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 				result := ac.DB.First(&data, "id_andalalin = ?", id)
 				if result.Error != nil {
-					ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+					ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
 					return
 				}
 
@@ -3910,7 +3910,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 				result := ac.DB.First(&data, "id_andalalin = ?", id)
 				if result.Error != nil {
-					ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+					ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
 					return
 				}
 
@@ -3935,7 +3935,7 @@ func (ac *AndalalinController) KeputusanHasil(ctx *gin.Context) {
 
 							result := ac.DB.First(&data, "id_andalalin = ?", id)
 							if result.Error != nil {
-								ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+								ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
 								return
 							}
 
@@ -3972,7 +3972,7 @@ func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context, id string) {
 
 	result := ac.DB.First(&permohonan, "id_andalalin = ?", id)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
 		return
 	}
 
@@ -4094,7 +4094,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 
 	resultTiket1 := ac.DB.Find(&ticket1, "id_andalalin = ?", id)
 	if resultTiket1.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tiket tidak ditemukan"})
 		return
 	}
 
@@ -4102,7 +4102,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if resultsPerlalin.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
 		return
 	}
 
@@ -4157,7 +4157,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data survey sudah tersedia"})
 		return
 	} else if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
@@ -4227,7 +4227,7 @@ func (ac *AndalalinController) GetAllPemasangan(ctx *gin.Context) {
 	results := ac.DB.Find(&pemasangan, "id_petugas = ?", currentUser.ID)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	} else {
 		var respone []models.DaftarAndalalinResponse
@@ -4261,7 +4261,7 @@ func (ac *AndalalinController) GetPemasangan(ctx *gin.Context) {
 
 	result := ac.DB.First(&pemasangan, "id_andalalin = ?", id)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
 		return
 	}
 
