@@ -429,7 +429,7 @@ type Perlalin struct {
 	Kategori         string    `gorm:"type:varchar(255);not null"`
 	KategoriUtama    string    `gorm:"type:varchar(255);not null"`
 	Jenis            string    `gorm:"type:varchar(255);not null"`
-	Perlengkapan     []byte
+	Perlengkapan     string
 	Kode             string `gorm:"type:varchar(255);not null"`
 	WaktuAndalalin   string `gorm:"not null"`
 	TanggalAndalalin string `gorm:"not null"`
@@ -484,6 +484,7 @@ type InputPerlalin struct {
 	KategoriUtama       string  `json:"kategori_utama" binding:"required"`
 	Kategori            string  `json:"kategori" binding:"required"`
 	Jenis               string  `json:"jenis_perlengkapan" binding:"required"`
+	Perlengkapan        string  `json:"perlengkapan" binding:"required"`
 	NikPemohon          string  `json:"nik_pemohon" binding:"required"`
 	TempatLahirPemohon  string  `json:"tempat_lahir_pemohon" binding:"required"`
 	TanggalLahirPemohon string  `json:"tanggal_lahir_pemohon" binding:"required"`
@@ -514,7 +515,7 @@ type PerlalinResponse struct {
 	KategoriUtama    string    `json:"kategori_utama,omitempty"`
 	Kategori         string    `json:"kategori,omitempty"`
 	Jenis            string    `json:"jenis,omitempty"`
-	Perlengkapan     []byte    `json:"perlengkapan,omitempty"`
+	Perlengkapan     string    `json:"perlengkapan,omitempty"`
 	Kode             string    `json:"kode_andalalin,omitempty"`
 	WaktuAndalalin   string    `json:"waktu_andalalin,omitempty"`
 	TanggalAndalalin string    `json:"tanggal_andalalin,omitempty"`
@@ -575,7 +576,7 @@ type PerlalinResponseUser struct {
 	TanggalAndalalin string    `json:"tanggal_andalalin,omitempty"`
 	StatusAndalalin  string    `json:"status_andalalin,omitempty"`
 	Jenis            string    `json:"jenis,omitempty"`
-	Perlengkapan     []byte    `json:"perlengkapan,omitempty"`
+	Perlengkapan     string    `json:"perlengkapan,omitempty"`
 	KategoriUtama    string    `json:"kategori_utama,omitempty"`
 	Kategori         string    `json:"kategori,omitempty"`
 

@@ -437,8 +437,6 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 
 	berkas := []models.BerkasPermohonan{}
 
-	var perlengkapan []byte
-
 	for key, files := range form.File {
 		for _, file := range files {
 			// Save the uploaded file with key as prefix
@@ -461,10 +459,6 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 			} else {
 				berkas = append(berkas, models.BerkasPermohonan{Nama: key, Tipe: "Word", Status: "Selesai", Berkas: data})
 			}
-
-			if key == "Perlengkapan" {
-				perlengkapan = data
-			}
 		}
 	}
 
@@ -476,7 +470,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		KategoriUtama:       payload.Perlalin.KategoriUtama,
 		Kategori:            payload.Perlalin.Kategori,
 		Jenis:               payload.Perlalin.Jenis,
-		Perlengkapan:        perlengkapan,
+		Perlengkapan:        payload.Perlalin.Perlengkapan,
 		Kode:                kode,
 		NikPemohon:          payload.Perlalin.NikPemohon,
 		NamaPemohon:         currentUser.Name,
