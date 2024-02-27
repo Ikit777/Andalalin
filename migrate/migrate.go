@@ -43,7 +43,6 @@ func main() {
 	initializers.DB.Migrator().DropTable(&models.TiketLevel2{})
 	initializers.DB.Migrator().DropTable(&models.Notifikasi{})
 	initializers.DB.Migrator().DropTable(&models.DataMaster{})
-	initializers.DB.Migrator().DropTable(&models.UsulanPengelolaan{})
 	initializers.DB.Migrator().DropTable(&models.SurveiKepuasan{})
 	initializers.DB.Migrator().DropTable(&models.Pemasangan{})
 
@@ -56,7 +55,6 @@ func main() {
 	initializers.DB.AutoMigrate(&models.TiketLevel2{})
 	initializers.DB.AutoMigrate(&models.Notifikasi{})
 	initializers.DB.AutoMigrate(&models.DataMaster{})
-	initializers.DB.AutoMigrate(&models.UsulanPengelolaan{})
 	initializers.DB.AutoMigrate(&models.SurveiKepuasan{})
 	initializers.DB.AutoMigrate(&models.Pemasangan{})
 
