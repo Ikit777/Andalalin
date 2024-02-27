@@ -43,14 +43,6 @@ var (
 	once        sync.Once
 )
 
-func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
-	dataStream := GetDataStream(dm.DB)
-
-	data := <-dataStream
-
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
-}
-
 func StartStreaming(db *gorm.DB) {
 	stream = make(chan string)
 
@@ -119,6 +111,14 @@ func GetDataStream(db *gorm.DB) <-chan string {
 		go StartStreaming(db)
 	})
 	return stream
+}
+
+func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
+	dataStream := GetDataStream(dm.DB)
+
+	data := <-dataStream
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 }
 
 func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {

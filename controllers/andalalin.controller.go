@@ -2957,6 +2957,53 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 		ac.ReleaseTicketLevel2(ctx, perlalin.IdAndalalin, payload.IdPetugas)
 	}
 
+	var user models.User
+	resultUser := ac.DB.First(&user, "id = ?", perlalin.IdPetugas)
+	if resultUser.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+		return
+	}
+
+	if perlalin.StatusAndalalin == "Persyaratan terpenuhi" {
+		simpanNotif := models.Notifikasi{
+			IdUser: user.ID,
+			Title:  "Tugas baru",
+			Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+		}
+
+		ac.DB.Create(&simpanNotif)
+
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Tugas baru",
+				Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+				Token:  user.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+		}
+	} else {
+		simpanNotif := models.Notifikasi{
+			IdUser: user.ID,
+			Title:  "Tugas baru",
+			Body:   "Pemasangan perlengkapan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+		}
+
+		ac.DB.Create(&simpanNotif)
+
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Tugas baru",
+				Body:   "Pemasangan perlengkapan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+				Token:  user.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+		}
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Tambah petugas berhasil"})
 }
 
@@ -3010,7 +3057,53 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 		}
 
 		ac.DB.Save(&perlalin)
+	}
 
+	var user models.User
+	resultUser := ac.DB.First(&user, "id = ?", perlalin.IdPetugas)
+	if resultUser.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+		return
+	}
+
+	if perlalin.StatusAndalalin == "Survei lapangan" {
+		simpanNotif := models.Notifikasi{
+			IdUser: user.ID,
+			Title:  "Tugas baru",
+			Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+		}
+
+		ac.DB.Create(&simpanNotif)
+
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Tugas baru",
+				Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+				Token:  user.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+		}
+	} else {
+		simpanNotif := models.Notifikasi{
+			IdUser: user.ID,
+			Title:  "Tugas baru",
+			Body:   "Pemasangan perlengkapan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+		}
+
+		ac.DB.Create(&simpanNotif)
+
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Tugas baru",
+				Body:   "Pemasangan perlengkapan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+				Token:  user.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+		}
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ubah petugas berhasil"})
