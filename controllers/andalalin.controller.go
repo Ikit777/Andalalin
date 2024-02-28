@@ -1177,19 +1177,13 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 		}
 	}
 
-	var perlengkapan []string
-
-	for _, data := range perlalin.Perlengkapan {
-		perlengkapan = append(perlengkapan, data.IdPerlengkapan)
-	}
-
 	if perlalin.IdAndalalin != uuid.Nil {
 		if currentUser.Role == "User" {
 			dataUser := models.PerlalinResponseUser{
 				//Data Permohonan
 				IdAndalalin:      perlalin.IdAndalalin,
 				JenisAndalalin:   perlalin.JenisAndalalin,
-				Perlengkapan:     perlengkapan,
+				Perlengkapan:     perlalin.Perlengkapan,
 				Kode:             perlalin.Kode,
 				WaktuAndalalin:   perlalin.WaktuAndalalin,
 				TanggalAndalalin: perlalin.TanggalAndalalin,
@@ -1221,7 +1215,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				//Data Permohonan
 				IdAndalalin:      perlalin.IdAndalalin,
 				JenisAndalalin:   perlalin.JenisAndalalin,
-				Perlengkapan:     perlengkapan,
+				Perlengkapan:     perlalin.Perlengkapan,
 				Kode:             perlalin.Kode,
 				WaktuAndalalin:   perlalin.WaktuAndalalin,
 				TanggalAndalalin: perlalin.TanggalAndalalin,
