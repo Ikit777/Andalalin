@@ -435,7 +435,7 @@ type Perlengkapan struct {
 	FotoLokasi           []Foto  `json:"foto" binding:"required"`
 	Detail               *string `json:"detail" binding:"required"`
 	Alasan               string  `json:"alasan" binding:"required"`
-	Peruntukan           string  `json:"peruntukan" binding:"required"`
+	Keterangan           *string
 }
 
 type Perlalin struct {

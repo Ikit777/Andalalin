@@ -492,7 +492,6 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 			LongitudePemasangan:  data.LongitudePemasangan,
 			Detail:               data.Detail,
 			Alasan:               data.Alasan,
-			Peruntukan:           data.Peruntukan,
 		}
 		perlengkapan = append(perlengkapan, input)
 	}
