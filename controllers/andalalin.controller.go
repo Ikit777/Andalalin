@@ -2974,6 +2974,11 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 	}
 
 	if perlalin.StatusAndalalin == "Persyaratan terpenuhi" {
+		for _, data := range perlalin.Perlengkapan {
+			data.StatusPerlengkapan = "Survei lapangan"
+		}
+
+		ac.DB.Save(&perlalin)
 		simpanNotif := models.Notifikasi{
 			IdUser: user.ID,
 			Title:  "Tugas baru",
@@ -2987,25 +2992,6 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 				IdUser: user.ID,
 				Title:  "Tugas baru",
 				Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
-				Token:  user.PushToken,
-			}
-
-			utils.SendPushNotifications(&notif)
-		}
-	} else {
-		simpanNotif := models.Notifikasi{
-			IdUser: user.ID,
-			Title:  "Tugas baru",
-			Body:   "Pemasangan perlengkapan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
-		}
-
-		ac.DB.Create(&simpanNotif)
-
-		if user.PushToken != "" {
-			notif := utils.Notification{
-				IdUser: user.ID,
-				Title:  "Tugas baru",
-				Body:   "Pemasangan perlengkapan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
 				Token:  user.PushToken,
 			}
 

@@ -666,10 +666,6 @@ type Survei struct {
 	TanggalSurvei string `gorm:"not null"`
 }
 
-// type Foto struct {
-// 	Foto []byte
-// }
-
 type Foto []byte
 
 type DataFoto struct {
