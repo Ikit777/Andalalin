@@ -100,7 +100,7 @@ func StartStreaming(db *gorm.DB) {
 			continue
 		}
 
-		encodedData := base64.StdEncoding.EncodeToString(jsonData)
+		encodedData := base64.URLEncoding.EncodeToString(jsonData)
 		stream <- encodedData
 	}
 }
