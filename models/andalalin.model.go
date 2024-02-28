@@ -440,6 +440,7 @@ type Perlengkapan struct {
 
 type PerlengkapanResponse struct {
 	IdPerlengkapan     string `json:"id_perlengkapan,omitempty"`
+	StatusPerlengkapan string `json:"status,omitempty"`
 	JenisPerlengkapan  string `json:"perlengkapan,omitempty"`
 	GambarPerlengkapan string `json:"gambar,omitempty"`
 	LokasiPemasangan   string `json:"pemasangan,omitempty"`

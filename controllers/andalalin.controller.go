@@ -1180,7 +1180,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 	var perlengkapan []models.PerlengkapanResponse
 
 	for _, data := range perlalin.Perlengkapan {
-		perlengkapan = append(perlengkapan, models.PerlengkapanResponse{IdPerlengkapan: data.IdPerlengkapan, JenisPerlengkapan: data.JenisPerlengkapan, GambarPerlengkapan: data.GambarPerlengkapan, LokasiPemasangan: data.LokasiPemasangan})
+		perlengkapan = append(perlengkapan, models.PerlengkapanResponse{IdPerlengkapan: data.IdPerlengkapan, StatusPerlengkapan: data.StatusPerlengkapan, JenisPerlengkapan: data.JenisPerlengkapan, GambarPerlengkapan: data.GambarPerlengkapan, LokasiPemasangan: data.LokasiPemasangan})
 	}
 
 	if perlalin.IdAndalalin != uuid.Nil {
