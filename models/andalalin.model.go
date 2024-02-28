@@ -423,8 +423,8 @@ type AndalalinResponseUser struct {
 }
 
 type Perlengkapan struct {
-	IdPerlengkapan       string  `json:"id_perlengkapan" binding:"required"`
-	StatusPerlengkapan   string  `json:"status" binding:"required"`
+	IdPerlengkapan       string `json:"id_perlengkapan" binding:"required"`
+	StatusPerlengkapan   string
 	KategoriUtama        string  `json:"kategori_utama" binding:"required"`
 	KategoriPerlengkapan string  `json:"kategori" binding:"required"`
 	JenisPerlengkapan    string  `json:"perlengkapan" binding:"required"`
@@ -432,7 +432,7 @@ type Perlengkapan struct {
 	LokasiPemasangan     string  `json:"pemasangan" binding:"required"`
 	LatitudePemasangan   float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
 	LongitudePemasangan  float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
-	FotoLokasi           []Foto  `json:"foto" binding:"required"`
+	FotoLokasi           []Foto
 	Detail               *string `json:"detail" binding:"required"`
 	Alasan               string  `json:"alasan" binding:"required"`
 	Keterangan           *string
