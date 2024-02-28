@@ -510,13 +510,13 @@ type DataPerlalin struct {
 
 type PerlalinResponse struct {
 	//Data Permohonan
-	IdAndalalin      uuid.UUID      `json:"id_andalalin,omitempty"`
-	JenisAndalalin   string         `json:"jenis_andalalin,omitempty"`
-	Perlengkapan     []Perlengkapan `json:"perlengkapan,omitempty"`
-	Kode             string         `json:"kode_andalalin,omitempty"`
-	WaktuAndalalin   string         `json:"waktu_andalalin,omitempty"`
-	TanggalAndalalin string         `json:"tanggal_andalalin,omitempty"`
-	StatusAndalalin  string         `json:"status_andalalin,omitempty"`
+	IdAndalalin      uuid.UUID `json:"id_andalalin,omitempty"`
+	JenisAndalalin   string    `json:"jenis_andalalin,omitempty"`
+	Perlengkapan     []string  `json:"perlengkapan,omitempty"`
+	Kode             string    `json:"kode_andalalin,omitempty"`
+	WaktuAndalalin   string    `json:"waktu_andalalin,omitempty"`
+	TanggalAndalalin string    `json:"tanggal_andalalin,omitempty"`
+	StatusAndalalin  string    `json:"status_andalalin,omitempty"`
 
 	//Data Pemohon
 	NikPemohon          string `json:"nik_pemohon,omitempty"`
@@ -560,13 +560,13 @@ type PerlalinResponse struct {
 
 type PerlalinResponseUser struct {
 	//Data Permohonan
-	IdAndalalin      uuid.UUID      `json:"id_andalalin,omitempty"`
-	JenisAndalalin   string         `json:"jenis_andalalin,omitempty"`
-	Kode             string         `json:"kode_andalalin,omitempty"`
-	WaktuAndalalin   string         `json:"waktu_andalalin,omitempty"`
-	TanggalAndalalin string         `json:"tanggal_andalalin,omitempty"`
-	StatusAndalalin  string         `json:"status_andalalin,omitempty"`
-	Perlengkapan     []Perlengkapan `json:"perlengkapan,omitempty"`
+	IdAndalalin      uuid.UUID `json:"id_andalalin,omitempty"`
+	JenisAndalalin   string    `json:"jenis_andalalin,omitempty"`
+	Kode             string    `json:"kode_andalalin,omitempty"`
+	WaktuAndalalin   string    `json:"waktu_andalalin,omitempty"`
+	TanggalAndalalin string    `json:"tanggal_andalalin,omitempty"`
+	StatusAndalalin  string    `json:"status_andalalin,omitempty"`
+	Perlengkapan     []string  `json:"perlengkapan,omitempty"`
 
 	//Data Pemohon
 	NikPemohon   string `json:"nik_pemohon,omitempty"`
