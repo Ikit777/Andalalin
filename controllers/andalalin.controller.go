@@ -3195,11 +3195,11 @@ func (ac *AndalalinController) GetPerlengkapan(ctx *gin.Context) {
 					GambarPerlengkapan   string        `json:"gambar,omitempty"`
 					LokasiPemasangan     string        `json:"pemasangan,omitempty"`
 					LatitudePemasangan   float64       `json:"latitude,omitempty"`
-					LongitudePemasangan  float64       `json:"longtitude,omitempty"`
+					LongitudePemasangan  float64       `json:"longitude,omitempty"`
 					FotoLokasi           []models.Foto `json:"foto,omitempty"`
 					Detail               *string       `json:"detail,omitempty"`
 					Alasan               string        `json:"alasan,omitempty"`
-					Keterangan           *string       `json:"keterangan,omitempty"`
+					Pertimbangan         *string       `json:"pertimbangan,omitempty"`
 				}{
 					IdPerlengkapan:       data.IdPerlengkapan,
 					StatusPerlengkapan:   data.StatusPerlengkapan,
@@ -3213,7 +3213,7 @@ func (ac *AndalalinController) GetPerlengkapan(ctx *gin.Context) {
 					FotoLokasi:           data.FotoLokasi,
 					Detail:               data.Detail,
 					Alasan:               data.Alasan,
-					Keterangan:           data.Keterangan,
+					Pertimbangan:         data.Pertimbangan,
 				}
 
 				ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": perlengkapan})
