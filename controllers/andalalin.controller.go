@@ -3175,6 +3175,53 @@ func (ac *AndalalinController) GetAndalalinTicketLevel2(ctx *gin.Context) {
 	}
 }
 
+func (ac *AndalalinController) GetPerlengkapan(ctx *gin.Context) {
+	id_andalalin := ctx.Param("id_andalalin")
+	id_perlengkapan := ctx.Param("id_perlengkapan")
+
+	var perlalin models.Perlalin
+
+	ac.DB.First(&perlalin, "id_andalalin = ?", id_andalalin)
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		for _, data := range perlalin.Perlengkapan {
+			if data.IdPerlengkapan == id_perlengkapan {
+				perlengkapan := struct {
+					IdPerlengkapan       string        `json:"id_perlengkapan,omitempty"`
+					StatusPerlengkapan   string        `json:"status,omitempty"`
+					KategoriUtama        string        `json:"kategori_utama,omitempty"`
+					KategoriPerlengkapan string        `json:"kategori,omitempty"`
+					JenisPerlengkapan    string        `json:"perlengkapan,omitempty"`
+					GambarPerlengkapan   string        `json:"gambar,omitempty"`
+					LokasiPemasangan     string        `json:"pemasangan,omitempty"`
+					LatitudePemasangan   float64       `json:"latitude,omitempty"`
+					LongitudePemasangan  float64       `json:"longtitude,omitempty"`
+					FotoLokasi           []models.Foto `json:"foto,omitempty"`
+					Detail               *string       `json:"detail,omitempty"`
+					Alasan               string        `json:"alasan,omitempty"`
+					Keterangan           *string       `json:"keterangan,omitempty"`
+				}{
+					IdPerlengkapan:       data.IdPerlengkapan,
+					StatusPerlengkapan:   data.StatusPerlengkapan,
+					KategoriUtama:        data.KategoriUtama,
+					KategoriPerlengkapan: data.KategoriPerlengkapan,
+					JenisPerlengkapan:    data.JenisPerlengkapan,
+					GambarPerlengkapan:   data.GambarPerlengkapan,
+					LokasiPemasangan:     data.LokasiPemasangan,
+					LatitudePemasangan:   data.LatitudePemasangan,
+					LongitudePemasangan:  data.LongitudePemasangan,
+					FotoLokasi:           data.FotoLokasi,
+					Detail:               data.Detail,
+					Alasan:               data.Alasan,
+					Keterangan:           data.Keterangan,
+				}
+
+				ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": perlengkapan})
+			}
+		}
+	}
+}
+
 func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 	var payload *models.DataSurvey
 	currentUser := ctx.MustGet("currentUser").(models.User)

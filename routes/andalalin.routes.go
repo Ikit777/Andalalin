@@ -30,6 +30,9 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.GET("/status/:status_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanByStatus)
 	router.GET("/petugas/:status", middleware.DeserializeUser(), uc.andalalinController.GetAndalalinTicketLevel2)
 
+	//Get Data Perlengkapan
+	router.GET("/perlalin/perlengkapan/:id_andalalin/:id_perlengkapan", middleware.DeserializeUser(), uc.andalalinController.GetPerlengkapan)
+
 	//Get Berkas Permohonan
 	router.GET("/berkas/:id_andalalin/:dokumen", middleware.DeserializeUser(), uc.andalalinController.GetDokumen)
 	router.POST("/berkas/update/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.UpdateBerkas)
