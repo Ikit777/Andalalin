@@ -504,26 +504,6 @@ func (sc *SurveyController) GetAllPengaduan(ctx *gin.Context) {
 
 func (sc *SurveyController) GetAllPengaduanByPetugas(ctx *gin.Context) {
 	currentUser := ctx.MustGet("currentUser").(models.User)
-	config, _ := initializers.LoadConfig()
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinSurveyCredential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
 
 	var survey []models.Pengaduan
 
@@ -538,27 +518,6 @@ func (sc *SurveyController) GetAllPengaduanByPetugas(ctx *gin.Context) {
 
 func (sc *SurveyController) GetPengaduan(ctx *gin.Context) {
 	id := ctx.Param("id_survei")
-
-	config, _ := initializers.LoadConfig()
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinSurveyCredential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
 
 	var survey *models.Pengaduan
 
