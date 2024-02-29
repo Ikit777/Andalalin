@@ -400,30 +400,9 @@ func (sc *SurveyController) HasilSurveiKepuasanTertentu(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": hasil})
 }
 
-func (sc *SurveyController) IsiSurveyMandiri(ctx *gin.Context) {
+func (sc *SurveyController) IsiPengaduan(ctx *gin.Context) {
 	var payload *models.DataSurvey
 	currentUser := ctx.MustGet("currentUser").(models.User)
-
-	config, _ := initializers.LoadConfig()
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinSurveyCredential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
 
 	if err := ctx.ShouldBind(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
@@ -465,18 +444,19 @@ func (sc *SurveyController) IsiSurveyMandiri(ctx *gin.Context) {
 		}
 	}
 
-	survey := models.SurveiMandiri{
-		IdPetugas:     currentUser.ID,
-		Petugas:       currentUser.Name,
-		EmailPetugas:  currentUser.Email,
-		Lokasi:        payload.Data.Lokasi,
-		Catatan:       payload.Data.Catatan,
-		Foto:          foto,
-		Latitude:      payload.Data.Latitude,
-		Longitude:     payload.Data.Longitude,
-		StatusSurvei:  "Perlu tindakan",
-		TanggalSurvei: tanggal,
-		WaktuSurvei:   nowTime.Format("15:04:05"),
+	survey := models.Pengaduan{
+		IdPengguna:     currentUser.ID,
+		JenisAndalalin: "Pengaduan perlengkapan lalu lintas",
+		Nama:           currentUser.Name,
+		Email:          currentUser.Email,
+		Lokasi:         payload.Data.Lokasi,
+		Catatan:        payload.Data.Catatan,
+		Foto:           foto,
+		Latitude:       payload.Data.Latitude,
+		Longitude:      payload.Data.Longitude,
+		StatusSurvei:   "Perlu tindakan",
+		TanggalSurvei:  tanggal,
+		WaktuSurvei:    nowTime.Format("15:04:05"),
 	}
 
 	result := sc.DB.Create(&survey)
@@ -489,7 +469,7 @@ func (sc *SurveyController) IsiSurveyMandiri(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
 }
 
-func (sc *SurveyController) GetAllSurveiMandiri(ctx *gin.Context) {
+func (sc *SurveyController) GetAllPengaduan(ctx *gin.Context) {
 	config, _ := initializers.LoadConfig()
 
 	accessUser := ctx.MustGet("accessUser").(string)
@@ -511,7 +491,7 @@ func (sc *SurveyController) GetAllSurveiMandiri(ctx *gin.Context) {
 		return
 	}
 
-	var survey []models.SurveiMandiri
+	var survey []models.Pengaduan
 
 	results := sc.DB.Find(&survey)
 
@@ -522,7 +502,7 @@ func (sc *SurveyController) GetAllSurveiMandiri(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(survey), "data": survey})
 }
 
-func (sc *SurveyController) GetAllSurveiMandiriByPetugas(ctx *gin.Context) {
+func (sc *SurveyController) GetAllPengaduanByPetugas(ctx *gin.Context) {
 	currentUser := ctx.MustGet("currentUser").(models.User)
 	config, _ := initializers.LoadConfig()
 
@@ -545,7 +525,7 @@ func (sc *SurveyController) GetAllSurveiMandiriByPetugas(ctx *gin.Context) {
 		return
 	}
 
-	var survey []models.SurveiMandiri
+	var survey []models.Pengaduan
 
 	results := sc.DB.Find(&survey, "id_petugas = ?", currentUser.ID)
 
@@ -556,7 +536,7 @@ func (sc *SurveyController) GetAllSurveiMandiriByPetugas(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(survey), "data": survey})
 }
 
-func (sc *SurveyController) GetSurveiMandiri(ctx *gin.Context) {
+func (sc *SurveyController) GetPengaduan(ctx *gin.Context) {
 	id := ctx.Param("id_survei")
 
 	config, _ := initializers.LoadConfig()
@@ -580,7 +560,7 @@ func (sc *SurveyController) GetSurveiMandiri(ctx *gin.Context) {
 		return
 	}
 
-	var survey *models.SurveiMandiri
+	var survey *models.Pengaduan
 
 	result := sc.DB.First(&survey, "id_survey = ?", id)
 	if result.Error != nil {
@@ -593,7 +573,7 @@ func (sc *SurveyController) GetSurveiMandiri(ctx *gin.Context) {
 
 func (sc *SurveyController) TerimaSurvei(ctx *gin.Context) {
 	id := ctx.Param("id_survei")
-	var payload *models.TerimaSurveiMandiri
+	var payload *models.TerimaPengaduan
 
 	config, _ := initializers.LoadConfig()
 
@@ -621,7 +601,7 @@ func (sc *SurveyController) TerimaSurvei(ctx *gin.Context) {
 		return
 	}
 
-	var survey *models.SurveiMandiri
+	var survey *models.Pengaduan
 
 	result := sc.DB.First(&survey, "id_survey = ?", id)
 	if result.Error != nil {

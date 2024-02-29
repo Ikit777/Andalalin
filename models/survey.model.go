@@ -25,11 +25,12 @@ type Kepuasan struct {
 	Nilai string
 }
 
-type SurveiMandiri struct {
-	IdSurvey        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	IdPetugas       uuid.UUID `gorm:"type:varchar(255);not null"`
-	Petugas         string    `gorm:"type:varchar(255);not null"`
-	EmailPetugas    string    `gorm:"type:varchar(255);not null"`
+type Pengaduan struct {
+	IdPengaduan     uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
+	JenisAndalalin  string    `gorm:"type:varchar(255);not null"`
+	IdPengguna      uuid.UUID `gorm:"type:varchar(255);not null"`
+	Nama            string    `gorm:"type:varchar(255);not null"`
+	Email           string    `gorm:"type:varchar(255);not null"`
 	Catatan         *string
 	Foto            []Foto `gorm:"serializer:json"`
 	Lokasi          string
@@ -41,6 +42,6 @@ type SurveiMandiri struct {
 	CatatanTindakan *string
 }
 
-type TerimaSurveiMandiri struct {
+type TerimaPengaduan struct {
 	Catatan *string `json:"catatan" binding:"required"`
 }
