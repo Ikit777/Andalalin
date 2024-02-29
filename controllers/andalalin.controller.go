@@ -3318,9 +3318,9 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 			return
 		}
 
-		for _, data := range perlalin.Perlengkapan {
+		for i, data := range perlalin.Perlengkapan {
 			if data.IdPerlengkapan == id_perlengkapan {
-				data.StatusPerlengkapan = "Pengecekan"
+				perlalin.Perlengkapan[i].StatusPerlengkapan = "Pengecekan"
 			}
 		}
 
