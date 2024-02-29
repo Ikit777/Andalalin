@@ -128,7 +128,7 @@ func (sc *SurveyController) SurveiKepuasan(ctx *gin.Context) {
 		result := sc.DB.Create(&kepuasan)
 
 		if result.Error != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 			return
 		}
 	}
@@ -147,7 +147,7 @@ func (sc *SurveyController) SurveiKepuasan(ctx *gin.Context) {
 		result := sc.DB.Create(&kepuasan)
 
 		if result.Error != nil {
-			ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 			return
 		}
 	}
@@ -163,7 +163,7 @@ func (sc *SurveyController) CekSurveiKepuasan(ctx *gin.Context) {
 	result := sc.DB.First(&survei, "id_andalalin", id)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
@@ -206,7 +206,7 @@ func (sc *SurveyController) HasilSurveiKepuasan(ctx *gin.Context) {
 	result := sc.DB.Where("tanggal_pelaksanaan LIKE ?", fmt.Sprintf("%%%s%%", utils.Bulan(nowTime.Month())+" "+nowTime.Format("2006"))).Find(&survei)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
@@ -304,13 +304,13 @@ func (sc *SurveyController) HasilSurveiKepuasanTertentu(ctx *gin.Context) {
 
 	tahun, err := strconv.Atoi(waktu[3:7])
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
 	convertBulan, err := strconv.Atoi(waktu[0:2])
 	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
@@ -327,7 +327,7 @@ func (sc *SurveyController) HasilSurveiKepuasanTertentu(ctx *gin.Context) {
 	result := sc.DB.Where("tanggal_pelaksanaan LIKE ?", fmt.Sprintf("%%%s%%", utils.Bulan(bulan)+" "+waktu[3:7])).Find(&survei)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
@@ -462,7 +462,7 @@ func (sc *SurveyController) IsiPengaduan(ctx *gin.Context) {
 	result := sc.DB.Create(&survey)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
 		return
 	}
 
@@ -496,7 +496,7 @@ func (sc *SurveyController) GetAllPengaduan(ctx *gin.Context) {
 	results := sc.DB.Find(&survey)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(survey), "data": survey})
@@ -510,7 +510,7 @@ func (sc *SurveyController) GetAllPengaduanByPetugas(ctx *gin.Context) {
 	results := sc.DB.Find(&survey, "id_penguna = ?", currentUser.ID)
 
 	if results.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(survey), "data": survey})
@@ -523,7 +523,7 @@ func (sc *SurveyController) GetPengaduan(ctx *gin.Context) {
 
 	result := sc.DB.First(&survey, "id_pengaduan = ?", id)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
 		return
 	}
 
@@ -564,7 +564,7 @@ func (sc *SurveyController) TerimPengaduan(ctx *gin.Context) {
 
 	result := sc.DB.First(&survey, "id_pengaduan = ?", id)
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
 		return
 	}
 	survey.StatusSurvei = "Pengaduan diterima"
