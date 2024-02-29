@@ -3323,6 +3323,12 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 
 		perlalin.StatusAndalalin = "Laporan survei"
 
+		for _, data := range perlalin.Perlengkapan {
+			if data.IdPerlengkapan == id_perlengkapan {
+				data.StatusPerlengkapan = "Pengecekan"
+			}
+		}
+
 		ac.DB.Save(&perlalin)
 
 		ac.CloseTiketLevel2(ctx, perlalin.IdAndalalin)
