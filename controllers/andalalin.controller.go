@@ -2961,8 +2961,8 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 		perlalin.EmailPetugas = payload.EmailPetugas
 		perlalin.StatusAndalalin = "Survei lapangan"
 
-		for _, data := range perlalin.Perlengkapan {
-			data.StatusPerlengkapan = "Survei"
+		for i := range perlalin.Perlengkapan {
+			perlalin.Perlengkapan[i].StatusPerlengkapan = "Survei"
 		}
 
 		ac.DB.Save(&perlalin)
