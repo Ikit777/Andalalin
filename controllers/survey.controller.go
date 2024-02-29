@@ -507,7 +507,7 @@ func (sc *SurveyController) GetAllPengaduanByPetugas(ctx *gin.Context) {
 
 	var survey []models.Pengaduan
 
-	results := sc.DB.Find(&survey, "id_petugas = ?", currentUser.ID)
+	results := sc.DB.Find(&survey, "id_penguna = ?", currentUser.ID)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": results.Error})
@@ -517,11 +517,11 @@ func (sc *SurveyController) GetAllPengaduanByPetugas(ctx *gin.Context) {
 }
 
 func (sc *SurveyController) GetPengaduan(ctx *gin.Context) {
-	id := ctx.Param("id_survei")
+	id := ctx.Param("id_pengaduan")
 
 	var survey *models.Pengaduan
 
-	result := sc.DB.First(&survey, "id_survey = ?", id)
+	result := sc.DB.First(&survey, "id_pengaduan = ?", id)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
 		return
@@ -531,7 +531,7 @@ func (sc *SurveyController) GetPengaduan(ctx *gin.Context) {
 }
 
 func (sc *SurveyController) TerimPengaduan(ctx *gin.Context) {
-	id := ctx.Param("id_survei")
+	id := ctx.Param("id_pengaduan")
 	var payload *models.TerimaPengaduan
 
 	config, _ := initializers.LoadConfig()
@@ -562,12 +562,12 @@ func (sc *SurveyController) TerimPengaduan(ctx *gin.Context) {
 
 	var survey *models.Pengaduan
 
-	result := sc.DB.First(&survey, "id_survey = ?", id)
+	result := sc.DB.First(&survey, "id_pengaduan = ?", id)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error})
 		return
 	}
-	survey.StatusSurvei = "Survei diterima"
+	survey.StatusSurvei = "Pengaduan diterima"
 	survey.CatatanTindakan = payload.Catatan
 
 	sc.DB.Save(&survey)
