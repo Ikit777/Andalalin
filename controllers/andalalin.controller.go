@@ -3336,7 +3336,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 		}
 
 		if cek == nil {
-			perlalin.StatusAndalalin = "Laporan survei"
+			perlalin.StatusAndalalin = "Pemeriksaan perlengkapan"
 		}
 
 		ac.DB.Save(&perlalin)
