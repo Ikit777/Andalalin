@@ -3334,11 +3334,10 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 
 		if cek == nil {
 			perlalin.StatusAndalalin = "Pemeriksaan perlengkapan"
+			ac.CloseTiketLevel2(ctx, perlalin.IdAndalalin)
 		}
 
 		ac.DB.Save(&perlalin)
-
-		ac.CloseTiketLevel2(ctx, perlalin.IdAndalalin)
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
