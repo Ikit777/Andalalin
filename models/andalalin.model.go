@@ -659,7 +659,7 @@ type TambahPetugas struct {
 
 type Survei struct {
 	IdSurvey       uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	IdAndalalin    uuid.UUID `gorm:"type:varchar(255);unique;not null"`
+	IdAndalalin    uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdTiketLevel1  uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdTiketLevel2  uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdPetugas      uuid.UUID `gorm:"type:varchar(255);not null"`
@@ -709,7 +709,7 @@ type TiketLevel2 struct {
 
 type Pemasangan struct {
 	IdPemasangan      uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	IdAndalalin       uuid.UUID `gorm:"type:varchar(255);unique;not null"`
+	IdAndalalin       uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdTiketLevel1     uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdPetugas         uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdPerlengkapan    string    `gorm:"type:varchar(255);not null"`
