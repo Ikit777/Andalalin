@@ -2961,6 +2961,10 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 		perlalin.EmailPetugas = payload.EmailPetugas
 		perlalin.StatusAndalalin = "Survei lapangan"
 
+		for _, data := range perlalin.Perlengkapan {
+			data.StatusPerlengkapan = "Survei"
+		}
+
 		ac.DB.Save(&perlalin)
 
 		ac.ReleaseTicketLevel2(ctx, perlalin.IdAndalalin, payload.IdPetugas)
@@ -2973,30 +2977,23 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 		return
 	}
 
-	if perlalin.StatusAndalalin == "Persyaratan terpenuhi" {
-		for _, data := range perlalin.Perlengkapan {
-			data.StatusPerlengkapan = "Survei lapangan"
-		}
+	simpanNotif := models.Notifikasi{
+		IdUser: user.ID,
+		Title:  "Tugas baru",
+		Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+	}
 
-		ac.DB.Save(&perlalin)
-		simpanNotif := models.Notifikasi{
+	ac.DB.Create(&simpanNotif)
+
+	if user.PushToken != "" {
+		notif := utils.Notification{
 			IdUser: user.ID,
 			Title:  "Tugas baru",
 			Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+			Token:  user.PushToken,
 		}
 
-		ac.DB.Create(&simpanNotif)
-
-		if user.PushToken != "" {
-			notif := utils.Notification{
-				IdUser: user.ID,
-				Title:  "Tugas baru",
-				Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
-				Token:  user.PushToken,
-			}
-
-			utils.SendPushNotifications(&notif)
-		}
+		utils.SendPushNotifications(&notif)
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Tambah petugas berhasil"})
