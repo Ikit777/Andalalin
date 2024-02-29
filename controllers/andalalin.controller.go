@@ -3333,7 +3333,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 		}
 
 		if cek == nil {
-			perlalin.StatusAndalalin = "Pemeriksaan perlengkapan"
+			perlalin.StatusAndalalin = "Pengecekan perlengkapan"
 			ac.CloseTiketLevel2(ctx, perlalin.IdAndalalin)
 
 			var survey []models.Survei
