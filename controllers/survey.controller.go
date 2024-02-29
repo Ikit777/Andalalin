@@ -532,7 +532,7 @@ func (sc *SurveyController) GetAllPengaduanByPetugas(ctx *gin.Context) {
 
 	var survey []models.Pengaduan
 
-	results := sc.DB.Find(&survey, "id_penguna = ?", currentUser.ID)
+	results := sc.DB.Find(&survey, "id_pengguna = ?", currentUser.ID)
 
 	if results.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
