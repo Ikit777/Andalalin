@@ -607,8 +607,8 @@ func (sc *SurveyController) TerimPengaduan(ctx *gin.Context) {
 
 	simpanNotif := models.Notifikasi{
 		IdUser: user.ID,
-		Title:  "Pengaduan baru",
-		Body:   "Pengaduan baru telah tersedia",
+		Title:  "Pengaduan diterima",
+		Body:   "Pengaduan anda telah diterima",
 	}
 
 	sc.DB.Create(&simpanNotif)
@@ -616,8 +616,8 @@ func (sc *SurveyController) TerimPengaduan(ctx *gin.Context) {
 	if user.PushToken != "" {
 		notif := utils.Notification{
 			IdUser: user.ID,
-			Title:  "Pengaduan baru",
-			Body:   "Pengaduan baru telah tersedia",
+			Title:  "Pengaduan diterima",
+			Body:   "Pengaduan anda telah diterima",
 			Token:  user.PushToken,
 		}
 
