@@ -693,6 +693,14 @@ type DataSurvey struct {
 	Data InputSurvey `form:"data"`
 }
 
+type DataLaporanSurvei struct {
+	Perlengkapan string
+	Lokasi       string
+	Tanggal      string
+	Survei       string
+	Foto         []Foto
+}
+
 type TiketLevel1 struct {
 	IdTiketLevel1 uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
 	IdAndalalin   uuid.UUID `gorm:"type:varchar(255);unique;not null"`

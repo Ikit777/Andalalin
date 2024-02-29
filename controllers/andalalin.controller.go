@@ -3335,6 +3335,61 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 		if cek == nil {
 			perlalin.StatusAndalalin = "Pemeriksaan perlengkapan"
 			ac.CloseTiketLevel2(ctx, perlalin.IdAndalalin)
+
+			var survey []models.Survei
+
+			result := ac.DB.Find(&survey, "id_andalalin = ?", id)
+			if result.Error != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
+				return
+			}
+
+			laporan := []models.DataLaporanSurvei{}
+
+			for _, data := range survey {
+				for _, perlengkapan := range perlalin.Perlengkapan {
+					if perlengkapan.IdPerlengkapan == data.IdPerlengkapan {
+						laporan = append(laporan, models.DataLaporanSurvei{Perlengkapan: perlengkapan.JenisPerlengkapan, Lokasi: perlengkapan.LokasiPemasangan, Tanggal: data.TanggalSurvei, Survei: data.Lokasi, Foto: data.Foto})
+					}
+				}
+			}
+
+			perlengkapan := struct {
+				Kode  string
+				Nik   string
+				Nama  string
+				Email string
+				Nomor string
+				Data  []models.DataLaporanSurvei
+			}{
+				Kode:  perlalin.Kode,
+				Nik:   perlalin.NikPemohon,
+				Nama:  perlalin.NamaPemohon,
+				Email: perlalin.EmailPemohon,
+				Nomor: perlalin.NomerPemohon,
+				Data:  laporan,
+			}
+
+			t, err := template.ParseFiles("templates/laporanSurvei.html")
+			if err != nil {
+				log.Fatal("Error reading the email template:", err)
+				return
+			}
+
+			buffer := new(bytes.Buffer)
+			if err = t.Execute(buffer, perlengkapan); err != nil {
+				log.Fatal("Eror saat membaca template:", err)
+				return
+			}
+
+			pdfContent, err := generatePDF(buffer.String())
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+
+			perlalin.BerkasPermohonan = append(perlalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Nama: "Laporan survei", Tipe: "Pdf", Berkas: pdfContent})
+
 		}
 
 		ac.DB.Save(&perlalin)
