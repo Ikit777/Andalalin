@@ -3212,6 +3212,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 	var payload *models.DataSurvey
 	currentUser := ctx.MustGet("currentUser").(models.User)
 	id := ctx.Param("id_andalalin")
+	id_perlengkapan := ctx.Param("id_perlengkapan")
 
 	config, _ := initializers.LoadConfig()
 
@@ -3294,19 +3295,20 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 
 	if perlalin.IdAndalalin != uuid.Nil {
 		survey := models.Survei{
-			IdAndalalin:   perlalin.IdAndalalin,
-			IdTiketLevel1: ticket1.IdTiketLevel1,
-			IdTiketLevel2: ticket2.IdTiketLevel2,
-			IdPetugas:     currentUser.ID,
-			Petugas:       currentUser.Name,
-			EmailPetugas:  currentUser.Email,
-			Lokasi:        payload.Data.Lokasi,
-			Catatan:       payload.Data.Catatan,
-			Foto:          foto,
-			Latitude:      payload.Data.Latitude,
-			Longitude:     payload.Data.Longitude,
-			TanggalSurvei: tanggal,
-			WaktuSurvei:   nowTime.Format("15:04:05"),
+			IdAndalalin:    perlalin.IdAndalalin,
+			IdTiketLevel1:  ticket1.IdTiketLevel1,
+			IdTiketLevel2:  ticket2.IdTiketLevel2,
+			IdPerlengkapan: id_perlengkapan,
+			IdPetugas:      currentUser.ID,
+			Petugas:        currentUser.Name,
+			EmailPetugas:   currentUser.Email,
+			Lokasi:         payload.Data.Lokasi,
+			Catatan:        payload.Data.Catatan,
+			Foto:           foto,
+			Latitude:       payload.Data.Latitude,
+			Longitude:      payload.Data.Longitude,
+			TanggalSurvei:  tanggal,
+			WaktuSurvei:    nowTime.Format("15:04:05"),
 		}
 
 		result := ac.DB.Create(&survey)
@@ -3327,61 +3329,6 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
-}
-
-func (ac *AndalalinController) GetAllSurvey(ctx *gin.Context) {
-	currentUser := ctx.MustGet("currentUser").(models.User)
-	config, _ := initializers.LoadConfig()
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinSurveyCredential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
-
-	var survey []models.Survei
-
-	results := ac.DB.Find(&survey, "id_petugas = ?", currentUser.ID)
-
-	if results.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
-		return
-	} else {
-		var respone []models.DaftarAndalalinResponse
-		for _, s := range survey {
-			var perlalin models.Perlalin
-
-			ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin)
-
-			if perlalin.IdAndalalin != uuid.Nil {
-				respone = append(respone, models.DaftarAndalalinResponse{
-					IdAndalalin:      perlalin.IdAndalalin,
-					Kode:             perlalin.Kode,
-					TanggalAndalalin: perlalin.TanggalAndalalin,
-					Nama:             perlalin.NamaPemohon,
-					Email:            perlalin.EmailPemohon,
-					Petugas:          perlalin.NamaPetugas,
-					JenisAndalalin:   perlalin.JenisAndalalin,
-					StatusAndalalin:  perlalin.StatusAndalalin,
-				})
-			}
-
-		}
-		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
-	}
 }
 
 func (ac *AndalalinController) GetSurvey(ctx *gin.Context) {
@@ -3790,6 +3737,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 	var payload *models.DataSurvey
 	currentUser := ctx.MustGet("currentUser").(models.User)
 	id := ctx.Param("id_andalalin")
+	id_perlengkapan := ctx.Param("id_perlengkapan")
 
 	config, _ := initializers.LoadConfig()
 
@@ -3871,6 +3819,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 	survey := models.Pemasangan{
 		IdAndalalin:       perlalin.IdAndalalin,
 		IdTiketLevel1:     ticket1.IdTiketLevel1,
+		IdPerlengkapan:    id_perlengkapan,
 		IdPetugas:         currentUser.ID,
 		Petugas:           currentUser.Name,
 		EmailPetugas:      currentUser.Email,
@@ -3928,61 +3877,6 @@ func (ac *AndalalinController) PemasanganSelesai(ctx *gin.Context, permohonan mo
 		}
 
 		utils.SendPushNotifications(&notif)
-	}
-}
-
-func (ac *AndalalinController) GetAllPemasangan(ctx *gin.Context) {
-	currentUser := ctx.MustGet("currentUser").(models.User)
-	config, _ := initializers.LoadConfig()
-
-	accessUser := ctx.MustGet("accessUser").(string)
-
-	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
-	if error != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
-		return
-	}
-
-	credential := claim.Credentials[repository.AndalalinPemasanganCredential]
-
-	if !credential {
-		// Return status 403 and permission denied error message.
-		ctx.JSON(http.StatusForbidden, gin.H{
-			"error": true,
-			"msg":   "Permission denied",
-		})
-		return
-	}
-
-	var pemasangan []models.Pemasangan
-
-	results := ac.DB.Find(&pemasangan, "id_petugas = ?", currentUser.ID)
-
-	if results.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": results.Error})
-		return
-	} else {
-		var respone []models.DaftarAndalalinResponse
-		for _, s := range pemasangan {
-			var perlalin models.Perlalin
-
-			ac.DB.First(&perlalin, "id_andalalin = ?", s.IdAndalalin)
-
-			if perlalin.IdAndalalin != uuid.Nil {
-				respone = append(respone, models.DaftarAndalalinResponse{
-					IdAndalalin:      perlalin.IdAndalalin,
-					Kode:             perlalin.Kode,
-					TanggalAndalalin: perlalin.TanggalAndalalin,
-					Nama:             perlalin.NamaPemohon,
-					Email:            perlalin.EmailPemohon,
-					Petugas:          perlalin.NamaPetugas,
-					JenisAndalalin:   perlalin.JenisAndalalin,
-					StatusAndalalin:  perlalin.StatusAndalalin,
-				})
-			}
-
-		}
-		ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(respone), "data": respone})
 	}
 }
 

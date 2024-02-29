@@ -56,9 +56,8 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.POST("/pembuatan/penyusun/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.PembuatanPenyusunDokumen)
 
 	//Survei
-	router.POST("/survey/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.IsiSurvey)
-	router.GET("/survey/detail/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetSurvey)
-	router.GET("/survey/all", middleware.DeserializeUser(), uc.andalalinController.GetAllSurvey)
+	router.POST("/survey/:id_andalalin/:id_perlengkapan", middleware.DeserializeUser(), uc.andalalinController.IsiSurvey)
+	router.GET("/survey/detail/:id_andalalin/:id_perlengkapan", middleware.DeserializeUser(), uc.andalalinController.GetSurvey)
 
 	//Menindaklanjuti petugas permohonan
 	router.POST("/survey/petugas/pilih/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.TambahPetugas)
@@ -81,7 +80,6 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 
 	//Pemasangan perlalin
 	router.GET("/pemasangan", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanPemasanganLalin)
-	router.POST("/pemasangan/pasang/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.PemasanganPerlengkapanLaluLintas)
+	router.POST("/pemasangan/pasang/:id_andalalin/:id_perlengkapan", middleware.DeserializeUser(), uc.andalalinController.PemasanganPerlengkapanLaluLintas)
 	router.GET("/pemasangan/detail/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPemasangan)
-	router.GET("/pemasangan/all", middleware.DeserializeUser(), uc.andalalinController.GetAllPemasangan)
 }

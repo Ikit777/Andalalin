@@ -658,20 +658,21 @@ type TambahPetugas struct {
 }
 
 type Survei struct {
-	IdSurvey      uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
-	IdAndalalin   uuid.UUID `gorm:"type:varchar(255);unique;not null"`
-	IdTiketLevel1 uuid.UUID `gorm:"type:varchar(255);not null"`
-	IdTiketLevel2 uuid.UUID `gorm:"type:varchar(255);not null"`
-	IdPetugas     uuid.UUID `gorm:"type:varchar(255);not null"`
-	Petugas       string    `gorm:"type:varchar(255);not null"`
-	EmailPetugas  string    `gorm:"type:varchar(255);not null"`
-	Catatan       *string
-	Foto          []Foto `gorm:"serializer:json"`
-	Lokasi        string
-	Latitude      float64
-	Longitude     float64
-	WaktuSurvei   string `gorm:"not null"`
-	TanggalSurvei string `gorm:"not null"`
+	IdSurvey       uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primary_key"`
+	IdAndalalin    uuid.UUID `gorm:"type:varchar(255);unique;not null"`
+	IdTiketLevel1  uuid.UUID `gorm:"type:varchar(255);not null"`
+	IdTiketLevel2  uuid.UUID `gorm:"type:varchar(255);not null"`
+	IdPetugas      uuid.UUID `gorm:"type:varchar(255);not null"`
+	IdPerlengkapan string    `gorm:"type:varchar(255);not null"`
+	Petugas        string    `gorm:"type:varchar(255);not null"`
+	EmailPetugas   string    `gorm:"type:varchar(255);not null"`
+	Catatan        *string
+	Foto           []Foto `gorm:"serializer:json"`
+	Lokasi         string
+	Latitude       float64
+	Longitude      float64
+	WaktuSurvei    string `gorm:"not null"`
+	TanggalSurvei  string `gorm:"not null"`
 }
 
 type Foto []byte
@@ -711,6 +712,7 @@ type Pemasangan struct {
 	IdAndalalin       uuid.UUID `gorm:"type:varchar(255);unique;not null"`
 	IdTiketLevel1     uuid.UUID `gorm:"type:varchar(255);not null"`
 	IdPetugas         uuid.UUID `gorm:"type:varchar(255);not null"`
+	IdPerlengkapan    string    `gorm:"type:varchar(255);not null"`
 	Petugas           string    `gorm:"type:varchar(255);not null"`
 	EmailPetugas      string    `gorm:"type:varchar(255);not null"`
 	Catatan           *string
