@@ -466,6 +466,31 @@ func (sc *SurveyController) IsiPengaduan(ctx *gin.Context) {
 		return
 	}
 
+	var user []models.User
+
+	sc.DB.Find(&user, "role = ?", "Operator")
+
+	for _, users := range user {
+		simpanNotif := models.Notifikasi{
+			IdUser: users.ID,
+			Title:  "Pengaduan baru",
+			Body:   "Pengaduan baru telah tersedia",
+		}
+
+		sc.DB.Create(&simpanNotif)
+
+		if users.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: users.ID,
+				Title:  "Pengaduan baru",
+				Body:   "Pengaduan baru telah tersedia",
+				Token:  users.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+		}
+	}
+
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
 }
 
@@ -571,6 +596,33 @@ func (sc *SurveyController) TerimPengaduan(ctx *gin.Context) {
 	survey.CatatanTindakan = payload.Catatan
 
 	sc.DB.Save(&survey)
+
+	var user models.User
+	resultUser := sc.DB.First(&user, "id = ?", survey.IdPengguna)
+
+	if resultUser.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "User tidak ditemukan"})
+		return
+	}
+
+	simpanNotif := models.Notifikasi{
+		IdUser: user.ID,
+		Title:  "Pengaduan baru",
+		Body:   "Pengaduan baru telah tersedia",
+	}
+
+	sc.DB.Create(&simpanNotif)
+
+	if user.PushToken != "" {
+		notif := utils.Notification{
+			IdUser: user.ID,
+			Title:  "Pengaduan baru",
+			Body:   "Pengaduan baru telah tersedia",
+			Token:  user.PushToken,
+		}
+
+		utils.SendPushNotifications(&notif)
+	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
 }
