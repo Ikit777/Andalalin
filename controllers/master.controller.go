@@ -124,17 +124,16 @@ func GetDataStream(db *gorm.DB) <-chan string {
 	return stream
 }
 
+func GetStartUp(db *gorm.DB) {
+	GetDataStream(db)
+}
+
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	dataStream := GetDataStream(dm.DB)
 
 	data := <-dataStream
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
-}
-
-func GetMasterData(ctx *gin.Context) {
-	dm := &DataMasterControler{}
-	dm.GetDataMaster(ctx)
 }
 
 func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {

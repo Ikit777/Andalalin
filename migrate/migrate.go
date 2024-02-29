@@ -11,12 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"andalalin/controllers"
 	"andalalin/initializers"
 	"andalalin/models"
 	"andalalin/utils"
-
-	"github.com/gin-gonic/gin"
 
 	_ "time/tzdata"
 )
@@ -920,9 +917,6 @@ func main() {
 		Jalan:                      jalan,
 		UpdatedAt:                  now + " " + time.Now().In(loc).Format("15:04:05"),
 	})
-
-	var ctx *gin.Context
-	controllers.GetMasterData(ctx)
 
 	fmt.Println("Migration complete")
 }

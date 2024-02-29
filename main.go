@@ -81,6 +81,11 @@ func main() {
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": message})
 	})
 
+	router.Use(func(c *gin.Context) {
+		// Start streaming on startup
+		controllers.GetStartUp(initializers.DB)
+	})
+
 	AuthRouteController.AuthRoute(router)
 	UserRouteController.UserRoute(router)
 	AndalalinRouteController.AndalalainRoute(router)
