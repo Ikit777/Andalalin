@@ -11,9 +11,12 @@ import (
 	"strings"
 	"time"
 
+	"andalalin/controllers"
 	"andalalin/initializers"
 	"andalalin/models"
 	"andalalin/utils"
+
+	"github.com/gin-gonic/gin"
 
 	_ "time/tzdata"
 )
@@ -57,6 +60,9 @@ func main() {
 	initializers.DB.AutoMigrate(&models.DataMaster{})
 	initializers.DB.AutoMigrate(&models.SurveiKepuasan{})
 	initializers.DB.AutoMigrate(&models.Pemasangan{})
+
+	var ctx *gin.Context
+	controllers.GetMasterData(ctx)
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	now := time.Now().In(loc).Format("02-01-2006")

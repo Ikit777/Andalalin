@@ -132,6 +132,11 @@ func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
 }
 
+func GetMasterData(ctx *gin.Context) {
+	dm := &DataMasterControler{}
+	dm.GetDataMaster(ctx)
+}
+
 func (dm *DataMasterControler) CheckDataMaster(ctx *gin.Context) {
 	var master models.DataMaster
 
