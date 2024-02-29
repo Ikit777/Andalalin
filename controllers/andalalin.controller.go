@@ -3321,12 +3321,22 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 			return
 		}
 
-		perlalin.StatusAndalalin = "Laporan survei"
-
 		for _, data := range perlalin.Perlengkapan {
 			if data.IdPerlengkapan == id_perlengkapan {
 				data.StatusPerlengkapan = "Pengecekan"
 			}
+		}
+
+		var cek []string
+
+		for _, data := range perlalin.Perlengkapan {
+			if data.StatusPerlengkapan == "Survei" {
+				cek = append(cek, "Ada")
+			}
+		}
+
+		if cek == nil {
+			perlalin.StatusAndalalin = "Laporan survei"
 		}
 
 		ac.DB.Save(&perlalin)
