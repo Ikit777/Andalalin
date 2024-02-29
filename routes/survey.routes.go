@@ -25,9 +25,9 @@ func (sc *SurveyRouteController) SurveyRoute(rg *gin.RouterGroup) {
 	router.GET("/kepuasan/hasil/periode/:waktu", middleware.DeserializeUser(), sc.surveyController.HasilSurveiKepuasanTertentu)
 
 	//Survei mandiri
-	router.POST("/mandiri", middleware.DeserializeUser(), sc.surveyController.IsiSurveyMandiri)
-	router.GET("/mandiri/detail/:id_survei", middleware.DeserializeUser(), sc.surveyController.GetSurveiMandiri)
-	router.GET("/mandiri/daftar", middleware.DeserializeUser(), sc.surveyController.GetAllSurveiMandiri)
-	router.GET("/mandiri/daftar/petugas", middleware.DeserializeUser(), sc.surveyController.GetAllSurveiMandiriByPetugas)
-	router.POST("/mendiri/terima/:id_survei", middleware.DeserializeUser(), sc.surveyController.TerimaSurvei)
+	router.POST("/mandiri", middleware.DeserializeUser(), sc.surveyController.IsiPengaduan)
+	router.GET("/mandiri/detail/:id_survei", middleware.DeserializeUser(), sc.surveyController.GetPengaduan)
+	router.GET("/mandiri/daftar", middleware.DeserializeUser(), sc.surveyController.GetAllPengaduan)
+	router.GET("/mandiri/daftar/petugas", middleware.DeserializeUser(), sc.surveyController.GetAllPengaduanByPetugas)
+	router.POST("/mendiri/terima/:id_survei", middleware.DeserializeUser(), sc.surveyController.TerimPengaduan)
 }

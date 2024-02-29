@@ -571,7 +571,7 @@ func (sc *SurveyController) GetPengaduan(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": survey})
 }
 
-func (sc *SurveyController) TerimaSurvei(ctx *gin.Context) {
+func (sc *SurveyController) TerimPengaduan(ctx *gin.Context) {
 	id := ctx.Param("id_survei")
 	var payload *models.TerimaPengaduan
 
