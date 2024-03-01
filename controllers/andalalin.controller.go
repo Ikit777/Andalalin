@@ -3558,7 +3558,7 @@ func (ac *AndalalinController) Pengecekanperlengkapan(ctx *gin.Context) {
 		}
 
 		if cek != nil {
-			perlalin.StatusAndalalin = "Pengecekan perlengkapan"
+			perlalin.StatusAndalalin = "Pemasangan perlengkapan"
 		} else {
 			ac.BatalkanPermohonanForNothing(ctx, id)
 		}
