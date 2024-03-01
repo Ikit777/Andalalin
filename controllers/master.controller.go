@@ -4554,15 +4554,20 @@ func (dm *DataMasterControler) EditPanduan(ctx *gin.Context) {
 }
 
 func (dm *DataMasterControler) GetPanduan(ctx *gin.Context) {
-	id := ctx.Param("id")
-
 	var master models.DataMaster
 
-	resultsData := dm.DB.Where("id_data_master", id).First(&master)
-
-	if resultsData.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsData.Error})
+	rows, err := dm.DB.Table("data_masters").Select("id_data_master", "panduan").Rows()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err := dm.DB.ScanRows(rows, &master); err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
 	}
 
 	var payload *models.DataPanduan
