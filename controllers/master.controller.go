@@ -4579,13 +4579,7 @@ func (dm *DataMasterControler) GetPanduan(ctx *gin.Context) {
 
 	for _, data := range master.Panduan {
 		if data.Tipe == payload.Panduan.Tipe {
-			respone := struct {
-				Panduan []byte `json:"panduan,omitempty"`
-			}{
-				Panduan: data.File,
-			}
-
-			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data.File})
 		}
 	}
 
