@@ -17,10 +17,11 @@ type DataMaster struct {
 	Kecamatan                  []Kecamatan                `gorm:"serializer:json"`
 	Kelurahan                  []Kelurahan                `gorm:"serializer:json"`
 	Jalan                      []Jalan                    `gorm:"serializer:json"`
+	Panduan                    []Panduan                  `gorm:"serializer:json"`
 	UpdatedAt                  string                     `gorm:"not null"`
 }
 
-//Lokasi pengambilan
+// Lokasi pengambilan
 type Lokasi []string
 
 type LokasiInput struct {
@@ -32,7 +33,7 @@ type LokasiEdit struct {
 	LokasiEdit string `json:"lokasi_edit" binding:"required"`
 }
 
-//Kategori rencana pembangunan
+// Kategori rencana pembangunan
 type KategoriRencanaPembangunan []string
 
 type KategoriRencanaInput struct {
@@ -44,7 +45,7 @@ type KategoriRencanaEdit struct {
 	KategoriEdit string `json:"kategori_edit" binding:"required"`
 }
 
-//Jenis rencana pembangunan
+// Jenis rencana pembangunan
 type JenisRencanaPembangunan struct {
 	Kategori     string
 	JenisRencana []JenisRencana
@@ -79,7 +80,7 @@ type JenisRencanaPembangunanEdit struct {
 	Terbilang *string `json:"terbilang" binding:"required"`
 }
 
-//Kategori perlengkapan utama
+// Kategori perlengkapan utama
 type KategoriPerlengkapanUtama []string
 
 type KategoriPerlengkapanUtamaInput struct {
@@ -91,7 +92,7 @@ type KategoriPerlengkapanUtamaEdit struct {
 	KategoriEdit string `json:"kategori_edit" binding:"required"`
 }
 
-//Kategori perlengkapan
+// Kategori perlengkapan
 type KategoriPerlengkapan struct {
 	KategoriUtama string
 	Kategori      []string
@@ -108,7 +109,7 @@ type KategoriPerlengkapanEdit struct {
 	KategoriEdit  string `json:"kategori_edit" binding:"required"`
 }
 
-//Jenis perlengkapan lalu lintas
+// Jenis perlengkapan lalu lintas
 type JenisPerlengkapan struct {
 	KategoriUtama string
 	Kategori      string
@@ -141,13 +142,13 @@ type DataPerlengkapanEdit struct {
 	Perlengkapan JenisPerlengkapanEdit `form:"data"`
 }
 
-//Persyaratan
+// Persyaratan
 type Persyaratan struct {
 	PersyaratanAndalalin []PersyaratanAndalalinInput
 	PersyaratanPerlalin  []PersyaratanPerlalinInput
 }
 
-//Persyaratan andalalin
+// Persyaratan andalalin
 type PersyaratanAndalalinInput struct {
 	Kebutuhan             string `json:"kebutuhan" binding:"required"`
 	Bangkitan             string `json:"bangkitan" binding:"required"`
@@ -169,7 +170,7 @@ type PersyaratanAndalalinEdit struct {
 	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
 }
 
-//Persyaratan perlalin
+// Persyaratan perlalin
 type PersyaratanPerlalinInput struct {
 	Kebutuhan             string `json:"kebutuhan" binding:"required"`
 	Persyaratan           string `json:"persyaratan" binding:"required"`
@@ -189,7 +190,7 @@ type PersyaratanPerlalinEdit struct {
 	KeteranganPersyaratan string `json:"keterangan" binding:"required"`
 }
 
-//Provinsi
+// Provinsi
 type Provinsi struct {
 	Id   string
 	Name string
@@ -204,7 +205,7 @@ type ProvinsiEdit struct {
 	ProvinsiEdit string `json:"provinsi_edit" binding:"required"`
 }
 
-//Kabupaten
+// Kabupaten
 type Kabupaten struct {
 	Id         string
 	IdProvinsi string
@@ -225,7 +226,7 @@ type KabupatenEdit struct {
 	KabupatenEdit string `json:"kabupaten_edit" binding:"required"`
 }
 
-//Kecamatan
+// Kecamatan
 type Kecamatan struct {
 	Id          string
 	IdKabupaten string
@@ -246,7 +247,7 @@ type KecamatanEdit struct {
 	KecamatanEdit string `json:"kecamatan_edit" binding:"required"`
 }
 
-//Kelurahan
+// Kelurahan
 type Kelurahan struct {
 	Id          string
 	IdKecamatan string
@@ -267,7 +268,7 @@ type KelurahanEdit struct {
 	KelurahanEdit string `json:"kelurahan_edit" binding:"required"`
 }
 
-//Jenis proyek
+// Jenis proyek
 type JenisProyek []string
 
 type JenisProyekInput struct {
@@ -332,4 +333,17 @@ type JalanEdit struct {
 	Lebar         string `json:"lebar" binding:"required"`
 	Permukaan     string `json:"permukaan" binding:"required"`
 	Fungsi        string `json:"fungsi" binding:"required"`
+}
+
+type Panduan struct {
+	Tipe string
+	File []byte
+}
+
+type PanduanInput struct {
+	Tipe string `json:"tipe" binding:"required"`
+}
+
+type DataPanduan struct {
+	Panduan PanduanInput `form:"data"`
 }

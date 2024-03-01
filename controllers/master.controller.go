@@ -280,7 +280,6 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			Kelurahan:    kelurahan_filter,
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
-
 	case "pengambilan":
 		var master models.DataMaster
 
@@ -306,7 +305,6 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			Lokasi:       master.LokasiPengambilan,
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
-
 	case "kategorirencana":
 		var master models.DataMaster
 
@@ -332,7 +330,6 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			KategoriRencanaPembangunan: master.KategoriRencanaPembangunan,
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
-
 	case "jenispembangunan":
 		var master models.DataMaster
 
@@ -360,7 +357,6 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			JenisRencanaPembangunan:    master.JenisRencanaPembangunan,
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
-
 	case "kategoriutama":
 		var master models.DataMaster
 
@@ -386,7 +382,6 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama,
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
-
 	case "kategoriperlengkapan":
 		var master models.DataMaster
 
@@ -414,7 +409,6 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			KategoriPerlengkapanUtama: master.KategoriPerlengkapanUtama,
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
-
 	case "jenisperlengkapan":
 		var master models.DataMaster
 
@@ -444,7 +438,6 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			PerlengkapanLaluLintas:    master.PerlengkapanLaluLintas,
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
-
 	case "persyaratan":
 		var master models.DataMaster
 
@@ -469,7 +462,30 @@ func (dm *DataMasterControler) GetDataMasterByType(ctx *gin.Context) {
 			Persyaratan:  master.Persyaratan,
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+	case "panduan":
+		var master models.DataMaster
 
+		rows, err := dm.DB.Table("data_masters").Select("id_data_master", "panduan").Rows()
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			if err := dm.DB.ScanRows(rows, &master); err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
+				return
+			}
+		}
+		respone := struct {
+			IdDataMaster uuid.UUID        `json:"id_data_master,omitempty"`
+			Panduan      []models.Panduan `json:"panduan,omitempty"`
+		}{
+			IdDataMaster: master.IdDataMaster,
+			Panduan:      master.Panduan,
+		}
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
 	}
 }
 
@@ -4278,4 +4294,294 @@ func (dm *DataMasterControler) EditJalan(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) TambahPanduan(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	var payload *models.DataPanduan
+
+	if err := ctx.ShouldBind(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	file, err := ctx.FormFile("panduan")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	uploadedFile, err := file.Open()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer uploadedFile.Close()
+
+	data, err := io.ReadAll(uploadedFile)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	panduanExist := false
+
+	for _, data := range master.Panduan {
+		if data.Tipe == payload.Panduan.Tipe {
+			panduanExist = true
+			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data sudah ada"})
+			return
+		}
+	}
+
+	if !panduanExist {
+		master.Panduan = append(master.Panduan, models.Panduan{Tipe: payload.Panduan.Tipe, File: data})
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Panduan   []models.Panduan `json:"panduan,omitempty"`
+		UpdatedAt string           `json:"update,omitempty"`
+	}{
+		Panduan:   master.Panduan,
+		UpdatedAt: master.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) HapusPanduan(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	var payload *models.DataPanduan
+
+	if err := ctx.ShouldBind(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	for i, data := range master.Panduan {
+		if data.Tipe == payload.Panduan.Tipe {
+			master.Panduan = append(master.Panduan[:i], master.Panduan[i+1:]...)
+			break
+		}
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Panduan   []models.Panduan `json:"panduan,omitempty"`
+		UpdatedAt string           `json:"update,omitempty"`
+	}{
+		Panduan:   master.Panduan,
+		UpdatedAt: master.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) EditPanduan(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	var payload *models.DataPanduan
+
+	if err := ctx.ShouldBind(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.ProductAddCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	file, err := ctx.FormFile("panduan")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	uploadedFile, err := file.Open()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer uploadedFile.Close()
+
+	data, err := io.ReadAll(uploadedFile)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	itemIndex := -1
+
+	for i, data := range master.Panduan {
+		if data.Tipe == payload.Panduan.Tipe {
+			itemIndex = i
+		}
+	}
+
+	if itemIndex != -1 {
+		master.Panduan[itemIndex].File = data
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	now := time.Now().In(loc).Format("02-01-2006")
+
+	master.UpdatedAt = now + " " + time.Now().In(loc).Format("15:04:05")
+
+	resultsSave := dm.DB.Save(&master)
+	if resultsSave.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsSave.Error})
+		return
+	}
+
+	respone := struct {
+		Panduan   []models.Panduan `json:"panduan,omitempty"`
+		UpdatedAt string           `json:"update,omitempty"`
+	}{
+		Panduan:   master.Panduan,
+		UpdatedAt: master.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+}
+
+func (dm *DataMasterControler) GetPanduan(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	var master models.DataMaster
+
+	resultsData := dm.DB.Where("id_data_master", id).First(&master)
+
+	if resultsData.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": resultsData.Error})
+		return
+	}
+
+	var payload *models.DataPanduan
+
+	if err := ctx.ShouldBind(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	for _, data := range master.Panduan {
+		if data.Tipe == payload.Panduan.Tipe {
+			respone := struct {
+				Panduan []byte `json:"panduan,omitempty"`
+			}{
+				Panduan: data.File,
+			}
+
+			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
+		}
+	}
+
 }
