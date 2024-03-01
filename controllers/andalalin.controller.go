@@ -3625,6 +3625,7 @@ func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context) {
 		return
 	}
 
+	ac.CloseTiketLevel1(ctx, permohonan.IdAndalalin)
 	permohonan.PertimbanganPembatalan = payload.Pertimbangan
 	permohonan.StatusAndalalin = "Permohonan dibatalkan"
 	ac.DB.Save(&permohonan)
@@ -3691,7 +3692,6 @@ func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context) {
 	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if perlalin.IdAndalalin != uuid.Nil {
-		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		perlalin.StatusAndalalin = "Pemasangan ditunda"
 		perlalin.PertimbanganPenundaan = payload.Pertimbangan
 		ac.DB.Save(&perlalin)
@@ -3755,7 +3755,6 @@ func (ac *AndalalinController) LanjutkanPemasangan(ctx *gin.Context) {
 	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if perlalin.IdAndalalin != uuid.Nil {
-		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		perlalin.StatusAndalalin = "Pemasangan perlengkapan"
 		perlalin.PertimbanganPenundaan = ""
 		ac.DB.Save(&perlalin)
