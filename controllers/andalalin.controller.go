@@ -3954,7 +3954,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 		var cek []string
 
 		for _, data := range perlalin.Perlengkapan {
-			if data.StatusPerlengkapan == "Selesai" {
+			if data.StatusPerlengkapan == "Pemasangan" {
 				cek = append(cek, "Ada")
 			}
 		}
