@@ -3491,6 +3491,84 @@ func (ac *AndalalinController) PemeriksaanSuratKeputusan(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
+func (ac *AndalalinController) Pengecekanperlengkapan(ctx *gin.Context) {
+	id := ctx.Param("id_andalalin")
+
+	var payload *models.Pengecekan
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var perlalin models.Perlalin
+	resultsPerlalin := ac.DB.First(&perlalin, "id_andalalin = ?", id)
+
+	if resultsPerlalin.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		return
+	}
+
+	if perlalin.IdAndalalin != uuid.Nil {
+		for _, data := range payload.Data {
+			if data.Tidak == "" {
+				for j, perlengkapan := range perlalin.Perlengkapan {
+					if perlengkapan.IdPerlengkapan == data.ID {
+						perlalin.Perlengkapan[j].StatusPerlengkapan = "Pemasangan"
+						perlalin.Perlengkapan[j].Pertimbangan = data.Pertimbangan
+					}
+				}
+			} else {
+				for j, perlengkapan := range perlalin.Perlengkapan {
+					if perlengkapan.IdPerlengkapan == data.ID {
+						perlalin.Perlengkapan[j].StatusPerlengkapan = "Tidak disetujui"
+						perlalin.Perlengkapan[j].Pertimbangan = data.Pertimbangan
+					}
+				}
+			}
+		}
+
+		var cek []string
+
+		for _, data := range perlalin.Perlengkapan {
+			if data.StatusPerlengkapan == "Pemasangan" {
+				cek = append(cek, "Ada")
+			}
+		}
+
+		if cek != nil {
+			perlalin.StatusAndalalin = "Pengecekan perlengkapan"
+		} else {
+			ac.BatalkanPermohonanForNothing(ctx, id)
+		}
+
+		ac.DB.Save(&perlalin)
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
+}
+
 func (ac *AndalalinController) BatalkanPermohonanForNothing(ctx *gin.Context, id string) {
 	var permohonan models.Perlalin
 
@@ -3500,7 +3578,7 @@ func (ac *AndalalinController) BatalkanPermohonanForNothing(ctx *gin.Context, id
 		return
 	}
 
-	permohonan.PertimbanganPembatalan = "Tidak ada perlengkapan yang diterima"
+	permohonan.PertimbanganPembatalan = "Tidak ada perlengkapan yang disetujui"
 	permohonan.StatusAndalalin = "Permohonan dibatalkan"
 	ac.DB.Save(&permohonan)
 

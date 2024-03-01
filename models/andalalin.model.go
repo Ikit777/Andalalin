@@ -726,6 +726,20 @@ type Pemasangan struct {
 	TanggalPemasangan string `gorm:"not null"`
 }
 
+type Pengecekan struct {
+	Data []DataPengecekan `json:"data" binding:"required"`
+}
+
+type DataPengecekan struct {
+	ID           string  `json:"id" binding:"required"`
+	Perlengkapan string  `json:"perlengkapan" binding:"required"`
+	Pambar       string  `json:"gambar" binding:"required"`
+	Lokasi       string  `json:"lokasi" binding:"required"`
+	Setuju       string  `json:"setuju" binding:"required"`
+	Tidak        string  `json:"tidak" binding:"required"`
+	Pertimbangan *string `json:"pertimbangan" binding:"required"`
+}
+
 type Administrasi struct {
 	NomorSurat   string             `json:"nomor" binding:"required"`
 	TanggalSurat string             `json:"tanggal" binding:"required"`
