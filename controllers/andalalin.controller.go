@@ -3931,8 +3931,8 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 			Foto:              foto,
 			Latitude:          payload.Data.Latitude,
 			Longitude:         payload.Data.Longitude,
-			WaktuPemasangan:   tanggal,
-			TanggalPemasangan: nowTime.Format("15:04:05"),
+			WaktuPemasangan:   nowTime.Format("15:04:05"),
+			TanggalPemasangan: tanggal,
 		}
 
 		result := ac.DB.Create(&survey)
