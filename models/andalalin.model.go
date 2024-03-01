@@ -691,6 +691,7 @@ type DataLaporanSurvei struct {
 	Lokasi       string
 	Tanggal      string
 	Survei       string
+	Catatan      *string
 	Foto         []Foto
 }
 

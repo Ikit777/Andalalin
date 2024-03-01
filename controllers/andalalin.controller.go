@@ -3355,7 +3355,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 			for _, data := range survey {
 				for _, perlengkapan := range perlalin.Perlengkapan {
 					if perlengkapan.IdPerlengkapan == data.IdPerlengkapan {
-						laporan = append(laporan, models.DataLaporanSurvei{Perlengkapan: perlengkapan.JenisPerlengkapan, Lokasi: perlengkapan.LokasiPemasangan, Tanggal: data.TanggalSurvei, Survei: data.Lokasi, Foto: data.Foto})
+						laporan = append(laporan, models.DataLaporanSurvei{Perlengkapan: perlengkapan.JenisPerlengkapan, Lokasi: perlengkapan.LokasiPemasangan, Tanggal: data.TanggalSurvei, Survei: data.Lokasi, Catatan: data.Catatan, Foto: data.Foto})
 					}
 				}
 			}
