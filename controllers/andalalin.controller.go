@@ -3918,38 +3918,110 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 		}
 	}
 
-	survey := models.Pemasangan{
-		IdAndalalin:       perlalin.IdAndalalin,
-		IdTiketLevel1:     ticket1.IdTiketLevel1,
-		IdPerlengkapan:    id_perlengkapan,
-		IdPetugas:         currentUser.ID,
-		Petugas:           currentUser.Name,
-		EmailPetugas:      currentUser.Email,
-		Lokasi:            payload.Data.Lokasi,
-		Catatan:           payload.Data.Catatan,
-		Foto:              foto,
-		Latitude:          payload.Data.Latitude,
-		Longitude:         payload.Data.Longitude,
-		WaktuPemasangan:   tanggal,
-		TanggalPemasangan: nowTime.Format("15:04:05"),
+	if perlalin.IdAndalalin != uuid.Nil {
+		survey := models.Pemasangan{
+			IdAndalalin:       perlalin.IdAndalalin,
+			IdTiketLevel1:     ticket1.IdTiketLevel1,
+			IdPerlengkapan:    id_perlengkapan,
+			IdPetugas:         currentUser.ID,
+			Petugas:           currentUser.Name,
+			EmailPetugas:      currentUser.Email,
+			Lokasi:            payload.Data.Lokasi,
+			Catatan:           payload.Data.Catatan,
+			Foto:              foto,
+			Latitude:          payload.Data.Latitude,
+			Longitude:         payload.Data.Longitude,
+			WaktuPemasangan:   tanggal,
+			TanggalPemasangan: nowTime.Format("15:04:05"),
+		}
+
+		result := ac.DB.Create(&survey)
+
+		if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
+			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data survey sudah tersedia"})
+			return
+		} else if result.Error != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
+			return
+		}
+
+		for i, data := range perlalin.Perlengkapan {
+			if data.IdPerlengkapan == id_perlengkapan {
+				perlalin.Perlengkapan[i].StatusPerlengkapan = "Selesai"
+			}
+		}
+
+		var cek []string
+
+		for _, data := range perlalin.Perlengkapan {
+			if data.StatusPerlengkapan == "Selesai" {
+				cek = append(cek, "Ada")
+			}
+		}
+
+		if cek == nil {
+			perlalin.StatusAndalalin = "Pemasangan selesai"
+			ac.PemasanganSelesai(ctx, perlalin)
+			ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+
+			var pemasangan []models.Pemasangan
+
+			result := ac.DB.Find(&pemasangan, "id_andalalin = ?", id)
+			if result.Error != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": result.Error})
+				return
+			}
+
+			laporan := []models.DataLaporanSurvei{}
+
+			for _, data := range pemasangan {
+				for _, perlengkapan := range perlalin.Perlengkapan {
+					if perlengkapan.IdPerlengkapan == data.IdPerlengkapan {
+						laporan = append(laporan, models.DataLaporanSurvei{Perlengkapan: perlengkapan.JenisPerlengkapan, Lokasi: perlengkapan.LokasiPemasangan, Tanggal: data.TanggalPemasangan, Survei: data.Lokasi, Catatan: data.Catatan, Foto: data.Foto})
+					}
+				}
+			}
+
+			perlengkapan := struct {
+				Kode  string
+				Nik   string
+				Nama  string
+				Email string
+				Nomor string
+				Data  []models.DataLaporanSurvei
+			}{
+				Kode:  perlalin.Kode,
+				Nik:   perlalin.NikPemohon,
+				Nama:  perlalin.NamaPemohon,
+				Email: perlalin.EmailPemohon,
+				Nomor: perlalin.NomerPemohon,
+				Data:  laporan,
+			}
+
+			t, err := template.ParseFiles("templates/laporanPemasangan.html")
+			if err != nil {
+				log.Fatal("Error reading the email template:", err)
+				return
+			}
+
+			buffer := new(bytes.Buffer)
+			if err = t.Execute(buffer, perlengkapan); err != nil {
+				log.Fatal("Eror saat membaca template:", err)
+				return
+			}
+
+			pdfContent, err := generatePDF(buffer.String())
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+
+			perlalin.BerkasPermohonan = append(perlalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Nama: "Laporan pemasangan", Tipe: "Pdf", Berkas: pdfContent})
+
+		}
+
+		ac.DB.Save(&perlalin)
 	}
-
-	result := ac.DB.Create(&survey)
-
-	if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
-		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data survey sudah tersedia"})
-		return
-	} else if result.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
-		return
-	}
-
-	perlalin.StatusAndalalin = "Pemasangan selesai"
-
-	ac.DB.Save(&perlalin)
-
-	ac.PemasanganSelesai(ctx, perlalin)
-	ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "success"})
 }
