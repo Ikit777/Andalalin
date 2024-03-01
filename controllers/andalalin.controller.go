@@ -3820,7 +3820,7 @@ func (ac *AndalalinController) GetPermohonanPemasanganLalin(ctx *gin.Context) {
 
 	var respone []models.DaftarAndalalinResponse
 	for _, s := range perlalin {
-		if s.StatusAndalalin == "Pemasangan sedang dilakukan" && s.IdPetugas == currentUser.ID {
+		if s.StatusAndalalin == "Pemasangan perlengkapan" && s.IdPetugas == currentUser.ID {
 			respone = append(respone, models.DaftarAndalalinResponse{
 				IdAndalalin:      s.IdAndalalin,
 				Kode:             s.Kode,
