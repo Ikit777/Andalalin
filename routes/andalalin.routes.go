@@ -39,8 +39,8 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 
 	//Menindaklanjuti Permohonan
 	router.POST("/update/status/:id_andalalin/:status", middleware.DeserializeUser(), uc.andalalinController.UpdateStatusPermohonan)
-	router.POST("/tolak/:id_andalalin/:pertimbangan", middleware.DeserializeUser(), uc.andalalinController.TolakPermohonan)
-	router.POST("/tunda/:id_andalalin/:pertimbangan", middleware.DeserializeUser(), uc.andalalinController.TundaPermohonan)
+	router.POST("/tolak/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.TolakPermohonan)
+	router.POST("/tunda/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.TundaPermohonan)
 	router.POST("/lanjutkan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.LanjutkanPermohonan)
 
 	//Menindaklanjuti Persyaratan Permohonan
@@ -76,4 +76,7 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.GET("/pemasangan", middleware.DeserializeUser(), uc.andalalinController.GetPermohonanPemasanganLalin)
 	router.POST("/pemasangan/pasang/:id_andalalin/:id_perlengkapan", middleware.DeserializeUser(), uc.andalalinController.PemasanganPerlengkapanLaluLintas)
 	router.GET("/pemasangan/detail/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPemasangan)
+	router.POST("/pemasangan/tunda/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.TundaPemasangan)
+	router.POST("/pemasangan/lanjutkan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.LanjutkanPemasangan)
+	router.POST("/pemasangan/batal/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.BatalkanPermohonan)
 }

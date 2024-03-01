@@ -492,9 +492,9 @@ type Perlalin struct {
 	Tindakan string
 
 	//Data Pertimbangan
-	PertimbanganTindakan  string
-	PertimbanganPenolakan string
-	PertimbanganPenundaan string
+	PertimbanganPembatalan string
+	PertimbanganPenolakan  string
+	PertimbanganPenundaan  string
 }
 
 type InputPerlalin struct {
@@ -557,13 +557,10 @@ type PerlalinResponse struct {
 	PersyaratanPermohonan []string `json:"persyaratan,omitempty"`
 	BerkasPermohonan      []string `json:"berkas,omitempty"`
 
-	//Data Tindakan
-	Tindakan string `json:"keputusan_hasil,omitempty"`
-
 	//Data Pertimbangan
-	PertimbanganTindakan  string `json:"pertimbangan_tindakan,omitempty"`
-	PertimbanganPenolakan string `json:"pertimbangan_penolakan,omitempty"`
-	PertimbanganPenundaan string `json:"pertimbangan_penundaan,omitempty"`
+	PertimbanganPembatalan string `json:"pertimbangan_pembatalan,omitempty"`
+	PertimbanganPenolakan  string `json:"pertimbangan_penolakan,omitempty"`
+	PertimbanganPenundaan  string `json:"pertimbangan_penundaan,omitempty"`
 }
 
 type PerlalinResponseUser struct {
@@ -592,13 +589,10 @@ type PerlalinResponseUser struct {
 	PersyaratanPermohonan []string `json:"persyaratan,omitempty"`
 	BerkasPermohonan      []string `json:"berkas,omitempty"`
 
-	//Data Tindakan
-	Tindakan string `json:"keputusan_hasil,omitempty"`
-
 	//Data Pertimbangan
-	PertimbanganTindakan  string `json:"pertimbangan_tindakan,omitempty"`
-	PertimbanganPenolakan string `json:"pertimbangan_penolakan,omitempty"`
-	PertimbanganPenundaan string `json:"pertimbangan_penundaan,omitempty"`
+	PertimbanganPembatalan string `json:"pertimbangan_pembatalan,omitempty"`
+	PertimbanganPenolakan  string `json:"pertimbangan_penolakan,omitempty"`
+	PertimbanganPenundaan  string `json:"pertimbangan_penundaan,omitempty"`
 }
 
 type CatatanAsistensi struct {
@@ -646,8 +640,7 @@ type Pemeriksaan struct {
 	Catatan *string `json:"catatan" binding:"required"`
 }
 
-type KeputusanHasil struct {
-	Keputusan    string `json:"keputusan" binding:"required"`
+type Pertimbangan struct {
 	Pertimbangan string `json:"pertimbangan" binding:"required"`
 }
 
