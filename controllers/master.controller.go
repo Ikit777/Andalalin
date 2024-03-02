@@ -4570,7 +4570,7 @@ func (dm *DataMasterControler) GetPanduan(ctx *gin.Context) {
 		}
 	}
 
-	var payload *models.DataPanduan
+	var payload *models.PanduanInput
 
 	if err := ctx.ShouldBind(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
@@ -4578,7 +4578,7 @@ func (dm *DataMasterControler) GetPanduan(ctx *gin.Context) {
 	}
 
 	for _, data := range master.Panduan {
-		if data.Tipe == payload.Panduan.Tipe {
+		if data.Tipe == payload.Tipe {
 			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data.File})
 		}
 	}
