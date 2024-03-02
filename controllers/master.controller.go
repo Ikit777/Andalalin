@@ -4577,10 +4577,19 @@ func (dm *DataMasterControler) GetPanduan(ctx *gin.Context) {
 		return
 	}
 
+	var berkas []byte
+
 	for _, data := range master.Panduan {
 		if data.Tipe == payload.Tipe {
-			ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data.File})
+			berkas = data.File
 		}
+	}
+
+	if berkas != nil {
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": berkas})
+	} else {
+		ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Not Found"})
+		return
 	}
 
 }
