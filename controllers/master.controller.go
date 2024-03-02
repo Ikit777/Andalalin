@@ -4556,7 +4556,7 @@ func (dm *DataMasterControler) EditPanduan(ctx *gin.Context) {
 func (dm *DataMasterControler) GetPanduan(ctx *gin.Context) {
 	var master models.DataMaster
 
-	rows, err := dm.DB.Table("data_masters").Select("id_data_master", "panduan").Rows()
+	rows, err := dm.DB.Table("data_masters").Select("panduan").Rows()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Data error"})
 		return
