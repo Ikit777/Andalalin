@@ -4394,7 +4394,7 @@ func (dm *DataMasterControler) TambahPanduan(ctx *gin.Context) {
 func (dm *DataMasterControler) HapusPanduan(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	var payload *models.DataPanduan
+	var payload *models.PanduanInput
 
 	if err := ctx.ShouldBind(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
@@ -4432,7 +4432,7 @@ func (dm *DataMasterControler) HapusPanduan(ctx *gin.Context) {
 	}
 
 	for i, data := range master.Panduan {
-		if data.Tipe == payload.Panduan.Tipe {
+		if data.Tipe == payload.Tipe {
 			master.Panduan = append(master.Panduan[:i], master.Panduan[i+1:]...)
 			break
 		}
