@@ -574,12 +574,16 @@ func (ac *AndalalinController) ReleaseTicketLevel1(ctx *gin.Context, id uuid.UUI
 
 	result := ac.DB.Create(&tiket)
 
-	if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
-		ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Tiket level 1 sudah tersedia"})
-		return
-	} else if result.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
-		return
+	if result.Error != nil {
+		fmt.Println(result.Error)
+
+		if strings.Contains(strings.ToLower(result.Error.Error()), "unique constraint") {
+			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data is exist"})
+			return
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "An error occurred on the server. Please try again later"})
+			return
+		}
 	}
 }
 
@@ -3316,12 +3320,16 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 
 		result := ac.DB.Create(&survey)
 
-		if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
-			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data survey sudah tersedia"})
-			return
-		} else if result.Error != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
-			return
+		if result.Error != nil {
+			fmt.Println(result.Error)
+
+			if strings.Contains(strings.ToLower(result.Error.Error()), "unique constraint") {
+				ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data is exist"})
+				return
+			} else {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "An error occurred on the server. Please try again later"})
+				return
+			}
 		}
 
 		for i, data := range perlalin.Perlengkapan {
@@ -3937,12 +3945,16 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 
 		result := ac.DB.Create(&survey)
 
-		if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
-			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data survey sudah tersedia"})
-			return
-		} else if result.Error != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Telah terjadi sesuatu"})
-			return
+		if result.Error != nil {
+			fmt.Println(result.Error)
+
+			if strings.Contains(strings.ToLower(result.Error.Error()), "unique constraint") {
+				ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Data is exist"})
+				return
+			} else {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "An error occurred on the server. Please try again later"})
+				return
+			}
 		}
 
 		for i, data := range perlalin.Perlengkapan {
