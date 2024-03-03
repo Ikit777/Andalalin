@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -40,7 +41,7 @@ func DeserializeUser() gin.HandlerFunc {
 		}
 
 		var user models.User
-		result := initializers.DB.First(&user, "id = ?", claim.UserID)
+		result := initializers.DB.First(&user, "id = ?", fmt.Sprint(claim.UserID))
 		if result.Error != nil {
 			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": "The user belonging to this token no logger exists"})
 			return
