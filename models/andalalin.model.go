@@ -124,7 +124,8 @@ type Andalalin struct {
 	KelengkapanTidakSesuai []KelengkapanTidakSesuai `gorm:"serializer:json"`
 
 	//Petimbangan
-	Pertimbangan string
+	PertimbanganPenolakan string
+	PertimbanganPenundaan string
 
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []PersayaratanTidakSesuai `gorm:"serializer:json"`
@@ -341,7 +342,8 @@ type AndalalinResponse struct {
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []PersayaratanTidakSesuai `json:"persyaratan_tidak_sesuai,omitempty"`
 
-	Pertimbangan string `json:"pertimbangan,omitempty"`
+	PertimbanganPenolakan string `json:"pertimbangan_penolakan,omitempty"`
+	PertimbanganPenundaan string `json:"pertimbangan_penundaan,omitempty"`
 
 	//Data Pemeriksaan Suat Persetujuan
 	HasilPemeriksaan   string  `json:"hasil_pemeriksaan,omitempty"`
@@ -412,7 +414,8 @@ type AndalalinResponseUser struct {
 	//Persyaratan tidak terpenuhi
 	PersyaratanTidakSesuai []PersayaratanTidakSesuai `json:"persyaratan_tidak_sesuai,omitempty"`
 
-	Pertimbangan string `json:"pertimbangan,omitempty"`
+	PertimbanganPenolakan string `json:"pertimbangan_penolakan,omitempty"`
+	PertimbanganPenundaan string `json:"pertimbangan_penundaan,omitempty"`
 
 	//Berkas Permohonan
 	PersyaratanPermohonan []string `json:"persyaratan,omitempty"`

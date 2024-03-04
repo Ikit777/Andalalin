@@ -19,7 +19,7 @@ type User struct {
 	ResetToken       string
 	NIP              *string
 	ResetAt          time.Time
-	PushToken        string
+	PushToken        []string
 	CreatedAt        string `gorm:"not null"`
 	UpdatedAt        string `gorm:"not null"`
 }
@@ -95,4 +95,8 @@ type ForgotPasswordRespone struct {
 type ResetPasswordInput struct {
 	Password        string `json:"password" binding:"required"`
 	PasswordConfirm string `json:"passwordConfirm" binding:"required"`
+}
+
+type RemoveToken struct {
+	PushToken string `json:"push_token"`
 }

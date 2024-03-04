@@ -32,5 +32,5 @@ func (rc *AuthRouteController) AuthRoute(rg *gin.RouterGroup) {
 	router.POST("/verification/resend", rc.authController.ResendVerification)
 
 	//Logout
-	router.GET("/logout", middleware.DeserializeUser(), rc.authController.LogoutUser)
+	router.POST("/logout", middleware.DeserializeUser(), rc.authController.LogoutUser)
 }

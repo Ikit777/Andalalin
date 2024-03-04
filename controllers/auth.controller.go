@@ -137,17 +137,9 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 
 	if user.Role == "User" || user.Role == "Operator" || user.Role == "Petugas" || user.Role == "Admin" {
 		if payload.PushToken != "" {
-			if user.PushToken == "" {
-				result := ac.DB.Model(&user).Where("id = ?", user.ID).Update("push_token", payload.PushToken)
-				if result.Error != nil {
-					ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
-					return
-				}
-			} else {
-				ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Account already logged"})
-				return
-			}
+			user.PushToken = append(user.PushToken, payload.PushToken)
 
+			ac.DB.Save(&user)
 		}
 	}
 
@@ -166,27 +158,25 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 	}
 
 	data := struct {
-		Access    string    `json:"access_token,omitempty"`
-		Refresh   string    `json:"refresh_token,omitempty"`
-		Id        uuid.UUID `json:"id,omitempty"`
-		Name      string    `json:"name,omitempty"`
-		Email     string    `json:"email,omitempty"`
-		Nomor     string    `json:"nomor,omitempty"`
-		Role      string    `json:"role,omitempty"`
-		Photo     []byte    `json:"photo,omitempty"`
-		Nip       *string   `json:"nip,omitempty"`
-		PushToken string    `json:"push_token,omitempty"`
+		Access  string    `json:"access_token,omitempty"`
+		Refresh string    `json:"refresh_token,omitempty"`
+		Id      uuid.UUID `json:"id,omitempty"`
+		Name    string    `json:"name,omitempty"`
+		Email   string    `json:"email,omitempty"`
+		Nomor   string    `json:"nomor,omitempty"`
+		Role    string    `json:"role,omitempty"`
+		Photo   []byte    `json:"photo,omitempty"`
+		Nip     *string   `json:"nip,omitempty"`
 	}{
-		Access:    access_token,
-		Refresh:   refresh_token,
-		Id:        user.ID,
-		Name:      user.Name,
-		Email:     user.Email,
-		Nomor:     user.Nomor,
-		Role:      user.Role,
-		Photo:     user.Photo,
-		Nip:       user.NIP,
-		PushToken: user.PushToken,
+		Access:  access_token,
+		Refresh: refresh_token,
+		Id:      user.ID,
+		Name:    user.Name,
+		Email:   user.Email,
+		Nomor:   user.Nomor,
+		Role:    user.Role,
+		Photo:   user.Photo,
+		Nip:     user.NIP,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
@@ -241,6 +231,12 @@ func (ac *AuthController) VerifyEmail(ctx *gin.Context) {
 }
 
 func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
+	var payload *models.RemoveToken
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	var refresh_token string
 
@@ -259,7 +255,12 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 		var userData models.User
 		initializers.DB.First(&userData, "id = ?", fmt.Sprint(getId.UserID))
 
-		userData.PushToken = ""
+		for i, token := range userData.PushToken {
+			if token == payload.PushToken {
+				userData.PushToken = append(userData.PushToken[:i], userData.PushToken[i+1:]...)
+				break
+			}
+		}
 
 		initializers.DB.Save(&userData)
 
@@ -314,6 +315,13 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 }
 
 func (ac *AuthController) LogoutUser(ctx *gin.Context) {
+	var payload *models.RemoveToken
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
 	var user models.User
@@ -323,7 +331,12 @@ func (ac *AuthController) LogoutUser(ctx *gin.Context) {
 		return
 	}
 
-	user.PushToken = ""
+	for i, token := range user.PushToken {
+		if token == payload.PushToken {
+			user.PushToken = append(user.PushToken[:i], user.PushToken[i+1:]...)
+			break
+		}
+	}
 
 	ac.DB.Save(&user)
 
