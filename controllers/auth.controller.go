@@ -137,9 +137,14 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 
 	if user.Role == "User" || user.Role == "Operator" || user.Role == "Petugas" {
 		if payload.PushToken != "" {
-			result := ac.DB.Model(&user).Where("id = ?", user.ID).Update("push_token", payload.PushToken)
-			if result.Error != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
+			if user.PushToken != "" {
+				result := ac.DB.Model(&user).Where("id = ?", user.ID).Update("push_token", payload.PushToken)
+				if result.Error != nil {
+					ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
+					return
+				}
+			} else {
+				ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": "Account already logged"})
 				return
 			}
 		}
