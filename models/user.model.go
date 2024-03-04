@@ -19,7 +19,7 @@ type User struct {
 	ResetToken       string
 	NIP              *string
 	ResetAt          time.Time
-	PushToken        []string
+	PushToken        string
 	CreatedAt        string `gorm:"not null"`
 	UpdatedAt        string `gorm:"not null"`
 }
@@ -65,6 +65,7 @@ type UserResponse struct {
 	Email     string    `json:"email,omitempty"`
 	Nomor     string    `json:"nomor,omitempty"`
 	Role      string    `json:"role,omitempty"`
+	PushToken string    `json:"push_token,omitempty"`
 	NIP       *string   `json:"nip,omitempty"`
 	Photo     []byte    `json:"photo,omitempty"`
 	CreatedAt string    `json:"created_at"`
@@ -95,8 +96,4 @@ type ForgotPasswordRespone struct {
 type ResetPasswordInput struct {
 	Password        string `json:"password" binding:"required"`
 	PasswordConfirm string `json:"passwordConfirm" binding:"required"`
-}
-
-type RemoveToken struct {
-	PushToken string `json:"push_token"`
 }

@@ -48,6 +48,7 @@ func (ac *UserController) GetMe(ctx *gin.Context) {
 		Name:      currentUser.Name,
 		Email:     currentUser.Email,
 		Nomor:     currentUser.Nomor,
+		PushToken: currentUser.PushToken,
 		Role:      currentUser.Role,
 		NIP:       currentUser.NIP,
 		Photo:     currentUser.Photo,

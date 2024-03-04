@@ -344,17 +344,16 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 
 			ac.DB.Create(&simpanNotif)
 
-			if users.PushToken != nil {
-				for _, token := range users.PushToken {
-					notif := utils.Notification{
-						IdUser: users.ID,
-						Title:  "Permohonan baru",
-						Body:   "Permohonan baru dengan kode " + permohonan.Kode + " telah tersedia",
-						Token:  token,
-					}
-
-					utils.SendPushNotifications(&notif)
+			if users.PushToken != "" {
+				notif := utils.Notification{
+					IdUser: users.ID,
+					Title:  "Permohonan baru",
+					Body:   "Permohonan baru dengan kode " + permohonan.Kode + " telah tersedia",
+					Token:  users.PushToken,
 				}
+
+				utils.SendPushNotifications(&notif)
+
 			}
 		}
 
@@ -553,17 +552,16 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 
 			ac.DB.Create(&simpanNotif)
 
-			if users.PushToken != nil {
-				for _, token := range users.PushToken {
-					notif := utils.Notification{
-						IdUser: users.ID,
-						Title:  "Permohonan baru",
-						Body:   "Permohonan baru dengan kode " + permohonan.Kode + " telah tersedia",
-						Token:  token,
-					}
-
-					utils.SendPushNotifications(&notif)
+			if users.PushToken != "" {
+				notif := utils.Notification{
+					IdUser: users.ID,
+					Title:  "Permohonan baru",
+					Body:   "Permohonan baru dengan kode " + permohonan.Kode + " telah tersedia",
+					Token:  users.PushToken,
 				}
+
+				utils.SendPushNotifications(&notif)
+
 			}
 		}
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": respone})
@@ -691,17 +689,16 @@ func (ac *AndalalinController) TundaPermohonan(ctx *gin.Context) {
 
 		ac.DB.Create(&simpanNotif)
 
-		if user.PushToken != nil {
-			for _, token := range user.PushToken {
-				notif := utils.Notification{
-					IdUser: user.ID,
-					Title:  "Permohonan ditunda",
-					Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah ditunda",
-					Token:  token,
-				}
-
-				utils.SendPushNotifications(&notif)
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Permohonan ditunda",
+				Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah ditunda",
+				Token:  user.PushToken,
 			}
+
+			utils.SendPushNotifications(&notif)
+
 		}
 	}
 
@@ -726,17 +723,15 @@ func (ac *AndalalinController) TundaPermohonan(ctx *gin.Context) {
 
 		ac.DB.Create(&simpanNotif)
 
-		if user.PushToken != nil {
-			for _, token := range user.PushToken {
-				notif := utils.Notification{
-					IdUser: user.ID,
-					Title:  "Permohonan ditunda",
-					Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah ditunda",
-					Token:  token,
-				}
-
-				utils.SendPushNotifications(&notif)
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Permohonan ditunda",
+				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah ditunda",
+				Token:  user.PushToken,
 			}
+
+			utils.SendPushNotifications(&notif)
 		}
 	}
 
@@ -794,17 +789,16 @@ func (ac *AndalalinController) LanjutkanPermohonan(ctx *gin.Context) {
 
 		ac.DB.Create(&simpanNotif)
 
-		if user.PushToken != nil {
-			for _, token := range user.PushToken {
-				notif := utils.Notification{
-					IdUser: user.ID,
-					Title:  "Permohonan dilanjutkan",
-					Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah dilanjutkan",
-					Token:  token,
-				}
-
-				utils.SendPushNotifications(&notif)
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Permohonan dilanjutkan",
+				Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah dilanjutkan",
+				Token:  user.PushToken,
 			}
+
+			utils.SendPushNotifications(&notif)
+
 		}
 	}
 
@@ -829,17 +823,16 @@ func (ac *AndalalinController) LanjutkanPermohonan(ctx *gin.Context) {
 
 		ac.DB.Create(&simpanNotif)
 
-		if user.PushToken != nil {
-			for _, token := range user.PushToken {
-				notif := utils.Notification{
-					IdUser: user.ID,
-					Title:  "Permohonan dilanjutkan",
-					Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah dilanjutkan",
-					Token:  token,
-				}
-
-				utils.SendPushNotifications(&notif)
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Permohonan dilanjutkan",
+				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah dilanjutkan",
+				Token:  user.PushToken,
 			}
+
+			utils.SendPushNotifications(&notif)
+
 		}
 	}
 
@@ -903,17 +896,16 @@ func (ac *AndalalinController) TolakPermohonan(ctx *gin.Context) {
 
 		ac.DB.Create(&simpanNotif)
 
-		if user.PushToken != nil {
-			for _, token := range user.PushToken {
-				notif := utils.Notification{
-					IdUser: user.ID,
-					Title:  "Permohonan ditolak",
-					Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah ditolak",
-					Token:  token,
-				}
-
-				utils.SendPushNotifications(&notif)
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Permohonan ditolak",
+				Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah ditolak",
+				Token:  user.PushToken,
 			}
+
+			utils.SendPushNotifications(&notif)
+
 		}
 	}
 
@@ -938,17 +930,16 @@ func (ac *AndalalinController) TolakPermohonan(ctx *gin.Context) {
 
 		ac.DB.Create(&simpanNotif)
 
-		if user.PushToken != nil {
-			for _, token := range user.PushToken {
-				notif := utils.Notification{
-					IdUser: user.ID,
-					Title:  "Permohonan ditolak",
-					Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah ditolak",
-					Token:  token,
-				}
-
-				utils.SendPushNotifications(&notif)
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Permohonan ditolak",
+				Body:   "Permohonan anda dengan kode " + perlalin.Kode + " telah ditolak",
+				Token:  user.PushToken,
 			}
+
+			utils.SendPushNotifications(&notif)
+
 		}
 	}
 
@@ -1755,17 +1746,16 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 
 				ac.DB.Create(&simpanNotif)
 
-				if user.PushToken != nil {
-					for _, token := range user.PushToken {
-						notif := utils.Notification{
-							IdUser: user.ID,
-							Title:  "Persyaratan tidak terpenuhi",
-							Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi",
-							Token:  token,
-						}
-
-						utils.SendPushNotifications(&notif)
+				if user.PushToken != "" {
+					notif := utils.Notification{
+						IdUser: user.ID,
+						Title:  "Persyaratan tidak terpenuhi",
+						Body:   "Permohonan anda dengan kode " + andalalin.Kode + " terdapat persyaratan yang tidak terpenuhi",
+						Token:  user.PushToken,
 					}
+
+					utils.SendPushNotifications(&notif)
+
 				}
 			} else {
 				andalalin.StatusAndalalin = "Persyaratan terpenuhi"
@@ -2045,17 +2035,16 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 
 				ac.DB.Create(&simpanNotif)
 
-				if user.PushToken != nil {
-					for _, token := range user.PushToken {
-						notif := utils.Notification{
-							IdUser: user.ID,
-							Title:  "Permohonan selesai",
-							Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai",
-							Token:  token,
-						}
-
-						utils.SendPushNotifications(&notif)
+				if user.PushToken != "" {
+					notif := utils.Notification{
+						IdUser: user.ID,
+						Title:  "Permohonan selesai",
+						Body:   "Permohonan anda dengan kode " + andalalin.Kode + " telah selesai",
+						Token:  user.PushToken,
 					}
+
+					utils.SendPushNotifications(&notif)
+
 				}
 			}
 		}
@@ -3087,17 +3076,16 @@ func (ac *AndalalinController) TambahPetugas(ctx *gin.Context) {
 
 	ac.DB.Create(&simpanNotif)
 
-	if user.PushToken != nil {
-		for _, token := range user.PushToken {
-			notif := utils.Notification{
-				IdUser: user.ID,
-				Title:  "Tugas baru",
-				Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
-				Token:  token,
-			}
-
-			utils.SendPushNotifications(&notif)
+	if user.PushToken != "" {
+		notif := utils.Notification{
+			IdUser: user.ID,
+			Title:  "Tugas baru",
+			Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+			Token:  user.PushToken,
 		}
+
+		utils.SendPushNotifications(&notif)
+
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "Tambah petugas berhasil"})
@@ -3171,17 +3159,16 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 
 		ac.DB.Create(&simpanNotif)
 
-		if user.PushToken != nil {
-			for _, token := range user.PushToken {
-				notif := utils.Notification{
-					IdUser: user.ID,
-					Title:  "Tugas baru",
-					Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
-					Token:  token,
-				}
-
-				utils.SendPushNotifications(&notif)
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Tugas baru",
+				Body:   "Survei lapangan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+				Token:  user.PushToken,
 			}
+
+			utils.SendPushNotifications(&notif)
+
 		}
 	} else {
 		simpanNotif := models.Notifikasi{
@@ -3192,17 +3179,16 @@ func (ac *AndalalinController) GantiPetugas(ctx *gin.Context) {
 
 		ac.DB.Create(&simpanNotif)
 
-		if user.PushToken != nil {
-			for _, token := range user.PushToken {
-				notif := utils.Notification{
-					IdUser: user.ID,
-					Title:  "Tugas baru",
-					Body:   "Pemasangan perlengkapan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
-					Token:  token,
-				}
-
-				utils.SendPushNotifications(&notif)
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Tugas baru",
+				Body:   "Pemasangan perlengkapan untuk permohonan dengan kode " + perlalin.Kode + " telah tersedia",
+				Token:  user.PushToken,
 			}
+
+			utils.SendPushNotifications(&notif)
+
 		}
 	}
 
@@ -3703,17 +3689,16 @@ func (ac *AndalalinController) BatalkanPermohonanForNothing(ctx *gin.Context, id
 
 	ac.DB.Create(&simpanNotif)
 
-	if user.PushToken != nil {
-		for _, token := range user.PushToken {
-			notif := utils.Notification{
-				IdUser: user.ID,
-				Title:  "Permohonan dibatalkan",
-				Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah dibatalkan",
-				Token:  token,
-			}
-
-			utils.SendPushNotifications(&notif)
+	if user.PushToken != "" {
+		notif := utils.Notification{
+			IdUser: user.ID,
+			Title:  "Permohonan dibatalkan",
+			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah dibatalkan",
+			Token:  user.PushToken,
 		}
+
+		utils.SendPushNotifications(&notif)
+
 	}
 }
 
@@ -3753,17 +3738,16 @@ func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context) {
 
 	ac.DB.Create(&simpanNotif)
 
-	if user.PushToken != nil {
-		for _, token := range user.PushToken {
-			notif := utils.Notification{
-				IdUser: user.ID,
-				Title:  "Permohonan dibatalkan",
-				Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah dibatalkan",
-				Token:  token,
-			}
-
-			utils.SendPushNotifications(&notif)
+	if user.PushToken != "" {
+		notif := utils.Notification{
+			IdUser: user.ID,
+			Title:  "Permohonan dibatalkan",
+			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah dibatalkan",
+			Token:  user.PushToken,
 		}
+
+		utils.SendPushNotifications(&notif)
+
 	}
 }
 
@@ -3821,17 +3805,16 @@ func (ac *AndalalinController) TundaPemasangan(ctx *gin.Context) {
 
 		ac.DB.Create(&simpanNotif)
 
-		if user.PushToken != nil {
-			for _, token := range user.PushToken {
-				notif := utils.Notification{
-					IdUser: user.ID,
-					Title:  "Pemasangan ditunda",
-					Body:   "Pemasangan perlengkapan pada permohonan anda dengan kode " + perlalin.Kode + " telah ditunda",
-					Token:  token,
-				}
-
-				utils.SendPushNotifications(&notif)
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Pemasangan ditunda",
+				Body:   "Pemasangan perlengkapan pada permohonan anda dengan kode " + perlalin.Kode + " telah ditunda",
+				Token:  user.PushToken,
 			}
+
+			utils.SendPushNotifications(&notif)
+
 		}
 	}
 
@@ -3886,17 +3869,16 @@ func (ac *AndalalinController) LanjutkanPemasangan(ctx *gin.Context) {
 
 		ac.DB.Create(&simpanNotif)
 
-		if user.PushToken != nil {
-			for _, token := range user.PushToken {
-				notif := utils.Notification{
-					IdUser: user.ID,
-					Title:  "Pemasangan dilanjutkan",
-					Body:   "Pemasangan perlengkapan pada permohonan anda dengan kode " + perlalin.Kode + " telah dilanjutkan",
-					Token:  token,
-				}
-
-				utils.SendPushNotifications(&notif)
+		if user.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: user.ID,
+				Title:  "Pemasangan dilanjutkan",
+				Body:   "Pemasangan perlengkapan pada permohonan anda dengan kode " + perlalin.Kode + " telah dilanjutkan",
+				Token:  user.PushToken,
 			}
+
+			utils.SendPushNotifications(&notif)
+
 		}
 	}
 
@@ -4160,17 +4142,16 @@ func (ac *AndalalinController) PemasanganSelesai(ctx *gin.Context, permohonan mo
 
 	ac.DB.Create(&simpanNotif)
 
-	if user.PushToken != nil {
-		for _, token := range user.PushToken {
-			notif := utils.Notification{
-				IdUser: user.ID,
-				Title:  "Pemasangan selesai",
-				Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah selesai",
-				Token:  token,
-			}
-
-			utils.SendPushNotifications(&notif)
+	if user.PushToken != "" {
+		notif := utils.Notification{
+			IdUser: user.ID,
+			Title:  "Pemasangan selesai",
+			Body:   "Permohonan anda dengan kode " + permohonan.Kode + " telah selesai",
+			Token:  user.PushToken,
 		}
+
+		utils.SendPushNotifications(&notif)
+
 	}
 }
 
