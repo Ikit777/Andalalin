@@ -1656,6 +1656,56 @@ func (ac *AndalalinController) UpdateBerkas(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "msg": "persyaratan berhasil diupdate"})
 }
 
+func (ac *AndalalinController) UpdateLokasiProyek(ctx *gin.Context) {
+	var payload *models.PerbaruiLokasi
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	id := ctx.Param("id_andalalin")
+
+	var andalalin *models.Andalalin
+
+	resultsAndalalin := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+
+	if resultsAndalalin.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Tidak ditemukan"})
+		return
+	}
+
+	if andalalin.IdAndalalin != uuid.Nil {
+		andalalin.LokasiBangunan = payload.Lokasi
+		andalalin.LatitudeBangunan = payload.Latitude
+		andalalin.LongitudeBangunan = payload.Longitude
+
+		ac.DB.Save(&andalalin)
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "msg": "persyaratan berhasil diupdate"})
+}
+
 func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 	id := ctx.Param("id_andalalin")
 	dokumen := ctx.Param("dokumen")

@@ -827,3 +827,9 @@ type PemeriksaanDokumen struct {
 	Status      string             `json:"status" binding:"required"`
 	Pemeriksaan []CatatanAsistensi `json:"pemeriksaan" binding:"required"`
 }
+
+type PerbaruiLokasi struct {
+	Lokasi    string  `json:"lokasi" binding:"required"`
+	Latitude  float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
+	Longitude float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
+}
