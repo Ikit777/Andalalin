@@ -297,6 +297,7 @@ type Jalan struct {
 	Lebar         string
 	Permukaan     string
 	Fungsi        string
+	Status        string
 }
 
 type JalanInput struct {
@@ -312,6 +313,7 @@ type JalanInput struct {
 	Lebar         string `json:"lebar" binding:"required"`
 	Permukaan     string `json:"permukaan" binding:"required"`
 	Fungsi        string `json:"fungsi" binding:"required"`
+	Status        string `json:"status" binding:"required"`
 }
 
 type JalanHapus struct {
@@ -333,6 +335,7 @@ type JalanEdit struct {
 	Lebar         string `json:"lebar" binding:"required"`
 	Permukaan     string `json:"permukaan" binding:"required"`
 	Fungsi        string `json:"fungsi" binding:"required"`
+	Status        string `json:"status" binding:"required"`
 }
 
 type Panduan struct {

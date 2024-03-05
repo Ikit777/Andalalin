@@ -898,7 +898,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		jalan = append(jalan, models.Jalan{KodeProvinsi: record[0], KodeKabupaten: record[1], KodeKecamatan: record[2], KodeKelurahan: record[3], KodeJalan: record[4], Nama: record[5], Pangkal: record[6], Ujung: record[7], Kelurahan: record[8], Kecamatan: record[9], Panjang: record[10], Lebar: record[11], Permukaan: record[12], Fungsi: record[13]})
+		jalan = append(jalan, models.Jalan{KodeProvinsi: record[0], KodeKabupaten: record[1], KodeKecamatan: record[2], KodeKelurahan: record[3], KodeJalan: record[4], Nama: record[5], Pangkal: record[6], Ujung: record[7], Kelurahan: record[8], Kecamatan: record[9], Panjang: record[10], Lebar: record[11], Permukaan: record[12], Fungsi: record[13], Status: record[14]})
 	}
 
 	initializers.DB.Create(&models.DataMaster{

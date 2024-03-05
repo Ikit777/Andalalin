@@ -236,6 +236,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		LebarJalan:      payload.Andalalin.LebarJalan,
 		PermukaanJalan:  payload.Andalalin.PermukaanJalan,
 		FungsiJalan:     payload.Andalalin.FungsiJalan,
+		StatusJalan:     payload.Andalalin.StatusJalan,
 
 		//Data Pemohon
 		NikPemohon:             payload.Andalalin.NikPemohon,
@@ -1174,6 +1175,7 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				LebarJalan:      andalalin.LebarJalan,
 				PermukaanJalan:  andalalin.PermukaanJalan,
 				FungsiJalan:     andalalin.FungsiJalan,
+				StatusJalan:     andalalin.StatusJalan,
 
 				//Data Pemohon
 				NikPemohon:             andalalin.NikPemohon,

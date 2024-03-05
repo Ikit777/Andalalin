@@ -55,6 +55,7 @@ type Andalalin struct {
 	LebarJalan      string `gorm:"type:varchar(255);not null"`
 	PermukaanJalan  string `gorm:"type:varchar(255);not null"`
 	FungsiJalan     string `gorm:"type:varchar(255);not null"`
+	StatusJalan     string `gorm:"type:varchar(255);not null"`
 
 	//Data Perusahaan
 	NamaPerusahaan              *string `gorm:"type:varchar(255);"`
@@ -164,6 +165,7 @@ type InputAndalalin struct {
 	LebarJalan      string `json:"lebar_jalan" binding:"required"`
 	PermukaanJalan  string `json:"permukaan_jalan" binding:"required"`
 	FungsiJalan     string `json:"fungsi_jalan" binding:"required"`
+	StatusJalan     string `json:"status_jalan" binding:"required"`
 
 	//Data Pemohon
 	NikPemohon             string  `json:"nik_pemohon" binding:"required"`
@@ -267,6 +269,7 @@ type AndalalinResponse struct {
 	LebarJalan      string `json:"lebar_jalan,omitempty"`
 	PermukaanJalan  string `json:"permukaan_jalan,omitempty"`
 	FungsiJalan     string `json:"fungsi_jalan,omitempty"`
+	StatusJalan     string `json:"status_jalan,omitempty"`
 
 	//Data Pemohon
 	NikPemohon             string  `json:"nik_pemohon,omitempty"`

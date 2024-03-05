@@ -4109,6 +4109,7 @@ func (dm *DataMasterControler) TambahJalan(ctx *gin.Context) {
 			Lebar:         payload.Lebar,
 			Permukaan:     payload.Permukaan,
 			Fungsi:        payload.Fungsi,
+			Status:        payload.Status,
 		}
 		master.Jalan = append(master.Jalan, jalan)
 	}
@@ -4274,6 +4275,7 @@ func (dm *DataMasterControler) EditJalan(ctx *gin.Context) {
 		master.Jalan[itemIndex].Lebar = payload.Lebar
 		master.Jalan[itemIndex].Permukaan = payload.Permukaan
 		master.Jalan[itemIndex].Fungsi = payload.Fungsi
+		master.Jalan[itemIndex].Status = payload.Status
 	}
 
 	loc, _ := time.LoadLocation("Asia/Singapore")
