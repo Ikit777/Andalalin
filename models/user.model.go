@@ -97,3 +97,7 @@ type ResetPasswordInput struct {
 	Password        string `json:"password" binding:"required"`
 	PasswordConfirm string `json:"passwordConfirm" binding:"required"`
 }
+
+type Status struct {
+	Status string `json:"status"`
+}

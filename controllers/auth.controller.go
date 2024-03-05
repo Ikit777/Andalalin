@@ -235,6 +235,12 @@ func (ac *AuthController) VerifyEmail(ctx *gin.Context) {
 }
 
 func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
+	var payload *models.Status
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
 
 	var refresh_token string
 
@@ -253,7 +259,9 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 		var userData models.User
 		initializers.DB.First(&userData, "id = ?", fmt.Sprint(getId.UserID))
 
-		userData.PushToken = ""
+		if payload.Status == "Mobile" {
+			userData.PushToken = ""
+		}
 
 		initializers.DB.Save(&userData)
 
@@ -308,6 +316,13 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 }
 
 func (ac *AuthController) LogoutUser(ctx *gin.Context) {
+	var payload *models.Status
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
 	currentUser := ctx.MustGet("currentUser").(models.User)
 
 	var user models.User
@@ -317,7 +332,9 @@ func (ac *AuthController) LogoutUser(ctx *gin.Context) {
 		return
 	}
 
-	user.PushToken = ""
+	if payload.Status == "Mobile" {
+		user.PushToken = ""
+	}
 
 	ac.DB.Save(&user)
 
