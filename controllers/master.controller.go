@@ -128,8 +128,12 @@ func GetStartUp(db *gorm.DB) {
 	GetDataStream(db)
 }
 
+func GetData() <-chan string {
+	return stream
+}
+
 func (dm *DataMasterControler) GetDataMaster(ctx *gin.Context) {
-	dataStream := GetDataStream(dm.DB)
+	dataStream := GetData()
 
 	data := <-dataStream
 
