@@ -275,6 +275,25 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		AlamatPimpinan:              payload.Andalalin.AlamatPimpinan,
 
 		//Data Konsultan
+		NamaKonsultan:                  payload.Andalalin.NamaKonsultan,
+		NegaraKonsultan:                "Indonesia",
+		ProvinsiKonsultan:              payload.Andalalin.ProvinsiKonsultan,
+		KabupatenKonsultan:             payload.Andalalin.KabupatenKonsultan,
+		KecamatanKonsultan:             payload.Andalalin.KecamatanKonsultan,
+		KelurahanKonsultan:             payload.Andalalin.KelurahanKonsultan,
+		AlamatKonsultan:                payload.Andalalin.AlamatKonsultan,
+		NomerKonsultan:                 payload.Andalalin.NomerKonsultan,
+		EmailKonsultan:                 payload.Andalalin.EmailKonsultan,
+		NamaPenyusunDokumen:            payload.Andalalin.NamaPenyusunDokumen,
+		JenisKelaminPenyusunDokumen:    payload.Andalalin.JenisKelaminPenyusunDokumen,
+		NegaraPenyusunDokumen:          "Indonesia",
+		ProvinsiPenyusunDokumen:        payload.Andalalin.ProvinsiPenyusunDokumen,
+		KabupatenPenyusunDokumen:       payload.Andalalin.KabupatenPenyusunDokumen,
+		KecamatanPenyusunDokumen:       payload.Andalalin.KecamatanPenyusunDokumen,
+		KelurahanPenyusunDokumen:       payload.Andalalin.KelurahanPenyusunDokumen,
+		AlamatPenyusunDokumen:          payload.Andalalin.AlamatPenyusunDokumen,
+		NomerSertifikatPenyusunDokumen: payload.Andalalin.NomerSertifikatPenyusunDokumen,
+		KlasifikasiPenyusunDokumen:     payload.Andalalin.KlasifikasiPenyusunDokumen,
 
 		//Data Pengembang
 		NamaPengembang:                 payload.Andalalin.NamaPengembang,
@@ -1105,19 +1124,25 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				AlamatProyek:    andalalin.AlamatProyek,
 
 				//Data Pemohon
-				NikPemohon:             andalalin.NikPemohon,
-				EmailPemohon:           andalalin.EmailPemohon,
-				NomerPemohon:           andalalin.NomerPemohon,
-				NamaPemohon:            andalalin.NamaPemohon,
-				JabatanPemohon:         andalalin.JabatanPemohon,
-				NomerSertifikatPemohon: andalalin.NomerSertifikatPemohon,
-				KlasifikasiPemohon:     andalalin.KlasifikasiPemohon,
+				NikPemohon:     andalalin.NikPemohon,
+				EmailPemohon:   andalalin.EmailPemohon,
+				NomerPemohon:   andalalin.NomerPemohon,
+				NamaPemohon:    andalalin.NamaPemohon,
+				JabatanPemohon: andalalin.JabatanPemohon,
 
 				//Data perusahaan
 				NamaPerusahaan: andalalin.NamaPerusahaan,
 
 				//Data Pengembang
 				NamaPengembang: andalalin.NamaPengembang,
+
+				//Data Konsultan
+				NamaKonsultan:                  andalalin.NamaKonsultan,
+				NomerKonsultan:                 andalalin.NomerKonsultan,
+				EmailKonsultan:                 andalalin.EmailKonsultan,
+				NamaPenyusunDokumen:            andalalin.NamaPenyusunDokumen,
+				NomerSertifikatPenyusunDokumen: andalalin.NomerSertifikatPenyusunDokumen,
+				KlasifikasiPenyusunDokumen:     andalalin.KlasifikasiPenyusunDokumen,
 
 				//Data Kegiatan
 				Aktivitas:         andalalin.Aktivitas,
@@ -1178,22 +1203,20 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				StatusJalan:     andalalin.StatusJalan,
 
 				//Data Pemohon
-				NikPemohon:             andalalin.NikPemohon,
-				NamaPemohon:            andalalin.NamaPemohon,
-				EmailPemohon:           andalalin.EmailPemohon,
-				TempatLahirPemohon:     andalalin.TempatLahirPemohon,
-				TanggalLahirPemohon:    andalalin.TanggalLahirPemohon,
-				NegaraPemohon:          andalalin.NegaraPemohon,
-				ProvinsiPemohon:        andalalin.ProvinsiPemohon,
-				KabupatenPemohon:       andalalin.KabupatenPemohon,
-				KecamatanPemohon:       andalalin.KecamatanPemohon,
-				KelurahanPemohon:       andalalin.KelurahanPemohon,
-				AlamatPemohon:          andalalin.AlamatPemohon,
-				JenisKelaminPemohon:    andalalin.JenisKelaminPemohon,
-				NomerPemohon:           andalalin.NomerPemohon,
-				JabatanPemohon:         andalalin.JabatanPemohon,
-				NomerSertifikatPemohon: andalalin.NomerSertifikatPemohon,
-				KlasifikasiPemohon:     andalalin.KlasifikasiPemohon,
+				NikPemohon:          andalalin.NikPemohon,
+				NamaPemohon:         andalalin.NamaPemohon,
+				EmailPemohon:        andalalin.EmailPemohon,
+				TempatLahirPemohon:  andalalin.TempatLahirPemohon,
+				TanggalLahirPemohon: andalalin.TanggalLahirPemohon,
+				NegaraPemohon:       andalalin.NegaraPemohon,
+				ProvinsiPemohon:     andalalin.ProvinsiPemohon,
+				KabupatenPemohon:    andalalin.KabupatenPemohon,
+				KecamatanPemohon:    andalalin.KecamatanPemohon,
+				KelurahanPemohon:    andalalin.KelurahanPemohon,
+				AlamatPemohon:       andalalin.AlamatPemohon,
+				JenisKelaminPemohon: andalalin.JenisKelaminPemohon,
+				NomerPemohon:        andalalin.NomerPemohon,
+				JabatanPemohon:      andalalin.JabatanPemohon,
 
 				//Data Perusahaan
 				NamaPerusahaan:              andalalin.NamaPerusahaan,
@@ -1234,6 +1257,27 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				KecamatanPimpinanPengembang:    andalalin.KecamatanPimpinanPengembang,
 				KelurahanPimpinanPengembang:    andalalin.KelurahanPimpinanPengembang,
 				AlamatPimpinanPengembang:       andalalin.AlamatPimpinanPengembang,
+
+				//Data Konsultan
+				NamaKonsultan:                  andalalin.NamaKonsultan,
+				NegaraKonsultan:                andalalin.NegaraKonsultan,
+				ProvinsiKonsultan:              andalalin.ProvinsiKonsultan,
+				KabupatenKonsultan:             andalalin.KabupatenKonsultan,
+				KecamatanKonsultan:             andalalin.KecamatanKonsultan,
+				KelurahanKonsultan:             andalalin.KelurahanKonsultan,
+				AlamatKonsultan:                andalalin.AlamatKonsultan,
+				NomerKonsultan:                 andalalin.NomerKonsultan,
+				EmailKonsultan:                 andalalin.EmailKonsultan,
+				NamaPenyusunDokumen:            andalalin.NamaPenyusunDokumen,
+				JenisKelaminPenyusunDokumen:    andalalin.JenisKelaminPenyusunDokumen,
+				NegaraPenyusunDokumen:          andalalin.NegaraPenyusunDokumen,
+				ProvinsiPenyusunDokumen:        andalalin.ProvinsiPenyusunDokumen,
+				KabupatenPenyusunDokumen:       andalalin.KabupatenPenyusunDokumen,
+				KecamatanPenyusunDokumen:       andalalin.KecamatanPenyusunDokumen,
+				KelurahanPenyusunDokumen:       andalalin.KelurahanPenyusunDokumen,
+				AlamatPenyusunDokumen:          andalalin.AlamatPenyusunDokumen,
+				NomerSertifikatPenyusunDokumen: andalalin.NomerSertifikatPenyusunDokumen,
+				KlasifikasiPenyusunDokumen:     andalalin.KlasifikasiPenyusunDokumen,
 
 				//Data Kegiatan
 				Aktivitas:         andalalin.Aktivitas,
@@ -2197,81 +2241,199 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	nowTime := time.Now().In(loc)
 	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
 
-	t, err := template.ParseFiles("templates/checklistAdministrasi.html")
-	if err != nil {
-		log.Fatal("Error reading the email template:", err)
-		return
-	}
-
-	var bangkitan string
-
 	switch andalalin.Bangkitan {
 	case "Bangkitan rendah":
-		bangkitan = "RENDAH"
-	case "Bangkitan sedang":
-		bangkitan = "SEDANG"
-	case "Bangkitan tinggi":
-		bangkitan = "TINGGI"
-	}
-
-	itemIndex := -1
-
-	for i, item := range andalalin.BerkasPermohonan {
-		if item.Nama == "Checklist administrasi" {
-			itemIndex = i
-			break
+		t, err := template.ParseFiles("templates/checklistAdministrasiBangkitanRendah.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
 		}
-	}
 
-	administrasi := struct {
-		Bangkitan   string
-		Objek       string
-		Lokasi      string
-		Pengembang  string
-		Pemohon     string
-		Sertifikat  string
-		Klasifikasi string
-		Nomor       string
-		Diterima    string
-		Pemeriksaan string
-		Status      string
-		Data        []models.DataAdministrasi
-		Operator    string
-		Nip         string
-	}{
-		Bangkitan:   bangkitan,
-		Objek:       andalalin.Jenis,
-		Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
-		Pengembang:  andalalin.NamaPengembang,
-		Pemohon:     andalalin.NamaPemohon,
-		Sertifikat:  andalalin.NomerSertifikatPemohon,
-		Klasifikasi: andalalin.KlasifikasiPemohon,
-		Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(payload.TanggalSurat[3:5]) + " " + payload.TanggalSurat[6:10],
-		Diterima:    andalalin.TanggalAndalalin,
-		Pemeriksaan: tanggal,
-		Status:      andalalin.StatusBerkasPermohonan,
-		Data:        payload.Data,
-		Operator:    currentUser.Name,
-		Nip:         *currentUser.NIP,
-	}
+		itemIndex := -1
 
-	buffer := new(bytes.Buffer)
-	if err = t.Execute(buffer, administrasi); err != nil {
-		log.Fatal("Eror saat membaca template:", err)
-		return
-	}
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Checklist administrasi" {
+				itemIndex = i
+				break
+			}
+		}
 
-	pdfContent, err := generatePDF(buffer.String())
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+		administrasi := struct {
+			Bangkitan   string
+			Objek       string
+			Lokasi      string
+			Pengembang  string
+			Nomor       string
+			Diterima    string
+			Pemeriksaan string
+			Status      string
+			Data        []models.DataAdministrasi
+			Operator    string
+			Nip         string
+		}{
+			Bangkitan:   "RENDAH",
+			Objek:       andalalin.Jenis,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Pengembang:  andalalin.NamaPengembang,
+			Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(payload.TanggalSurat[3:5]) + " " + payload.TanggalSurat[6:10],
+			Diterima:    andalalin.TanggalAndalalin,
+			Pemeriksaan: tanggal,
+			Status:      andalalin.StatusBerkasPermohonan,
+			Data:        payload.Data,
+			Operator:    currentUser.Name,
+			Nip:         *currentUser.NIP,
+		}
 
-	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
-		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
-	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist administrasi", Tipe: "Pdf", Berkas: pdfContent})
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, administrasi); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist administrasi", Tipe: "Pdf", Berkas: pdfContent})
+		}
+	case "Bangkitan sedang":
+		t, err := template.ParseFiles("templates/checklistAdministrasi.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Checklist administrasi" {
+				itemIndex = i
+				break
+			}
+		}
+
+		administrasi := struct {
+			Bangkitan   string
+			Objek       string
+			Lokasi      string
+			Pengembang  string
+			Pemohon     string
+			Sertifikat  string
+			Klasifikasi string
+			Nomor       string
+			Diterima    string
+			Pemeriksaan string
+			Status      string
+			Data        []models.DataAdministrasi
+			Operator    string
+			Nip         string
+		}{
+			Bangkitan:   "SEDANG",
+			Objek:       andalalin.Jenis,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Pengembang:  andalalin.NamaPengembang,
+			Pemohon:     *andalalin.NamaPenyusunDokumen,
+			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
+			Klasifikasi: *andalalin.KlasifikasiPenyusunDokumen,
+			Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(payload.TanggalSurat[3:5]) + " " + payload.TanggalSurat[6:10],
+			Diterima:    andalalin.TanggalAndalalin,
+			Pemeriksaan: tanggal,
+			Status:      andalalin.StatusBerkasPermohonan,
+			Data:        payload.Data,
+			Operator:    currentUser.Name,
+			Nip:         *currentUser.NIP,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, administrasi); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist administrasi", Tipe: "Pdf", Berkas: pdfContent})
+		}
+	case "Bangkitan tinggi":
+		t, err := template.ParseFiles("templates/checklistAdministrasi.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Checklist administrasi" {
+				itemIndex = i
+				break
+			}
+		}
+
+		administrasi := struct {
+			Bangkitan   string
+			Objek       string
+			Lokasi      string
+			Pengembang  string
+			Pemohon     string
+			Sertifikat  string
+			Klasifikasi string
+			Nomor       string
+			Diterima    string
+			Pemeriksaan string
+			Status      string
+			Data        []models.DataAdministrasi
+			Operator    string
+			Nip         string
+		}{
+			Bangkitan:   "TINGGI",
+			Objek:       andalalin.Jenis,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Pengembang:  andalalin.NamaPengembang,
+			Pemohon:     *andalalin.NamaPenyusunDokumen,
+			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
+			Klasifikasi: *andalalin.KlasifikasiPenyusunDokumen,
+			Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(payload.TanggalSurat[3:5]) + " " + payload.TanggalSurat[6:10],
+			Diterima:    andalalin.TanggalAndalalin,
+			Pemeriksaan: tanggal,
+			Status:      andalalin.StatusBerkasPermohonan,
+			Data:        payload.Data,
+			Operator:    currentUser.Name,
+			Nip:         *currentUser.NIP,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, administrasi); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist administrasi", Tipe: "Pdf", Berkas: pdfContent})
+		}
 	}
 
 	if andalalin.PersyaratanTidakSesuai != nil {
@@ -2717,77 +2879,189 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 	nowTime := time.Now().In(loc)
 	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
 
-	t, err := template.ParseFiles("templates/checklistKelengkapanAkhir.html")
-	if err != nil {
-		log.Fatal("Error reading the email template:", err)
-		return
-	}
-
-	var bangkitan string
-
 	switch andalalin.Bangkitan {
 	case "Bangkitan rendah":
-		bangkitan = "RENDAH"
-	case "Bangkitan sedang":
-		bangkitan = "SEDANG"
-	case "Bangkitan tinggi":
-		bangkitan = "TINGGI"
-	}
-
-	kelengkapan := struct {
-		Bangkitan   string
-		Objek       string
-		Lokasi      string
-		Pengembang  string
-		Pemohon     string
-		Sertifikat  string
-		Klasifikasi string
-		Diterima    string
-		Pemeriksaan string
-		Data        []models.DataKelengkapanAkhir
-		Operator    string
-		Nip         string
-	}{
-		Bangkitan:   bangkitan,
-		Objek:       andalalin.Jenis,
-		Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
-		Pengembang:  andalalin.NamaPengembang,
-		Pemohon:     andalalin.NamaPemohon,
-		Sertifikat:  andalalin.NomerSertifikatPemohon,
-		Klasifikasi: andalalin.KlasifikasiPemohon,
-		Diterima:    andalalin.TanggalAndalalin,
-		Pemeriksaan: tanggal,
-		Data:        payload.Kelengkapan,
-		Operator:    currentUser.Name,
-		Nip:         *currentUser.NIP,
-	}
-
-	buffer := new(bytes.Buffer)
-	if err = t.Execute(buffer, kelengkapan); err != nil {
-		log.Fatal("Eror saat membaca template:", err)
-		return
-	}
-
-	pdfContent, err := generatePDF(buffer.String())
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	itemIndex := -1
-
-	for i, item := range andalalin.BerkasPermohonan {
-		if item.Nama == "Checklist kelengkapan akhir" {
-			itemIndex = i
-			break
+		t, err := template.ParseFiles("templates/checklistKelengkapanAkhirBangkitanRendah.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
 		}
-	}
 
-	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
-		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
-	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfContent})
+		kelengkapan := struct {
+			Bangkitan   string
+			Objek       string
+			Lokasi      string
+			Pengembang  string
+			Diterima    string
+			Pemeriksaan string
+			Data        []models.DataKelengkapanAkhir
+			Operator    string
+			Nip         string
+		}{
+			Bangkitan:   "RENDAH",
+			Objek:       andalalin.Jenis,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Pengembang:  andalalin.NamaPengembang,
+			Diterima:    andalalin.TanggalAndalalin,
+			Pemeriksaan: tanggal,
+			Data:        payload.Kelengkapan,
+			Operator:    currentUser.Name,
+			Nip:         *currentUser.NIP,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, kelengkapan); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Checklist kelengkapan akhir" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfContent})
+		}
+
+	case "Bangkitan sedang":
+		t, err := template.ParseFiles("templates/checklistKelengkapanAkhir.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
+		}
+
+		kelengkapan := struct {
+			Bangkitan   string
+			Objek       string
+			Lokasi      string
+			Pengembang  string
+			Pemohon     string
+			Sertifikat  string
+			Klasifikasi string
+			Diterima    string
+			Pemeriksaan string
+			Data        []models.DataKelengkapanAkhir
+			Operator    string
+			Nip         string
+		}{
+			Bangkitan:   "SEDANG",
+			Objek:       andalalin.Jenis,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Pengembang:  andalalin.NamaPengembang,
+			Pemohon:     *andalalin.NamaPenyusunDokumen,
+			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
+			Klasifikasi: *andalalin.KlasifikasiPenyusunDokumen,
+			Diterima:    andalalin.TanggalAndalalin,
+			Pemeriksaan: tanggal,
+			Data:        payload.Kelengkapan,
+			Operator:    currentUser.Name,
+			Nip:         *currentUser.NIP,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, kelengkapan); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Checklist kelengkapan akhir" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfContent})
+		}
+
+	case "Bangkitan tinggi":
+		t, err := template.ParseFiles("templates/checklistKelengkapanAkhir.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
+		}
+
+		kelengkapan := struct {
+			Bangkitan   string
+			Objek       string
+			Lokasi      string
+			Pengembang  string
+			Pemohon     string
+			Sertifikat  string
+			Klasifikasi string
+			Diterima    string
+			Pemeriksaan string
+			Data        []models.DataKelengkapanAkhir
+			Operator    string
+			Nip         string
+		}{
+			Bangkitan:   "TINGGI",
+			Objek:       andalalin.Jenis,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Pengembang:  andalalin.NamaPengembang,
+			Pemohon:     *andalalin.NamaPenyusunDokumen,
+			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
+			Klasifikasi: *andalalin.KlasifikasiPenyusunDokumen,
+			Diterima:    andalalin.TanggalAndalalin,
+			Pemeriksaan: tanggal,
+			Data:        payload.Kelengkapan,
+			Operator:    currentUser.Name,
+			Nip:         *currentUser.NIP,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, kelengkapan); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Checklist kelengkapan akhir" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kelengkapan akhir", Tipe: "Pdf", Berkas: pdfContent})
+		}
 	}
 
 	if andalalin.KelengkapanTidakSesuai != nil {
@@ -2853,77 +3127,131 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	nowTime := time.Now().In(loc)
 	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
 
-	t, err := template.ParseFiles("templates/penyusunanDokumenAndalalin.html")
-	if err != nil {
-		log.Fatal("Error reading the email template:", err)
-		return
-	}
-
-	var bangkitan string
-
 	switch andalalin.Bangkitan {
-	case "Bangkitan rendah":
-		bangkitan = "RENDAH"
 	case "Bangkitan sedang":
-		bangkitan = "SEDANG"
-	case "Bangkitan tinggi":
-		bangkitan = "TINGGI"
-	}
-
-	penyusun := struct {
-		Bangkitan   string
-		Objek       string
-		Lokasi      string
-		Pengembang  string
-		Pemohon     string
-		Sertifikat  string
-		Klasifikasi string
-		Diterima    string
-		Pemeriksaan string
-		Data        []models.DataPenyusunDokumen
-		Operator    string
-		Nip         string
-	}{
-		Bangkitan:   bangkitan,
-		Objek:       andalalin.Jenis,
-		Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
-		Pengembang:  andalalin.NamaPengembang,
-		Pemohon:     andalalin.NamaPemohon,
-		Sertifikat:  andalalin.NomerSertifikatPemohon,
-		Klasifikasi: andalalin.KlasifikasiPemohon,
-		Diterima:    andalalin.TanggalAndalalin,
-		Pemeriksaan: tanggal,
-		Data:        payload.Penyusun,
-		Operator:    currentUser.Name,
-		Nip:         *currentUser.NIP,
-	}
-
-	buffer := new(bytes.Buffer)
-	if err = t.Execute(buffer, penyusun); err != nil {
-		log.Fatal("Eror saat membaca template:", err)
-		return
-	}
-
-	pdfContent, err := generatePDF(buffer.String())
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	itemIndex := -1
-
-	for i, item := range andalalin.BerkasPermohonan {
-		if item.Nama == "Penyusun dokumen analsis dampak lalu lintas" {
-			itemIndex = i
-			break
+		t, err := template.ParseFiles("templates/penyusunanDokumenAndalalin.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
 		}
-	}
 
-	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
-		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
-	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfContent})
+		penyusun := struct {
+			Bangkitan   string
+			Objek       string
+			Lokasi      string
+			Pengembang  string
+			Pemohon     string
+			Sertifikat  string
+			Klasifikasi string
+			Diterima    string
+			Pemeriksaan string
+			Data        []models.DataPenyusunDokumen
+			Operator    string
+			Nip         string
+		}{
+			Bangkitan:   "SEDANG",
+			Objek:       andalalin.Jenis,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Pengembang:  andalalin.NamaPengembang,
+			Pemohon:     *andalalin.NamaPenyusunDokumen,
+			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
+			Klasifikasi: *andalalin.KlasifikasiPenyusunDokumen,
+			Diterima:    andalalin.TanggalAndalalin,
+			Pemeriksaan: tanggal,
+			Data:        payload.Penyusun,
+			Operator:    currentUser.Name,
+			Nip:         *currentUser.NIP,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, penyusun); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Penyusun dokumen analsis dampak lalu lintas" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfContent})
+		}
+	case "Bangkitan tinggi":
+		t, err := template.ParseFiles("templates/penyusunanDokumenAndalalin.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
+		}
+
+		penyusun := struct {
+			Bangkitan   string
+			Objek       string
+			Lokasi      string
+			Pengembang  string
+			Pemohon     string
+			Sertifikat  string
+			Klasifikasi string
+			Diterima    string
+			Pemeriksaan string
+			Data        []models.DataPenyusunDokumen
+			Operator    string
+			Nip         string
+		}{
+			Bangkitan:   "TINGGI",
+			Objek:       andalalin.Jenis,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Pengembang:  andalalin.NamaPengembang,
+			Pemohon:     *andalalin.NamaPenyusunDokumen,
+			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
+			Klasifikasi: *andalalin.KlasifikasiPenyusunDokumen,
+			Diterima:    andalalin.TanggalAndalalin,
+			Pemeriksaan: tanggal,
+			Data:        payload.Penyusun,
+			Operator:    currentUser.Name,
+			Nip:         *currentUser.NIP,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, penyusun); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Penyusun dokumen analsis dampak lalu lintas" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Penyusun dokumen analsis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfContent})
+		}
 	}
 
 	andalalin.StatusAndalalin = "Persetujuan penyusun dokumen"
@@ -2977,77 +3305,131 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 	nowTime := time.Now().In(loc)
 	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
 
-	t, err := template.ParseFiles("templates/catatanAsistensiDokumen.html")
-	if err != nil {
-		log.Fatal("Error reading the email template:", err)
-		return
-	}
-
-	var bangkitan string
-
 	switch andalalin.Bangkitan {
-	case "Bangkitan rendah":
-		bangkitan = "RENDAH"
 	case "Bangkitan sedang":
-		bangkitan = "SEDANG"
-	case "Bangkitan tinggi":
-		bangkitan = "TINGGI"
-	}
-
-	pemeriksaan := struct {
-		Bangkitan   string
-		Objek       string
-		Lokasi      string
-		Pengembang  string
-		Pemohon     string
-		Sertifikat  string
-		Klasifikasi string
-		Diterima    string
-		Pemeriksaan string
-		Data        []models.CatatanAsistensi
-		Operator    string
-		Nip         string
-	}{
-		Bangkitan:   bangkitan,
-		Objek:       andalalin.Jenis,
-		Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
-		Pengembang:  andalalin.NamaPengembang,
-		Pemohon:     andalalin.NamaPemohon,
-		Sertifikat:  andalalin.NomerSertifikatPemohon,
-		Klasifikasi: andalalin.KlasifikasiPemohon,
-		Diterima:    andalalin.TanggalAndalalin,
-		Pemeriksaan: tanggal,
-		Data:        payload.Pemeriksaan,
-		Operator:    currentUser.Name,
-		Nip:         *currentUser.NIP,
-	}
-
-	buffer := new(bytes.Buffer)
-	if err = t.Execute(buffer, pemeriksaan); err != nil {
-		log.Fatal("Eror saat membaca template:", err)
-		return
-	}
-
-	pdfContent, err := generatePDF(buffer.String())
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	itemIndex := -1
-
-	for i, item := range andalalin.BerkasPermohonan {
-		if item.Nama == "Catatan asistensi dokumen analisis dampak lalu lintas" {
-			itemIndex = i
-			break
+		t, err := template.ParseFiles("templates/catatanAsistensiDokumen.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
 		}
-	}
 
-	if itemIndex != -1 {
-		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
-		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
-	} else {
-		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Catatan asistensi dokumen analisis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfContent})
+		pemeriksaan := struct {
+			Bangkitan   string
+			Objek       string
+			Lokasi      string
+			Pengembang  string
+			Pemohon     string
+			Sertifikat  string
+			Klasifikasi string
+			Diterima    string
+			Pemeriksaan string
+			Data        []models.CatatanAsistensi
+			Operator    string
+			Nip         string
+		}{
+			Bangkitan:   "SEDANG",
+			Objek:       andalalin.Jenis,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Pengembang:  andalalin.NamaPengembang,
+			Pemohon:     *andalalin.NamaPenyusunDokumen,
+			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
+			Klasifikasi: *andalalin.KlasifikasiPenyusunDokumen,
+			Diterima:    andalalin.TanggalAndalalin,
+			Pemeriksaan: tanggal,
+			Data:        payload.Pemeriksaan,
+			Operator:    currentUser.Name,
+			Nip:         *currentUser.NIP,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, pemeriksaan); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Catatan asistensi dokumen analisis dampak lalu lintas" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Catatan asistensi dokumen analisis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfContent})
+		}
+	case "Bangkitan tinggi":
+		t, err := template.ParseFiles("templates/catatanAsistensiDokumen.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
+		}
+
+		pemeriksaan := struct {
+			Bangkitan   string
+			Objek       string
+			Lokasi      string
+			Pengembang  string
+			Pemohon     string
+			Sertifikat  string
+			Klasifikasi string
+			Diterima    string
+			Pemeriksaan string
+			Data        []models.CatatanAsistensi
+			Operator    string
+			Nip         string
+		}{
+			Bangkitan:   "SEDANG",
+			Objek:       andalalin.Jenis,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Pengembang:  andalalin.NamaPengembang,
+			Pemohon:     *andalalin.NamaPenyusunDokumen,
+			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
+			Klasifikasi: *andalalin.KlasifikasiPenyusunDokumen,
+			Diterima:    andalalin.TanggalAndalalin,
+			Pemeriksaan: tanggal,
+			Data:        payload.Pemeriksaan,
+			Operator:    currentUser.Name,
+			Nip:         *currentUser.NIP,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, pemeriksaan); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Catatan asistensi dokumen analisis dampak lalu lintas" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Catatan asistensi dokumen analisis dampak lalu lintas", Tipe: "Pdf", Berkas: pdfContent})
+		}
 	}
 
 	andalalin.HasilAsistensiDokumen = payload.Status

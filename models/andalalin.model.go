@@ -76,25 +76,25 @@ type Andalalin struct {
 	AlamatPimpinan              *string `gorm:"type:varchar(255);"`
 
 	//Data Konsultan
-	NamaKonsultan                  string `gorm:"type:varchar(255);not null"`
-	NegaraKonsultan                string `gorm:"type:varchar(255);not null"`
-	ProvinsiKonsultan              string `gorm:"type:varchar(255);not null"`
-	KabupatenKonsultan             string `gorm:"type:varchar(255);not null"`
-	KecamatanKonsultan             string `gorm:"type:varchar(255);not null"`
-	KelurahanKonsultan             string `gorm:"type:varchar(255);not null"`
-	AlamatKonsultan                string `gorm:"type:varchar(255);not null"`
-	NomerKonsultan                 string `gorm:"type:varchar(255);not null"`
-	EmailKonsultan                 string `gorm:"type:varchar(255);not null"`
-	NamaPenyusunDokumen            string `gorm:"type:varchar(255);not null"`
-	JenisKelaminPenyusunDokumen    string `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
-	NegaraPenyusunDokumen          string `gorm:"type:varchar(255);not null"`
-	ProvinsiPenyusunDokumen        string `gorm:"type:varchar(255);not null"`
-	KabupatenPenyusunDokumen       string `gorm:"type:varchar(255);not null"`
-	KecamatanPenyusunDokumen       string `gorm:"type:varchar(255);not null"`
-	KelurahanPenyusunDokumen       string `gorm:"type:varchar(255);not null"`
-	AlamatPenyusunDokumen          string `gorm:"type:varchar(255);not null"`
-	NomerSertifikatPenyusunDokumen string `gorm:"type:varchar(255);not null"`
-	KlasifikasiPenyusunDokumen     string `gorm:"type:varchar(255);not null"`
+	NamaKonsultan                  *string `gorm:"type:varchar(255);"`
+	NegaraKonsultan                string  `gorm:"type:varchar(255);"`
+	ProvinsiKonsultan              *string `gorm:"type:varchar(255);"`
+	KabupatenKonsultan             *string `gorm:"type:varchar(255);"`
+	KecamatanKonsultan             *string `gorm:"type:varchar(255);"`
+	KelurahanKonsultan             *string `gorm:"type:varchar(255);"`
+	AlamatKonsultan                *string `gorm:"type:varchar(255);"`
+	NomerKonsultan                 *string `gorm:"type:varchar(255);"`
+	EmailKonsultan                 *string `gorm:"type:varchar(255);"`
+	NamaPenyusunDokumen            *string `gorm:"type:varchar(255);"`
+	JenisKelaminPenyusunDokumen    *string `sql:"type:enum('Laki-laki', 'Perempuan');"`
+	NegaraPenyusunDokumen          string  `gorm:"type:varchar(255);"`
+	ProvinsiPenyusunDokumen        *string `gorm:"type:varchar(255);"`
+	KabupatenPenyusunDokumen       *string `gorm:"type:varchar(255);"`
+	KecamatanPenyusunDokumen       *string `gorm:"type:varchar(255);"`
+	KelurahanPenyusunDokumen       *string `gorm:"type:varchar(255);"`
+	AlamatPenyusunDokumen          *string `gorm:"type:varchar(255);"`
+	NomerSertifikatPenyusunDokumen *string `gorm:"type:varchar(255);"`
+	KlasifikasiPenyusunDokumen     *string `gorm:"type:varchar(255);"`
 
 	//Data Pengembang
 	NamaPengembang                 string `gorm:"type:varchar(255);not null"`
@@ -218,23 +218,23 @@ type InputAndalalin struct {
 	AlamatPimpinan              *string `json:"alamat_pimpinan_perusahaan" binding:"required"`
 
 	//Data Konsultan
-	NamaKonsultan                  string `json:"nama_konsultan" binding:"required"`
-	ProvinsiKonsultan              string `json:"provinsi_konsultan" binding:"required"`
-	KabupatenKonsultan             string `json:"kabupaten_konsultan" binding:"required"`
-	KecamatanKonsultan             string `json:"kecamatan_konsultan" binding:"required"`
-	KelurahanKonsultan             string `json:"kelurahan_konsultan" binding:"required"`
-	AlamatKonsultan                string `json:"alamat_konsultan" binding:"required"`
-	NomerKonsultan                 string `json:"nomer_konsultan" binding:"required"`
-	EmailKonsultan                 string `json:"email_konsultan" binding:"required"`
-	NamaPenyusunDokumen            string `json:"nama_penyusun_dokumen" binding:"required"`
-	JenisKelaminPenyusunDokumen    string `json:"jenis_kelamin_penyusun_dokumen" binding:"required"`
-	ProvinsiPenyusunDokumen        string `json:"provinsi_penyusun_dokumen" binding:"required"`
-	KabupatenPenyusunDokumen       string `json:"kabupaten_penyusun_dokumen" binding:"required"`
-	KecamatanPenyusunDokumen       string `json:"kecamatan_penyusun_dokumen" binding:"required"`
-	KelurahanPenyusunDokumen       string `json:"kelurahan_penyusun_dokumen" binding:"required"`
-	AlamatPenyusunDokumen          string `json:"alamat_penyusun_dokumen" binding:"required"`
-	NomerSertifikatPenyusunDokumen string `json:"nomer_sertifikat_penyusun_dokumen" binding:"required"`
-	KlasifikasiPenyusunDokumen     string `json:"klasifikasi_penyusun_dokumen" binding:"required"`
+	NamaKonsultan                  *string `json:"nama_konsultan" binding:"required"`
+	ProvinsiKonsultan              *string `json:"provinsi_konsultan" binding:"required"`
+	KabupatenKonsultan             *string `json:"kabupaten_konsultan" binding:"required"`
+	KecamatanKonsultan             *string `json:"kecamatan_konsultan" binding:"required"`
+	KelurahanKonsultan             *string `json:"kelurahan_konsultan" binding:"required"`
+	AlamatKonsultan                *string `json:"alamat_konsultan" binding:"required"`
+	NomerKonsultan                 *string `json:"nomer_konsultan" binding:"required"`
+	EmailKonsultan                 *string `json:"email_konsultan" binding:"required"`
+	NamaPenyusunDokumen            *string `json:"nama_penyusun_dokumen" binding:"required"`
+	JenisKelaminPenyusunDokumen    *string `json:"jenis_kelamin_penyusun_dokumen" binding:"required"`
+	ProvinsiPenyusunDokumen        *string `json:"provinsi_penyusun_dokumen" binding:"required"`
+	KabupatenPenyusunDokumen       *string `json:"kabupaten_penyusun_dokumen" binding:"required"`
+	KecamatanPenyusunDokumen       *string `json:"kecamatan_penyusun_dokumen" binding:"required"`
+	KelurahanPenyusunDokumen       *string `json:"kelurahan_penyusun_dokumen" binding:"required"`
+	AlamatPenyusunDokumen          *string `json:"alamat_penyusun_dokumen" binding:"required"`
+	NomerSertifikatPenyusunDokumen *string `json:"nomer_sertifikat_penyusun_dokumen" binding:"required"`
+	KlasifikasiPenyusunDokumen     *string `json:"klasifikasi_penyusun_dokumen" binding:"required"`
 
 	//Data Pengembang
 	NamaPengembang                 string `json:"nama_pengembang" binding:"required"`
@@ -344,25 +344,25 @@ type AndalalinResponse struct {
 	AlamatPimpinan              *string `json:"alamat_pimpinan_perusahaan,omitempty"`
 
 	//Data Konsultan
-	NamaKonsultan                  string `json:"nama_konsultan,omitempty"`
-	NegaraKonsultan                string `json:"negara_konsultan,omitempty"`
-	ProvinsiKonsultan              string `json:"provinsi_konsultan,omitempty"`
-	KabupatenKonsultan             string `json:"kabupaten_konsultan,omitempty"`
-	KecamatanKonsultan             string `json:"kecamatan_konsultan,omitempty"`
-	KelurahanKonsultan             string `json:"kelurahan_konsultan,omitempty"`
-	AlamatKonsultan                string `json:"alamat_konsultan,omitempty"`
-	NomerKonsultan                 string `json:"nomer_konsultan,omitempty"`
-	EmailKonsultan                 string `json:"email_konsultan,omitempty"`
-	NamaPenyusunDokumen            string `json:"nama_penyusun_dokumen,omitempty"`
-	JenisKelaminPenyusunDokumen    string `json:"jenis_kelamin_penyusun_dokumen,omitempty"`
-	NegaraPenyusunDokumen          string `json:"negara_penyusun_dokumen,omitempty"`
-	ProvinsiPenyusunDokumen        string `json:"provinsi_penyusun_dokumen,omitempty"`
-	KabupatenPenyusunDokumen       string `json:"kabupaten_penyusun_dokumen,omitempty"`
-	KecamatanPenyusunDokumen       string `json:"kecamatan_penyusun_dokumen,omitempty"`
-	KelurahanPenyusunDokumen       string `json:"kelurahan_penyusun_dokumen,omitempty"`
-	AlamatPenyusunDokumen          string `json:"alamat_penyusun_dokumen,omitempty"`
-	NomerSertifikatPenyusunDokumen string `json:"nomer_sertifikat_penyusun_dokumen,omitempty"`
-	KlasifikasiPenyusunDokumen     string `json:"klasifikasi_penyusun_dokumen,omitempty"`
+	NamaKonsultan                  *string `json:"nama_konsultan,omitempty"`
+	NegaraKonsultan                string  `json:"negara_konsultan,omitempty"`
+	ProvinsiKonsultan              *string `json:"provinsi_konsultan,omitempty"`
+	KabupatenKonsultan             *string `json:"kabupaten_konsultan,omitempty"`
+	KecamatanKonsultan             *string `json:"kecamatan_konsultan,omitempty"`
+	KelurahanKonsultan             *string `json:"kelurahan_konsultan,omitempty"`
+	AlamatKonsultan                *string `json:"alamat_konsultan,omitempty"`
+	NomerKonsultan                 *string `json:"nomer_konsultan,omitempty"`
+	EmailKonsultan                 *string `json:"email_konsultan,omitempty"`
+	NamaPenyusunDokumen            *string `json:"nama_penyusun_dokumen,omitempty"`
+	JenisKelaminPenyusunDokumen    *string `json:"jenis_kelamin_penyusun_dokumen,omitempty"`
+	NegaraPenyusunDokumen          string  `json:"negara_penyusun_dokumen,omitempty"`
+	ProvinsiPenyusunDokumen        *string `json:"provinsi_penyusun_dokumen,omitempty"`
+	KabupatenPenyusunDokumen       *string `json:"kabupaten_penyusun_dokumen,omitempty"`
+	KecamatanPenyusunDokumen       *string `json:"kecamatan_penyusun_dokumen,omitempty"`
+	KelurahanPenyusunDokumen       *string `json:"kelurahan_penyusun_dokumen,omitempty"`
+	AlamatPenyusunDokumen          *string `json:"alamat_penyusun_dokumen,omitempty"`
+	NomerSertifikatPenyusunDokumen *string `json:"nomer_sertifikat_penyusun_dokumen,omitempty"`
+	KlasifikasiPenyusunDokumen     *string `json:"klasifikasi_penyusun_dokumen,omitempty"`
 
 	//Data Pengembang
 	NamaPengembang                 string `json:"nama_pengembang,omitempty"`
@@ -433,13 +433,11 @@ type AndalalinResponseUser struct {
 	LokasiPengambilan       string    `json:"lokasi_pengambilan,omitempty"`
 
 	//Data Pemohon
-	NikPemohon             string  `json:"nik_pemohon,omitempty"`
-	NamaPemohon            string  `json:"nama_pemohon,omitempty"`
-	JabatanPemohon         *string `json:"jabatan_pemohon,omitempty"`
-	EmailPemohon           string  `json:"email_pemohon,omitempty"`
-	NomerPemohon           string  `json:"nomer_pemohon,omitempty"`
-	NomerSertifikatPemohon string  `json:"nomer_sertifikat_pemohon,omitempty"`
-	KlasifikasiPemohon     string  `json:"klasifikasi_pemohon,omitempty"`
+	NikPemohon     string  `json:"nik_pemohon,omitempty"`
+	NamaPemohon    string  `json:"nama_pemohon,omitempty"`
+	JabatanPemohon *string `json:"jabatan_pemohon,omitempty"`
+	EmailPemohon   string  `json:"email_pemohon,omitempty"`
+	NomerPemohon   string  `json:"nomer_pemohon,omitempty"`
 
 	//Data Proyek
 	NamaProyek      string `json:"nama_proyek,omitempty"`
@@ -459,12 +457,12 @@ type AndalalinResponseUser struct {
 	NamaPengembang string `json:"nama_pengembang,omitempty"`
 
 	//Data Konsultan
-	NamaKonsultan                  string `json:"nama_konsultan,omitempty"`
-	NomerKonsultan                 string `json:"nomer_konsultan,omitempty"`
-	EmailKonsultan                 string `json:"email_konsultan,omitempty"`
-	NamaPenyusunDokumen            string `json:"nama_penyusun_dokumen,omitempty"`
-	NomerSertifikatPenyusunDokumen string `json:"nomer_sertifikat_penyusun_dokumen,omitempty"`
-	KlasifikasiPenyusunDokumen     string `json:"klasifikasi_penyusun_dokumen,omitempty"`
+	NamaKonsultan                  *string `json:"nama_konsultan,omitempty"`
+	NomerKonsultan                 *string `json:"nomer_konsultan,omitempty"`
+	EmailKonsultan                 *string `json:"email_konsultan,omitempty"`
+	NamaPenyusunDokumen            *string `json:"nama_penyusun_dokumen,omitempty"`
+	NomerSertifikatPenyusunDokumen *string `json:"nomer_sertifikat_penyusun_dokumen,omitempty"`
+	KlasifikasiPenyusunDokumen     *string `json:"klasifikasi_penyusun_dokumen,omitempty"`
 
 	//Data Kegiatan
 	Aktivitas         string  `json:"aktivitas,omitempty"`
