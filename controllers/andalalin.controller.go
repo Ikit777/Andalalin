@@ -239,22 +239,20 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		StatusJalan:     payload.Andalalin.StatusJalan,
 
 		//Data Pemohon
-		NikPemohon:             payload.Andalalin.NikPemohon,
-		NamaPemohon:            currentUser.Name,
-		EmailPemohon:           currentUser.Email,
-		TempatLahirPemohon:     payload.Andalalin.TempatLahirPemohon,
-		TanggalLahirPemohon:    payload.Andalalin.TanggalLahirPemohon,
-		NegaraPemohon:          "Indonesia",
-		ProvinsiPemohon:        payload.Andalalin.ProvinsiPemohon,
-		KabupatenPemohon:       payload.Andalalin.KabupatenPemohon,
-		KecamatanPemohon:       payload.Andalalin.KecamatanPemohon,
-		KelurahanPemohon:       payload.Andalalin.KelurahanPemohon,
-		AlamatPemohon:          payload.Andalalin.AlamatPemohon,
-		JenisKelaminPemohon:    payload.Andalalin.JenisKelaminPemohon,
-		NomerPemohon:           payload.Andalalin.NomerPemohon,
-		JabatanPemohon:         payload.Andalalin.JabatanPemohon,
-		NomerSertifikatPemohon: payload.Andalalin.NomerSertifikatPemohon,
-		KlasifikasiPemohon:     payload.Andalalin.KlasifikasiPemohon,
+		NikPemohon:          payload.Andalalin.NikPemohon,
+		NamaPemohon:         currentUser.Name,
+		EmailPemohon:        currentUser.Email,
+		TempatLahirPemohon:  payload.Andalalin.TempatLahirPemohon,
+		TanggalLahirPemohon: payload.Andalalin.TanggalLahirPemohon,
+		NegaraPemohon:       "Indonesia",
+		ProvinsiPemohon:     payload.Andalalin.ProvinsiPemohon,
+		KabupatenPemohon:    payload.Andalalin.KabupatenPemohon,
+		KecamatanPemohon:    payload.Andalalin.KecamatanPemohon,
+		KelurahanPemohon:    payload.Andalalin.KelurahanPemohon,
+		AlamatPemohon:       payload.Andalalin.AlamatPemohon,
+		JenisKelaminPemohon: payload.Andalalin.JenisKelaminPemohon,
+		NomerPemohon:        payload.Andalalin.NomerPemohon,
+		JabatanPemohon:      payload.Andalalin.JabatanPemohon,
 
 		//Data Perusahaan
 		NamaPerusahaan:              payload.Andalalin.NamaPerusahaan,
@@ -275,6 +273,8 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		KecamatanPimpinanPerusahaan: payload.Andalalin.KecamatanPimpinanPerusahaan,
 		KelurahanPimpinanPerusahaan: payload.Andalalin.KelurahanPimpinanPerusahaan,
 		AlamatPimpinan:              payload.Andalalin.AlamatPimpinan,
+
+		//Data Konsultan
 
 		//Data Pengembang
 		NamaPengembang:                 payload.Andalalin.NamaPengembang,
