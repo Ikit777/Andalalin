@@ -25,7 +25,7 @@ func (rc *AuthRouteController) AuthRoute(rg *gin.RouterGroup) {
 	router.POST("/login", rc.authController.SignIn)
 
 	//Refresh token
-	router.GET("/refresh", rc.authController.RefreshAccessToken)
+	router.POST("/refresh", rc.authController.RefreshAccessToken)
 
 	//Verifikasi akun
 	router.GET("/verification/:verificationCode", rc.authController.VerifyEmail)
