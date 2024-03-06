@@ -96,26 +96,6 @@ type Andalalin struct {
 	NomerSertifikatPenyusunDokumen *string `gorm:"type:varchar(255);"`
 	KlasifikasiPenyusunDokumen     *string `gorm:"type:varchar(255);"`
 
-	//Data Pengembang
-	NamaPengembang                 string `gorm:"type:varchar(255);not null"`
-	NegaraPengembang               string `gorm:"type:varchar(255);not null"`
-	ProvinsiPengembang             string `gorm:"type:varchar(255);not null"`
-	KabupatenPengembang            string `gorm:"type:varchar(255);not null"`
-	KecamatanPengembang            string `gorm:"type:varchar(255);not null"`
-	KelurahanPengembang            string `gorm:"type:varchar(255);not null"`
-	AlamatPengembang               string `gorm:"type:varchar(255);not null"`
-	NomerPengembang                string `gorm:"type:varchar(255);not null"`
-	EmailPengembang                string `gorm:"type:varchar(255);not null"`
-	NamaPimpinanPengembang         string `gorm:"type:varchar(255);not null"`
-	JabatanPimpinanPengembang      string `gorm:"type:varchar(255);not null"`
-	JenisKelaminPimpinanPengembang string `sql:"type:enum('Laki-laki', 'Perempuan');not null"`
-	NegaraPimpinanPengembang       string `gorm:"type:varchar(255);not null"`
-	ProvinsiPimpinanPengembang     string `gorm:"type:varchar(255);not null"`
-	KabupatenPimpinanPengembang    string `gorm:"type:varchar(255);not null"`
-	KecamatanPimpinanPengembang    string `gorm:"type:varchar(255);not null"`
-	KelurahanPimpinanPengembang    string `gorm:"type:varchar(255);not null"`
-	AlamatPimpinanPengembang       string `gorm:"type:varchar(255);not null"`
-
 	//Data Kegiatan
 	Aktivitas         string  `gorm:"type:varchar(255);not null"`
 	Peruntukan        string  `gorm:"type:varchar(255);not null"`
@@ -236,24 +216,6 @@ type InputAndalalin struct {
 	NomerSertifikatPenyusunDokumen *string `json:"nomer_sertifikat_penyusun_dokumen" binding:"required"`
 	KlasifikasiPenyusunDokumen     *string `json:"klasifikasi_penyusun_dokumen" binding:"required"`
 
-	//Data Pengembang
-	NamaPengembang                 string `json:"nama_pengembang" binding:"required"`
-	ProvinsiPengembang             string `json:"provinsi_pengembang" binding:"required"`
-	KabupatenPengembang            string `json:"kabupaten_pengembang" binding:"required"`
-	KecamatanPengembang            string `json:"kecamatan_pengembang" binding:"required"`
-	KelurahanPengembang            string `json:"kelurahan_pengembang" binding:"required"`
-	AlamatPengembang               string `json:"alamat_pengembang" binding:"required"`
-	NomerPengembang                string `json:"nomer_pengembang" binding:"required"`
-	EmailPengembang                string `json:"email_pengembang" binding:"required"`
-	NamaPimpinanPengembang         string `json:"nama_pimpinan_pengembang" binding:"required"`
-	JabatanPimpinanPengembang      string `json:"jabatan_pimpinan_pengembang" binding:"required"`
-	JenisKelaminPimpinanPengembang string `json:"jenis_kelamin_pimpinan_pengembang" binding:"required"`
-	ProvinsiPimpinanPengembang     string `json:"provinsi_pimpinan_pengembang" binding:"required"`
-	KabupatenPimpinanPengembang    string `json:"kabupaten_pimpinan_pengembang" binding:"required"`
-	KecamatanPimpinanPengembang    string `json:"kecamatan_pimpinan_pengembang" binding:"required"`
-	KelurahanPimpinanPengembang    string `json:"kelurahan_pimpinan_pengembang" binding:"required"`
-	AlamatPimpinanPengembang       string `json:"alamat_pimpinan_pengembang" binding:"required"`
-
 	//Data Kegiatan
 	Aktivitas         string  `json:"aktivitas" binding:"required"`
 	Peruntukan        string  `json:"peruntukan" binding:"required"`
@@ -364,26 +326,6 @@ type AndalalinResponse struct {
 	NomerSertifikatPenyusunDokumen *string `json:"nomer_sertifikat_penyusun_dokumen,omitempty"`
 	KlasifikasiPenyusunDokumen     *string `json:"klasifikasi_penyusun_dokumen,omitempty"`
 
-	//Data Pengembang
-	NamaPengembang                 string `json:"nama_pengembang,omitempty"`
-	NegaraPengembang               string `json:"negara_pengembang,omitempty"`
-	ProvinsiPengembang             string `json:"provinsi_pengembang,omitempty"`
-	KabupatenPengembang            string `json:"kabupaten_pengembang,omitempty"`
-	KecamatanPengembang            string `json:"kecamatan_pengembang,omitempty"`
-	KelurahanPengembang            string `json:"kelurahan_pengembang,omitempty"`
-	AlamatPengembang               string `json:"alamat_pengembang,omitempty"`
-	NomerPengembang                string `json:"nomer_pengembang,omitempty"`
-	EmailPengembang                string `json:"email_pengembang,omitempty"`
-	NamaPimpinanPengembang         string `json:"nama_pimpinan_pengembang,omitempty"`
-	JabatanPimpinanPengembang      string `json:"jabatan_pimpinan_pengembang,omitempty"`
-	JenisKelaminPimpinanPengembang string `json:"jenis_kelamin_pimpinan_pengembang,omitempty"`
-	NegaraPimpinanPengembang       string `json:"negara_pimpinan_pengembang,omitempty"`
-	ProvinsiPimpinanPengembang     string `json:"provinsi_pimpinan_pengembang,omitempty"`
-	KabupatenPimpinanPengembang    string `json:"kabupaten_pimpinan_pengembang,omitempty"`
-	KecamatanPimpinanPengembang    string `json:"kecamatan_pimpinan_pengembang,omitempty"`
-	KelurahanPimpinanPengembang    string `json:"kelurahan_pimpinan_pengembang,omitempty"`
-	AlamatPimpinanPengembang       string `json:"alamat_pimpinan_pengembang,omitempty"`
-
 	//Data Kegiatan
 	Aktivitas         string  `json:"aktivitas,omitempty"`
 	Peruntukan        string  `json:"peruntukan,omitempty"`
@@ -452,11 +394,6 @@ type AndalalinResponseUser struct {
 
 	//Data Perusahaan
 	NamaPerusahaan *string `json:"nama_perusahaan,omitempty"`
-
-	//Data Pengembang
-	NamaPengembang  string `json:"nama_pengembang,omitempty"`
-	NomerPengembang string `json:"nomer_pengembang,omitempty"`
-	EmailPengembang string `json:"email_pengembang,omitempty"`
 
 	//Data Konsultan
 	NamaKonsultan                  *string `json:"nama_konsultan,omitempty"`
@@ -698,7 +635,6 @@ type DaftarAndalalinResponse struct {
 	TanggalAndalalin string    `json:"tanggal_andalalin,omitempty"`
 	Nama             string    `json:"nama_pemohon,omitempty"`
 	Email            string    `json:"email_pemohon,omitempty"`
-	Pengembang       string    `json:"pengembang,omitempty"`
 	Petugas          string    `json:"petugas,omitempty"`
 	JenisAndalalin   string    `json:"jenis_andalalin,omitempty"`
 	StatusAndalalin  string    `json:"status_andalalin,omitempty"`
