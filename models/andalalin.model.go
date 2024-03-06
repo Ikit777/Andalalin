@@ -454,7 +454,9 @@ type AndalalinResponseUser struct {
 	NamaPerusahaan *string `json:"nama_perusahaan,omitempty"`
 
 	//Data Pengembang
-	NamaPengembang string `json:"nama_pengembang,omitempty"`
+	NamaPengembang  string `json:"nama_pengembang,omitempty"`
+	NomerPengembang string `json:"nomer_pengembang,omitempty"`
+	EmailPengembang string `json:"email_pengembang,omitempty"`
 
 	//Data Konsultan
 	NamaKonsultan                  *string `json:"nama_konsultan,omitempty"`

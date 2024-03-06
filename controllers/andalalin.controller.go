@@ -1134,7 +1134,9 @@ func (ac *AndalalinController) GetPermohonanByIdAndalalin(ctx *gin.Context) {
 				NamaPerusahaan: andalalin.NamaPerusahaan,
 
 				//Data Pengembang
-				NamaPengembang: andalalin.NamaPengembang,
+				NamaPengembang:  andalalin.NamaPengembang,
+				NomerPengembang: andalalin.NomerPengembang,
+				EmailPengembang: andalalin.EmailPengembang,
 
 				//Data Konsultan
 				NamaKonsultan:                  andalalin.NamaKonsultan,
