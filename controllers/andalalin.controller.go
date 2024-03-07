@@ -2542,7 +2542,11 @@ func (ac *AndalalinController) PembuatanSuratPermohonan(ctx *gin.Context) {
 			"_klasifikasi_": "Rendah",
 			"_jenis_":       payload.Jenis,
 			"_proyek_":      payload.Proyek,
-			"_lokasi_":      payload.Lokasi,
+			"_jalan_":       payload.Jalan,
+			"_kelurahan_":   payload.Kelurahan,
+			"_kecamatan_":   payload.Kecamatan,
+			"_kabupaten_":   payload.Kabupaten,
+			"_provinsi_":    payload.Provinsi,
 			"_status_":      payload.StatusJalan,
 		}
 
@@ -2585,7 +2589,11 @@ func (ac *AndalalinController) PembuatanSuratPermohonan(ctx *gin.Context) {
 			"_klasifikasi_": "Sedang",
 			"_jenis_":       payload.Jenis,
 			"_proyek_":      payload.Proyek,
-			"_lokasi_":      payload.Lokasi,
+			"_jalan_":       payload.Jalan,
+			"_kelurahan_":   payload.Kelurahan,
+			"_kecamatan_":   payload.Kecamatan,
+			"_kabupaten_":   payload.Kabupaten,
+			"_provinsi_":    payload.Provinsi,
 			"_status_":      payload.StatusJalan,
 			"_konsultan_":   payload.Konsultan,
 		}
@@ -2629,7 +2637,11 @@ func (ac *AndalalinController) PembuatanSuratPermohonan(ctx *gin.Context) {
 			"_klasifikasi_": "Tinggi",
 			"_jenis_":       payload.Jenis,
 			"_proyek_":      payload.Proyek,
-			"_lokasi_":      payload.Lokasi,
+			"_jalan_":       payload.Jalan,
+			"_kelurahan_":   payload.Kelurahan,
+			"_kecamatan_":   payload.Kecamatan,
+			"_kabupaten_":   payload.Kabupaten,
+			"_provinsi_":    payload.Provinsi,
 			"_status_":      payload.StatusJalan,
 			"_konsultan_":   payload.Konsultan,
 		}

@@ -840,7 +840,11 @@ type DataSuratPermohonan struct {
 	Jabatan     *string `json:"jabatan" binding:"required"`
 	Jenis       string  `json:"jenis" binding:"required"`
 	Proyek      string  `json:"proyek" binding:"required"`
-	Lokasi      string  `json:"lokasi" binding:"required"`
+	Jalan       string  `json:"jalan" binding:"required"`
+	Kelurahan   string  `json:"kelurahan" binding:"required"`
+	Kecamatan   string  `json:"kecamatan" binding:"required"`
+	Kabupaten   string  `json:"kabupaten" binding:"required"`
+	Provinsi    string  `json:"provinsi" binding:"required"`
 	StatusJalan string  `json:"status" binding:"required"`
 	Pengembang  string  `json:"pengembang" binding:"required"`
 	Konsultan   *string `json:"konsultan" binding:"required"`
