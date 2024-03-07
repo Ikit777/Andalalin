@@ -2217,7 +2217,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		}{
 			Bangkitan:   "RENDAH",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan" + andalalin.KecamatanProyek + ", Kabupaten" + andalalin.KabupatenProyek + ", Provinsi" + andalalin.ProvinsiProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(payload.TanggalSurat[3:5]) + " " + payload.TanggalSurat[6:10],
 			Diterima:    andalalin.TanggalAndalalin,
@@ -2280,7 +2280,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		}{
 			Bangkitan:   "SEDANG",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan" + andalalin.KecamatanProyek + ", Kabupaten" + andalalin.KabupatenProyek + ", Provinsi" + andalalin.ProvinsiProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Penyusun:    *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -2346,7 +2346,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		}{
 			Bangkitan:   "TINGGI",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan" + andalalin.KecamatanProyek + ", Kabupaten" + andalalin.KabupatenProyek + ", Provinsi" + andalalin.ProvinsiProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Penyusun:    *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -2732,13 +2732,13 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		replaceMap := docx.PlaceholderMap{
 			"_nama_":       andalalin.NamaPemohon,
 			"_jabatan_":    andalalin.JabatanPemohon,
-			"_alamat_":     andalalin.AlamatPemohon + ", " + andalalin.KelurahanPemohon + ", " + andalalin.KecamatanPemohon + ", " + andalalin.KabupatenPemohon + ", " + andalalin.ProvinsiPemohon + ", " + andalalin.NegaraPemohon,
+			"_alamat_":     andalalin.AlamatPemohon + ", Kelurahan " + andalalin.KelurahanPemohon + ", Kecamatan " + andalalin.KecamatanPemohon + ", Kabupaten " + andalalin.KabupatenPemohon + ", Provinsi " + andalalin.ProvinsiPemohon,
 			"_pengembang_": andalalin.NamaPerusahaan,
 			"_nomor_":      andalalin.Nomor,
 			"_tanggal_":    andalalin.Tanggal[0:2],
 			"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
 			"_tahun_":      andalalin.Tanggal[6:10],
-			"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.NamaProyek + ", di " + andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.NamaProyek + ", di Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan " + andalalin.KecamatanProyek + ", Kabupaten " + andalalin.KabupatenProyek + ", Provinsi " + andalalin.ProvinsiProyek,
 			"_kewajiban_":  listContent,
 		}
 
@@ -2801,17 +2801,17 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		}
 
 		replaceMap := docx.PlaceholderMap{
-			"_nama_":       andalalin.NamaPemohon,
-			"_jabatan_":    andalalin.JabatanPemohon,
-			"_alamat_":     andalalin.AlamatPemohon + ", " + andalalin.KelurahanPemohon + ", " + andalalin.KecamatanPemohon + ", " + andalalin.KabupatenPemohon + ", " + andalalin.ProvinsiPemohon + ", " + andalalin.NegaraPemohon,
-			"_pengembang_": andalalin.NamaPerusahaan,
-			"_nomor_":      andalalin.Nomor,
-			"_tanggal_":    andalalin.Tanggal[0:2],
-			"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
-			"_tahun_":      andalalin.Tanggal[6:10],
-			"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.NamaProyek + ", di " + andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
-			"rekomendasi":  andalalin.NamaProyek + ", " + andalalin.NamaProyek + ", di " + andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
-			"_kewajiban_":  listContent,
+			"_nama_":        andalalin.NamaPemohon,
+			"_jabatan_":     andalalin.JabatanPemohon,
+			"_alamat_":      andalalin.AlamatPemohon + ", Kelurahan " + andalalin.KelurahanPemohon + ", Kecamatan " + andalalin.KecamatanPemohon + ", Kabupaten " + andalalin.KabupatenPemohon + ", Provinsi " + andalalin.ProvinsiPemohon,
+			"_pengembang_":  andalalin.NamaPerusahaan,
+			"_nomor_":       andalalin.Nomor,
+			"_tanggal_":     andalalin.Tanggal[0:2],
+			"_bulan_":       utils.Month(andalalin.Tanggal[3:5]),
+			"_tahun_":       andalalin.Tanggal[6:10],
+			"_kegiatan_":    andalalin.JenisProyek + " " + andalalin.NamaProyek + ", di Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan " + andalalin.KecamatanProyek + ", Kabupaten " + andalalin.KabupatenProyek + ", Provinsi " + andalalin.ProvinsiProyek,
+			"_rekomendasi_": andalalin.JenisProyek + " " + andalalin.NamaProyek + ", di Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan " + andalalin.KecamatanProyek + ", Kabupaten " + andalalin.KabupatenProyek + ", Provinsi " + andalalin.ProvinsiProyek,
+			"_kewajiban_":   listContent,
 		}
 
 		var docRendah string
@@ -2875,13 +2875,13 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		replaceMap := docx.PlaceholderMap{
 			"_nama_":       andalalin.NamaPemohon,
 			"_jabatan_":    andalalin.JabatanPemohon,
-			"_alamat_":     andalalin.AlamatPemohon + ", " + andalalin.KelurahanPemohon + ", " + andalalin.KecamatanPemohon + ", " + andalalin.KabupatenPemohon + ", " + andalalin.ProvinsiPemohon + ", " + andalalin.NegaraPemohon,
+			"_alamat_":     andalalin.AlamatPemohon + ", Kelurahan " + andalalin.KelurahanPemohon + ", Kecamatan " + andalalin.KecamatanPemohon + ", Kabupaten " + andalalin.KabupatenPemohon + ", Provinsi " + andalalin.ProvinsiPemohon,
 			"_pengembang_": andalalin.NamaPerusahaan,
 			"_nomor_":      andalalin.Nomor,
 			"_tanggal_":    andalalin.Tanggal[0:2],
 			"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
 			"_tahun_":      andalalin.Tanggal[6:10],
-			"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.NamaProyek + ", di " + andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.NamaProyek + ", di Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan " + andalalin.KecamatanProyek + ", Kabupaten " + andalalin.KabupatenProyek + ", Provinsi " + andalalin.ProvinsiProyek,
 			"_kewajiban_":  listContent,
 		}
 
@@ -3154,7 +3154,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		}{
 			Bangkitan:   "RENDAH",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan" + andalalin.KecamatanProyek + ", Kabupaten" + andalalin.KabupatenProyek + ", Provinsi" + andalalin.ProvinsiProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Diterima:    andalalin.TanggalAndalalin,
 			Pemeriksaan: tanggal,
@@ -3214,7 +3214,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		}{
 			Bangkitan:   "SEDANG",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan" + andalalin.KecamatanProyek + ", Kabupaten" + andalalin.KabupatenProyek + ", Provinsi" + andalalin.ProvinsiProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -3277,7 +3277,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		}{
 			Bangkitan:   "TINGGI",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan" + andalalin.KecamatanProyek + ", Kabupaten" + andalalin.KabupatenProyek + ", Provinsi" + andalalin.ProvinsiProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -3405,7 +3405,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		}{
 			Bangkitan:   "SEDANG",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan" + andalalin.KecamatanProyek + ", Kabupaten" + andalalin.KabupatenProyek + ", Provinsi" + andalalin.ProvinsiProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -3467,7 +3467,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		}{
 			Bangkitan:   "TINGGI",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan" + andalalin.KecamatanProyek + ", Kabupaten" + andalalin.KabupatenProyek + ", Provinsi" + andalalin.ProvinsiProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -3583,7 +3583,7 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 		}{
 			Bangkitan:   "SEDANG",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan" + andalalin.KecamatanProyek + ", Kabupaten" + andalalin.KabupatenProyek + ", Provinsi" + andalalin.ProvinsiProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -3645,7 +3645,7 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 		}{
 			Bangkitan:   "SEDANG",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan" + andalalin.KecamatanProyek + ", Kabupaten" + andalalin.KabupatenProyek + ", Provinsi" + andalalin.ProvinsiProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
