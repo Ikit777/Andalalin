@@ -37,15 +37,6 @@ func NewAndalalinController(DB *gorm.DB) AndalalinController {
 	return AndalalinController{DB}
 }
 
-func customTitleCase(input string) string {
-	words := strings.Fields(input)
-	for i, word := range words {
-		words[i] = strings.ToUpper(string(word[0])) + strings.ToLower(word[1:])
-	}
-
-	return strings.Join(words, " ")
-}
-
 func findItem(array []string, target string) int {
 	for i, value := range array {
 		if value == target {
@@ -2226,7 +2217,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		}{
 			Bangkitan:   "RENDAH",
 			Objek:       andalalin.Jenis,
-			Lokasi:      customTitleCase(andalalin.NamaJalan) + ", " + andalalin.AlamatProyek + ", " + customTitleCase(andalalin.KelurahanProyek) + ", " + customTitleCase(andalalin.KecamatanProyek) + ", " + customTitleCase(andalalin.KabupatenProyek) + ", " + customTitleCase(andalalin.ProvinsiProyek) + ", " + customTitleCase(andalalin.NegaraProyek),
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Nomor:       payload.NomorSurat + ", " + payload.TanggalSurat[0:2] + " " + utils.Month(payload.TanggalSurat[3:5]) + " " + payload.TanggalSurat[6:10],
 			Diterima:    andalalin.TanggalAndalalin,
@@ -2289,7 +2280,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		}{
 			Bangkitan:   "SEDANG",
 			Objek:       andalalin.Jenis,
-			Lokasi:      customTitleCase(andalalin.NamaJalan) + ", " + andalalin.AlamatProyek + ", " + customTitleCase(andalalin.KelurahanProyek) + ", " + customTitleCase(andalalin.KecamatanProyek) + ", " + customTitleCase(andalalin.KabupatenProyek) + ", " + customTitleCase(andalalin.ProvinsiProyek) + ", " + customTitleCase(andalalin.NegaraProyek),
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Penyusun:    *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -2355,7 +2346,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 		}{
 			Bangkitan:   "TINGGI",
 			Objek:       andalalin.Jenis,
-			Lokasi:      customTitleCase(andalalin.NamaJalan) + ", " + andalalin.AlamatProyek + ", " + customTitleCase(andalalin.KelurahanProyek) + ", " + customTitleCase(andalalin.KecamatanProyek) + ", " + customTitleCase(andalalin.KabupatenProyek) + ", " + customTitleCase(andalalin.ProvinsiProyek) + ", " + customTitleCase(andalalin.NegaraProyek),
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Penyusun:    *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -2512,6 +2503,171 @@ func (ac *AndalalinController) UpdateStatusPermohonan(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
+func (ac *AndalalinController) PembuatanSuratPermohonan(ctx *gin.Context) {
+	var payload *models.DataSuratPermohonan
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinPengajuanCredential]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	switch payload.Bangkitan {
+	case "Bangkitan rendah":
+
+		replaceMap := docx.PlaceholderMap{
+			"_nama_":        payload.Nama,
+			"_pemohon_":     *payload.Jabatan + " " + payload.Pengembang,
+			"_pengembang_":  payload.Pengembang,
+			"_klasifikasi_": "Rendah",
+			"_jenis_":       payload.Jenis,
+			"_proyek_":      payload.Proyek,
+			"_lokasi_":      payload.Lokasi,
+			"_status_":      payload.StatusJalan,
+		}
+
+		var docRendah string
+
+		if payload.Pemohon == "Perorangan" {
+			docRendah = "templates/suratPermohonanBangkitanRendahPerorangan.docx"
+		} else {
+			docRendah = "templates/suratPermohonanBangkitanRendahNonPerorangan.docx"
+		}
+
+		doc, err := docx.Open(docRendah)
+		if err != nil {
+			panic(err)
+		}
+
+		// replace the keys with values from replaceMap
+		err = doc.ReplaceAll(replaceMap)
+		if err != nil {
+			panic(err)
+		}
+
+		tempFilePath := "temp.docx"
+		err = doc.WriteToFile(tempFilePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		docBytes, err := os.ReadFile(tempFilePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": docBytes})
+	case "Bangkitan sedang":
+		replaceMap := docx.PlaceholderMap{
+			"_nama_":        payload.Nama,
+			"_pemohon_":     *payload.Jabatan + " " + payload.Pengembang,
+			"_pengembang_":  payload.Pengembang,
+			"_klasifikasi_": "Sedang",
+			"_jenis_":       payload.Jenis,
+			"_proyek_":      payload.Proyek,
+			"_lokasi_":      payload.Lokasi,
+			"_status_":      payload.StatusJalan,
+			"_konsultan_":   payload.Konsultan,
+		}
+
+		var docRendah string
+
+		if payload.Pemohon == "Perorangan" {
+			docRendah = "templates/suratPermohonanBangkitanSedangPerorangan.docx"
+		} else {
+			docRendah = "templates/suratPermohonanBangkitanSedangNonPerorangan.docx"
+		}
+
+		doc, err := docx.Open(docRendah)
+		if err != nil {
+			panic(err)
+		}
+
+		// replace the keys with values from replaceMap
+		err = doc.ReplaceAll(replaceMap)
+		if err != nil {
+			panic(err)
+		}
+
+		tempFilePath := "temp.docx"
+		err = doc.WriteToFile(tempFilePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		docBytes, err := os.ReadFile(tempFilePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": docBytes})
+	case "Bangkitan tinggi":
+		replaceMap := docx.PlaceholderMap{
+			"_nama_":        payload.Nama,
+			"_pemohon_":     *payload.Jabatan + " " + payload.Pengembang,
+			"_pengembang_":  payload.Pengembang,
+			"_klasifikasi_": "Tinggi",
+			"_jenis_":       payload.Jenis,
+			"_proyek_":      payload.Proyek,
+			"_lokasi_":      payload.Lokasi,
+			"_status_":      payload.StatusJalan,
+			"_konsultan_":   payload.Konsultan,
+		}
+
+		var docRendah string
+
+		if payload.Pemohon == "Perorangan" {
+			docRendah = "templates/suratPermohonanBangkitanTinggiPerorangan.docx"
+		} else {
+			docRendah = "templates/suratPermohonanBangkitanTinggiNonPerorangan.docx"
+		}
+
+		doc, err := docx.Open(docRendah)
+		if err != nil {
+			panic(err)
+		}
+
+		// replace the keys with values from replaceMap
+		err = doc.ReplaceAll(replaceMap)
+		if err != nil {
+			panic(err)
+		}
+
+		tempFilePath := "temp.docx"
+		err = doc.WriteToFile(tempFilePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		docBytes, err := os.ReadFile(tempFilePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": docBytes})
+	}
+}
+
 func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 	var payload *models.Kewajiban
 	id := ctx.Param("id_andalalin")
@@ -2564,19 +2720,19 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		replaceMap := docx.PlaceholderMap{
 			"_nama_":       andalalin.NamaPemohon,
 			"_jabatan_":    andalalin.JabatanPemohon,
-			"_alamat_":     andalalin.AlamatPemohon + ", " + customTitleCase(andalalin.KelurahanPemohon) + ", " + customTitleCase(andalalin.KecamatanPemohon) + ", " + customTitleCase(andalalin.KabupatenPemohon) + ", " + customTitleCase(andalalin.ProvinsiPemohon) + ", " + customTitleCase(andalalin.NegaraPemohon),
+			"_alamat_":     andalalin.AlamatPemohon + ", " + andalalin.KelurahanPemohon + ", " + andalalin.KecamatanPemohon + ", " + andalalin.KabupatenPemohon + ", " + andalalin.ProvinsiPemohon + ", " + andalalin.NegaraPemohon,
 			"_pengembang_": andalalin.NamaPerusahaan,
 			"_nomor_":      andalalin.Nomor,
 			"_tanggal_":    andalalin.Tanggal[0:2],
 			"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
 			"_tahun_":      andalalin.Tanggal[6:10],
-			"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.NamaProyek + ", " + customTitleCase(andalalin.NamaJalan) + ", " + andalalin.AlamatProyek + ", " + customTitleCase(andalalin.KelurahanProyek) + ", " + customTitleCase(andalalin.KecamatanProyek) + ", " + customTitleCase(andalalin.KabupatenProyek) + ", " + customTitleCase(andalalin.ProvinsiProyek) + ", " + customTitleCase(andalalin.NegaraProyek),
+			"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.NamaProyek + ", di " + andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			"_kewajiban_":  listContent,
 		}
 
 		var docRendah string
 
-		if andalalin.KabupatenPemohon == "Perorangan" {
+		if andalalin.Pemohon == "Perorangan" {
 			docRendah = "templates/suratPernyataanKesanggupanBangkitanRendahPerorangan.docx"
 		} else {
 			docRendah = "templates/suratPernyataanKesanggupanBangkitanRendahNonPerorangan.docx"
@@ -2635,20 +2791,20 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		replaceMap := docx.PlaceholderMap{
 			"_nama_":       andalalin.NamaPemohon,
 			"_jabatan_":    andalalin.JabatanPemohon,
-			"_alamat_":     andalalin.AlamatPemohon + ", " + customTitleCase(andalalin.KelurahanPemohon) + ", " + customTitleCase(andalalin.KecamatanPemohon) + ", " + customTitleCase(andalalin.KabupatenPemohon) + ", " + customTitleCase(andalalin.ProvinsiPemohon) + ", " + customTitleCase(andalalin.NegaraPemohon),
+			"_alamat_":     andalalin.AlamatPemohon + ", " + andalalin.KelurahanPemohon + ", " + andalalin.KecamatanPemohon + ", " + andalalin.KabupatenPemohon + ", " + andalalin.ProvinsiPemohon + ", " + andalalin.NegaraPemohon,
 			"_pengembang_": andalalin.NamaPerusahaan,
 			"_nomor_":      andalalin.Nomor,
 			"_tanggal_":    andalalin.Tanggal[0:2],
 			"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
 			"_tahun_":      andalalin.Tanggal[6:10],
-			"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.NamaProyek + ", " + customTitleCase(andalalin.NamaJalan) + ", " + andalalin.AlamatProyek + ", " + customTitleCase(andalalin.KelurahanProyek) + ", " + customTitleCase(andalalin.KecamatanProyek) + ", " + customTitleCase(andalalin.KabupatenProyek) + ", " + customTitleCase(andalalin.ProvinsiProyek) + ", " + customTitleCase(andalalin.NegaraProyek),
-			"rekomendasi":  andalalin.NamaProyek + ", " + customTitleCase(andalalin.NamaJalan) + ", " + andalalin.AlamatProyek + ", " + customTitleCase(andalalin.KelurahanProyek) + ", " + customTitleCase(andalalin.KecamatanProyek) + ", " + customTitleCase(andalalin.KabupatenProyek) + ", " + customTitleCase(andalalin.ProvinsiProyek) + ", " + customTitleCase(andalalin.NegaraProyek),
+			"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.NamaProyek + ", di " + andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			"rekomendasi":  andalalin.NamaProyek + ", " + andalalin.NamaProyek + ", di " + andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			"_kewajiban_":  listContent,
 		}
 
 		var docRendah string
 
-		if andalalin.KabupatenPemohon == "Perorangan" {
+		if andalalin.Pemohon == "Perorangan" {
 			docRendah = "templates/suratPernyataanKesanggupanBangkitanSedangPerorangan.docx"
 		} else {
 			docRendah = "templates/suratPernyataanKesanggupanBangkitanSedangNonPerorangan.docx"
@@ -2707,19 +2863,19 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 		replaceMap := docx.PlaceholderMap{
 			"_nama_":       andalalin.NamaPemohon,
 			"_jabatan_":    andalalin.JabatanPemohon,
-			"_alamat_":     andalalin.AlamatPemohon + ", " + customTitleCase(andalalin.KelurahanPemohon) + ", " + customTitleCase(andalalin.KecamatanPemohon) + ", " + customTitleCase(andalalin.KabupatenPemohon) + ", " + customTitleCase(andalalin.ProvinsiPemohon) + ", " + customTitleCase(andalalin.NegaraPemohon),
+			"_alamat_":     andalalin.AlamatPemohon + ", " + andalalin.KelurahanPemohon + ", " + andalalin.KecamatanPemohon + ", " + andalalin.KabupatenPemohon + ", " + andalalin.ProvinsiPemohon + ", " + andalalin.NegaraPemohon,
 			"_pengembang_": andalalin.NamaPerusahaan,
 			"_nomor_":      andalalin.Nomor,
 			"_tanggal_":    andalalin.Tanggal[0:2],
 			"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
 			"_tahun_":      andalalin.Tanggal[6:10],
-			"_kegiatan_":   andalalin.NamaProyek + ", " + customTitleCase(andalalin.NamaJalan) + ", " + andalalin.AlamatProyek + ", " + customTitleCase(andalalin.KelurahanProyek) + ", " + customTitleCase(andalalin.KecamatanProyek) + ", " + customTitleCase(andalalin.KabupatenProyek) + ", " + customTitleCase(andalalin.ProvinsiProyek) + ", " + customTitleCase(andalalin.NegaraProyek),
+			"_kegiatan_":   andalalin.JenisProyek + " " + andalalin.NamaProyek + ", di " + andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			"_kewajiban_":  listContent,
 		}
 
 		var docRendah string
 
-		if andalalin.KabupatenPemohon == "Perorangan" {
+		if andalalin.Pemohon == "Perorangan" {
 			docRendah = "templates/suratPernyataanKesanggupanBangkitanTinggiPerorangan.docx"
 		} else {
 			docRendah = "templates/suratPernyataanKesanggupanBangkitanTinggiNonPerorangan.docx"
@@ -2986,7 +3142,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		}{
 			Bangkitan:   "RENDAH",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Diterima:    andalalin.TanggalAndalalin,
 			Pemeriksaan: tanggal,
@@ -3024,7 +3180,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		}
 
 	case "Bangkitan sedang":
-		t, err := template.ParseFiles("templates/checklistKelengkapanAkhir.html")
+		t, err := template.ParseFiles("templates/checklistKelengkapanAkhirBangkitanSedang.html")
 		if err != nil {
 			log.Fatal("Error reading the email template:", err)
 			return
@@ -3046,7 +3202,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		}{
 			Bangkitan:   "SEDANG",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -3087,7 +3243,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		}
 
 	case "Bangkitan tinggi":
-		t, err := template.ParseFiles("templates/checklistKelengkapanAkhir.html")
+		t, err := template.ParseFiles("templates/checklistKelengkapanAkhirBangkitanTinggi.html")
 		if err != nil {
 			log.Fatal("Error reading the email template:", err)
 			return
@@ -3109,7 +3265,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 		}{
 			Bangkitan:   "TINGGI",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -3237,7 +3393,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		}{
 			Bangkitan:   "SEDANG",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -3299,7 +3455,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 		}{
 			Bangkitan:   "TINGGI",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -3415,7 +3571,7 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 		}{
 			Bangkitan:   "SEDANG",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,
@@ -3477,7 +3633,7 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 		}{
 			Bangkitan:   "SEDANG",
 			Objek:       andalalin.Jenis,
-			Lokasi:      andalalin.NamaJalan + ", " + andalalin.AlamatProyek + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
+			Lokasi:      andalalin.NamaJalan + ", " + andalalin.KelurahanProyek + ", " + andalalin.KecamatanProyek + ", " + andalalin.KabupatenProyek + ", " + andalalin.ProvinsiProyek + ", " + andalalin.NegaraProyek,
 			Pengembang:  *andalalin.NamaPerusahaan,
 			Pemohon:     *andalalin.NamaPenyusunDokumen,
 			Sertifikat:  *andalalin.NomerSertifikatPenyusunDokumen,

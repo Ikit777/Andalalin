@@ -832,3 +832,16 @@ type PerbaruiLokasi struct {
 	Latitude  float64 `protobuf:"fixed64,1,opt,name=latitude,proto3" json:"latitude" binding:"required"`
 	Longitude float64 `protobuf:"fixed64,2,opt,name=longitude,proto3" json:"longtitude" binding:"required"`
 }
+
+type DataSuratPermohonan struct {
+	Bangkitan   string  `json:"bangkitan" binding:"required"`
+	Pemohon     string  `json:"pemohon" binding:"required"`
+	Nama        string  `json:"nama" binding:"required"`
+	Jabatan     *string `json:"jabatan" binding:"required"`
+	Jenis       string  `json:"jenis" binding:"required"`
+	Proyek      string  `json:"proyek" binding:"required"`
+	Lokasi      string  `json:"lokasi" binding:"required"`
+	StatusJalan string  `json:"status" binding:"required"`
+	Pengembang  string  `json:"pengembang" binding:"required"`
+	Konsultan   *string `json:"konsultan" binding:"required"`
+}
