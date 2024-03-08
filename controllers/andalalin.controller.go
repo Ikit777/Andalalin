@@ -2595,7 +2595,7 @@ func (ac *AndalalinController) PembuatanSuratPermohonan(ctx *gin.Context) {
 			"_kabupaten_":   payload.Kabupaten,
 			"_provinsi_":    payload.Provinsi,
 			"_status_":      payload.StatusJalan,
-			"_konsultan_":   payload.Konsultan,
+			"_konsultan_":   *payload.Konsultan,
 		}
 
 		var docRendah string
@@ -2643,7 +2643,7 @@ func (ac *AndalalinController) PembuatanSuratPermohonan(ctx *gin.Context) {
 			"_kabupaten_":   payload.Kabupaten,
 			"_provinsi_":    payload.Provinsi,
 			"_status_":      payload.StatusJalan,
-			"_konsultan_":   payload.Konsultan,
+			"_konsultan_":   *payload.Konsultan,
 		}
 
 		var docRendah string
@@ -2731,9 +2731,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 
 		replaceMap := docx.PlaceholderMap{
 			"_nama_":       andalalin.NamaPemohon,
-			"_jabatan_":    andalalin.JabatanPemohon,
+			"_jabatan_":    *andalalin.JabatanPemohon,
 			"_alamat_":     andalalin.AlamatPemohon + ", Kelurahan " + andalalin.KelurahanPemohon + ", Kecamatan " + andalalin.KecamatanPemohon + ", Kabupaten " + andalalin.KabupatenPemohon + ", Provinsi " + andalalin.ProvinsiPemohon,
-			"_pengembang_": andalalin.NamaPerusahaan,
+			"_pengembang_": *andalalin.NamaPerusahaan,
 			"_nomor_":      andalalin.Nomor,
 			"_tanggal_":    andalalin.Tanggal[0:2],
 			"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
@@ -2802,9 +2802,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 
 		replaceMap := docx.PlaceholderMap{
 			"_nama_":        andalalin.NamaPemohon,
-			"_jabatan_":     andalalin.JabatanPemohon,
+			"_jabatan_":     *andalalin.JabatanPemohon,
 			"_alamat_":      andalalin.AlamatPemohon + ", Kelurahan " + andalalin.KelurahanPemohon + ", Kecamatan " + andalalin.KecamatanPemohon + ", Kabupaten " + andalalin.KabupatenPemohon + ", Provinsi " + andalalin.ProvinsiPemohon,
-			"_pengembang_":  andalalin.NamaPerusahaan,
+			"_pengembang_":  *andalalin.NamaPerusahaan,
 			"_nomor_":       andalalin.Nomor,
 			"_tanggal_":     andalalin.Tanggal[0:2],
 			"_bulan_":       utils.Month(andalalin.Tanggal[3:5]),
@@ -2874,9 +2874,9 @@ func (ac *AndalalinController) PembuatanSuratPernyataan(ctx *gin.Context) {
 
 		replaceMap := docx.PlaceholderMap{
 			"_nama_":       andalalin.NamaPemohon,
-			"_jabatan_":    andalalin.JabatanPemohon,
+			"_jabatan_":    *andalalin.JabatanPemohon,
 			"_alamat_":     andalalin.AlamatPemohon + ", Kelurahan " + andalalin.KelurahanPemohon + ", Kecamatan " + andalalin.KecamatanPemohon + ", Kabupaten " + andalalin.KabupatenPemohon + ", Provinsi " + andalalin.ProvinsiPemohon,
-			"_pengembang_": andalalin.NamaPerusahaan,
+			"_pengembang_": *andalalin.NamaPerusahaan,
 			"_nomor_":      andalalin.Nomor,
 			"_tanggal_":    andalalin.Tanggal[0:2],
 			"_bulan_":      utils.Month(andalalin.Tanggal[3:5]),
