@@ -255,9 +255,14 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 	claim, err := utils.ValidateToken(refresh_token, config.RefreshTokenPublicKey)
 	if err != nil {
-		getId := utils.GetIdByToken(refresh_token, config.AccessTokenPublicKey)
+		claim, err := utils.ValidateToken(refresh_token, config.AccessTokenPublicKey)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"status": "fail", "message": err.Error()})
+			return
+		}
+
 		var userData models.User
-		initializers.DB.First(&userData, "id = ?", fmt.Sprint(getId.UserID))
+		initializers.DB.First(&userData, "id = ?", fmt.Sprint(claim.UserID))
 
 		if payload.Status == "Mobile" {
 			userData.PushToken = ""
