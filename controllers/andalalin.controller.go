@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -23,8 +24,6 @@ import (
 	_ "time/tzdata"
 
 	"github.com/lukasjarosch/go-docx"
-
-	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 )
 
 type AndalalinController struct {
@@ -79,33 +78,19 @@ func findItem(array []string, target string) int {
 // }
 
 func generatePDF(htmlContent []byte) ([]byte, error) {
-	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	cmd := exec.Command("xvfb-run", "--", "wkhtmltopdf", "-", "-") // "-" indicates stdin and stdout respectively
+	cmd.Stdin = bytes.NewReader(htmlContent)
+	var pdfBuffer bytes.Buffer
+	cmd.Stdout = &pdfBuffer
+
+	// Run the command
+	err := cmd.Run()
 	if err != nil {
-		log.Fatal("Eror generate pdf", err)
 		return nil, err
 	}
 
-	// read the HTML page as a PDF page
-	page := wkhtmltopdf.NewPageReader(bytes.NewReader(htmlContent))
-
-	pdfg.AddPage(page)
-
-	marginInMillimeters := 2.54 * 10
-
-	pdfg.Dpi.Set(300)
-	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
-	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(uint(marginInMillimeters))
-	pdfg.MarginLeft.Set(uint(marginInMillimeters))
-	pdfg.MarginRight.Set(uint(marginInMillimeters))
-	pdfg.MarginTop.Set(uint(marginInMillimeters))
-
-	err = pdfg.Create()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return pdfg.Bytes(), nil
+	pdfBytes := pdfBuffer.Bytes()
+	return pdfBytes, nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
