@@ -2,13 +2,13 @@ package controllers
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"strings"
 	"time"
 
@@ -17,6 +17,8 @@ import (
 	"andalalin/repository"
 	"andalalin/utils"
 
+	"github.com/chromedp/cdproto/page"
+	"github.com/chromedp/chromedp"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -43,77 +45,38 @@ func findItem(array []string, target string) int {
 	return -1
 }
 
-// func generatePDF(htmlContent string) ([]byte, error) {
-// 	ctx, cancel := chromedp.NewContext(context.Background())
-// 	defer cancel()
+func generatePDF(htmlContent string) ([]byte, error) {
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
 
-// 	var pdfContent []byte
-// 	err := chromedp.Run(ctx,
-// 		chromedp.Navigate("about:blank"),
-// 		chromedp.ActionFunc(func(ctx context.Context) error {
-// 			frameTree, err := page.GetFrameTree().Do(ctx)
-// 			if err != nil {
-// 				return err
-// 			}
+	var pdfContent []byte
+	err := chromedp.Run(ctx,
+		chromedp.Navigate("about:blank"),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			frameTree, err := page.GetFrameTree().Do(ctx)
+			if err != nil {
+				return err
+			}
 
-// 			return page.SetDocumentContent(frameTree.Frame.ID, htmlContent).Do(ctx)
-// 		}),
-// 		chromedp.ActionFunc(func(ctx context.Context) error {
-// 			err := chromedp.ActionFunc(func(ctx context.Context) error {
-// 				buf, _, err := page.PrintToPDF().WithPaperHeight(11.7).WithPaperWidth(8.3).WithMarginBottom(1).WithMarginLeft(1).WithMarginRight(1).WithMarginTop(1).WithDisplayHeaderFooter(false).WithPrintBackground(false).Do(ctx)
-// 				if err != nil {
-// 					return err
-// 				}
-// 				pdfContent = buf
-// 				return nil
-// 			}).Do(ctx)
-// 			return err
-// 		}),
-// 	)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return pdfContent, nil
-// }
-
-// func generatePDF(htmlContent []byte) ([]byte, error) {
-// 	cmd := exec.Command("libreoffice", "--headless", "--convert-to", "pdf", "html_input_file.html")
-// 	cmd.Stdin = bytes.NewReader(htmlContent)
-
-// 	var out bytes.Buffer
-// 	cmd.Stdout = &out
-
-// 	if err := cmd.Run(); err != nil {
-// 		return nil, err
-// 	}
-
-// 	return out.Bytes(), nil
-// }
-
-func generatePDF(htmlString string) ([]byte, error) {
-	htmlFile, err := os.CreateTemp("", "input*.html")
-	if err != nil {
-		return nil, err
-	}
-	defer htmlFile.Close()
-	defer os.Remove(htmlFile.Name())
-
-	_, err = htmlFile.WriteString(htmlString)
+			return page.SetDocumentContent(frameTree.Frame.ID, htmlContent).Do(ctx)
+		}),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			err := chromedp.ActionFunc(func(ctx context.Context) error {
+				buf, _, err := page.PrintToPDF().WithPaperHeight(11.7).WithPaperWidth(8.3).WithMarginBottom(1).WithMarginLeft(1).WithMarginRight(1).WithMarginTop(1).WithDisplayHeaderFooter(false).WithPrintBackground(false).Do(ctx)
+				if err != nil {
+					return err
+				}
+				pdfContent = buf
+				return nil
+			}).Do(ctx)
+			return err
+		}),
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	cmd := exec.Command("libreoffice", "--headless", "--convert-to", "pdf", htmlFile.Name())
-	var pdfBuffer bytes.Buffer
-	cmd.Stdout = &pdfBuffer
-	cmd.Stderr = &pdfBuffer
-	err = cmd.Run()
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert HTML to PDF: %v. Error: %s", err, pdfBuffer.String())
-	}
-
-	return pdfBuffer.Bytes(), nil
+	return pdfContent, nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
