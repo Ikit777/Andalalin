@@ -2983,11 +2983,6 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 
 	switch andalalin.Bangkitan {
 	case "Bangkitan rendah":
-	case "Bangkitan sedang":
-	case "Bangkitan tinggi":
-	}
-
-	if andalalin.Bangkitan == "Bangkitan rendah" {
 		t, err := template.ParseFiles("templates/suratKeputusanBangkitanRendah.html")
 		if err != nil {
 			log.Fatal("Error reading the email template:", err)
@@ -3093,9 +3088,37 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 		} else {
 			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Surat keputusan persetujuan teknis andalalin", Tipe: "Pdf", Berkas: pdfContent})
 		}
+	case "Bangkitan sedang":
+	case "Bangkitan tinggi":
 	}
 
 	andalalin.StatusAndalalin = "Pemeriksaan surat keputusan"
+
+	var user []models.User
+
+	ac.DB.Find(&user, "role = ?", "Admin")
+
+	for _, users := range user {
+		simpanNotif := models.Notifikasi{
+			IdUser: users.ID,
+			Title:  "Surat keputusan baru",
+			Body:   "Surat keputusan baru untuk permohonan dengan kode " + andalalin.Kode + " telah tersedia",
+		}
+
+		ac.DB.Create(&simpanNotif)
+
+		if users.PushToken != "" {
+			notif := utils.Notification{
+				IdUser: users.ID,
+				Title:  "Surat keputusan baru",
+				Body:   "Surat keputusan baru untuk permohonan dengan kode " + andalalin.Kode + " telah tersedia",
+				Token:  users.PushToken,
+			}
+
+			utils.SendPushNotifications(&notif)
+
+		}
+	}
 
 	ac.DB.Save(&andalalin)
 
