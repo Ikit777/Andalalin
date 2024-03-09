@@ -71,6 +71,9 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	//Pemeriksaan dokumen andalalin
 	router.POST("/pemeriksaan/dokumen/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.PemeriksaanDokumenAndalalin)
 
+	//Pemeriksaan kesesuaian substansi teknis
+	router.POST("/pemeriksaan/substansi/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.PemeriksaanSubstansiTeknisAndalalin)
+
 	//Pemeriksanaan kelengkapan akhir
 	router.POST("/pemeriksaan/kelengkapan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.CheckKelengkapanAkhir)
 

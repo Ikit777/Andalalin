@@ -865,3 +865,23 @@ type DataSuratPermohonan struct {
 	Pengembang  string  `json:"pengembang" binding:"required"`
 	Konsultan   *string `json:"konsultan" binding:"required"`
 }
+
+type PemeriksaanKesesuaianSubstansi struct {
+	Administrasi []string    `json:"administrasi" binding:"required"`
+	Substansi    []Substansi `json:"pemeriksaan" binding:"required"`
+}
+
+type Substansi struct {
+	Uraian     string  `json:"uraian" binding:"required"`
+	Ada        string  `json:"ada" binding:"required"`
+	Tidak      string  `json:"tidak" binding:"required"`
+	Keterangan string  `json:"keterangan" binding:"required"`
+	Child      []Child `json:"child" binding:"required"`
+}
+
+type Child struct {
+	Uraian     string `json:"uraian" binding:"required"`
+	Ada        string `json:"ada" binding:"required"`
+	Tidak      string `json:"tidak" binding:"required"`
+	Keterangan string `json:"keterangan" binding:"required"`
+}

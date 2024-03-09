@@ -657,7 +657,6 @@ func (ac *AndalalinController) TundaPermohonan(ctx *gin.Context) {
 	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if andalalin.IdAndalalin != uuid.Nil {
-		ac.CloseTiketLevel1(ctx, andalalin.IdAndalalin)
 		andalalin.StatusAndalalin = "Permohonan ditunda"
 		andalalin.PertimbanganPenundaan = payload.Pertimbangan
 		ac.DB.Save(&andalalin)
@@ -691,7 +690,6 @@ func (ac *AndalalinController) TundaPermohonan(ctx *gin.Context) {
 	}
 
 	if perlalin.IdAndalalin != uuid.Nil {
-		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		perlalin.StatusAndalalin = "Permohonan ditunda"
 		perlalin.PertimbanganPenundaan = payload.Pertimbangan
 		ac.DB.Save(&perlalin)
@@ -757,7 +755,6 @@ func (ac *AndalalinController) LanjutkanPermohonan(ctx *gin.Context) {
 	ac.DB.First(&perlalin, "id_andalalin = ?", id)
 
 	if andalalin.IdAndalalin != uuid.Nil {
-		ac.CloseTiketLevel1(ctx, andalalin.IdAndalalin)
 		andalalin.StatusAndalalin = "Cek persyaratan"
 		andalalin.PertimbanganPenundaan = ""
 		ac.DB.Save(&andalalin)
@@ -791,7 +788,6 @@ func (ac *AndalalinController) LanjutkanPermohonan(ctx *gin.Context) {
 	}
 
 	if perlalin.IdAndalalin != uuid.Nil {
-		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
 		perlalin.StatusAndalalin = "Cek persyaratan"
 		perlalin.PertimbanganPenundaan = ""
 		ac.DB.Save(&perlalin)
@@ -1973,6 +1969,39 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
 		}
 
+		if dokumen == "Checklist kesesuaian substansi teknis" {
+			itenKeputusan := -1
+
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Checklist kesesuaia substansi teknis" {
+					itenKeputusan = i
+					break
+				}
+			}
+
+			for _, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					andalalin.BerkasPermohonan[itenKeputusan].Berkas = data
+				}
+			}
+
+			andalalin.StatusAndalalin = "Pembuatan surat pernyataan"
+		}
+
 		if dokumen == "Checklist kelengkapan akhir" {
 			itemKelengkapan := -1
 
@@ -2008,6 +2037,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			if andalalin.KelengkapanTidakSesuai != nil {
 				andalalin.StatusAndalalin = "Kelengkapan tidak terpenuhi"
 			} else {
+				ac.CloseTiketLevel1(ctx, andalalin.IdAndalalin)
 				andalalin.StatusAndalalin = "Permohonan selesai"
 
 				itenKeputusan := -1
@@ -3692,6 +3722,196 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
+func (ac *AndalalinController) PemeriksaanSubstansiTeknisAndalalin(ctx *gin.Context) {
+	var payload *models.PemeriksaanKesesuaianSubstansi
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig()
+
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var andalalin models.Andalalin
+
+	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
+
+	switch andalalin.Bangkitan {
+	case "Bangkitan sedang":
+		t, err := template.ParseFiles("templates/checklistKesesuaianSubstansiTeknisk.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
+		}
+
+		pemeriksaan := struct {
+			Bangkitan    string
+			Objek        string
+			Lokasi       string
+			Pengembang   string
+			Pemohon      string
+			Sertifikat   string
+			Klasifikasi  string
+			Nomor        string
+			Diterima     string
+			Pemeriksaan  string
+			Status       string
+			Data         []models.Substansi
+			Administrasi []string
+			Operator     string
+			Nip          string
+		}{
+			Bangkitan:    "SEDANG",
+			Objek:        andalalin.Jenis,
+			Lokasi:       "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan " + andalalin.KecamatanProyek + ", Kabupaten " + andalalin.KabupatenProyek + ", Provinsi " + andalalin.ProvinsiProyek,
+			Pengembang:   *andalalin.NamaPerusahaan,
+			Pemohon:      *andalalin.NamaPenyusunDokumen,
+			Sertifikat:   *andalalin.NomerSertifikatPenyusunDokumen,
+			Klasifikasi:  *andalalin.KlasifikasiPenyusunDokumen,
+			Nomor:        andalalin.Nomor + ", " + andalalin.Tanggal[0:2] + " " + utils.Month(andalalin.Tanggal[3:5]) + " " + andalalin.Tanggal[6:10],
+			Diterima:     andalalin.TanggalAndalalin,
+			Pemeriksaan:  tanggal,
+			Status:       andalalin.StatusBerkasPermohonan,
+			Data:         payload.Substansi,
+			Administrasi: payload.Administrasi,
+			Operator:     currentUser.Name,
+			Nip:          *currentUser.NIP,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, pemeriksaan); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Checklist kesesuaia substansi teknis" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kesesuaia substansi teknis", Tipe: "Pdf", Berkas: pdfContent})
+		}
+	case "Bangkitan tinggi":
+		t, err := template.ParseFiles("templates/checklistKesesuaianSubstansiTeknis.html")
+		if err != nil {
+			log.Fatal("Error reading the email template:", err)
+			return
+		}
+
+		pemeriksaan := struct {
+			Bangkitan    string
+			Objek        string
+			Lokasi       string
+			Pengembang   string
+			Pemohon      string
+			Sertifikat   string
+			Klasifikasi  string
+			Nomor        string
+			Diterima     string
+			Pemeriksaan  string
+			Status       string
+			Data         []models.Substansi
+			Administrasi []string
+			Operator     string
+			Nip          string
+		}{
+			Bangkitan:    "SEDANG",
+			Objek:        andalalin.Jenis,
+			Lokasi:       "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan " + andalalin.KecamatanProyek + ", Kabupaten " + andalalin.KabupatenProyek + ", Provinsi " + andalalin.ProvinsiProyek,
+			Pengembang:   *andalalin.NamaPerusahaan,
+			Pemohon:      *andalalin.NamaPenyusunDokumen,
+			Sertifikat:   *andalalin.NomerSertifikatPenyusunDokumen,
+			Klasifikasi:  *andalalin.KlasifikasiPenyusunDokumen,
+			Nomor:        andalalin.Nomor + ", " + andalalin.Tanggal[0:2] + " " + utils.Month(andalalin.Tanggal[3:5]) + " " + andalalin.Tanggal[6:10],
+			Diterima:     andalalin.TanggalAndalalin,
+			Pemeriksaan:  tanggal,
+			Status:       andalalin.StatusBerkasPermohonan,
+			Data:         payload.Substansi,
+			Administrasi: payload.Administrasi,
+			Operator:     currentUser.Name,
+			Nip:          *currentUser.NIP,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, pemeriksaan); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Checklist kesesuaia substansi teknis" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kesesuaia substansi teknis", Tipe: "Pdf", Berkas: pdfContent})
+		}
+	}
+
+	andalalin.StatusAndalalin = "Persetujuan substansi teknis"
+
+	ac.DB.Save(&andalalin)
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
 func (ac *AndalalinController) PemeriksaanSuratKeputusan(ctx *gin.Context) {
 	var payload *models.Pemeriksaan
 	id := ctx.Param("id_andalalin")
@@ -4355,6 +4575,7 @@ func (ac *AndalalinController) BatalkanPermohonanForNothing(ctx *gin.Context, id
 		return
 	}
 
+	ac.CloseTiketLevel1(ctx, permohonan.IdAndalalin)
 	permohonan.PertimbanganPembatalan = "Tidak ada perlengkapan yang disetujui"
 	permohonan.StatusAndalalin = "Permohonan dibatalkan"
 	ac.DB.Save(&permohonan)
