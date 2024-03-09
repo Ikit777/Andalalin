@@ -81,6 +81,7 @@ func findItem(array []string, target string) int {
 func generatePDF(htmlContent []byte) ([]byte, error) {
 	pdfg, err := wkhtmltopdf.NewPDFGenerator()
 	if err != nil {
+		log.Fatal("Eror generate pdf", err)
 		return nil, err
 	}
 
@@ -89,17 +90,19 @@ func generatePDF(htmlContent []byte) ([]byte, error) {
 
 	pdfg.AddPage(page)
 
+	marginInMillimeters := 2.54 * 10
+
 	pdfg.Dpi.Set(300)
 	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
 	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.MarginBottom.Set(20)
-	pdfg.MarginLeft.Set(30)
-	pdfg.MarginRight.Set(30)
-	pdfg.MarginTop.Set(20)
+	pdfg.MarginBottom.Set(uint(marginInMillimeters))
+	pdfg.MarginLeft.Set(uint(marginInMillimeters))
+	pdfg.MarginRight.Set(uint(marginInMillimeters))
+	pdfg.MarginTop.Set(uint(marginInMillimeters))
 
 	err = pdfg.Create()
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
 	return pdfg.Bytes(), nil
