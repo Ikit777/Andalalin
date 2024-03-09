@@ -78,7 +78,7 @@ func findItem(array []string, target string) int {
 // }
 
 func generatePDF(htmlContent []byte) ([]byte, error) {
-	cmd := exec.Command("xvfb-run", "--", "wkhtmltopdf", "-", "-") // "-" indicates stdin and stdout respectively
+	cmd := exec.Command("xvfb-run", "--", "wkhtmltopdf", "--margin-top", "1in", "--margin-bottom", "1in", "--margin-left", "1in", "--margin-right", "1in", "-", "-") // "-" indicates stdin and stdout respectively
 	cmd.Stdin = bytes.NewReader(htmlContent)
 	var pdfBuffer bytes.Buffer
 	cmd.Stdout = &pdfBuffer
