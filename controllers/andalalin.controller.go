@@ -89,7 +89,7 @@ func generatePDF(htmlContent []byte) ([]byte, error) {
 
 	pdfg.AddPage(page)
 
-	pdfg.Dpi.Set(600)
+	pdfg.Dpi.Set(300)
 	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
 	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
 	pdfg.MarginBottom.Set(20)
