@@ -777,12 +777,28 @@ type Kewajiban struct {
 }
 
 type Keputusan struct {
-	NomorKeputusan     string `json:"nomor_keputusan" binding:"required"`
-	NomorLampiran      string `json:"nomor_lampiran" binding:"required"`
-	NomorKesanggupan   string `json:"nomor_kesanggupan" binding:"required"`
-	TanggalKesanggupan string `json:"tanggal_kesanggupan" binding:"required"`
-	NamaKadis          string `json:"nama_kadis" binding:"required"`
-	NipKadis           string `json:"nip_kadis" binding:"required"`
+	NomorKeputusan     string          `json:"nomor_keputusan" binding:"required"`
+	NomorLampiran      string          `json:"nomor_lampiran" binding:"required"`
+	NomorKesanggupan   string          `json:"nomor_kesanggupan" binding:"required"`
+	TanggalKesanggupan string          `json:"tanggal_kesanggupan" binding:"required"`
+	NamaKadis          string          `json:"nama_kadis" binding:"required"`
+	NipKadis           string          `json:"nip_kadis" binding:"required"`
+	Data               []DataKeputusan `json:"data" binding:"required"`
+}
+
+type DataKeputusan struct {
+	Kewajiban     string          `json:"kewajiban" binding:"required"`
+	DataKewajiban []DataKewajiban `json:"data_kewajiban" binding:"required"`
+}
+
+type DataKewajiban struct {
+	Poin     string     `json:"poin" binding:"required"`
+	DataPoin []DataPoin `json:"data_poin" binding:"required"`
+}
+
+type DataPoin struct {
+	Subpoin     string   `json:"subpoin" binding:"required"`
+	DataSubpoin []string `json:"data_subpoin" binding:"required"`
 }
 
 type KelengkapanAkhir struct {

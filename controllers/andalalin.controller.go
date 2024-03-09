@@ -2981,6 +2981,12 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 	loc, _ := time.LoadLocation("Asia/Singapore")
 	nowTime := time.Now().In(loc)
 
+	switch andalalin.Bangkitan {
+	case "Bangkitan rendah":
+	case "Bangkitan sedang":
+	case "Bangkitan tinggi":
+	}
+
 	if andalalin.Bangkitan == "Bangkitan rendah" {
 		t, err := template.ParseFiles("templates/suratKeputusanBangkitanRendah.html")
 		if err != nil {
@@ -3026,31 +3032,38 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			NipKadis           string
 			NomorLampiran      string
 			TahunTerbit        string
+			Data               []models.DataKeputusan
 		}{
 			NomorKeputusan:     payload.NomorKeputusan,
 			JenisProyek:        andalalin.JenisProyek,
 			JenisProyekJudul:   strings.ToUpper(andalalin.JenisProyek),
 			NamaProyek:         andalalin.NamaProyek,
 			NamaProyekJudul:    strings.ToUpper(andalalin.NamaProyek),
+			Pengembang:         *andalalin.NamaPerusahaan,
+			AlamatPengembang:   *andalalin.AlamatPerusahaan,
+			NomorPengembang:    *andalalin.NomerPerusahaan,
+			NamaPimpinan:       *andalalin.NamaPimpinan,
+			JabatanPimpinan:    *andalalin.JabatanPimpinan,
 			JalanJudul:         strings.ToUpper("JALAN " + andalalin.NamaJalan + " " + "DENGAN NOMOR RUAS JALAN " + andalalin.KodeJalan),
-			KelurahanJudul:     strings.ToUpper(andalalin.KelurahanProyek),
-			KabupatenJudul:     strings.ToUpper(andalalin.KabupatenProyek),
-			StatusJudul:        strings.ToUpper(andalalin.FungsiJalan),
-			ProvinsiJudul:      strings.ToUpper(andalalin.ProvinsiProyek),
+			KelurahanJudul:     strings.ToUpper("KELURAHAN " + andalalin.KelurahanProyek),
+			KabupatenJudul:     strings.ToUpper("KABUPATEN " + andalalin.KabupatenProyek),
+			StatusJudul:        strings.ToUpper(andalalin.StatusJalan),
+			ProvinsiJudul:      strings.ToUpper("PROVINSI " + andalalin.ProvinsiProyek),
 			NomorSurat:         andalalin.Nomor,
 			TanggalSurat:       andalalin.Tanggal[0:2] + " " + utils.Month(andalalin.Tanggal[3:5]) + " " + andalalin.Tanggal[6:10],
 			NomorKesanggupan:   payload.NomorKesanggupan,
 			TanggalKesanggupan: payload.TanggalKesanggupan[0:2] + " " + utils.Month(payload.TanggalKesanggupan[3:5]) + " " + payload.TanggalKesanggupan[6:10],
 			Jalan:              "Jalan " + andalalin.NamaJalan + " " + "dengan Nomor Ruas Jalan " + andalalin.KodeJalan,
-			Kelurahan:          andalalin.KelurahanProyek,
-			Kabupaten:          andalalin.KabupatenProyek,
-			Status:             andalalin.FungsiJalan,
-			Provinsi:           andalalin.ProvinsiProyek,
+			Kelurahan:          "Kelurahan " + andalalin.KelurahanProyek,
+			Kabupaten:          "Kabupaten " + andalalin.KabupatenProyek,
+			Status:             andalalin.StatusJalan,
+			Provinsi:           "Provinsi " + andalalin.ProvinsiProyek,
 			Kegiatan:           template.HTML(kegiatan),
 			NamaKadis:          payload.NamaKadis,
 			NipKadis:           payload.NipKadis,
 			NomorLampiran:      payload.NomorLampiran,
 			TahunTerbit:        nowTime.Format("2006"),
+			Data:               payload.Data,
 		}
 
 		buffer := new(bytes.Buffer)
