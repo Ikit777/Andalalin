@@ -2,13 +2,13 @@ package controllers
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"strings"
 	"time"
 
@@ -17,6 +17,8 @@ import (
 	"andalalin/repository"
 	"andalalin/utils"
 
+	"github.com/chromedp/cdproto/page"
+	"github.com/chromedp/chromedp"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -43,54 +45,38 @@ func findItem(array []string, target string) int {
 	return -1
 }
 
-// func generatePDF(htmlContent string) ([]byte, error) {
-// 	ctx, cancel := chromedp.NewContext(context.Background())
-// 	defer cancel()
+func generatePDF(htmlContent string) ([]byte, error) {
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
 
-// 	var pdfContent []byte
-// 	err := chromedp.Run(ctx,
-// 		chromedp.Navigate("about:blank"),
-// 		chromedp.ActionFunc(func(ctx context.Context) error {
-// 			frameTree, err := page.GetFrameTree().Do(ctx)
-// 			if err != nil {
-// 				return err
-// 			}
+	var pdfContent []byte
+	err := chromedp.Run(ctx,
+		chromedp.Navigate("about:blank"),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			frameTree, err := page.GetFrameTree().Do(ctx)
+			if err != nil {
+				return err
+			}
 
-// 			return page.SetDocumentContent(frameTree.Frame.ID, htmlContent).Do(ctx)
-// 		}),
-// 		chromedp.ActionFunc(func(ctx context.Context) error {
-// 			err := chromedp.ActionFunc(func(ctx context.Context) error {
-// 				buf, _, err := page.PrintToPDF().WithPaperHeight(11.7).WithPaperWidth(8.3).WithMarginBottom(1).WithMarginLeft(1).WithMarginRight(1).WithMarginTop(1).WithDisplayHeaderFooter(false).WithPrintBackground(false).Do(ctx)
-// 				if err != nil {
-// 					return err
-// 				}
-// 				pdfContent = buf
-// 				return nil
-// 			}).Do(ctx)
-// 			return err
-// 		}),
-// 	)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return pdfContent, nil
-// }
-
-func generatePDF(htmlContent []byte) ([]byte, error) {
-	cmd := exec.Command("xvfb-run", "--", "wkhtmltopdf", "--page-size", "A4", "-", "-")
-	cmd.Stdin = bytes.NewReader(htmlContent)
-	var pdfBuffer bytes.Buffer
-	cmd.Stdout = &pdfBuffer
-
-	// Run the command
-	err := cmd.Run()
+			return page.SetDocumentContent(frameTree.Frame.ID, htmlContent).Do(ctx)
+		}),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			err := chromedp.ActionFunc(func(ctx context.Context) error {
+				buf, _, err := page.PrintToPDF().WithPaperHeight(11.7).WithPaperWidth(8.3).WithMarginBottom(1).WithMarginLeft(1).WithMarginRight(1).WithMarginTop(1).WithDisplayHeaderFooter(false).WithPrintBackground(false).Do(ctx)
+				if err != nil {
+					return err
+				}
+				pdfContent = buf
+				return nil
+			}).Do(ctx)
+			return err
+		}),
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	pdfBytes := pdfBuffer.Bytes()
-	return pdfBytes, nil
+	return pdfContent, nil
 }
 
 func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
@@ -166,7 +152,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 		return
 	}
 
-	pdfContent, err := generatePDF(buffer.Bytes())
+	pdfContent, err := generatePDF(buffer.String())
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -425,7 +411,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 		return
 	}
 
-	pdfContent, err := generatePDF(buffer.Bytes())
+	pdfContent, err := generatePDF(buffer.String())
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -2209,7 +2195,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			return
 		}
 
-		pdfContent, err := generatePDF(buffer.Bytes())
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -2275,7 +2261,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			return
 		}
 
-		pdfContent, err := generatePDF(buffer.Bytes())
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -2341,7 +2327,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 			return
 		}
 
-		pdfContent, err := generatePDF(buffer.Bytes())
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -3042,7 +3028,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			return
 		}
 
-		pdfContent, err := generatePDF(buffer.Bytes())
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -3180,7 +3166,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 			return
 		}
 
-		pdfContent, err := generatePDF(buffer.Bytes())
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -3243,7 +3229,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 			return
 		}
 
-		pdfContent, err := generatePDF(buffer.Bytes())
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -3306,7 +3292,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 			return
 		}
 
-		pdfContent, err := generatePDF(buffer.Bytes())
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -3434,7 +3420,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 			return
 		}
 
-		pdfContent, err := generatePDF(buffer.Bytes())
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -3496,7 +3482,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 			return
 		}
 
-		pdfContent, err := generatePDF(buffer.Bytes())
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -3612,7 +3598,7 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 			return
 		}
 
-		pdfContent, err := generatePDF(buffer.Bytes())
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -3674,7 +3660,7 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 			return
 		}
 
-		pdfContent, err := generatePDF(buffer.Bytes())
+		pdfContent, err := generatePDF(buffer.String())
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -4230,7 +4216,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 				return
 			}
 
-			pdfContent, err := generatePDF(buffer.Bytes())
+			pdfContent, err := generatePDF(buffer.String())
 			if err != nil {
 				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
@@ -4809,7 +4795,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 				return
 			}
 
-			pdfContent, err := generatePDF(buffer.Bytes())
+			pdfContent, err := generatePDF(buffer.String())
 			if err != nil {
 				ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
