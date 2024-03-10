@@ -1999,7 +1999,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 				}
 			}
 
-			andalalin.StatusAndalalin = "Pembuatan surat pernyataan"
+			andalalin.StatusAndalalin = "Penyusunan dokumen andalalin"
 		}
 
 		if dokumen == "Checklist kelengkapan akhir" {
