@@ -35,6 +35,7 @@ div.WordSection1
 	{page:WordSection1;}
 #table-data thead, tfoot { display: table-row-group }
 #table-data tr { page-break-inside: avoid }
+#table-child tr { page-break-inside: avoid }
 #table-officer { page-break-inside: avoid; }
 -->
 </style>
@@ -270,7 +271,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
 	const elementsWithClass = document.getElementsByClassName('MsoNormal');
 	const elementsWithClass1 = document.getElementsByClassName('MsoListParagraph');
 	
-	const administrasi = {{.Administrasi}};
+	const administrasi = {{.Administrasi}}
 	
 	const tableAdministrasi = document.getElementById('table-administrasi');
 
@@ -283,15 +284,14 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
     }
 	
 	const alphabetArray = Array.from({ length: 26 }, (_, index) => String.fromCharCode(65 + index));
-	const data = {{.Data}};
-	
+	const data = {{.Data}}
 	const tableBody = document.getElementById('table-body');
 	
 	for (let i = 0; i <= data.length; i++) {
 		if (data[i].child.length != 0){
 			const row = document.createElement('tr');
 			
-			row.innerHTML = `<td width="4%" style='width:4.88%;border-top:solid windowtext 1.0pt;border-left:solid windowtext 1.0pt;border-bottom:none;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${alphabetArray[i]}</span></b></p></td><td width="51%" style='width:51.52%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].uraian}</span></b></p></td><td width="5%" style='width:5.94%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].ada}</span></b></p></td><td width="12%" style='width:12.08%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].tidak}</span></b></p></td><td width="25%" style='width:25.6%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].keterangan}</span></b></p></td>`;
+			row.innerHTML = `<td width="4%" style='width:4.88%;border-top:solid windowtext 1.0pt;border-left:solid windowtext 1.0pt;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${alphabetArray[i]}</span></b></p></td><td width="51%" style='width:51.52%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].uraian}</span></b></p></td><td width="5%" style='width:5.94%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].ada}</span></b></p></td><td width="12%" style='width:12.08%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].tidak}</span></b></p></td><td width="25%" style='width:25.6%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].keterangan}</span></b></p></td>`;
 
 			tableBody.appendChild(row);
 		}else{
@@ -304,14 +304,13 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
 		
 		
 		if (data[i].child.length != 0){
-			for (let j = 0; j <= data[i].child.length; j++){
+			for (let j = 0; j < data[i].child.length; j++){
 				const row1 = document.createElement('tr');
 				const panjang = data[i].child.length
 			
-				row1.innerHTML = `<td width="4%" style='width:4.88%;border-top:none;border-left:solid windowtext 1.0pt;border-bottom: {j == panjang ? solid : none }windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'></span></b></p></td><td width="51%" style='width:51.52%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].child[j].uraian}</span></b></p></td><td width="5%" style='width:5.94%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].child[j].ada}</span></b></p></td><td 	width="12%" style='width:12.08%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].child[j].tidak}</span></b></p></td><td width="25%" style='width:25.6%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><b><span style=		'font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].child[j].keterangan}</span></b></p></td>`;
+				row1.innerHTML = `<td width="4%" style='width:4.88%;border-top:none;border-left:solid windowtext 1.0pt;border-bottom: solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'></span></p></td><td width="51%" style='width:51.52%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><table class=MsoTableGrid id="table-child" border=0 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;border-collapse:collapse;border:none'><tr><td width="1%" style='width:1.88%;border:none;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=top style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${j+1}. </span></p></td><td style='border:none;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=top style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].child[j].uraian}</span></p></td></tr></table></td><td width="5%" style='width:5.94%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].child[j].ada}</span></p></td><td 	width="12%" style='width:12.08%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass align=center style='margin-bottom:0cm;text-align:center;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].child[j].tidak}</span></p></td><td width="25%" style='width:25.6%;border:solid windowtext 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:1.0cm'><p class=elementsWithClass style='margin-bottom:0cm;line-height:115%'><span style='font-size:12.0pt;line-height:115%;font-family:"Times New Roman",serif'>${data[i].child[j].keterangan}</span></p></td>`;
 
 				tableBody.appendChild(row1);
-				break;
 			}
 		}
 	}	
