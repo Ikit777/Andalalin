@@ -783,6 +783,10 @@ type Keputusan struct {
 	TanggalKesanggupan string          `json:"tanggal_kesanggupan" binding:"required"`
 	NamaKadis          string          `json:"nama_kadis" binding:"required"`
 	NipKadis           string          `json:"nip_kadis" binding:"required"`
+	NomorBA            *string         `json:"nomor_ba" binding:"required"`
+	TanggalBA          *string         `json:"tanggal_ba" binding:"required"`
+	NomorBAPL          *string         `json:"nomor_bapl" binding:"required"`
+	TanggalBAPL        *string         `json:"tanggal_bapl" binding:"required"`
 	Data               []DataKeputusan `json:"data" binding:"required"`
 }
 

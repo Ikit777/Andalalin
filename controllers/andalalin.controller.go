@@ -1973,7 +1973,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			itenKeputusan := -1
 
 			for i, item := range andalalin.BerkasPermohonan {
-				if item.Nama == "Checklist kesesuaia substansi teknis" {
+				if item.Nama == "Checklist kesesuaian substansi teknis" {
 					itenKeputusan = i
 					break
 				}
@@ -3080,7 +3080,225 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Surat keputusan persetujuan teknis andalalin", Tipe: "Pdf", Berkas: pdfContent})
 		}
 	case "Bangkitan sedang":
+		t, err := template.ParseFiles("templates/suratKeputusanBangkitanSedang.html")
+		if err != nil {
+			log.Fatal("Error reading the template:", err)
+			return
+		}
+
+		var kegiatan string
+
+		if *andalalin.NilaiKriteria == "" || andalalin.NilaiKriteria == nil {
+			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " <i>(terbilang meter persegi)</i>"
+		} else {
+			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " <i>(terbilang meter persegi)</i> dan " + strings.ToLower(*andalalin.KriteriaKhusus) + " sebesar ± " + *andalalin.NilaiKriteria + " <i>(terbilang " + *andalalin.Terbilang + ")</i>"
+		}
+
+		keputusan := struct {
+			NomorKeputusan     string
+			JenisProyek        string
+			JenisProyekJudul   string
+			NamaProyek         string
+			NamaProyekJudul    string
+			Pengembang         string
+			AlamatPengembang   string
+			NomorPengembang    string
+			NamaPimpinan       string
+			JabatanPimpinan    string
+			JalanJudul         string
+			KelurahanJudul     string
+			KabupatenJudul     string
+			StatusJudul        string
+			ProvinsiJudul      string
+			NomorSurat         string
+			TanggalSurat       string
+			NomorKesanggupan   string
+			TanggalKesanggupan string
+			Jalan              string
+			Kelurahan          string
+			Kabupaten          string
+			Status             string
+			Provinsi           string
+			Kegiatan           template.HTML
+			NamaKadis          string
+			NipKadis           string
+			NomorLampiran      string
+			TahunTerbit        string
+			Data               []models.DataKeputusan
+		}{
+			NomorKeputusan:     payload.NomorKeputusan,
+			JenisProyek:        andalalin.JenisProyek,
+			JenisProyekJudul:   strings.ToUpper(andalalin.JenisProyek),
+			NamaProyek:         andalalin.NamaProyek,
+			NamaProyekJudul:    strings.ToUpper(andalalin.NamaProyek),
+			Pengembang:         *andalalin.NamaPerusahaan,
+			AlamatPengembang:   *andalalin.AlamatPerusahaan,
+			NomorPengembang:    *andalalin.NomerPerusahaan,
+			NamaPimpinan:       *andalalin.NamaPimpinan,
+			JabatanPimpinan:    *andalalin.JabatanPimpinan,
+			JalanJudul:         strings.ToUpper("JALAN " + andalalin.NamaJalan + " " + "DENGAN NOMOR RUAS JALAN " + andalalin.KodeJalan),
+			KelurahanJudul:     strings.ToUpper("KELURAHAN " + andalalin.KelurahanProyek),
+			KabupatenJudul:     strings.ToUpper("KABUPATEN " + andalalin.KabupatenProyek),
+			StatusJudul:        strings.ToUpper(andalalin.StatusJalan),
+			ProvinsiJudul:      strings.ToUpper("PROVINSI " + andalalin.ProvinsiProyek),
+			NomorSurat:         andalalin.Nomor,
+			TanggalSurat:       andalalin.Tanggal[0:2] + " " + utils.Month(andalalin.Tanggal[3:5]) + " " + andalalin.Tanggal[6:10],
+			NomorKesanggupan:   payload.NomorKesanggupan,
+			TanggalKesanggupan: payload.TanggalKesanggupan[0:2] + " " + utils.Month(payload.TanggalKesanggupan[3:5]) + " " + payload.TanggalKesanggupan[6:10],
+			Jalan:              "Jalan " + andalalin.NamaJalan + " " + "dengan Nomor Ruas Jalan " + andalalin.KodeJalan,
+			Kelurahan:          "Kelurahan " + andalalin.KelurahanProyek,
+			Kabupaten:          "Kabupaten " + andalalin.KabupatenProyek,
+			Status:             andalalin.StatusJalan,
+			Provinsi:           "Provinsi " + andalalin.ProvinsiProyek,
+			Kegiatan:           template.HTML(kegiatan),
+			NamaKadis:          payload.NamaKadis,
+			NipKadis:           payload.NipKadis,
+			NomorLampiran:      payload.NomorLampiran,
+			TahunTerbit:        nowTime.Format("2006"),
+			Data:               payload.Data,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, keputusan); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Surat keputusan persetujuan teknis andalalin" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Surat keputusan persetujuan teknis andalalin", Tipe: "Pdf", Berkas: pdfContent})
+		}
 	case "Bangkitan tinggi":
+		t, err := template.ParseFiles("templates/suratKeputusanBangkitanTinggi.html")
+		if err != nil {
+			log.Fatal("Error reading the template:", err)
+			return
+		}
+
+		var kegiatan string
+
+		if *andalalin.NilaiKriteria == "" || andalalin.NilaiKriteria == nil {
+			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " <i>(terbilang meter persegi)</i>"
+		} else {
+			kegiatan = "Dengan luas lahan total sebesar ± " + andalalin.TotalLuasLahan + " <i>(terbilang meter persegi)</i> dan " + strings.ToLower(*andalalin.KriteriaKhusus) + " sebesar ± " + *andalalin.NilaiKriteria + " <i>(terbilang " + *andalalin.Terbilang + ")</i>"
+		}
+
+		keputusan := struct {
+			NomorKeputusan     string
+			JenisProyek        string
+			JenisProyekJudul   string
+			NamaProyek         string
+			NamaProyekJudul    string
+			Pengembang         string
+			AlamatPengembang   string
+			NomorPengembang    string
+			NamaPimpinan       string
+			JabatanPimpinan    string
+			JalanJudul         string
+			KelurahanJudul     string
+			KabupatenJudul     string
+			StatusJudul        string
+			ProvinsiJudul      string
+			NomorSurat         string
+			TanggalSurat       string
+			NomorKesanggupan   string
+			TanggalKesanggupan string
+			Jalan              string
+			Kelurahan          string
+			Kabupaten          string
+			Status             string
+			Provinsi           string
+			Kegiatan           template.HTML
+			NamaKadis          string
+			NipKadis           string
+			NomorLampiran      string
+			TahunTerbit        string
+			NomorBA            string
+			TanggalBA          string
+			NomorBAPL          string
+			TanggalBAPL        string
+			Data               []models.DataKeputusan
+		}{
+			NomorKeputusan:     payload.NomorKeputusan,
+			JenisProyek:        andalalin.JenisProyek,
+			JenisProyekJudul:   strings.ToUpper(andalalin.JenisProyek),
+			NamaProyek:         andalalin.NamaProyek,
+			NamaProyekJudul:    strings.ToUpper(andalalin.NamaProyek),
+			Pengembang:         *andalalin.NamaPerusahaan,
+			AlamatPengembang:   *andalalin.AlamatPerusahaan,
+			NomorPengembang:    *andalalin.NomerPerusahaan,
+			NamaPimpinan:       *andalalin.NamaPimpinan,
+			JabatanPimpinan:    *andalalin.JabatanPimpinan,
+			JalanJudul:         strings.ToUpper("JALAN " + andalalin.NamaJalan + " " + "DENGAN NOMOR RUAS JALAN " + andalalin.KodeJalan),
+			KelurahanJudul:     strings.ToUpper("KELURAHAN " + andalalin.KelurahanProyek),
+			KabupatenJudul:     strings.ToUpper("KABUPATEN " + andalalin.KabupatenProyek),
+			StatusJudul:        strings.ToUpper(andalalin.StatusJalan),
+			ProvinsiJudul:      strings.ToUpper("PROVINSI " + andalalin.ProvinsiProyek),
+			NomorSurat:         andalalin.Nomor,
+			TanggalSurat:       andalalin.Tanggal[0:2] + " " + utils.Month(andalalin.Tanggal[3:5]) + " " + andalalin.Tanggal[6:10],
+			NomorKesanggupan:   payload.NomorKesanggupan,
+			TanggalKesanggupan: payload.TanggalKesanggupan[0:2] + " " + utils.Month(payload.TanggalKesanggupan[3:5]) + " " + payload.TanggalKesanggupan[6:10],
+			Jalan:              "Jalan " + andalalin.NamaJalan + " " + "dengan Nomor Ruas Jalan " + andalalin.KodeJalan,
+			Kelurahan:          "Kelurahan " + andalalin.KelurahanProyek,
+			Kabupaten:          "Kabupaten " + andalalin.KabupatenProyek,
+			Status:             andalalin.StatusJalan,
+			Provinsi:           "Provinsi " + andalalin.ProvinsiProyek,
+			Kegiatan:           template.HTML(kegiatan),
+			NamaKadis:          payload.NamaKadis,
+			NipKadis:           payload.NipKadis,
+			NomorLampiran:      payload.NomorLampiran,
+			TahunTerbit:        nowTime.Format("2006"),
+			NomorBA:            *payload.NomorBA,
+			TanggalBA:          *payload.TanggalBA,
+			NomorBAPL:          *payload.NomorBAPL,
+			TanggalBAPL:        *payload.NomorBAPL,
+			Data:               payload.Data,
+		}
+
+		buffer := new(bytes.Buffer)
+		if err = t.Execute(buffer, keputusan); err != nil {
+			log.Fatal("Eror saat membaca template:", err)
+			return
+		}
+
+		pdfContent, err := generatePDF(buffer.String())
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		itemIndex := -1
+
+		for i, item := range andalalin.BerkasPermohonan {
+			if item.Nama == "Surat keputusan persetujuan teknis andalalin" {
+				itemIndex = i
+				break
+			}
+		}
+
+		if itemIndex != -1 {
+			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+		} else {
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Surat keputusan persetujuan teknis andalalin", Tipe: "Pdf", Berkas: pdfContent})
+		}
 	}
 
 	andalalin.StatusAndalalin = "Pemeriksaan surat keputusan"
@@ -3823,7 +4041,7 @@ func (ac *AndalalinController) PemeriksaanSubstansiTeknisAndalalin(ctx *gin.Cont
 		itemIndex := -1
 
 		for i, item := range andalalin.BerkasPermohonan {
-			if item.Nama == "Checklist kesesuaia substansi teknis" {
+			if item.Nama == "Checklist kesesuaian substansi teknis" {
 				itemIndex = i
 				break
 			}
@@ -3833,7 +4051,7 @@ func (ac *AndalalinController) PemeriksaanSubstansiTeknisAndalalin(ctx *gin.Cont
 			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
 			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 		} else {
-			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kesesuaia substansi teknis", Tipe: "Pdf", Berkas: pdfContent})
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kesesuaian substansi teknis", Tipe: "Pdf", Berkas: pdfContent})
 		}
 	case "Bangkitan tinggi":
 		t, err := template.ParseFiles("templates/checklistKesesuaianSubstansiTeknis.html")
@@ -3891,7 +4109,7 @@ func (ac *AndalalinController) PemeriksaanSubstansiTeknisAndalalin(ctx *gin.Cont
 		itemIndex := -1
 
 		for i, item := range andalalin.BerkasPermohonan {
-			if item.Nama == "Checklist kesesuaia substansi teknis" {
+			if item.Nama == "Checklist kesesuaian substansi teknis" {
 				itemIndex = i
 				break
 			}
@@ -3901,7 +4119,7 @@ func (ac *AndalalinController) PemeriksaanSubstansiTeknisAndalalin(ctx *gin.Cont
 			andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
 			andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
 		} else {
-			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kesesuaia substansi teknis", Tipe: "Pdf", Berkas: pdfContent})
+			andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Checklist kesesuaian substansi teknis", Tipe: "Pdf", Berkas: pdfContent})
 		}
 	}
 
