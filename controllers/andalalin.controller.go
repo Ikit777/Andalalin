@@ -4850,6 +4850,11 @@ func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context) {
 	if andalalin.IdAndalalin != uuid.Nil {
 
 		ac.CloseTiketLevel1(ctx, andalalin.IdAndalalin)
+		var ticket2 models.TiketLevel2
+		resultTiket2 := ac.DB.Where("id_andalalin = ? AND status = ?", andalalin.IdAndalalin, "Buka").First(&ticket2)
+		if resultTiket2.Error == nil {
+			ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
+		}
 		andalalin.PertimbanganPembatalan = payload.Pertimbangan
 		andalalin.StatusAndalalin = "Permohonan dibatalkan"
 		ac.DB.Save(&andalalin)
@@ -4884,6 +4889,11 @@ func (ac *AndalalinController) BatalkanPermohonan(ctx *gin.Context) {
 
 	if perlalin.IdAndalalin != uuid.Nil {
 		ac.CloseTiketLevel1(ctx, perlalin.IdAndalalin)
+		var ticket2 models.TiketLevel2
+		resultTiket2 := ac.DB.Where("id_andalalin = ? AND status = ?", perlalin.IdAndalalin, "Buka").First(&ticket2)
+		if resultTiket2.Error == nil {
+			ac.CloseTiketLevel2(ctx, perlalin.IdAndalalin)
+		}
 		perlalin.PertimbanganPembatalan = payload.Pertimbangan
 		perlalin.StatusAndalalin = "Permohonan dibatalkan"
 		ac.DB.Save(&perlalin)
