@@ -125,7 +125,7 @@ func (ac *AndalalinController) Pengajuan(ctx *gin.Context) {
 
 	t, err := template.ParseFiles(path)
 	if err != nil {
-		log.Fatal("Error reading the email template:", err)
+		log.Fatal("Error reading the template:", err)
 		return
 	}
 
@@ -387,7 +387,7 @@ func (ac *AndalalinController) PengajuanPerlalin(ctx *gin.Context) {
 
 	t, err := template.ParseFiles("templates/templateTandaTerimaPerlalin.html")
 	if err != nil {
-		log.Fatal("Error reading the email template:", err)
+		log.Fatal("Error reading the template:", err)
 		return
 	}
 
@@ -2180,7 +2180,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	case "Bangkitan rendah":
 		t, err := template.ParseFiles("templates/checklistAdministrasiBangkitanRendah.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -2240,7 +2240,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	case "Bangkitan sedang":
 		t, err := template.ParseFiles("templates/checklistAdministrasiBangkitanSedang.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -2306,7 +2306,7 @@ func (ac *AndalalinController) CheckAdministrasi(ctx *gin.Context) {
 	case "Bangkitan tinggi":
 		t, err := template.ParseFiles("templates/checklistAdministrasiBangkitanTinggi.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -2976,7 +2976,7 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 	case "Bangkitan rendah":
 		t, err := template.ParseFiles("templates/suratKeputusanBangkitanRendah.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -3164,7 +3164,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 	case "Bangkitan rendah":
 		t, err := template.ParseFiles("templates/checklistKelengkapanAkhirBangkitanRendah.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -3221,7 +3221,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 	case "Bangkitan sedang":
 		t, err := template.ParseFiles("templates/checklistKelengkapanAkhirBangkitanSedang.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -3284,7 +3284,7 @@ func (ac *AndalalinController) CheckKelengkapanAkhir(ctx *gin.Context) {
 	case "Bangkitan tinggi":
 		t, err := template.ParseFiles("templates/checklistKelengkapanAkhirBangkitanTinggi.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -3412,7 +3412,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	case "Bangkitan sedang":
 		t, err := template.ParseFiles("templates/penyusunanDokumenAndalalin.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -3474,7 +3474,7 @@ func (ac *AndalalinController) PembuatanPenyusunDokumen(ctx *gin.Context) {
 	case "Bangkitan tinggi":
 		t, err := template.ParseFiles("templates/penyusunanDokumenAndalalin.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -3590,7 +3590,7 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 	case "Bangkitan sedang":
 		t, err := template.ParseFiles("templates/catatanAsistensiDokumen.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -3652,7 +3652,7 @@ func (ac *AndalalinController) PemeriksaanDokumenAndalalin(ctx *gin.Context) {
 	case "Bangkitan tinggi":
 		t, err := template.ParseFiles("templates/catatanAsistensiDokumen.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -3768,9 +3768,9 @@ func (ac *AndalalinController) PemeriksaanSubstansiTeknisAndalalin(ctx *gin.Cont
 
 	switch andalalin.Bangkitan {
 	case "Bangkitan sedang":
-		t, err := template.ParseFiles("templates/checklistKesesuaianSubstansiTeknisk.html")
+		t, err := template.ParseFiles("templates/checklistKesesuaianSubstansiTeknis.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -3838,7 +3838,7 @@ func (ac *AndalalinController) PemeriksaanSubstansiTeknisAndalalin(ctx *gin.Cont
 	case "Bangkitan tinggi":
 		t, err := template.ParseFiles("templates/checklistKesesuaianSubstansiTeknis.html")
 		if err != nil {
-			log.Fatal("Error reading the email template:", err)
+			log.Fatal("Error reading the template:", err)
 			return
 		}
 
@@ -4426,7 +4426,7 @@ func (ac *AndalalinController) IsiSurvey(ctx *gin.Context) {
 
 			t, err := template.ParseFiles("templates/laporanSurvei.html")
 			if err != nil {
-				log.Fatal("Error reading the email template:", err)
+				log.Fatal("Error reading the template:", err)
 				return
 			}
 
@@ -5006,7 +5006,7 @@ func (ac *AndalalinController) PemasanganPerlengkapanLaluLintas(ctx *gin.Context
 
 			t, err := template.ParseFiles("templates/laporanPemasangan.html")
 			if err != nil {
-				log.Fatal("Error reading the email template:", err)
+				log.Fatal("Error reading the template:", err)
 				return
 			}
 
