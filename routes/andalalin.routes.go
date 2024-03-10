@@ -41,6 +41,7 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.POST("/update/status/:id_andalalin/:status", middleware.DeserializeUser(), uc.andalalinController.UpdateStatusPermohonan)
 	router.POST("/tolak/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.TolakPermohonan)
 	router.POST("/tunda/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.TundaPermohonan)
+	router.POST("/batal/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.BatalkanPermohonan)
 	router.POST("/lanjutkan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.LanjutkanPermohonan)
 	router.POST("/perbarui/lokasi/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.UpdateBerkas)
 
@@ -85,5 +86,5 @@ func (uc *AndalalinRouteController) AndalalainRoute(rg *gin.RouterGroup) {
 	router.GET("/pemasangan/detail/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.GetPemasangan)
 	router.POST("/pemasangan/tunda/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.TundaPemasangan)
 	router.POST("/pemasangan/lanjutkan/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.LanjutkanPemasangan)
-	router.POST("/pemasangan/batal/:id_andalalin", middleware.DeserializeUser(), uc.andalalinController.BatalkanPermohonan)
+
 }
