@@ -1795,7 +1795,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 
 				}
 			} else {
-				andalalin.StatusAndalalin = "Persyaratan terpenuhi"
+				andalalin.StatusAndalalin = "Pembayaran billing PNBP"
 				ac.ReleaseTicketLevel2(ctx, andalalin.IdAndalalin, andalalin.IdAndalalin)
 			}
 		}
@@ -1835,7 +1835,14 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 				}
 			}
 
-			andalalin.StatusAndalalin = "Menunggu pembayaran"
+			switch andalalin.Bangkitan {
+			case "Bangkitan rendah":
+				andalalin.StatusAndalalin = "Pembuatan surat keputusan"
+			case "Bangkitan sedang":
+				andalalin.StatusAndalalin = "Pembuatan surat keputusan"
+			case "Bangkitan tinggi":
+				andalalin.StatusAndalalin = "Pembuatan surat keputusan"
+			}
 		}
 
 		if dokumen == "Bukti pembayaran" {
@@ -1862,10 +1869,11 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 
 			switch andalalin.Bangkitan {
 			case "Bangkitan rendah":
-				andalalin.StatusAndalalin = "Pembuatan surat keputusan"
+				andalalin.StatusAndalalin = "Pembuatan surat pernyataan"
 			case "Bangkitan sedang":
-				andalalin.StatusAndalalin = "Pembuatan surat keputusan"
+				andalalin.StatusAndalalin = "Pembuatan penyusun dokumen"
 			case "Bangkitan tinggi":
+				andalalin.StatusAndalalin = "Berita acara pembahasan"
 			}
 		}
 
@@ -1900,7 +1908,7 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			}
 
 			andalalin.BerkasPermohonan[itemIndex].Status = "Selesai"
-			andalalin.StatusAndalalin = "Pemeriksaan dokumen andalalin"
+			andalalin.StatusAndalalin = "Pemeriksaan kesesuaian substansi"
 		}
 
 		if dokumen == "Catatan asistensi dokumen" {
@@ -1937,6 +1945,90 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			andalalin.StatusAndalalin = andalalin.HasilAsistensiDokumen
 		}
 
+		if dokumen == "Checklist kesesuaian substansi teknis" {
+			itenKeputusan := -1
+
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Checklist kesesuaian substansi teknis" {
+					itenKeputusan = i
+					break
+				}
+			}
+
+			for _, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					andalalin.BerkasPermohonan[itenKeputusan].Berkas = data
+				}
+			}
+
+			switch andalalin.Bangkitan {
+			case "Bangkitan sedang":
+				andalalin.StatusAndalalin = "Pemeriksaan dokumen andalalin"
+			case "Bangkitan tinggi":
+				andalalin.StatusAndalalin = "Berita acara peninjauan"
+			}
+		}
+
+		if dokumen == "Dokumen andalalin" {
+			itemWord := -1
+			itemPdf := -1
+
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Dokumen hasil analisis dampak lalu lintas (word)" {
+					itemWord = i
+					break
+				}
+			}
+
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Dokumen hasil analisis dampak lalu lintas (pdf)" {
+					itemPdf = i
+					break
+				}
+			}
+
+			for key, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					if key == "Dokumen hasil analisis dampak lalu lintas (word)" {
+						andalalin.BerkasPermohonan[itemWord].Berkas = data
+					} else {
+						andalalin.BerkasPermohonan[itemPdf].Berkas = data
+					}
+
+				}
+			}
+
+			andalalin.StatusAndalalin = "Pemeriksaan dokumen andalalin"
+		}
+
 		if dokumen == "Surat keputusan persetujuan teknis andalalin" {
 			itenKeputusan := -1
 
@@ -1969,39 +2061,6 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 
 			andalalin.StatusAndalalin = "Cek kelengkapan akhir"
 			ac.CloseTiketLevel2(ctx, andalalin.IdAndalalin)
-		}
-
-		if dokumen == "Checklist kesesuaian substansi teknis" {
-			itenKeputusan := -1
-
-			for i, item := range andalalin.BerkasPermohonan {
-				if item.Nama == "Checklist kesesuaian substansi teknis" {
-					itenKeputusan = i
-					break
-				}
-			}
-
-			for _, files := range form.File {
-				for _, file := range files {
-					// Save the uploaded file with key as prefix
-					filed, err := file.Open()
-
-					if err != nil {
-						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-						return
-					}
-					defer filed.Close()
-
-					data, err := io.ReadAll(filed)
-					if err != nil {
-						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-						return
-					}
-					andalalin.BerkasPermohonan[itenKeputusan].Berkas = data
-				}
-			}
-
-			andalalin.StatusAndalalin = "Penyusunan dokumen andalalin"
 		}
 
 		if dokumen == "Checklist kelengkapan akhir" {
@@ -2080,52 +2139,6 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 
 				}
 			}
-		}
-
-		if dokumen == "Dokumen andalalin" {
-			itemWord := -1
-			itemPdf := -1
-
-			for i, item := range andalalin.BerkasPermohonan {
-				if item.Nama == "Dokumen hasil analisis dampak lalu lintas (word)" {
-					itemWord = i
-					break
-				}
-			}
-
-			for i, item := range andalalin.BerkasPermohonan {
-				if item.Nama == "Dokumen hasil analisis dampak lalu lintas (pdf)" {
-					itemPdf = i
-					break
-				}
-			}
-
-			for key, files := range form.File {
-				for _, file := range files {
-					// Save the uploaded file with key as prefix
-					filed, err := file.Open()
-
-					if err != nil {
-						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-						return
-					}
-					defer filed.Close()
-
-					data, err := io.ReadAll(filed)
-					if err != nil {
-						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-						return
-					}
-					if key == "Dokumen hasil analisis dampak lalu lintas (word)" {
-						andalalin.BerkasPermohonan[itemWord].Berkas = data
-					} else {
-						andalalin.BerkasPermohonan[itemPdf].Berkas = data
-					}
-
-				}
-			}
-
-			andalalin.StatusAndalalin = "Pemeriksaan dokumen andalalin"
 		}
 
 		ac.DB.Save(&andalalin)
@@ -3267,10 +3280,10 @@ func (ac *AndalalinController) PembuatanSuratKeputusan(ctx *gin.Context) {
 			NipKadis:           payload.NipKadis,
 			NomorLampiran:      payload.NomorLampiran,
 			TahunTerbit:        nowTime.Format("2006"),
-			NomorBA:            *payload.NomorBA,
-			TanggalBA:          *payload.TanggalBA,
-			NomorBAPL:          *payload.NomorBAPL,
-			TanggalBAPL:        *payload.NomorBAPL,
+			NomorBA:            andalalin.NomorBA,
+			TanggalBA:          andalalin.TanggalBA,
+			NomorBAPL:          andalalin.NomorBAPL,
+			TanggalBAPL:        andalalin.NomorBAPL,
 			Data:               payload.Data,
 		}
 
@@ -4126,6 +4139,181 @@ func (ac *AndalalinController) PemeriksaanSubstansiTeknisAndalalin(ctx *gin.Cont
 	}
 
 	andalalin.StatusAndalalin = "Persetujuan substansi teknis"
+
+	ac.DB.Save(&andalalin)
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+
+func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) {
+	var payload *models.BeritaAcaraPembahasan
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var andalalin models.Andalalin
+
+	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+		return
+	}
+
+	t, err := template.ParseFiles("templates/beritaAcaraPembahasan.html")
+	if err != nil {
+		log.Fatal("Error reading the template:", err)
+		return
+	}
+
+	loc, _ := time.LoadLocation("Asia/Singapore")
+	nowTime := time.Now().In(loc)
+	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
+
+	pembahasan := struct {
+		JenisProyek          string
+		JenisProyekJudul     string
+		NamaProyekJudul      string
+		JalanJudul           string
+		KelurahanJudul       string
+		KabupatenJudul       string
+		StatusJudul          string
+		ProvinsiJudul        string
+		PengembangJudul      string
+		Nomor                string
+		Hari                 string
+		Tanggal              string
+		Bulan                string
+		Tahun                string
+		Waktu                string
+		TahunDiterima        string
+		Pengembang           string
+		JenisPerwakilan      string
+		Perwakilan           string
+		JabatanPerwakilan    string
+		SuratKuasa           string
+		NamaProyek           string
+		Lokasi               string
+		BalaiWilayah         string
+		BalaiProvinsi        string
+		PerhubunganProvinsi  string
+		PerhubunganKabupaten string
+		MargaProvinsi        string
+		RuangKabupaten       string
+		PoldaProvinsi        string
+		PolresKabupaten      string
+		Pengambilan          string
+		TanggalPembahasan    string
+		Ketua                string
+		NipKetua             string
+		Sekertaris           string
+		NipSekertaris        string
+		Anggota              string
+		NipAnggota           string
+		Konsultan            string
+		Penyusun             string
+		Sertifikat           string
+		Stackholder          []models.StackHolder
+		Data                 []models.DataBA
+	}{
+		JenisProyek:          andalalin.JenisProyek,
+		JenisProyekJudul:     strings.ToUpper(andalalin.JenisProyek),
+		NamaProyekJudul:      strings.ToUpper(andalalin.NamaProyek),
+		JalanJudul:           strings.ToUpper("JALAN " + andalalin.NamaJalan + " " + "DENGAN NOMOR RUAS JALAN " + andalalin.KodeJalan),
+		KelurahanJudul:       strings.ToUpper("KELURAHAN " + andalalin.KelurahanProyek),
+		KabupatenJudul:       strings.ToUpper("KABUPATEN " + andalalin.KabupatenProyek),
+		StatusJudul:          strings.ToUpper(andalalin.StatusJalan),
+		ProvinsiJudul:        strings.ToUpper("PROVINSI " + andalalin.ProvinsiProyek),
+		PengembangJudul:      strings.ToUpper(*andalalin.NamaPerusahaan),
+		Nomor:                payload.NomorBA,
+		Hari:                 utils.Day(),
+		Tanggal:              nowTime.Format("02"),
+		Bulan:                utils.Bulan(nowTime.Month()),
+		Tahun:                nowTime.Format("2006"),
+		Waktu:                nowTime.Format("15:04"),
+		TahunDiterima:        andalalin.TanggalAndalalin[6:10],
+		Pengembang:           *andalalin.NamaPerusahaan,
+		JenisPerwakilan:      payload.JenisPerwakiran,
+		Perwakilan:           payload.NamaPerwakilan,
+		JabatanPerwakilan:    payload.JabatanPerwakilan,
+		SuratKuasa:           *payload.NomorSuratKuasa,
+		NamaProyek:           andalalin.NamaProyek,
+		Lokasi:               "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan " + andalalin.KecamatanProyek + ", Kabupaten " + andalalin.KabupatenProyek + ", Provinsi " + andalalin.ProvinsiProyek,
+		BalaiWilayah:         payload.BalaiWilayah,
+		BalaiProvinsi:        payload.BalaiProvinsi,
+		PerhubunganProvinsi:  payload.PerhubunganProvinsi,
+		PerhubunganKabupaten: payload.PerhubunganKabupaten,
+		MargaProvinsi:        payload.MargaProvinsi,
+		RuangKabupaten:       payload.RuangKabupaten,
+		PoldaProvinsi:        payload.PoldaProvinsi,
+		PolresKabupaten:      payload.PolresKabupaten,
+		Pengambilan:          andalalin.LokasiPengambilan,
+		TanggalPembahasan:    tanggal,
+		Ketua:                payload.NamaKetua,
+		NipKetua:             payload.NipKetua,
+		Sekertaris:           payload.NamaSekertaris,
+		NipSekertaris:        payload.NipSekertaris,
+		Anggota:              payload.NamaAnggota,
+		NipAnggota:           payload.NipAnggota,
+		Konsultan:            *andalalin.NamaKonsultan,
+		Penyusun:             *andalalin.NamaPenyusunDokumen,
+		Sertifikat:           *andalalin.NomerSertifikatPenyusunDokumen,
+		Stackholder:          payload.StackHolder,
+		Data:                 payload.Data,
+	}
+
+	buffer := new(bytes.Buffer)
+	if err = t.Execute(buffer, pembahasan); err != nil {
+		log.Fatal("Eror saat membaca template:", err)
+		return
+	}
+
+	pdfContent, err := generatePDF(buffer.String())
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	itemIndex := -1
+
+	for i, item := range andalalin.BerkasPermohonan {
+		if item.Nama == "Berita acara pembahasan" {
+			itemIndex = i
+			break
+		}
+	}
+
+	if itemIndex != -1 {
+		andalalin.BerkasPermohonan[itemIndex].Berkas = pdfContent
+		andalalin.BerkasPermohonan[itemIndex].Status = "Menunggu"
+	} else {
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Berita acara pembahasan", Tipe: "Pdf", Berkas: pdfContent})
+	}
+
+	andalalin.StatusAndalalin = "Persetujuan pembahasan"
 
 	ac.DB.Save(&andalalin)
 
