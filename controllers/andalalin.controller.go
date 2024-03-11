@@ -4179,7 +4179,7 @@ func (ac *AndalalinController) PemeriksaanSubstansiTeknisAndalalin(ctx *gin.Cont
 }
 
 func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) {
-	var payload *models.BeritaAcaraPembahasan
+	var payload *models.DataInputBeritaAcara
 	id := ctx.Param("id_andalalin")
 
 	config, _ := initializers.LoadConfig()
@@ -4203,7 +4203,7 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 		return
 	}
 
-	if err := ctx.ShouldBindJSON(&payload); err != nil {
+	if err := ctx.ShouldBind(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
@@ -4214,6 +4214,36 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
 		return
+	}
+
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	foto := []models.Foto{}
+
+	for _, files := range form.File {
+		for _, file := range files {
+			// Save the uploaded file with key as prefix
+			file, err := file.Open()
+
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			defer file.Close()
+
+			data, err := io.ReadAll(file)
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			// Store the blob data in the map
+			foto = append(foto, data)
+		}
 	}
 
 	t, err := template.ParseFiles("templates/beritaAcaraPembahasan.html")
@@ -4271,6 +4301,7 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 		Sertifikat           string
 		Stackholder          []models.StackHolder
 		Data                 []models.DataBA
+		Foto                 []models.Foto
 	}{
 		JenisProyek:          andalalin.JenisProyek,
 		JenisProyekJudul:     strings.ToUpper(andalalin.JenisProyek),
@@ -4281,7 +4312,7 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 		StatusJudul:          strings.ToUpper(andalalin.StatusJalan),
 		ProvinsiJudul:        strings.ToUpper("PROVINSI " + andalalin.ProvinsiProyek),
 		PengembangJudul:      strings.ToUpper(*andalalin.NamaPerusahaan),
-		Nomor:                payload.NomorBA,
+		Nomor:                payload.BA.NomorBA,
 		Hari:                 utils.Day(),
 		Tanggal:              nowTime.Format("02"),
 		Bulan:                utils.Bulan(nowTime.Month()),
@@ -4289,33 +4320,34 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 		Waktu:                nowTime.Format("15:04"),
 		TahunDiterima:        andalalin.TanggalAndalalin[6:10],
 		Pengembang:           *andalalin.NamaPerusahaan,
-		JenisPerwakilan:      payload.JenisPerwakiran,
-		Perwakilan:           payload.NamaPerwakilan,
-		JabatanPerwakilan:    payload.JabatanPerwakilan,
-		SuratKuasa:           *payload.NomorSuratKuasa,
+		JenisPerwakilan:      payload.BA.JenisPerwakiran,
+		Perwakilan:           payload.BA.NamaPerwakilan,
+		JabatanPerwakilan:    payload.BA.JabatanPerwakilan,
+		SuratKuasa:           *payload.BA.NomorSuratKuasa,
 		NamaProyek:           andalalin.NamaProyek,
 		Lokasi:               "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan " + andalalin.KecamatanProyek + ", Kabupaten " + andalalin.KabupatenProyek + ", Provinsi " + andalalin.ProvinsiProyek,
-		BalaiWilayah:         payload.BalaiWilayah,
-		BalaiProvinsi:        payload.BalaiProvinsi,
-		PerhubunganProvinsi:  payload.PerhubunganProvinsi,
-		PerhubunganKabupaten: payload.PerhubunganKabupaten,
-		MargaProvinsi:        payload.MargaProvinsi,
-		RuangKabupaten:       payload.RuangKabupaten,
-		PoldaProvinsi:        payload.PoldaProvinsi,
-		PolresKabupaten:      payload.PolresKabupaten,
+		BalaiWilayah:         payload.BA.BalaiWilayah,
+		BalaiProvinsi:        payload.BA.BalaiProvinsi,
+		PerhubunganProvinsi:  payload.BA.PerhubunganProvinsi,
+		PerhubunganKabupaten: payload.BA.PerhubunganKabupaten,
+		MargaProvinsi:        payload.BA.MargaProvinsi,
+		RuangKabupaten:       payload.BA.RuangKabupaten,
+		PoldaProvinsi:        payload.BA.PoldaProvinsi,
+		PolresKabupaten:      payload.BA.PolresKabupaten,
 		Pengambilan:          andalalin.LokasiPengambilan,
 		TanggalPembahasan:    tanggal,
-		Ketua:                payload.NamaKetua,
-		NipKetua:             payload.NipKetua,
-		Sekertaris:           payload.NamaSekertaris,
-		NipSekertaris:        payload.NipSekertaris,
-		Anggota:              payload.NamaAnggota,
-		NipAnggota:           payload.NipAnggota,
+		Ketua:                payload.BA.NamaKetua,
+		NipKetua:             payload.BA.NipKetua,
+		Sekertaris:           payload.BA.NamaSekertaris,
+		NipSekertaris:        payload.BA.NipSekertaris,
+		Anggota:              payload.BA.NamaAnggota,
+		NipAnggota:           payload.BA.NipAnggota,
 		Konsultan:            *andalalin.NamaKonsultan,
 		Penyusun:             *andalalin.NamaPenyusunDokumen,
 		Sertifikat:           *andalalin.NomerSertifikatPenyusunDokumen,
-		Stackholder:          payload.StackHolder,
-		Data:                 payload.Data,
+		Stackholder:          payload.BA.StackHolder,
+		Data:                 payload.BA.Data,
+		Foto:                 foto,
 	}
 
 	buffer := new(bytes.Buffer)

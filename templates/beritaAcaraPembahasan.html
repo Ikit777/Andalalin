@@ -612,8 +612,43 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
  </tr>
 </table>
 
+<div class="page-break"></div>
+
 <p class=MsoNormal style='margin-bottom:0cm;line-height:150%'><span
 style='font-size:12.0pt;line-height:150%;font-family:"Times New Roman",serif'>&nbsp;</span></p>
+
+<p class=MsoNormal align=center style='margin-bottom:0cm;text-align:center;
+line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:
+"Times New Roman",serif'><u>Lampiran Dokumentasi Rapat (Via <i>Zoom Cloud Meeting</i>)</u></span></b></p>
+
+<div id="table-lampiran">
+      <!-- The table rows will be generated here -->
+</div>
+
+<script>
+	const foto = {{.Foto}}
+	
+	const tableLampiran = document.getElementById('table-lampiran');
+	
+	for (let i = 0; i < foto.length; i++) {
+		const img1 = document.createElement("img");
+        img1.src = `data:image/png;base64,${foto[i]}`;
+        img1.alt = `Gambar ${i + 1}`;
+		img1.style.width = "665"
+		img1.style.height = "330"
+		img1.style.padding = "20"
+		
+		const divGambar = document.createElement("div");
+		divGambar.style.display = 'flex';
+		divGambar.style.justifyContent = 'center';
+		divGambar.style.alignItems = 'center';
+		
+		divGambar.appendChild(img1);
+		
+		tableLampiran.appendChild(divGambar);
+	}
+
+</script>
 
 </div>
 

@@ -895,6 +895,10 @@ type Child struct {
 	Keterangan string `json:"keterangan" binding:"required"`
 }
 
+type DataInputBeritaAcara struct {
+	BA BeritaAcaraPembahasan `form:"data"`
+}
+
 type BeritaAcaraPembahasan struct {
 	NomorBA              string        `json:"nomor_berita_acara" binding:"required"`
 	NamaPerwakilan       string        `json:"nama_perwakilan" binding:"required"`
