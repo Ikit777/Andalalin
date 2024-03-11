@@ -1983,6 +1983,39 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 			}
 		}
 
+		if dokumen == "Berita acara pembahasan" {
+			itenKeputusan := -1
+
+			for i, item := range andalalin.BerkasPermohonan {
+				if item.Nama == "Berita acara pembahasan" {
+					itenKeputusan = i
+					break
+				}
+			}
+
+			for _, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					andalalin.BerkasPermohonan[itenKeputusan].Berkas = data
+				}
+			}
+			andalalin.StatusAndalalin = "Pembuatan penyusun dokumen"
+
+		}
+
 		if dokumen == "Dokumen andalalin" {
 			itemWord := -1
 			itemPdf := -1
