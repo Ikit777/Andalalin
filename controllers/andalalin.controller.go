@@ -4280,6 +4280,12 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 	nowTime := time.Now().In(loc)
 	tanggal := nowTime.Format("02") + " " + utils.Bulan(nowTime.Month()) + " " + nowTime.Format("2006")
 
+	var kuasa string
+
+	if *payload.BA.NomorSuratKuasa != "" {
+		kuasa = "dengan Surat Kuasa Nomor : " + *payload.BA.NomorSuratKuasa
+	}
+
 	pembahasan := struct {
 		JenisProyek          string
 		JenisProyekJudul     string
@@ -4347,7 +4353,7 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 		JenisPerwakilan:      payload.BA.JenisPerwakiran,
 		Perwakilan:           payload.BA.NamaPerwakilan,
 		JabatanPerwakilan:    payload.BA.JabatanPerwakilan,
-		SuratKuasa:           *payload.BA.NomorSuratKuasa,
+		SuratKuasa:           kuasa,
 		NamaProyek:           andalalin.NamaProyek,
 		Lokasi:               "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan " + andalalin.KecamatanProyek + ", Kabupaten " + andalalin.KabupatenProyek + ", Provinsi " + andalalin.ProvinsiProyek,
 		BalaiWilayah:         payload.BA.BalaiWilayah,
