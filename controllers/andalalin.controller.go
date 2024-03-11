@@ -2013,7 +2013,31 @@ func (ac *AndalalinController) UploadDokumen(ctx *gin.Context) {
 				}
 			}
 			andalalin.StatusAndalalin = "Pembuatan penyusun dokumen"
+		}
 
+		if dokumen == "Berita acara peninjauan" {
+			for key, files := range form.File {
+				for _, file := range files {
+					// Save the uploaded file with key as prefix
+					filed, err := file.Open()
+
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					defer filed.Close()
+
+					data, err := io.ReadAll(filed)
+					if err != nil {
+						ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Nama: key, Tipe: "Pdf", Berkas: data})
+
+				}
+			}
+
+			andalalin.StatusAndalalin = "Pemeriksaan dokumen andalalin"
 		}
 
 		if dokumen == "Dokumen andalalin" {
