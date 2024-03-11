@@ -4402,7 +4402,7 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Menunggu", Nama: "Berita acara pembahasan", Tipe: "Pdf", Berkas: pdfContent})
 	}
 
-	andalalin.StatusAndalalin = "Persetujuan pembahasan"
+	andalalin.StatusAndalalin = "Persetujuan berita acara"
 
 	ac.DB.Save(&andalalin)
 
