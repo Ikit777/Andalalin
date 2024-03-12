@@ -4409,6 +4409,86 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 
+func (ac *AndalalinController) BeritaAcaraPeninjauan(ctx *gin.Context) {
+	var payload *models.BeritaAcaraPeninjauan
+	id := ctx.Param("id_andalalin")
+
+	config, _ := initializers.LoadConfig()
+
+	accessUser := ctx.MustGet("accessUser").(string)
+
+	claim, error := utils.ValidateToken(accessUser, config.AccessTokenPublicKey)
+	if error != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": error.Error()})
+		return
+	}
+
+	credential := claim.Credentials[repository.AndalalinTindakLanjut]
+
+	if !credential {
+		// Return status 403 and permission denied error message.
+		ctx.JSON(http.StatusForbidden, gin.H{
+			"error": true,
+			"msg":   "Permission denied",
+		})
+		return
+	}
+
+	if err := ctx.ShouldBind(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	var andalalin models.Andalalin
+
+	result := ac.DB.First(&andalalin, "id_andalalin = ?", id)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "Permohonan tidak ditemukan"})
+		return
+	}
+
+	file, err := ctx.FormFile("Berita acara peninjauan")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	uploadedFile, err := file.Open()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer uploadedFile.Close()
+
+	data, err := io.ReadAll(uploadedFile)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	itemIndex := -1
+
+	for i, item := range andalalin.BerkasPermohonan {
+		if item.Nama == "Berita acara peninjauan lapangan" {
+			itemIndex = i
+			break
+		}
+	}
+
+	if itemIndex != -1 {
+		andalalin.BerkasPermohonan[itemIndex].Berkas = data
+		andalalin.BerkasPermohonan[itemIndex].Status = "Selesai"
+	} else {
+		andalalin.BerkasPermohonan = append(andalalin.BerkasPermohonan, models.BerkasPermohonan{Status: "Selesai", Nama: "Berita acara peninjauan lapangan", Tipe: "Pdf", Berkas: data})
+	}
+
+	andalalin.StatusAndalalin = "Pemeriksaan dokumen andalalin"
+	andalalin.NomorBAPL = payload.NomorBAPL
+	andalalin.TanggalBAPL = payload.TanggalBAPL
+
+	ac.DB.Save(&andalalin)
+}
+
 func (ac *AndalalinController) PemeriksaanSuratKeputusan(ctx *gin.Context) {
 	var payload *models.Pemeriksaan
 	id := ctx.Param("id_andalalin")

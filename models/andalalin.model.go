@@ -926,3 +926,8 @@ type DataBA struct {
 	Poin    string   `json:"poin" binding:"required"`
 	Subpoin []string `json:"subpoin" binding:"required"`
 }
+
+type BeritaAcaraPeninjauan struct {
+	NomorBAPL   string `form:"nomor"`
+	TanggalBAPL string `form:"tanggal"`
+}
