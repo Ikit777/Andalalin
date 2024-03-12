@@ -4270,7 +4270,15 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 		}
 	}
 
-	t, err := template.ParseFiles("templates/beritaAcaraPembahasan.html")
+	var path string
+
+	if andalalin.Pemohon == "Perorangan" {
+		path = "templates/beritaAcaraPembahasanPerorangan.html"
+	} else {
+		path = "templates/beritaAcaraPembahasanNonPerorangan.html"
+	}
+
+	t, err := template.ParseFiles(path)
 	if err != nil {
 		log.Fatal("Error reading the template:", err)
 		return
@@ -4283,7 +4291,7 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 	var kuasa string
 
 	if *payload.BA.NomorSuratKuasa != "" {
-		kuasa = "dengan Surat Kuasa Nomor : " + *payload.BA.NomorSuratKuasa
+		kuasa = " dengan Surat Kuasa Nomor : " + *payload.BA.NomorSuratKuasa
 	}
 
 	pembahasan := struct {

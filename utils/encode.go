@@ -100,7 +100,7 @@ func Day() string {
 	waktuSekarang := time.Now()
 	hariInt := waktuSekarang.Weekday()
 
-	hariString := []string{"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"}
+	hariString := []string{"Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"}
 
 	namaHari := hariString[hariInt]
 
