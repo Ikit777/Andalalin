@@ -900,27 +900,20 @@ type DataInputBeritaAcara struct {
 }
 
 type BeritaAcaraPembahasan struct {
-	NomorBA              string        `json:"nomor_berita_acara" binding:"required"`
-	NamaPerwakilan       string        `json:"nama_perwakilan" binding:"required"`
-	JenisPerwakiran      string        `json:"jenis_perwakilan" binding:"required"`
-	JabatanPerwakilan    string        `json:"jabatan_perwakilan" binding:"required"`
-	NomorSuratKuasa      *string       `json:"nomor_surat_kuasa" binding:"required"`
-	NamaKetua            string        `json:"nama_ketua" binding:"required"`
-	NipKetua             string        `json:"nip_ketua" binding:"required"`
-	NamaSekertaris       string        `json:"nama_sekertaris" binding:"required"`
-	NipSekertaris        string        `json:"nip_sekertaris" binding:"required"`
-	NamaAnggota          string        `json:"nama_anggota" binding:"required"`
-	NipAnggota           string        `json:"nip_anggota" binding:"required"`
-	BalaiWilayah         string        `json:"wilayah_balai" binding:"required"`
-	BalaiProvinsi        string        `json:"provinsi_balai" binding:"required"`
-	PerhubunganProvinsi  string        `json:"provinsi_dishub" binding:"required"`
-	PerhubunganKabupaten string        `json:"kabupaten_dishub" binding:"required"`
-	MargaProvinsi        string        `json:"bina_marga" binding:"required"`
-	RuangKabupaten       string        `json:"dinas_tata_ruang" binding:"required"`
-	PoldaProvinsi        string        `json:"polda" binding:"required"`
-	PolresKabupaten      string        `json:"polres" binding:"required"`
-	StackHolder          []StackHolder `json:"stack" binding:"required"`
-	Data                 []DataBA      `json:"pembahasan" binding:"required"`
+	NomorBA           string  `json:"nomor_berita_acara" binding:"required"`
+	NamaPerwakilan    string  `json:"nama_perwakilan" binding:"required"`
+	JenisPerwakiran   string  `json:"jenis_perwakilan" binding:"required"`
+	JabatanPerwakilan string  `json:"jabatan_perwakilan" binding:"required"`
+	NomorSuratKuasa   *string `json:"nomor_surat_kuasa" binding:"required"`
+	NamaKetua         string  `json:"nama_ketua" binding:"required"`
+	NipKetua          string  `json:"nip_ketua" binding:"required"`
+	NamaSekertaris    string  `json:"nama_sekertaris" binding:"required"`
+	NipSekertaris     string  `json:"nip_sekertaris" binding:"required"`
+	NamaAnggota       string  `json:"nama_anggota" binding:"required"`
+	NipAnggota        string  `json:"nip_anggota" binding:"required"`
+	Instansi          []string
+	StackHolder       []StackHolder `json:"stack" binding:"required"`
+	Data              []DataBA      `json:"pembahasan" binding:"required"`
 }
 
 type StackHolder struct {

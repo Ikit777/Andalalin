@@ -206,17 +206,24 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
 <script>
 	const data = {{.Data}};
 	
-	const stackholder = {{.Stackholder}};
+	const instansi = {{.Instansi}};
 	
 	const tableHasil = document.getElementById('table-hasil');
 	const elementsWithClass = document.getElementsByClassName('MsoNormal');
 	
 	const alphabetArray = Array.from({ length: 26 }, (_, index) => String.fromCharCode(97 + index));
 	
-	let stack = "";
+	let terkait = "";
 	
-	for (let k = 0; k < stackholder.length; k++){
-		stack += ", " + stackholder[k].stackholder;
+	const panjang = instansi.length - 1;
+	
+	for (let k = 0; k < instansi.length; k++){
+		if (k == panjang){
+			terkait +=  instansi[k];
+		}else{
+			terkait +=  instansi[k] + ", ";
+		}
+		
 	}
 	
 	for (let i = 0; i < data.length; i++) {
@@ -269,7 +276,7 @@ style='font-size:12.0pt;font-family:"Times New Roman",serif'>&nbsp;</span></p>
 	
 	const row7 = document.createElement('tr');
 		
-	row7.innerHTML = `<td width="3%" valign=top style='width:3.22%;padding:0cm 5.4pt 0cm 5.4pt'><p class=MsoNormal style='margin-bottom:0cm;text-align:justify;line-height:150%'><span style='font-size:12.0pt;line-height:150%;font-family:"Times New Roman",serif'>${data.length + 6})</span></p></td><td width="96%" valign=top style='width:96.78%;padding:0cm 5.4pt 0cm 5.4pt'><p lass=MsoNormal style='margin-bottom:0cm;text-align:justify;line-height:150%'><span style='font-size:12.0pt;line-height:150%;font-family:"Times New Roman",serif'>Dalam pelaksanaan Pembangunan agar berkoordinasi dengan instansi terkait (Balai Pengelola Transportasi Darat Wilayah {{.BalaiWilayah}} Provinsi {{.BalaiProvinsi}}, Dinas Perhubungan Provinsi {{.PerhubunganProvinsi}}, Dinas Perhubungan Kabupaten {{.PerhubunganKabupaten}}, Dinas Pekerjaan Umum Bina Marga Provinsi {{.MargaProvinsi}}, Dinas Pekerjaan Umum dan Tata Ruang Kabupaten {{.RuangKabupaten}}, Ditlantas Polda {{.PoldaProvinsi}} serta Satlantas Polres {{.PolresKabupaten}}${stack});</span></p>`;
+	row7.innerHTML = `<td width="3%" valign=top style='width:3.22%;padding:0cm 5.4pt 0cm 5.4pt'><p class=MsoNormal style='margin-bottom:0cm;text-align:justify;line-height:150%'><span style='font-size:12.0pt;line-height:150%;font-family:"Times New Roman",serif'>${data.length + 6})</span></p></td><td width="96%" valign=top style='width:96.78%;padding:0cm 5.4pt 0cm 5.4pt'><p lass=MsoNormal style='margin-bottom:0cm;text-align:justify;line-height:150%'><span style='font-size:12.0pt;line-height:150%;font-family:"Times New Roman",serif'>Dalam pelaksanaan Pembangunan agar berkoordinasi dengan instansi terkait (${terkait});</span></p>`;
 		
 	tableHasil.appendChild(row7);
 	

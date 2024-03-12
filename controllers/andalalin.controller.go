@@ -4287,97 +4287,83 @@ func (ac *AndalalinController) PembuatanBeritaAcaraPembahasan(ctx *gin.Context) 
 	}
 
 	pembahasan := struct {
-		JenisProyek          string
-		JenisProyekJudul     string
-		NamaProyekJudul      string
-		JalanJudul           string
-		KelurahanJudul       string
-		KabupatenJudul       string
-		StatusJudul          string
-		ProvinsiJudul        string
-		PengembangJudul      string
-		Nomor                string
-		Hari                 string
-		Tanggal              string
-		Bulan                string
-		Tahun                string
-		Waktu                string
-		TahunDiterima        string
-		Pengembang           string
-		JenisPerwakilan      string
-		Perwakilan           string
-		JabatanPerwakilan    string
-		SuratKuasa           string
-		NamaProyek           string
-		Lokasi               string
-		BalaiWilayah         string
-		BalaiProvinsi        string
-		PerhubunganProvinsi  string
-		PerhubunganKabupaten string
-		MargaProvinsi        string
-		RuangKabupaten       string
-		PoldaProvinsi        string
-		PolresKabupaten      string
-		Pengambilan          string
-		TanggalPembahasan    string
-		Ketua                string
-		NipKetua             string
-		Sekertaris           string
-		NipSekertaris        string
-		Anggota              string
-		NipAnggota           string
-		Konsultan            string
-		Penyusun             string
-		Sertifikat           string
-		Stackholder          []models.StackHolder
-		Data                 []models.DataBA
-		Foto                 []models.Foto
+		JenisProyek       string
+		JenisProyekJudul  string
+		NamaProyekJudul   string
+		JalanJudul        string
+		KelurahanJudul    string
+		KabupatenJudul    string
+		StatusJudul       string
+		ProvinsiJudul     string
+		PengembangJudul   string
+		Nomor             string
+		Hari              string
+		Tanggal           string
+		Bulan             string
+		Tahun             string
+		Waktu             string
+		TahunDiterima     string
+		Pengembang        string
+		JenisPerwakilan   string
+		Perwakilan        string
+		JabatanPerwakilan string
+		SuratKuasa        string
+		NamaProyek        string
+		Lokasi            string
+		Pengambilan       string
+		TanggalPembahasan string
+		Ketua             string
+		NipKetua          string
+		Sekertaris        string
+		NipSekertaris     string
+		Anggota           string
+		NipAnggota        string
+		Konsultan         string
+		Penyusun          string
+		Sertifikat        string
+		Instansi          []string
+		Stackholder       []models.StackHolder
+		Data              []models.DataBA
+		Foto              []models.Foto
 	}{
-		JenisProyek:          andalalin.JenisProyek,
-		JenisProyekJudul:     strings.ToUpper(andalalin.JenisProyek),
-		NamaProyekJudul:      strings.ToUpper(andalalin.NamaProyek),
-		JalanJudul:           strings.ToUpper("JALAN " + andalalin.NamaJalan + " " + "DENGAN NOMOR RUAS JALAN " + andalalin.KodeJalan),
-		KelurahanJudul:       strings.ToUpper("KELURAHAN " + andalalin.KelurahanProyek),
-		KabupatenJudul:       strings.ToUpper("KABUPATEN " + andalalin.KabupatenProyek),
-		StatusJudul:          strings.ToUpper(andalalin.StatusJalan),
-		ProvinsiJudul:        strings.ToUpper("PROVINSI " + andalalin.ProvinsiProyek),
-		PengembangJudul:      strings.ToUpper(*andalalin.NamaPerusahaan),
-		Nomor:                payload.BA.NomorBA,
-		Hari:                 utils.Day(),
-		Tanggal:              nowTime.Format("02"),
-		Bulan:                utils.Bulan(nowTime.Month()),
-		Tahun:                nowTime.Format("2006"),
-		Waktu:                nowTime.Format("15:04"),
-		TahunDiterima:        andalalin.TanggalAndalalin[6:10],
-		Pengembang:           *andalalin.NamaPerusahaan,
-		JenisPerwakilan:      payload.BA.JenisPerwakiran,
-		Perwakilan:           payload.BA.NamaPerwakilan,
-		JabatanPerwakilan:    payload.BA.JabatanPerwakilan,
-		SuratKuasa:           kuasa,
-		NamaProyek:           andalalin.NamaProyek,
-		Lokasi:               "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan " + andalalin.KecamatanProyek + ", Kabupaten " + andalalin.KabupatenProyek + ", Provinsi " + andalalin.ProvinsiProyek,
-		BalaiWilayah:         payload.BA.BalaiWilayah,
-		BalaiProvinsi:        payload.BA.BalaiProvinsi,
-		PerhubunganProvinsi:  payload.BA.PerhubunganProvinsi,
-		PerhubunganKabupaten: payload.BA.PerhubunganKabupaten,
-		MargaProvinsi:        payload.BA.MargaProvinsi,
-		RuangKabupaten:       payload.BA.RuangKabupaten,
-		PoldaProvinsi:        payload.BA.PoldaProvinsi,
-		PolresKabupaten:      payload.BA.PolresKabupaten,
-		Pengambilan:          andalalin.LokasiPengambilan,
-		TanggalPembahasan:    tanggal,
-		Ketua:                payload.BA.NamaKetua,
-		NipKetua:             payload.BA.NipKetua,
-		Sekertaris:           payload.BA.NamaSekertaris,
-		NipSekertaris:        payload.BA.NipSekertaris,
-		Anggota:              payload.BA.NamaAnggota,
-		NipAnggota:           payload.BA.NipAnggota,
-		Konsultan:            *andalalin.NamaKonsultan,
-		Penyusun:             *andalalin.NamaPenyusunDokumen,
-		Sertifikat:           *andalalin.NomerSertifikatPenyusunDokumen,
-		Stackholder:          payload.BA.StackHolder,
-		Data:                 payload.BA.Data,
-		Foto:                 foto,
+		JenisProyek:       andalalin.JenisProyek,
+		JenisProyekJudul:  strings.ToUpper(andalalin.JenisProyek),
+		NamaProyekJudul:   strings.ToUpper(andalalin.NamaProyek),
+		JalanJudul:        strings.ToUpper("JALAN " + andalalin.NamaJalan + " " + "DENGAN NOMOR RUAS JALAN " + andalalin.KodeJalan),
+		KelurahanJudul:    strings.ToUpper("KELURAHAN " + andalalin.KelurahanProyek),
+		KabupatenJudul:    strings.ToUpper("KABUPATEN " + andalalin.KabupatenProyek),
+		StatusJudul:       strings.ToUpper(andalalin.StatusJalan),
+		ProvinsiJudul:     strings.ToUpper("PROVINSI " + andalalin.ProvinsiProyek),
+		PengembangJudul:   strings.ToUpper(*andalalin.NamaPerusahaan),
+		Nomor:             payload.BA.NomorBA,
+		Hari:              utils.Day(),
+		Tanggal:           nowTime.Format("02"),
+		Bulan:             utils.Bulan(nowTime.Month()),
+		Tahun:             nowTime.Format("2006"),
+		Waktu:             nowTime.Format("15:04"),
+		TahunDiterima:     andalalin.TanggalAndalalin[6:10],
+		Pengembang:        *andalalin.NamaPerusahaan,
+		JenisPerwakilan:   payload.BA.JenisPerwakiran,
+		Perwakilan:        payload.BA.NamaPerwakilan,
+		JabatanPerwakilan: payload.BA.JabatanPerwakilan,
+		SuratKuasa:        kuasa,
+		NamaProyek:        andalalin.NamaProyek,
+		Lokasi:            "Jalan " + andalalin.NamaJalan + ", Kelurahan " + andalalin.KelurahanProyek + ", Kecamatan " + andalalin.KecamatanProyek + ", Kabupaten " + andalalin.KabupatenProyek + ", Provinsi " + andalalin.ProvinsiProyek,
+		Pengambilan:       andalalin.LokasiPengambilan,
+		TanggalPembahasan: tanggal,
+		Ketua:             payload.BA.NamaKetua,
+		NipKetua:          payload.BA.NipKetua,
+		Sekertaris:        payload.BA.NamaSekertaris,
+		NipSekertaris:     payload.BA.NipSekertaris,
+		Anggota:           payload.BA.NamaAnggota,
+		NipAnggota:        payload.BA.NipAnggota,
+		Konsultan:         *andalalin.NamaKonsultan,
+		Penyusun:          *andalalin.NamaPenyusunDokumen,
+		Sertifikat:        *andalalin.NomerSertifikatPenyusunDokumen,
+		Instansi:          payload.BA.Instansi,
+		Stackholder:       payload.BA.StackHolder,
+		Data:              payload.BA.Data,
+		Foto:              foto,
 	}
 
 	buffer := new(bytes.Buffer)
