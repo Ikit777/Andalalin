@@ -900,18 +900,18 @@ type DataInputBeritaAcara struct {
 }
 
 type BeritaAcaraPembahasan struct {
-	NomorBA           string  `json:"nomor_berita_acara" binding:"required"`
-	NamaPerwakilan    string  `json:"nama_perwakilan" binding:"required"`
-	JenisPerwakiran   string  `json:"jenis_perwakilan" binding:"required"`
-	JabatanPerwakilan string  `json:"jabatan_perwakilan" binding:"required"`
-	NomorSuratKuasa   *string `json:"nomor_surat_kuasa" binding:"required"`
-	NamaKetua         string  `json:"nama_ketua" binding:"required"`
-	NipKetua          string  `json:"nip_ketua" binding:"required"`
-	NamaSekertaris    string  `json:"nama_sekertaris" binding:"required"`
-	NipSekertaris     string  `json:"nip_sekertaris" binding:"required"`
-	NamaAnggota       string  `json:"nama_anggota" binding:"required"`
-	NipAnggota        string  `json:"nip_anggota" binding:"required"`
-	Instansi          []string
+	NomorBA           string        `json:"nomor_berita_acara" binding:"required"`
+	NamaPerwakilan    string        `json:"nama_perwakilan" binding:"required"`
+	JenisPerwakiran   string        `json:"jenis_perwakilan" binding:"required"`
+	JabatanPerwakilan string        `json:"jabatan_perwakilan" binding:"required"`
+	NomorSuratKuasa   *string       `json:"nomor_surat_kuasa" binding:"required"`
+	NamaKetua         string        `json:"nama_ketua" binding:"required"`
+	NipKetua          string        `json:"nip_ketua" binding:"required"`
+	NamaSekertaris    string        `json:"nama_sekertaris" binding:"required"`
+	NipSekertaris     string        `json:"nip_sekertaris" binding:"required"`
+	NamaAnggota       string        `json:"nama_anggota" binding:"required"`
+	NipAnggota        string        `json:"nip_anggota" binding:"required"`
+	Instansi          []string      `json:"instansi" binding:"required"`
 	StackHolder       []StackHolder `json:"stack" binding:"required"`
 	Data              []DataBA      `json:"pembahasan" binding:"required"`
 }
