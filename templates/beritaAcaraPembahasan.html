@@ -634,9 +634,10 @@ line-height:115%'><b><span style='font-size:12.0pt;line-height:115%;font-family:
 		const img1 = document.createElement("img");
         img1.src = `data:image/png;base64,${foto[i]}`;
         img1.alt = `Gambar ${i + 1}`;
-		img1.style.width = "665"
-		img1.style.height = "330"
-		img1.style.padding = "20"
+		img1.style.width = "665";
+		img1.style.height = "330";
+		img1.style.padding = "20";
+		img1.style.objectFit = 'contain';
 		
 		const divGambar = document.createElement("div");
 		divGambar.style.display = 'flex';
