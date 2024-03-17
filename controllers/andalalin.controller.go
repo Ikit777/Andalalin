@@ -2643,6 +2643,8 @@ func (ac *AndalalinController) PembuatanSuratPermohonan(ctx *gin.Context) {
 			log.Fatal(err)
 		}
 
+		_ = os.Remove(tempFilePath)
+
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": docBytes})
 	case "Bangkitan sedang":
 		replaceMap := docx.PlaceholderMap{
@@ -2691,6 +2693,8 @@ func (ac *AndalalinController) PembuatanSuratPermohonan(ctx *gin.Context) {
 			log.Fatal(err)
 		}
 
+		_ = os.Remove(tempFilePath)
+
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": docBytes})
 	case "Bangkitan tinggi":
 		replaceMap := docx.PlaceholderMap{
@@ -2738,6 +2742,8 @@ func (ac *AndalalinController) PembuatanSuratPermohonan(ctx *gin.Context) {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		_ = os.Remove(tempFilePath)
 
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": docBytes})
 	}
