@@ -139,7 +139,7 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		if payload.PushToken != "" {
 			result := ac.DB.Model(&user).Where("id = ?", user.ID).Update("push_token", payload.PushToken)
 			if result.Error != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": err.Error()})
+				ctx.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": "An error occurred on the server. Please try again later"})
 				return
 			}
 		}
@@ -255,12 +255,6 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 	claim, err := utils.ValidateToken(refresh_token, config.RefreshTokenPublicKey)
 	if err != nil {
-		claim, err := utils.ValidateToken(refresh_token, config.AccessTokenPublicKey)
-		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"status": "fail", "message": err.Error()})
-			return
-		}
-
 		var userData models.User
 		initializers.DB.First(&userData, "id = ?", fmt.Sprint(claim.UserID))
 
@@ -270,7 +264,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 
 		initializers.DB.Save(&userData)
 
-		ctx.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"status": "fail", "message": err.Error()})
+		ctx.AbortWithStatusJSON(http.StatusFailedDependency, gin.H{"status": "fail", "message": "Session end"})
 		return
 	}
 
